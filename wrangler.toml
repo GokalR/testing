@@ -1,0 +1,7 @@
+name = "ml-testing-platform"
+compatibility_date = "2024-08-14"
+
+[[kv_namespaces]]
+binding = "ML_QUESTIONS"
+id = "561f956bd5df4149bafb1227a49733b2"
+preview_id = "bcdac980e2c84b479c1050850878d8c5"
