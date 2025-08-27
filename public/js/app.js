@@ -1,5 +1,10 @@
-// Configuration
+// =================================================================================
+// Configuration & Global State
+// =================================================================================
+
 const API_BASE_URL = '/api';
+const ADMIN_PASSWORD = 'botabotabotaspeed'; // Change this to a secure password!
+const TEST_DURATION_SECONDS = 3600; // 60 minutes
 
 // Global variables
 let currentMode = 'candidate';
@@ -8,30 +13,25 @@ let currentTest = [];
 let currentQuestionIndex = 0;
 let userAnswers = {};
 let testTimer;
-let timeLeft = 2700; // 45 minutes
-let testResults = [];
-let editingQuestionId = null;
+let timeLeft = TEST_DURATION_SECONDS;
+let testResultId = null; // To store the ID of the current test result for updates
 let userName = '';
 
-// Add this for password protection
-const ADMIN_PASSWORD = 'botabotabotaspeed'; // Change this to a secure password!
-
-// Category names mapping
+// Data Mappings
 const categoryNames = {
     probability_stats: 'Probability & Statistics',
     ml_algorithms: 'ML Algorithms',
-    data_preparation: 'Data Preparation',
+    data_preparation: 'Data Preparation & Feature Engineering',
     validation_metrics: 'Validation & Metrics',
-    coding: 'Coding Tasks',
-    soft_communication: 'Communication',
-    soft_teamwork: 'Teamwork',
-    soft_selforg: 'Self-Organization',
-    soft_feedback: 'Feedback',
-    soft_creativity: 'Creativity',
-    soft_documentation: 'Documentation'
+    coding: 'Coding',
+    soft_communication: 'Soft Skills: Communication',
+    soft_teamwork: 'Soft Skills: Teamwork',
+    soft_selforg: 'Soft Skills: Self-Organization',
+    soft_feedback: 'Soft Skills: Feedback',
+    soft_creativity: 'Soft Skills: Creativity',
+    soft_documentation: 'Soft Skills: Documentation'
 };
 
-// Levels mapping
 const levels = [
     { name: 'Below Junior', min: 0, max: 5 },
     { name: 'Junior', min: 6, max: 24 },
@@ -42,209 +42,102 @@ const levels = [
     { name: 'Head of', min: 105, max: Infinity }
 ];
 
+// =================================================================================
 // API Functions
+// =================================================================================
+
 async function apiRequest(endpoint, options = {}) {
     try {
         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-            headers: {
-                'Content-Type': 'application/json',
-                ...options.headers
-            },
+            headers: { 'Content-Type': 'application/json', ...options.headers },
             ...options
         });
-
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const err = await response.json().catch(() => ({ error: `HTTP error! status: ${response.status}` }));
+            throw new Error(err.error);
         }
-
         return await response.json();
     } catch (error) {
         console.error('API request failed:', error);
-        showError('Network error. Please check your connection and try again.');
+        showError(`Network error: ${error.message}. Please check your connection.`);
         throw error;
     }
 }
 
-async function loadQuestions() {
-    try {
-        const response = await apiRequest('/questions');
-        allQuestions = response.questions || [];
-        updateWelcomeStats();
-        return allQuestions;
-    } catch (error) {
-        console.error('Failed to load questions:', error);
-        allQuestions = [];
-        updateWelcomeStats();
-    }
-}
+const loadQuestions = () => apiRequest('/questions');
+const saveQuestion = (question) => apiRequest('/questions', { method: 'POST', body: JSON.stringify(question) });
+const updateQuestion = (id, question) => apiRequest(`/questions/${id}`, { method: 'PUT', body: JSON.stringify(question) });
+const deleteQuestionAPI = (id) => apiRequest(`/questions/${id}`, { method: 'DELETE' });
+const resetQuestionsAPI = () => apiRequest('/questions/reset', { method: 'POST' });
+const submitTestResults = (results) => apiRequest('/results', { method: 'POST', body: JSON.stringify(results) });
+const updateTestResult = (id, updateData) => apiRequest(`/results/${id}`, { method: 'PUT', body: JSON.stringify(updateData) });
+const loadAnalytics = () => apiRequest('/analytics');
 
-async function saveQuestion(question) {
-    try {
-        const response = await apiRequest('/questions', {
-            method: 'POST',
-            body: JSON.stringify(question)
-        });
-        return response;
-    } catch (error) {
-        throw new Error('Failed to save question');
-    }
-}
-
-async function updateQuestion(id, question) {
-    try {
-        const response = await apiRequest(`/questions/${id}`, {
-            method: 'PUT',
-            body: JSON.stringify(question)
-        });
-        return response;
-    } catch (error) {
-        throw new Error('Failed to update question');
-    }
-}
-
-async function deleteQuestionAPI(id) {
-    try {
-        const response = await apiRequest(`/questions/${id}`, {
-            method: 'DELETE'
-        });
-        return response;
-    } catch (error) {
-        throw new Error('Failed to delete question');
-    }
-}
-
-async function submitTestResults(results) {
-    try {
-        const response = await apiRequest('/results', {
-            method: 'POST',
-            body: JSON.stringify(results)
-        });
-        return response;
-    } catch (error) {
-        console.error('Failed to submit results:', error);
-    }
-}
-
-async function updateTestResult(id, updateData) {
-    try {
-        const response = await apiRequest(`/results/${id}`, {
-            method: 'PUT',
-            body: JSON.stringify(updateData)
-        });
-        return response;
-    } catch (error) {
-        console.error('Failed to update result:', error);
-    }
-}
-
-async function loadAnalytics() {
-    try {
-        const response = await apiRequest('/analytics');
-        return response;
-    } catch (error) {
-        console.error('Failed to load analytics:', error);
-        return null;
-    }
-}
-
+// =================================================================================
 // UI Helper Functions
-function showError(message) {
-    const existingError = document.querySelector('.error');
-    if (existingError) {
-        existingError.remove();
-    }
+// =================================================================================
 
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'error';
-    errorDiv.textContent = message;
-    
-    document.body.insertBefore(errorDiv, document.body.firstChild);
-    
-    setTimeout(() => {
-        errorDiv.remove();
-    }, 5000);
+function showError(message) {
+    const existing = document.querySelector('.error');
+    if (existing) existing.remove();
+    const div = document.createElement('div');
+    div.className = 'error';
+    div.textContent = message;
+    document.body.insertBefore(div, document.body.firstChild);
+    setTimeout(() => div.remove(), 5000);
 }
 
 function showSuccess(message) {
-    const existingSuccess = document.querySelector('.success');
-    if (existingSuccess) {
-        existingSuccess.remove();
-    }
-
-    const successDiv = document.createElement('div');
-    successDiv.className = 'success';
-    successDiv.textContent = message;
-    
-    document.body.insertBefore(successDiv, document.body.firstChild);
-    
-    setTimeout(() => {
-        successDiv.remove();
-    }, 3000);
+    const existing = document.querySelector('.success');
+    if (existing) existing.remove();
+    const div = document.createElement('div');
+    div.className = 'success';
+    div.textContent = message;
+    document.body.insertBefore(div, document.body.firstChild);
+    setTimeout(() => div.remove(), 3000);
 }
 
 function updateWelcomeStats() {
-    const totalQuestionsEl = document.getElementById('totalQuestions');
-    const totalPointsEl = document.getElementById('totalPoints');
-    const coverageAreasEl = document.getElementById('coverageAreas');
+    document.getElementById('totalQuestions').textContent = allQuestions.length;
+    document.getElementById('totalPoints').textContent = allQuestions.reduce((sum, q) => sum + q.weight, 0);
 
-    if (allQuestions.length === 0) {
-        totalQuestionsEl.textContent = '0';
-        totalPointsEl.textContent = '0';
-        coverageAreasEl.innerHTML = '<li style="color: #dc3545;">No questions available. Please add questions in Administrator mode.</li>';
-        return;
-    }
+    const categoryCounts = allQuestions.reduce((acc, q) => {
+        acc[q.category] = (acc[q.category] || 0) + 1;
+        return acc;
+    }, {});
 
-    const totalQuestions = allQuestions.length;
-    const totalPoints = allQuestions.reduce((sum, q) => sum + q.weight, 0);
-
-    // Count questions by category
-    const categoryCounts = {};
-    allQuestions.forEach(q => {
-        categoryCounts[q.category] = (categoryCounts[q.category] || 0) + 1;
-    });
-
-    totalQuestionsEl.textContent = totalQuestions;
-    totalPointsEl.textContent = totalPoints;
-
-    const coverageHTML = Object.entries(categoryCounts).map(([category, count]) => 
-        `<li><strong>${categoryNames[category] || category}:</strong> ${count} questions</li>`
-    ).join('');
-
-    coverageAreasEl.innerHTML = coverageHTML;
+    const coverageHTML = Object.entries(categoryCounts)
+        .map(([category, count]) => `<li><strong>${categoryNames[category] || category}:</strong> ${count} questions</li>`)
+        .join('');
+    document.getElementById('coverageAreas').innerHTML = coverageHTML || '<li>No questions loaded.</li>';
 }
 
-// Mode and Navigation Functions
+// =================================================================================
+// Mode and Navigation
+// =================================================================================
+
 function setMode(mode) {
     if (mode === 'admin') {
-        const enteredPassword = prompt('Enter admin password:');
-        if (enteredPassword !== ADMIN_PASSWORD) {
-            showError('Incorrect password. Access denied.');
-            return; // Stay in candidate mode
+        const pass = prompt('Enter Administrator Password:');
+        if (pass !== ADMIN_PASSWORD) {
+            showError('Incorrect password.');
+            return;
         }
     }
 
     currentMode = mode;
     document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
+    document.querySelector(`.mode-btn[onclick="setMode('${mode}')"]`).classList.add('active');
 
-    const candidateNav = document.getElementById('candidateNavigation');
-    const adminNav = document.getElementById('adminNavigation');
+    document.getElementById('candidateNavigation').classList.toggle('hidden', mode !== 'candidate');
+    document.getElementById('adminNavigation').classList.toggle('hidden', mode !== 'admin');
 
-    if (mode === 'candidate') {
-        candidateNav.classList.remove('hidden');
-        adminNav.classList.add('hidden');
-    } else {
-        candidateNav.classList.add('hidden');
-        adminNav.classList.remove('hidden');
-    }
-
-    showSection('welcome');
+    showSection('welcome'); // Default to welcome section on mode change
 }
 
-// Add this helper to prevent direct access to admin sections without password
 function requireAdminAccess(sectionId) {
     if (currentMode !== 'admin') {
-        showError('Admin access required.');
+        showError('Administrator access required for this section.');
         showSection('welcome');
         return false;
     }
@@ -256,494 +149,392 @@ function showSection(sectionId) {
         return;
     }
 
-    document.querySelectorAll('.content-section').forEach(section => {
-        section.classList.remove('active');
-    });
-    
-    const activeNav = currentMode === 'candidate' ? 'candidateNavigation' : 'adminNavigation';
-    document.querySelectorAll(`#${activeNav} .nav-btn`).forEach(btn => {
-        btn.classList.remove('active');
-    });
-    
+    document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
     document.getElementById(sectionId).classList.add('active');
-    
-    // Find and activate the correct nav button
-    const navButtons = document.querySelectorAll(`#${activeNav} .nav-btn`);
-    navButtons.forEach(btn => {
-        const btnText = btn.textContent.toLowerCase();
-        if ((sectionId === 'welcome' && btnText.includes('start')) ||
-            (sectionId === 'questionEditor' && btnText.includes('edit')) ||
-            (sectionId === 'test' && btnText.includes('test')) ||
-            (sectionId === 'results' && btnText.includes('results')) ||
-            (sectionId === 'analytics' && btnText.includes('analytics'))) {
-            btn.classList.add('active');
-        }
-    });
-    
-    // Load data when entering specific sections
+
+    const navId = currentMode === 'admin' ? 'adminNavigation' : 'candidateNavigation';
+    document.querySelectorAll(`#${navId} .nav-btn`).forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`#${navId} .nav-btn[onclick="showSection('${sectionId}')"]`)?.classList.add('active');
+
+    // Load data for specific sections
     if (sectionId === 'questionEditor') {
-        loadQuestions().then(() => {
-            updateQuestionsList();
-        });
-    } else if (sectionId === 'analytics' && currentMode === 'admin') {
+        updateQuestionsList();
+    } else if (sectionId === 'analytics') {
         loadAnalyticsData();
     }
 }
 
-// Question Management Functions
-async function addQuestion() {
-    const category = document.getElementById('questionCategory').value;
-    const weight = parseInt(document.getElementById('questionWeight').value);
-    const text = document.getElementById('questionText').value.trim();
+// =================================================================================
+// Question Management (Admin)
+// =================================================================================
+
+/** [NEW] Toggles form fields based on the selected question type. */
+function toggleQuestionTypeFields() {
     const type = document.getElementById('questionType').value;
-    const options = type === 'multiple' ? {
-        A: document.getElementById('optionA').value.trim(),
-        B: document.getElementById('optionB').value.trim(),
-        C: document.getElementById('optionC').value.trim(),
-        D: document.getElementById('optionD').value.trim()
-    } : {};
-    const correctAnswer = type === 'multiple' ? document.getElementById('correctAnswer').value : null;
-    const test_cases = type === 'code' ? document.getElementById('testCases').value.trim() : '';
+    document.getElementById('multipleChoiceFields').classList.toggle('hidden', type !== 'multiple');
+    document.getElementById('codingFields').classList.toggle('hidden', type !== 'code');
+}
 
-    if (!text || (type === 'multiple' && (!options.A || !options.B || !options.C || !options.D))) {
-        showError('Please fill in all fields');
-        return;
-    }
-
+/** [UPDATED] Handles adding or updating a question. */
+async function addOrUpdateQuestion() {
+    const editingId = document.getElementById('editingQuestionId').value;
     const questionData = {
-        category,
-        weight,
-        text,
-        type,
-        options,
-        correctAnswer,
-        test_cases
+        type: document.getElementById('questionType').value,
+        category: document.getElementById('questionCategory').value,
+        weight: parseInt(document.getElementById('questionWeight').value, 10) || 1,
+        text: document.getElementById('questionText').value.trim(),
+        options: {},
+        correctAnswer: null,
+        test_cases: ''
     };
 
-    const editingId = document.getElementById('editingQuestionId').value;
+    if (questionData.type === 'multiple') {
+        questionData.options = {
+            A: document.getElementById('optionA').value.trim(), B: document.getElementById('optionB').value.trim(),
+            C: document.getElementById('optionC').value.trim(), D: document.getElementById('optionD').value.trim()
+        };
+        questionData.correctAnswer = document.getElementById('correctAnswer').value;
+        if (!questionData.options.A || !questionData.options.B) {
+            return showError('Options A and B are required for multiple choice questions.');
+        }
+    } else if (questionData.type === 'code') {
+        questionData.test_cases = document.getElementById('testCases').value.trim();
+    }
+
+    if (!questionData.text) return showError('Question text cannot be empty.');
 
     try {
-        if (editingId) {
-            await updateQuestion(editingId, questionData);
-            showSuccess('Question updated successfully!');
-        } else {
-            await saveQuestion(questionData);
-            showSuccess('Question added successfully!');
-        }
-        
-        await loadQuestions();
-        updateQuestionsList();
+        const action = editingId ? updateQuestion(editingId, questionData) : saveQuestion(questionData);
+        await action;
+        showSuccess(`Question ${editingId ? 'updated' : 'added'} successfully!`);
         clearForm();
+        const data = await loadQuestions(); // Reload all questions
+        allQuestions = data.questions || [];
+        updateQuestionsList();
     } catch (error) {
-        showError(error.message);
+        showError(`Failed to save question: ${error.message}`);
     }
 }
 
+/** [UPDATED] Clears the question editor form. */
 function clearForm() {
-    document.getElementById('questionText').value = '';
-    if (document.getElementById('optionA')) document.getElementById('optionA').value = '';
-    if (document.getElementById('optionB')) document.getElementById('optionB').value = '';
-    if (document.getElementById('optionC')) document.getElementById('optionC').value = '';
-    if (document.getElementById('optionD')) document.getElementById('optionD').value = '';
+    document.getElementById('editingQuestionId').value = '';
+    document.getElementById('questionType').value = 'multiple';
     document.getElementById('questionCategory').value = 'probability_stats';
     document.getElementById('questionWeight').value = '1';
-    if (document.getElementById('correctAnswer')) document.getElementById('correctAnswer').value = 'A';
-    document.getElementById('editingQuestionId').value = '';
-    if (document.getElementById('questionType')) document.getElementById('questionType').value = 'multiple';
-    if (document.getElementById('testCases')) document.getElementById('testCases').value = '';
+    document.getElementById('questionText').value = '';
+    document.getElementById('optionA').value = '';
+    document.getElementById('optionB').value = '';
+    document.getElementById('optionC').value = '';
+    document.getElementById('optionD').value = '';
+    document.getElementById('correctAnswer').value = 'A';
+    document.getElementById('testCases').value = '';
+    document.getElementById('formTitle').textContent = 'Add New Question';
+    toggleQuestionTypeFields();
 }
 
+/** [UPDATED] Populates the form to edit a question. */
 function editQuestion(questionId) {
-    const question = allQuestions.find(q => q.id == questionId);
-    if (!question) return;
-    
+    const question = allQuestions.find(q => q.id === questionId);
+    if (!question) return showError('Question not found.');
+
+    document.getElementById('editingQuestionId').value = question.id;
+    document.getElementById('formTitle').textContent = `Editing Question...`;
+    document.getElementById('questionType').value = question.type;
     document.getElementById('questionCategory').value = question.category;
     document.getElementById('questionWeight').value = question.weight;
     document.getElementById('questionText').value = question.text;
-    document.getElementById('questionType').value = question.type;
+
     if (question.type === 'multiple') {
-        document.getElementById('optionA').value = question.options.A;
-        document.getElementById('optionB').value = question.options.B;
-        document.getElementById('optionC').value = question.options.C;
-        document.getElementById('optionD').value = question.options.D;
-        document.getElementById('correctAnswer').value = question.correctAnswer;
+        document.getElementById('optionA').value = question.options.A || '';
+        document.getElementById('optionB').value = question.options.B || '';
+        document.getElementById('optionC').value = question.options.C || '';
+        document.getElementById('optionD').value = question.options.D || '';
+        document.getElementById('correctAnswer').value = question.correctAnswer || 'A';
+    } else if (question.type === 'code') {
+        document.getElementById('testCases').value = question.test_cases || '';
     }
-    if (question.test_cases) document.getElementById('testCases').value = question.test_cases;
-    document.getElementById('editingQuestionId').value = question.id;
+
+    toggleQuestionTypeFields();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+async function deleteQuestion(questionId) {
+    if (confirm(`Are you sure you want to delete question ID: ${questionId}?`)) {
+        try {
+            await deleteQuestionAPI(questionId);
+            showSuccess('Question deleted.');
+            allQuestions = allQuestions.filter(q => q.id !== questionId);
+            updateQuestionsList();
+        } catch (error) {
+            showError(`Failed to delete question: ${error.message}`);
+        }
+    }
+}
+
+async function resetToDefault() {
+    if (confirm('This will delete all custom questions and restore the default set. Are you sure?')) {
+        try {
+            await resetQuestionsAPI();
+            showSuccess('Questions have been reset.');
+            const data = await loadQuestions();
+            allQuestions = data.questions || [];
+            updateWelcomeStats();
+            updateQuestionsList();
+        } catch (error) {
+            showError(`Failed to reset questions: ${error.message}`);
+        }
+    }
+}
+
+/** [PERFORMANCE FIX] Efficiently renders the question list. */
 function updateQuestionsList() {
-    // Assume you have a function to list questions in the editor, e.g., render table with edit/delete buttons
-    const listEl = document.getElementById('questionList'); // Assume ID
-    listEl.innerHTML = allQuestions.map(q => `
-        <div>
-            <span>${q.text.slice(0, 50)}... (${q.weight}pt, ${q.type})</span>
-            <button onclick="editQuestion('${q.id}')">Edit</button>
-            <button onclick="deleteQuestion('${q.id}')">Delete</button>
+    const listEl = document.getElementById('questionsList');
+    const filter = document.getElementById('categoryFilter').value;
+    const filtered = allQuestions.filter(q => filter === 'all' || q.category === filter);
+
+    if (filtered.length === 0) {
+        listEl.innerHTML = `<div class="loading">No questions found.</div>`;
+        return;
+    }
+    const html = filtered.map(q => `
+        <div class="question-item">
+            <div class="question-header">
+                <strong>${q.type.charAt(0).toUpperCase() + q.type.slice(1)}: ${categoryNames[q.category] || q.category}</strong>
+                <span class="question-points">${q.weight} pt${q.weight > 1 ? 's' : ''}</span>
+            </div>
+            <p>${q.text.substring(0, 100)}${q.text.length > 100 ? '...' : ''}</p>
+            <div class="question-actions">
+                <button onclick="editQuestion('${q.id}')" data-i18n="editBtn">Edit</button>
+                <button onclick="deleteQuestion('${q.id}')" data-i18n="deleteBtn">Delete</button>
+            </div>
         </div>
     `).join('');
+    listEl.innerHTML = html;
 }
 
-async function deleteQuestion(id) {
-    if (confirm('Delete question?')) {
-        await deleteQuestionAPI(id);
-        await loadQuestions();
-        updateQuestionsList();
+const filterQuestions = () => updateQuestionsList();
+
+// =================================================================================
+// Test Taking Flow
+// =================================================================================
+
+function startGeneralTest() {
+    userName = prompt("Please enter your full name to begin the assessment:");
+    if (!userName || userName.trim() === '') {
+        return showError("A name is required to start the test.");
     }
-}
-
-// Test Functions
-function startTest() {
-    userName = prompt('Enter your name:');
-    if (!userName) return;
-    currentTest = [...allQuestions]; // Copy all
+    currentTest = [...allQuestions]; // Use all available questions
     currentQuestionIndex = 0;
     userAnswers = {};
-    timeLeft = 2700;
+    timeLeft = TEST_DURATION_SECONDS;
+    testResultId = null;
     showSection('test');
-    showQuestion(currentQuestionIndex);
+    document.getElementById('submitTest').style.display = 'block';
+    renderQuestion();
     startTimer();
 }
 
-function showQuestion(index) {
-    const question = currentTest[index];
-    let html = `
-        <div class="question-container">
-            <div class="question-header">
-                <span>Question ${index + 1} / ${currentTest.length}</span>
-                <span>Weight: ${question.weight} points</span>
-                <span>Type: ${question.type}</span>
-            </div>
-            <div class="question-text">${question.text}</div>
-    `;
-    
+function renderQuestion() {
+    const question = currentTest[currentQuestionIndex];
+    const container = document.getElementById('testQuestions');
+    let optionsHTML = '';
+
     if (question.type === 'multiple') {
-        html += `
-            <div class="answers">
-                ${Object.entries(question.options).map(([key, value]) => `
-                    <label class="answer-option ${userAnswers[question.id] === key ? 'selected' : ''}" onclick="selectAnswer('${question.id}', '${key}')">
-                        <input type="radio" name="q${question.id}" value="${key}" ${userAnswers[question.id] === key ? 'checked' : ''}>
-                        <strong>${key})</strong> ${value}
-                    </label>
-                `).join('')}
-            </div>
-        `;
+        optionsHTML = `<div class="answer-options">` +
+            Object.entries(question.options).map(([key, value]) => `
+                <div class="answer-option ${userAnswers[question.id] === key ? 'selected' : ''}" onclick="selectAnswer('${question.id}', '${key}')">
+                    <input type="radio" name="q${question.id}" value="${key}" ${userAnswers[question.id] === key ? 'checked' : ''} style="display:none;">
+                    <strong>${key})</strong> <label>${value}</label>
+                </div>
+            `).join('') + `</div>`;
     } else if (question.type === 'open' || question.type === 'code') {
-        html += `
-            <textarea id="answer_${question.id}" rows="10" style="width:100%;" oninput="selectAnswer('${question.id}', this.value)">${userAnswers[question.id] || ''}</textarea>
-            ${question.test_cases ? '<p>Test cases: ' + question.test_cases + '</p>' : ''}
+        optionsHTML = `
+            <textarea class="form-group" style="min-height: 200px;" oninput="selectAnswer('${question.id}', this.value)" 
+            placeholder="Enter your ${question.type === 'code' ? 'code or solution' : 'answer'} here...">${userAnswers[question.id] || ''}</textarea>
+            ${question.type === 'code' && question.test_cases ? `<div class="test-cases"><strong>Test Cases:</strong><pre>${question.test_cases}</pre></div>` : ''}
         `;
     }
 
-    html += `
-            <div style="margin-top: 30px; display: flex; justify-content: space-between;">
-                <button class="btn" onclick="previousQuestion()" ${index === 0 ? 'disabled' : ''}>← Previous</button>
-                <button class="btn" onclick="nextQuestion()">
-                    ${index === currentTest.length - 1 ? 'Review & Submit' : 'Next →'}
-                </button>
-            </div>
+    container.innerHTML = `
+        <div class="question-card">
+            <div class="question-number">${currentQuestionIndex + 1}</div>
+            <p style="font-size: 1.2rem; font-weight: 500;">${question.text}</p>
+            ${optionsHTML}
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+            <button class="btn btn-secondary" onclick="previousQuestion()" ${currentQuestionIndex === 0 ? 'disabled' : ''}>Previous</button>
+            <button class="btn" onclick="nextQuestion()">${currentQuestionIndex === currentTest.length - 1 ? 'Review & Finish' : 'Next'}</button>
         </div>
     `;
-    
-    document.getElementById('questionContent').innerHTML = html; // Assume div ID
     updateProgress();
 }
 
 function selectAnswer(questionId, answer) {
     userAnswers[questionId] = answer;
-    
-    const labels = document.querySelectorAll('.answer-option');
-    labels.forEach(label => {
-        label.classList.remove('selected');
-        if (label.querySelector(`input[value="${answer}"]`)) {
-            label.classList.add('selected');
-        }
-    });
+    // Re-render to update UI state, which is simple and effective for this app size
+    renderQuestion();
 }
 
-function nextQuestion() {
+const nextQuestion = () => {
     if (currentQuestionIndex < currentTest.length - 1) {
         currentQuestionIndex++;
-        showQuestion(currentQuestionIndex);
+        renderQuestion();
     } else {
-        if (confirm('Ready to submit?')) {
-            submitTest();
-        }
+        submitTest();
     }
-}
+};
 
-function previousQuestion() {
+const previousQuestion = () => {
     if (currentQuestionIndex > 0) {
         currentQuestionIndex--;
-        showQuestion(currentQuestionIndex);
+        renderQuestion();
     }
-}
+};
 
-function updateProgress() {
-    const progress = ((currentQuestionIndex + 1) / currentTest.length) * 100;
-    document.getElementById('progressFill').style.width = progress + '%';
-}
+const updateProgress = () => {
+    const answeredCount = Object.keys(userAnswers).length;
+    document.getElementById('progressFill').style.width = `${(answeredCount / currentTest.length) * 100}%`;
+};
 
 function startTimer() {
     clearInterval(testTimer);
+    const timerEl = document.getElementById('timer');
     testTimer = setInterval(() => {
         timeLeft--;
-        
         const minutes = Math.floor(timeLeft / 60);
         const seconds = timeLeft % 60;
-        
-        document.getElementById('timer').textContent = 
-            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        
-        const timerEl = document.getElementById('timer');
-        if (timeLeft <= 300) {
-            timerEl.style.background = '#dc3545';
-        } else if (timeLeft <= 600) {
-            timerEl.style.background = '#ffc107';
-            timerEl.style.color = '#000';
-        }
+        timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         
         if (timeLeft <= 0) {
             clearInterval(testTimer);
-            alert('Time is up! Submitting test automatically.');
+            showError('Time is up! Your test will be submitted automatically.');
             submitTest();
         }
     }, 1000);
 }
 
 async function submitTest() {
+    if (!confirm('Are you sure you want to finish and submit your test?')) return;
     clearInterval(testTimer);
-    
-    let score = 0;
-    let maxScore = 0;
-    const blockResults = {};
-    const detailedAnswers = [];
-    
-    currentTest.forEach(question => {
-        maxScore += question.weight;
-        const userAnswer = userAnswers[question.id];
-        let isCorrect = false;
-        if (question.type === 'multiple') {
-            isCorrect = userAnswer === question.correctAnswer;
-            if (isCorrect) score += question.weight;
-        } // open/code scored 0 auto
-        
-        const block = question.category;
-        if (!blockResults[block]) {
-            blockResults[block] = { correct: 0, total: 0, maxPoints: 0, earnedPoints: 0 };
-        }
-        blockResults[block].total++;
-        blockResults[block].maxPoints += question.weight;
-        if (isCorrect) {
-            blockResults[block].correct++;
-            blockResults[block].earnedPoints += question.weight;
-        }
 
-        detailedAnswers.push({
-            questionId: question.id,
-            questionText: question.text,
-            category: question.category,
-            userAnswer: userAnswer || null,
-            correctAnswer: question.correctAnswer,
-            isCorrect: isCorrect,
-            type: question.type
-        });
+    let score = 0;
+    const maxScore = allQuestions.reduce((sum, q) => sum + q.weight, 0);
+    const detailedAnswers = allQuestions.map(q => {
+        const userAnswer = userAnswers[q.id];
+        const isCorrect = q.type === 'multiple' && userAnswer === q.correctAnswer;
+        if (isCorrect) score += q.weight;
+        return { questionId: q.id, text: q.text, type: q.type, category: q.category, userAnswer: userAnswer || null, correctAnswer: q.correctAnswer, isCorrect };
     });
-    
-    const percentage = Math.round((score / maxScore) * 100);
-    const timeUsed = 2700 - timeLeft;
-    
-    let grade = 'Poor';
-    let gradeClass = 'grade-poor';
-    if (percentage >= 90) {
-        grade = 'Excellent';
-        gradeClass = 'grade-excellent';
-    } else if (percentage >= 75) {
-        grade = 'Good';
-        gradeClass = 'grade-good';
-    } else if (percentage >= 60) {
-        grade = 'Fair';
-        gradeClass = 'grade-fair';
-    }
-    
-    let level = 'Below Junior';
-    for (const lv of levels) {
-        if (score >= lv.min && score <= lv.max) {
-            level = lv.name;
-            break;
-        }
-    }
+
+    const level = levels.find(l => score >= l.min && score <= l.max)?.name || 'N/A';
     
     const result = {
+        userName: userName.trim(),
         timestamp: new Date().toISOString(),
         score,
         maxScore,
-        percentage,
-        grade,
-        gradeClass,
+        percentage: maxScore > 0 ? Math.round((score / maxScore) * 100) : 0,
         level,
-        timeUsed: `${Math.floor(timeUsed / 60)}:${(timeUsed % 60).toString().padStart(2, '0')}`,
-        answers: userAnswers,
-        detailedAnswers: detailedAnswers,
-        questions: currentTest.length,
-        blockResults,
-        userName: userName.trim()
+        detailedAnswers,
     };
     
-    // Save results to server
-    await submitTestResults(result);
+    try {
+        const response = await submitTestResults(result);
+        testResultId = response.id;
+        showSuccess('Test submitted successfully!');
+        showResults(result);
+    } catch (error) {
+        showError('Could not submit test results. Please check your connection.');
+    }
+}
+
+// =================================================================================
+// Results & Analytics
+// =================================================================================
+
+function showResults(result) {
+    const grade = result.percentage >= 80 ? { text: 'Excellent', class: 'grade-excellent' }
+        : result.percentage >= 60 ? { text: 'Good', class: 'grade-good' }
+        : result.percentage >= 40 ? { text: 'Fair', class: 'grade-fair' }
+        : { text: 'Needs Improvement', class: 'grade-poor' };
+
+    const blockResults = result.detailedAnswers.reduce((acc, ans) => {
+        const cat = ans.category;
+        if (!acc[cat]) acc[cat] = { correct: 0, total: 0 };
+        if (ans.isCorrect) acc[cat].correct++;
+        acc[cat].total++;
+        return acc;
+    }, {});
     
-    // Mark test as taken
-    localStorage.setItem('testTaken', 'true');
-    
-    testResults.push(result);
-    showResults(result);
+    document.getElementById('resultsContent').innerHTML = `
+        <div class="results-summary">
+            <h3>${result.userName}</h3>
+            <div class="score-display">${result.score} / ${result.maxScore}</div>
+            <div class="grade-badge ${grade.class}">${result.percentage}% - ${result.level} (${grade.text})</div>
+        </div>
+        <h4>Breakdown by Category:</h4>
+        <div class="detailed-results">
+            ${Object.entries(blockResults).map(([cat, res]) => `
+                <div class="result-block">
+                    <strong>${categoryNames[cat] || cat}:</strong> ${res.correct} / ${res.total} correct
+                </div>
+            `).join('')}
+        </div>
+    `;
     showSection('results');
 }
 
-function showResults(result) {
-    let detailedResults = Object.entries(result.blockResults).map(([block, blockResult]) => `
-        <div class="result-block">
-            <h4>${categoryNames[block] || block}</h4>
-            <p><strong>Correct:</strong> ${blockResult.correct}/${blockResult.total} questions</p>
-            <p><strong>Points:</strong> ${blockResult.earnedPoints}/${blockResult.maxPoints}</p>
-            <p><strong>Block Score:</strong> ${Math.round((blockResult.earnedPoints / blockResult.maxPoints) * 100)}%</p>
-        </div>
-    `).join('');
-                        
-    document.getElementById('resultsContent').innerHTML = `
-        <div class="results-summary">
-            <div class="score-display">${result.score}/${result.maxScore}</div>
-            <div style="font-size: 1.5rem; color: #666; margin-bottom: 10px;">${result.percentage}% Score</div>
-            <div class="grade-badge ${result.gradeClass}">${result.grade} - ${result.level}</div>
-            <p style="margin-top: 20px; color: #666;">
-                <strong>ML Engineer Assessment for ${result.userName}</strong> <br>
-                <strong>Time Used:</strong> ${result.timeUsed} <br>
-                <strong>Completed:</strong> ${new Date(result.timestamp).toLocaleString()}
-            </p>
-        </div>
-        
-        <div class="detailed-results">
-            <h3>Performance by Area</h3>
-            ${detailedResults}
-        </div>
-        
-        <div style="text-align: center; margin-top: 30px;">
-            ${currentMode === 'admin' ? '<button class="btn" onclick="showSection(\'welcome\')">Back to Welcome</button>' : '<p>You have completed the test. Thank you!</p>'}
-            ${currentMode === 'admin' ? '<button class="btn" onclick="showSection(\'analytics\')" style="margin-left: 10px;">View Analytics</button>' : ''}
-        </div>
-    `;
-}
-
-// Analytics Functions
 async function loadAnalyticsData() {
-    const analyticsContent = document.getElementById('analyticsContent');
-    analyticsContent.innerHTML = '<div class="loading">Loading analytics data...</div>';
-    
+    const content = document.getElementById('analyticsContent');
+    content.innerHTML = `<div class="loading">Loading analytics...</div>`;
     try {
         const data = await loadAnalytics();
-        if (data) {
-            displayAnalytics(data);
-        } else {
-            analyticsContent.innerHTML = '<p>No analytics data available yet.</p>';
-        }
+        displayAnalytics(data);
     } catch (error) {
-        analyticsContent.innerHTML = '<p>Failed to load analytics data.</p>';
+        content.innerHTML = `<p>Failed to load analytics data.</p>`;
     }
 }
 
 function displayAnalytics(data) {
-    const analyticsContent = document.getElementById('analyticsContent');
-    
-    analyticsContent.innerHTML = `
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px;">
-            <div class="result-block">
-                <h4>Total Tests Taken</h4>
-                <div style="font-size: 2rem; font-weight: 700; color: #667eea;">${data.totalTests || 0}</div>
-            </div>
-            <div class="result-block">
-                <h4>Average Score</h4>
-                <div style="font-size: 2rem; font-weight: 700; color: #667eea;">${data.averageScore || 0}%</div>
-            </div>
-            <div class="result-block">
-                <h4>Total Questions</h4>
-                <div style="font-size: 2rem; font-weight: 700; color: #667eea;">${data.totalQuestions || 0}</div>
-            </div>
-            <div class="result-block">
-                <h4>Pass Rate</h4>
-                <div style="font-size: 2rem; font-weight: 700; color: #667eea;">${data.passRate || 0}%</div>
-            </div>
+    document.getElementById('analyticsContent').innerHTML = `
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
+            <div class="result-block"><h4>Total Tests</h4><div class="score-display">${data.totalTests}</div></div>
+            <div class="result-block"><h4>Average Score</h4><div class="score-display">${data.averageScore}%</div></div>
+            <div class="result-block"><h4>Pass Rate (>=60%)</h4><div class="score-display">${data.passRate}%</div></div>
         </div>
-        
+        <h3>Recent Results</h3>
         <div class="detailed-results">
-            <h3>Recent Test Results</h3>
-            ${data.recentResults ? data.recentResults.map(result => `
-                <div class="result-block">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <strong>${result.userName || 'Anonymous'}: ${result.score}/${result.maxScore} (${result.percentage}%) - ${result.level}</strong>
-                            <div style="color: #666; font-size: 0.9rem;">${new Date(result.timestamp).toLocaleString()}</div>
-                        </div>
-                        <div class="grade-badge ${result.gradeClass}" style="margin: 0; padding: 5px 15px; font-size: 0.9rem;">
-                            ${result.grade}
-                        </div>
-                    </div>
-                    <div>
-                        <h5>Open/Code Answers for Manual Review:</h5>
-                        ${result.detailedAnswers.filter(a => a.type !== 'multiple').map(a => `
-                            <div>
-                                <p><strong>Q: ${a.questionText}</strong></p>
-                                <p>A: ${a.userAnswer || 'No answer'}</p>
-                            </div>
-                        `).join('')}
-                        <button class="btn" onclick="updateManualScore('${result.id}', ${result.score})">Update Score</button>
-                    </div>
-                </div>
-            `).join('') : '<p>No recent results available.</p>'}
+        ${data.recentResults.map(r => `
+            <div class="result-block">
+                <strong>${r.userName}</strong>: ${r.score}/${r.maxScore} (${r.percentage}%) - ${r.level}
+                <div style="font-size: 0.8rem; color: #666;">${new Date(r.timestamp).toLocaleString()}</div>
+            </div>`).join('') || '<p>No recent results found.</p>'}
         </div>
     `;
 }
 
-async function updateManualScore(id, currentScore) {
-    const newScore = prompt('Enter updated score (for open/code questions):', currentScore);
-    if (newScore && !isNaN(newScore)) {
-        const parsedScore = parseInt(newScore);
-        let newLevel = 'Below Junior';
-        for (const lv of levels) {
-            if (parsedScore >= lv.min && parsedScore <= lv.max) {
-                newLevel = lv.name;
-                break;
-            }
-        }
-        const updateData = { score: parsedScore, level: newLevel };
-        await updateTestResult(id, updateData);
-        showSuccess('Score updated!');
-        loadAnalyticsData();
-    }
-}
+// =================================================================================
+// Initialization
+// =================================================================================
 
-// Keyboard navigation
-document.addEventListener('keydown', (e) => {
-    if (document.getElementById('test').classList.contains('active') && currentTest.length > 0) {
-        if (e.key === 'ArrowLeft' && currentQuestionIndex > 0) {
-            previousQuestion();
-        } else if (e.key === 'ArrowRight' && currentQuestionIndex < currentTest.length - 1) {
-            nextQuestion();
-        } else if (e.key >= '1' && e.key <= '4') {
-            const letters = ['A', 'B', 'C', 'D'];
-            const answer = letters[parseInt(e.key) - 1];
-            if (currentTest[currentQuestionIndex] && currentTest[currentQuestionIndex].type === 'multiple') {
-                selectAnswer(currentTest[currentQuestionIndex].id, answer);
-            }
-        }
-    }
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('questionType').addEventListener('change', toggleQuestionTypeFields);
+    initializeApp();
 });
 
-// Initialize the application
 async function initializeApp() {
     setMode('candidate');
     showSection('welcome');
-    await loadQuestions();
+    try {
+        const data = await loadQuestions();
+        allQuestions = data.questions || [];
+        updateWelcomeStats();
+        
+        const categoryFilter = document.getElementById('categoryFilter');
+        categoryFilter.innerHTML = `<option value="all">All Categories</option>` + 
+            Object.entries(categoryNames).map(([val, name]) => `<option value="${val}">${name}</option>`).join('');
+    } catch (error) {
+        showError("Failed to initialize the application by loading questions.");
+    }
 }
-
-document.addEventListener('DOMContentLoaded', initializeApp);
