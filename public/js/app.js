@@ -45,6 +45,7 @@ const levels = [
     { name: 'Head of', min: 105, max: Infinity }
 ];
 
+// ... (translations object remains unchanged) ...
 const translations = {
     en: {
         mainTitle: "ML Engineer Testing Platform",
@@ -160,7 +161,6 @@ const translations = {
     }
 };
 
-
 // =================================================================================
 // Language Functions
 // =================================================================================
@@ -210,13 +210,15 @@ const updateQuestion = (id, question) => apiRequest(`/questions/${id}`, { method
 const deleteQuestionAPI = (id) => apiRequest(`/questions/${id}`, { method: 'DELETE' });
 const resetQuestionsAPI = () => apiRequest('/questions/reset', { method: 'POST' });
 const submitTestResults = (results) => apiRequest('/results', { method: 'POST', body: JSON.stringify(results) });
-const updateTestResult = (id, updateData) => apiRequest(`/results/${id}`, { method: 'PUT', body: JSON.stringify(updateData) });
+// MODIFIED: This is now specifically for grading.
+const gradeQuestionAPI = (resultId, questionId, pointsAwarded) => apiRequest(`/results/${resultId}`, { method: 'PUT', body: JSON.stringify({ questionId, pointsAwarded }) });
 const loadAnalytics = () => apiRequest('/analytics');
 
 // =================================================================================
 // UI Helper Functions
 // =================================================================================
 
+// ... (showError, showSuccess, updateWelcomeStats functions remain unchanged) ...
 function showError(message) {
     const existing = document.querySelector('.error');
     if (existing) existing.remove();
@@ -251,11 +253,11 @@ function updateWelcomeStats() {
         .join('');
     document.getElementById('coverageAreas').innerHTML = coverageHTML || '<li>No questions loaded.</li>';
 }
-
 // =================================================================================
 // Mode and Navigation
 // =================================================================================
 
+// ... (setMode, requireAdminAccess, showSection functions remain unchanged) ...
 function setMode(mode) {
     if (mode === 'admin') {
         const pass = prompt('Enter Administrator Password:');
@@ -305,11 +307,11 @@ function showSection(sectionId) {
         loadAnalyticsData(); // For admin, show all in results too? But keep separate, or redirect to analytics
     }
 }
-
 // =================================================================================
 // Question Management (Admin)
 // =================================================================================
 
+// ... (toggleQuestionTypeFields, addOrUpdateQuestion, clearForm, editQuestion, deleteQuestion, resetToDefault, updateQuestionsList, filterQuestions functions remain unchanged) ...
 function toggleQuestionTypeFields() {
     const type = document.getElementById('questionType').value;
     document.getElementById('multipleChoiceFields').classList.toggle('hidden', type !== 'multiple');
@@ -451,11 +453,11 @@ function updateQuestionsList() {
 }
 
 const filterQuestions = () => updateQuestionsList();
-
 // =================================================================================
 // Test Taking Flow
 // =================================================================================
 
+// ... (startGeneralTest, renderQuestion, selectAnswer, nextQuestion, previousQuestion, updateProgress, startTimer functions remain unchanged) ...
 function startGeneralTest() {
     userName = prompt("Пожалуйста, введите ваше полное имя для начала теста:");
     if (!userName || userName.trim() === '') {
@@ -554,6 +556,9 @@ function startTimer() {
     }, 1000);
 }
 
+/**
+ * MODIFIED: This function now initializes scores for all question types correctly.
+ */
 async function submitTest() {
     if (!confirm('Вы уверены, что хотите завершить и отправить тест?')) return;
     clearInterval(testTimer);
@@ -569,6 +574,7 @@ async function submitTest() {
     const detailedAnswers = allQuestions.map(q => {
         const userAnswer = userAnswers[q.id];
         const isCorrect = q.type === 'multiple' && userAnswer === q.correctAnswer;
+        
         if (isCorrect) {
             score += q.weight;
             if (hardSkillCategories.includes(q.category)) {
@@ -577,6 +583,7 @@ async function submitTest() {
                 softSkillScore += q.weight;
             }
         }
+        
         return { 
             questionId: q.id, 
             text: q.text, 
@@ -585,7 +592,9 @@ async function submitTest() {
             weight: q.weight,
             userAnswer: userAnswer || null, 
             correctAnswer: q.correctAnswer, 
-            isCorrect 
+            isCorrect,
+            // For MCQs, points are awarded now. For open questions, they are 0 until graded.
+            pointsAwarded: isCorrect ? q.weight : 0 
         };
     });
 
@@ -619,6 +628,7 @@ async function submitTest() {
 // Results & Analytics
 // =================================================================================
 
+// ... (showResults function remains unchanged) ...
 function showResults(result) {
     const grade = result.percentage >= 80 ? { text: 'Excellent', class: 'grade-excellent' }
         : result.percentage >= 60 ? { text: 'Good', class: 'grade-good' }
@@ -737,17 +747,62 @@ function toggleDetails(id) {
     el.style.display = el.style.display === 'none' ? 'block' : 'none';
 }
 
+/**
+ * NEW: This function handles grading open questions via the API.
+ */
+async function gradeOpenQuestion(resultId, questionId, maxPoints) {
+    const inputEl = document.getElementById(`grade-${resultId}-${questionId}`);
+    const points = parseFloat(inputEl.value);
+
+    if (isNaN(points) || points < 0 || points > maxPoints) {
+        showError(`Пожалуйста, введите корректную оценку от 0 до ${maxPoints}.`);
+        return;
+    }
+
+    try {
+        await gradeQuestionAPI(resultId, questionId, points);
+        showSuccess('Оценка сохранена! Результаты обновляются...');
+        loadAnalyticsData(); // Reload all analytics to show the updated score
+    } catch (error) {
+        showError(`Не удалось сохранить оценку: ${error.message}`);
+    }
+}
+
+/**
+ * REBUILT: This function now renders the new grading UI for supervisors
+ * and separates open questions into hard and soft skills.
+ */
 function displayAnalytics(data) {
     const recentHTML = data.recentResults.map(r => {
-        const openAnswersHTML = r.detailedAnswers
-            .filter(ans => ans.type === 'open' || ans.type === 'code')
-            .map(ans => `
+        // --- Supervisor Grading View ---
+        const openAnswers = r.detailedAnswers.filter(ans => ans.type === 'open' || ans.type === 'code');
+        const hardSkillOpenAnswers = openAnswers.filter(ans => hardSkillCategories.includes(ans.category));
+        const softSkillOpenAnswers = openAnswers.filter(ans => softSkillCategories.includes(ans.category));
+
+        const createGradingHTML = (answers) => {
+            if (answers.length === 0) return '<p>Нет вопросов в данной категории.</p>';
+            return answers.map(ans => `
                 <div class="detailed-answer-item">
-                     <p><strong>Вопрос (${ans.weight} ${ans.weight > 1 ? 'балла' : 'балл'}):</strong> ${ans.text}</p>
-                     <p class="user-answer"><strong>Ответ:</strong><pre>${ans.userAnswer || 'Нет ответа'}</pre></p>
+                    <p><strong>Вопрос (${categoryNames[ans.category] || ans.category} | ${ans.weight} ${ans.weight > 1 ? 'балла' : 'балл'}):</strong> ${ans.text}</p>
+                    <p class="user-answer"><strong>Ответ:</strong><pre>${ans.userAnswer || 'Нет ответа'}</pre></p>
+                    <div class="grading-box">
+                        <label for="grade-${r.id}-${ans.questionId}">Оценка (из ${ans.weight}):</label>
+                        <input type="number" id="grade-${r.id}-${ans.questionId}" min="0" max="${ans.weight}" step="0.5" value="${ans.pointsAwarded || 0}">
+                        <button class="btn btn-secondary" onclick="gradeOpenQuestion('${r.id}', '${ans.questionId}', ${ans.weight})">Сохранить</button>
+                    </div>
                 </div>
             `).join('');
-            
+        };
+
+        const supervisorViewHTML = `
+            <h4>Оценка Hard Skills (Открытые и практические вопросы)</h4>
+            ${createGradingHTML(hardSkillOpenAnswers)}
+            <hr style="margin: 20px 0;">
+            <h4>Оценка Soft Skills (Открытые вопросы)</h4>
+            ${createGradingHTML(softSkillOpenAnswers)}
+        `;
+        
+        // --- Full Detail View (for all answers) ---
         const detailedAnswersHTML = r.detailedAnswers.map(ans => {
             const correctnessClass = ans.isCorrect ? 'correct' : 'incorrect';
             let answerDetails = '';
@@ -780,8 +835,7 @@ function displayAnalytics(data) {
                 <button class="btn btn-secondary" onclick="toggleDetails('supervisor-${r.id}')" style="margin-right: 10px; margin-bottom: 5px;">Для проверяющего</button>
                 <button class="btn" onclick="toggleDetails('${r.id}')" style="margin-bottom: 5px;">Все детали</button>
                 <div id="details-supervisor-${r.id}" style="display:none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
-                    <h4>Открытые и практические вопросы</h4>
-                    ${openAnswersHTML.length > 0 ? openAnswersHTML : '<p>Нет открытых вопросов.</p>'}
+                    ${supervisorViewHTML}
                 </div>
                 <div id="details-${r.id}" style="display:none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
                     <h4>Все ответы</h4>
@@ -804,6 +858,7 @@ function displayAnalytics(data) {
         </div>
     `;
 }
+
 
 // =================================================================================
 // Initialization
@@ -831,4 +886,5 @@ async function initializeApp() {
         showError("Не удалось инициализировать приложение путем загрузки вопросов.");
     }
 }
+
 
