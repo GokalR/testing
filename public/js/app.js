@@ -44,7 +44,7 @@ const levels = [
 
 const translations = {
     en: {
-        mainTitle: "🧠 ML Engineer Testing Platform",
+        mainTitle: "ML Engineer Testing Platform",
         mainSubtitle: "Comprehensive evaluation system for Machine Learning professionals",
         candidateMode: "Candidate Mode",
         adminMode: "Administrator Mode",
@@ -100,7 +100,7 @@ const translations = {
         deleteBtn: "Delete"
     },
     ru: {
-        mainTitle: "🧠 Платформа для тестирования ML-инженеров",
+        mainTitle: "Платформа для тестирования ML-инженеров",
         mainSubtitle: "Комплексная система оценки для специалистов по машинному обучению",
         candidateMode: "Режим кандидата",
         adminMode: "Режим администратора",
@@ -704,3 +704,4 @@ async function initializeApp() {
         showError("Failed to initialize the application by loading questions.");
     }
 }
+
