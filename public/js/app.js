@@ -604,6 +604,30 @@ function showResults(result) {
         return acc;
     }, {});
     
+    const detailedAnswersHTML = result.detailedAnswers.map(ans => {
+        const correctnessClass = ans.isCorrect ? 'correct' : 'incorrect';
+        let answerDetails = '';
+
+        if (ans.type === 'multiple') {
+            const allOptions = allQuestions.find(q => q.id === ans.questionId)?.options || {};
+            const userAnswerText = ans.userAnswer ? `${ans.userAnswer}) ${allOptions[ans.userAnswer]}` : 'Not answered';
+            const correctAnswerText = `${ans.correctAnswer}) ${allOptions[ans.correctAnswer]}`;
+            answerDetails = `
+                <p class="user-answer"><strong>Your answer:</strong> ${userAnswerText}</p>
+                ${!ans.isCorrect ? `<p class="correct-answer"><strong>Correct answer:</strong> ${correctAnswerText}</p>` : ''}
+            `;
+        } else {
+            answerDetails = `<p class="user-answer"><strong>Your answer:</strong><pre>${ans.userAnswer || 'Not answered'}</pre></p>`;
+        }
+
+        return `
+            <div class="detailed-answer-item ${correctnessClass}">
+                <p><strong>Question:</strong> ${ans.text}</p>
+                ${answerDetails}
+            </div>
+        `;
+    }).join('');
+    
     document.getElementById('resultsContent').innerHTML = `
         <div class="results-summary">
             <h3>${result.userName}</h3>
@@ -618,6 +642,9 @@ function showResults(result) {
                 </div>
             `).join('')}
         </div>
+        <hr style="margin: 30px 0;">
+        <h4>Detailed Answers:</h4>
+        <div>${detailedAnswersHTML}</div>
     `;
     showSection('results');
 }
