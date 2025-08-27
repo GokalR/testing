@@ -883,7 +883,8 @@ async function updateTestResult(request, id, env) {
         status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
-    results[index] = { ...results[index], ...updateData };
+    // Ensure the ID from the URL is respected, not what's in the body.
+    results[index] = { ...updateData, id: id };
     await env.ML_QUESTIONS.put('results', JSON.stringify(results));
     return new Response(JSON.stringify({ success: true, result: results[index] }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -919,7 +920,6 @@ async function getAnalytics(env) {
     const averageScore = Math.round(results.reduce((sum, r) => sum + r.percentage, 0) / totalTests);
     const passRate = Math.round((results.filter(r => r.percentage >= 60).length / totalTests) * 100);
     
-    // Calculate average hard and soft skill scores
     const totalHardSkillPercentage = results.reduce((sum, r) => {
         const hardPercentage = (r.maxHardSkillScore > 0) ? (r.hardSkillScore / r.maxHardSkillScore) * 100 : 0;
         return sum + hardPercentage;
@@ -953,6 +953,5 @@ async function getAnalytics(env) {
     });
   }
 }
-
 
 
