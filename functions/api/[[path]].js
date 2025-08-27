@@ -361,7 +361,7 @@ const DEFAULT_QUESTIONS = [
     type: 'multiple',
     category: 'data_preparation',
     weight: 1,
-    text: 'Как处理 imbalanced data in classification?',
+    text: 'Как處理 imbalanced data in classification?',
     options: {
       A: 'Ignore it.',
       B: 'Use SMOTE or undersampling.',
