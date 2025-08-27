@@ -4,7 +4,7 @@ const API_BASE_URL = '/api'; // Adjust this for your Cloudflare Worker endpoint
 // --- NEW: Internationalization (i18n) ---
 const translations = {
     en: {
-        mainTitle: '🧠 ML Engineer Testing Platform',
+        mainTitle: 'Testing Platform for ML Engineers at Anorbank',
         mainSubtitle: 'Comprehensive evaluation system for Machine Learning professionals',
         candidateMode: 'Candidate Mode',
         adminMode: 'Administrator Mode',
@@ -86,7 +86,7 @@ const translations = {
         analyticsRecentResults: 'Recent Test Results'
     },
     ru: {
-        mainTitle: '🧠 Платформа для тестирования ML-инженеров',
+        mainTitle: 'Платформа для оценки и тестирования ML-инженеров в Anorbank',
         mainSubtitle: 'Комплексная система оценки для специалистов по машинному обучению',
         candidateMode: 'Режим кандидата',
         adminMode: 'Режим администратора',
@@ -418,20 +418,22 @@ function setMode(mode) {
 
     const candidateNav = document.getElementById('candidateNavigation');
     const adminNav = document.getElementById('adminNavigation');
-    const allowRetakeBtn = document.getElementById('allowRetakeBtn');
+    // --- REMOVED: No longer need to manage the retake button ---
+    // const allowRetakeBtn = document.getElementById('allowRetakeBtn'); 
 
     if (mode === 'candidate') {
         candidateNav.classList.remove('hidden');
         adminNav.classList.add('hidden');
-        allowRetakeBtn.classList.add('hidden');
+        // allowRetakeBtn.classList.add('hidden'); // REMOVED
     } else {
         candidateNav.classList.add('hidden');
         adminNav.classList.remove('hidden');
-        allowRetakeBtn.classList.remove('hidden');
+        // allowRetakeBtn.classList.remove('hidden'); // REMOVED
     }
 
     showSection('welcome');
 }
+
 
 // Add this helper to prevent direct access to admin sections without password
 function requireAdminAccess(sectionId) {
@@ -668,29 +670,12 @@ async function resetToDefault() {
     }
 }
 
-// --- NEW: Admin function to allow a user to retake the test ---
-function allowRetake() {
-    if (currentMode !== 'admin') {
-        showError('This function is for administrators only.');
-        return;
-    }
-    
-    if (confirm('Are you sure you want to allow this user to take the test again? This will clear their "test taken" status.')) {
-        localStorage.removeItem('testTaken');
-        showSuccess('User can now start a new test attempt.');
-    }
-}
+
 
 
 // Test Functions
 async function startGeneralTest() {
-    // Check if test already taken
-    const testTaken = localStorage.getItem('testTaken');
-    if (testTaken === 'true') {
-        showError('You have already taken the test. Only one attempt is allowed.');
-        return;
-    }
-
+    // Prompt for name
     // Prompt for name
     userName = prompt('Please enter your name:');
     if (!userName || userName.trim() === '') {
@@ -900,7 +885,6 @@ async function submitTest() {
     };
     
     await submitTestResults(result);
-    localStorage.setItem('testTaken', 'true');
     testResults.push(result);
     showResults(result);
     showSection('results');
@@ -1029,4 +1013,5 @@ async function initializeApp() {
 
 // Initialize when page loads
 document.addEventListener('DOMContentLoaded', initializeApp);
+
 
