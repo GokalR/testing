@@ -6,6 +6,7 @@ const API_BASE_URL = '/api';
 const ADMIN_PASSWORD = 'botabotabotaspeed'; // Change this to a secure password!
 const TEST_DURATION_SECONDS = 3600; // 60 minutes
 
+// ... (Global variables, Data Mappings, translations remain unchanged) ...
 // Global variables
 let currentMode = 'candidate';
 let allQuestions = [];
@@ -45,7 +46,6 @@ const levels = [
     { name: 'Head of', min: 105, max: Infinity }
 ];
 
-// ... (translations object remains unchanged) ...
 const translations = {
     en: {
         mainTitle: "ML Engineer Testing Platform",
@@ -164,7 +164,7 @@ const translations = {
 // =================================================================================
 // Language Functions
 // =================================================================================
-
+// ... (setLanguage function is unchanged) ...
 function setLanguage(lang) {
     const langData = translations[lang];
     if (!langData) return;
@@ -181,11 +181,9 @@ function setLanguage(lang) {
 
     localStorage.setItem('language', lang);
 }
-
 // =================================================================================
 // API Functions
 // =================================================================================
-
 async function apiRequest(endpoint, options = {}) {
     try {
         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -204,21 +202,22 @@ async function apiRequest(endpoint, options = {}) {
     }
 }
 
+
 const loadQuestions = () => apiRequest('/questions');
 const saveQuestion = (question) => apiRequest('/questions', { method: 'POST', body: JSON.stringify(question) });
 const updateQuestion = (id, question) => apiRequest(`/questions/${id}`, { method: 'PUT', body: JSON.stringify(question) });
 const deleteQuestionAPI = (id) => apiRequest(`/questions/${id}`, { method: 'DELETE' });
 const resetQuestionsAPI = () => apiRequest('/questions/reset', { method: 'POST' });
+// NEW API function for bulk import
+const replaceQuestionsAPI = (questions) => apiRequest('/questions/replace', { method: 'POST', body: JSON.stringify(questions) });
 const submitTestResults = (results) => apiRequest('/results', { method: 'POST', body: JSON.stringify(results) });
-// MODIFIED: This is now specifically for grading.
 const gradeQuestionAPI = (resultId, questionId, pointsAwarded) => apiRequest(`/results/${resultId}`, { method: 'PUT', body: JSON.stringify({ questionId, pointsAwarded }) });
 const loadAnalytics = () => apiRequest('/analytics');
 
 // =================================================================================
-// UI Helper Functions
+// UI Helper Functions & Navigation & Test Flow
 // =================================================================================
-
-// ... (showError, showSuccess, updateWelcomeStats functions remain unchanged) ...
+// ... (All functions in these sections are the same as the previous response) ...
 function showError(message) {
     const existing = document.querySelector('.error');
     if (existing) existing.remove();
@@ -253,11 +252,7 @@ function updateWelcomeStats() {
         .join('');
     document.getElementById('coverageAreas').innerHTML = coverageHTML || '<li>No questions loaded.</li>';
 }
-// =================================================================================
-// Mode and Navigation
-// =================================================================================
 
-// ... (setMode, requireAdminAccess, showSection functions remain unchanged) ...
 function setMode(mode) {
     if (mode === 'admin') {
         const pass = prompt('Enter Administrator Password:');
@@ -296,22 +291,23 @@ function showSection(sectionId) {
 
     const navId = currentMode === 'admin' ? 'adminNavigation' : 'candidateNavigation';
     document.querySelectorAll(`#${navId} .nav-btn`).forEach(btn => btn.classList.remove('active'));
-    document.querySelector(`#${navId} .nav-btn[onclick="showSection('${sectionId}')"]`)?.classList.add('active');
+    // Admin nav has 'analytics', candidate nav does not, so use optional chaining
+    const navButton = document.querySelector(`#adminNavigation .nav-btn[onclick="showSection('${sectionId}')"]`) || 
+                      document.querySelector(`#candidateNavigation .nav-btn[onclick="showSection('${sectionId}')"]`);
+    if(navButton) navButton.classList.add('active');
 
     // Load data for specific sections
     if (sectionId === 'questionEditor') {
         updateQuestionsList();
     } else if (sectionId === 'analytics') {
         loadAnalyticsData();
-    } else if (sectionId === 'results' && currentMode === 'admin') {
-        loadAnalyticsData(); // For admin, show all in results too? But keep separate, or redirect to analytics
     }
 }
 // =================================================================================
 // Question Management (Admin)
 // =================================================================================
 
-// ... (toggleQuestionTypeFields, addOrUpdateQuestion, clearForm, editQuestion, deleteQuestion, resetToDefault, updateQuestionsList, filterQuestions functions remain unchanged) ...
+// ... (toggleQuestionTypeFields, addOrUpdateQuestion, etc. are unchanged) ...
 function toggleQuestionTypeFields() {
     const type = document.getElementById('questionType').value;
     document.getElementById('multipleChoiceFields').classList.toggle('hidden', type !== 'multiple');
@@ -426,6 +422,48 @@ async function resetToDefault() {
         }
     }
 }
+// NEW: Export functionality
+function exportQuestions() {
+    const dataStr = JSON.stringify(allQuestions, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = 'questions.json';
+    
+    let linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+    showSuccess('Exporting questions...');
+}
+
+// NEW: Import functionality
+function importQuestions(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        try {
+            const importedQuestions = JSON.parse(e.target.result);
+            if (!Array.isArray(importedQuestions)) {
+                throw new Error("Invalid format. File must contain a JSON array of questions.");
+            }
+            if (confirm(`Are you sure you want to replace all ${allQuestions.length} current questions with the ${importedQuestions.length} questions from this file? This cannot be undone.`)) {
+                await replaceQuestionsAPI(importedQuestions);
+                showSuccess(`${importedQuestions.length} questions imported successfully!`);
+                allQuestions = importedQuestions;
+                updateQuestionsList();
+                updateWelcomeStats();
+            }
+        } catch (error) {
+            showError(`Import failed: ${error.message}`);
+        } finally {
+            // Reset file input to allow re-uploading the same file
+            document.getElementById('importFile').value = '';
+        }
+    };
+    reader.readAsText(file);
+}
 
 function updateQuestionsList() {
     const listEl = document.getElementById('questionsList');
@@ -453,11 +491,12 @@ function updateQuestionsList() {
 }
 
 const filterQuestions = () => updateQuestionsList();
+
 // =================================================================================
-// Test Taking Flow
+// Test Taking Flow, Results & Analytics
 // =================================================================================
 
-// ... (startGeneralTest, renderQuestion, selectAnswer, nextQuestion, previousQuestion, updateProgress, startTimer functions remain unchanged) ...
+// ... (All functions in these sections are the same as the previous response) ...
 function startGeneralTest() {
     userName = prompt("Пожалуйста, введите ваше полное имя для начала теста:");
     if (!userName || userName.trim() === '') {
@@ -556,9 +595,6 @@ function startTimer() {
     }, 1000);
 }
 
-/**
- * MODIFIED: This function now initializes scores for all question types correctly.
- */
 async function submitTest() {
     if (!confirm('Вы уверены, что хотите завершить и отправить тест?')) return;
     clearInterval(testTimer);
@@ -624,11 +660,6 @@ async function submitTest() {
     }
 }
 
-// =================================================================================
-// Results & Analytics
-// =================================================================================
-
-// ... (showResults function remains unchanged) ...
 function showResults(result) {
     const grade = result.percentage >= 80 ? { text: 'Excellent', class: 'grade-excellent' }
         : result.percentage >= 60 ? { text: 'Good', class: 'grade-good' }
@@ -637,8 +668,9 @@ function showResults(result) {
 
     const blockResults = result.detailedAnswers.reduce((acc, ans) => {
         const cat = ans.category;
-        if (!acc[cat]) acc[cat] = { correct: 0, total: 0 };
-        if (ans.isCorrect) acc[cat].correct++;
+        if (!acc[cat]) acc[cat] = { correct: 0, total: 0, awarded: 0 };
+        if (ans.isCorrect || ans.pointsAwarded > 0) acc[cat].correct++;
+        acc[cat].awarded += ans.pointsAwarded;
         acc[cat].total++;
         return acc;
     }, {});
@@ -653,7 +685,7 @@ function showResults(result) {
         `).join('');
 
     const detailedAnswersHTML = result.detailedAnswers.map(ans => {
-        const correctnessClass = ans.isCorrect ? 'correct' : 'incorrect';
+        const correctnessClass = (ans.type === 'multiple' && ans.isCorrect) ? 'correct' : (ans.type === 'multiple' && !ans.isCorrect) ? 'incorrect' : '';
         let answerDetails = '';
 
         if (ans.type === 'multiple') {
@@ -700,7 +732,7 @@ function showResults(result) {
         <div class="detailed-results">
             ${Object.entries(blockResults).map(([cat, res]) => `
                 <div class="result-block">
-                    <strong>${categoryNames[cat] || cat}:</strong> ${res.correct} / ${res.total} правильно
+                    <strong>${categoryNames[cat] || cat}:</strong> ${res.awarded} / ${allQuestions.filter(q=>q.category===cat).reduce((s,i)=>s+i.weight,0)} баллов
                 </div>
             `).join('')}
         </div>
@@ -744,12 +776,10 @@ async function loadAnalyticsData() {
 
 function toggleDetails(id) {
     const el = document.getElementById(`details-${id}`);
-    el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    const isHidden = el.style.display === 'none' || el.style.display === '';
+    el.style.display = isHidden ? 'block' : 'none';
 }
 
-/**
- * NEW: This function handles grading open questions via the API.
- */
 async function gradeOpenQuestion(resultId, questionId, maxPoints) {
     const inputEl = document.getElementById(`grade-${resultId}-${questionId}`);
     const points = parseFloat(inputEl.value);
@@ -768,10 +798,6 @@ async function gradeOpenQuestion(resultId, questionId, maxPoints) {
     }
 }
 
-/**
- * REBUILT: This function now renders the new grading UI for supervisors
- * and separates open questions into hard and soft skills.
- */
 function displayAnalytics(data) {
     const recentHTML = data.recentResults.map(r => {
         // --- Supervisor Grading View ---
@@ -858,7 +884,6 @@ function displayAnalytics(data) {
         </div>
     `;
 }
-
 
 // =================================================================================
 // Initialization
