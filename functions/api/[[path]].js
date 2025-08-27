@@ -900,15 +900,54 @@ async function getAnalytics(env) {
     const results = await env.ML_QUESTIONS.get('results', { type: 'json' }) || [];
     const questions = await env.ML_QUESTIONS.get('questions', { type: 'json' }) || DEFAULT_QUESTIONS;
     const totalTests = results.length;
-    const averageScore = totalTests > 0 ? Math.round(results.reduce((sum, r) => sum + r.percentage, 0) / totalTests) : 0;
-    const passRate = totalTests > 0 ? Math.round((results.filter(r => r.percentage >= 60).length / totalTests) * 100) : 0;
+
+    if (totalTests === 0) {
+        return new Response(JSON.stringify({ 
+            success: true, 
+            totalTests: 0, 
+            averageScore: 0,
+            averageHardSkillScore: 0,
+            averageSoftSkillScore: 0,
+            totalQuestions: questions.length, 
+            passRate: 0, 
+            recentResults: [] 
+        }), {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+    }
+
+    const averageScore = Math.round(results.reduce((sum, r) => sum + r.percentage, 0) / totalTests);
+    const passRate = Math.round((results.filter(r => r.percentage >= 60).length / totalTests) * 100);
+    
+    // Calculate average hard and soft skill scores
+    const totalHardSkillPercentage = results.reduce((sum, r) => {
+        const hardPercentage = (r.maxHardSkillScore > 0) ? (r.hardSkillScore / r.maxHardSkillScore) * 100 : 0;
+        return sum + hardPercentage;
+    }, 0);
+    const averageHardSkillScore = Math.round(totalHardSkillPercentage / totalTests);
+
+    const totalSoftSkillPercentage = results.reduce((sum, r) => {
+        const softPercentage = (r.maxSoftSkillScore > 0) ? (r.softSkillScore / r.maxSoftSkillScore) * 100 : 0;
+        return sum + softPercentage;
+    }, 0);
+    const averageSoftSkillScore = Math.round(totalSoftSkillPercentage / totalTests);
+    
     const recentResults = results.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 10);
     
-    // Use averagePercentage instead of averageScore for clarity
-    return new Response(JSON.stringify({ success: true, totalTests, averageScore: averageScore, totalQuestions: questions.length, passRate, recentResults }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    return new Response(JSON.stringify({ 
+        success: true, 
+        totalTests, 
+        averageScore,
+        averageHardSkillScore,
+        averageSoftSkillScore,
+        totalQuestions: questions.length, 
+        passRate, 
+        recentResults 
+    }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
+    console.error('Analytics Error:', error);
     return new Response(JSON.stringify({ success: false, error: 'Failed to get analytics' }), {
       status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
