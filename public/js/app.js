@@ -1,174 +1,5 @@
 // Configuration
-const API_BASE_URL = '/api'; // Adjust this for your Cloudflare Worker endpoint
-
-// --- NEW: Internationalization (i18n) ---
-const translations = {
-    en: {
-        mainTitle: 'Testing Platform for ML Engineers at Anorbank',
-        mainSubtitle: 'Comprehensive evaluation system for Machine Learning professionals',
-        candidateMode: 'Candidate Mode',
-        adminMode: 'Administrator Mode',
-        navStartTest: 'Start Test',
-        navResults: 'Results',
-        navEditQuestions: 'Edit Questions',
-        navAnalytics: 'Analytics',
-        welcomeTitle: 'Machine Learning Engineer Assessment',
-        welcomeSubtitle: 'Comprehensive evaluation covering all essential ML engineering skills',
-        overviewTitle: 'Test Overview',
-        overviewQuestions: 'Questions',
-        overviewMinutes: 'Minutes',
-        overviewPoints: 'Total Points',
-        coverageTitle: 'Coverage Areas:',
-        loadingCoverage: 'Loading test information...',
-        instructionsTitle: 'Instructions:',
-        instruction1: 'You have 60 minutes to complete all questions',
-        instruction2: 'Each question has one correct answer',
-        instruction3: 'You can navigate between questions and change answers',
-        instruction4: 'Questions are weighted by difficulty (1, 3, or 5 points)',
-        instruction5: 'Your progress will be automatically saved',
-        beginAssessment: 'Begin Assessment',
-        allowRetake: 'Allow Retake for This User',
-        qEditorTitle: 'Question Management',
-        qEditorAddTitle: 'Add New Question',
-        qEditorCategory: 'Category:',
-        qEditorWeight: 'Weight (Points):',
-        qEditorEasy: '1 point (Easy)',
-        qEditorMedium: '3 points (Medium)',
-        qEditorHard: '5 points (Hard)',
-        qEditorText: 'Question Text:',
-        qEditorOptA: 'Option A:',
-        qEditorOptB: 'Option B:',
-        qEditorOptC: 'Option C:',
-        qEditorOptD: 'Option D:',
-        qEditorCorrect: 'Correct Answer:',
-        qEditorAddBtn: 'Add Question',
-        qEditorClearBtn: 'Clear Form',
-        qBankTitle: 'Question Bank',
-        qBankFilter: 'Filter by Category:',
-        qBankAllCat: 'All Categories',
-        loadingQuestions: 'Loading questions...',
-        qBankExport: 'Export Questions',
-        qBankImport: 'Import Questions',
-        qBankReset: 'Reset to Default',
-        testTitle: 'Machine Learning Engineer Assessment',
-        testSubtitle: 'Answer all questions within the time limit',
-        testStartFromWelcome: 'Please start the test from the welcome section.',
-        submitTestBtn: 'Submit Test',
-        resultsTitle: 'Test Results',
-        resultsCompleteTest: 'Complete a test to see your results here.',
-        analyticsTitle: 'Performance Analytics',
-        loadingAnalytics: 'Loading analytics data...',
-        editBtn: 'Edit',
-        deleteBtn: 'Delete',
-        prevBtn: '← Previous',
-        nextBtn: 'Next →',
-        reviewSubmitBtn: 'Review & Submit',
-        // Dynamic text
-        noQuestionsAvailable: 'No questions available. Add questions using the form.',
-        noQuestionsInCategory: 'No questions found for this category.',
-        qCategory: 'Category',
-        qAnswer: 'Answer',
-        performanceByArea: 'Performance by Area',
-        resCorrect: 'Correct',
-        resPoints: 'Points',
-        resBlockScore: 'Block Score',
-        resScore: 'Score',
-        resAssessmentFor: 'ML Engineer Assessment for',
-        resTimeUsed: 'Time Used',
-        resCompleted: 'Completed',
-        backToWelcome: 'Back to Welcome',
-        viewAnalytics: 'View Analytics',
-        testCompletedThankYou: 'You have completed the test. Thank you!',
-        analyticsTotalTests: 'Total Tests Taken',
-        analyticsAvgScore: 'Average Score',
-        analyticsTotalQuestions: 'Total Questions',
-        analyticsPassRate: 'Pass Rate',
-        analyticsRecentResults: 'Recent Test Results'
-    },
-    ru: {
-        mainTitle: 'Платформа для оценки и тестирования ML-инженеров в Anorbank',
-        mainSubtitle: 'Комплексная система оценки для специалистов по машинному обучению',
-        candidateMode: 'Режим кандидата',
-        adminMode: 'Режим администратора',
-        navStartTest: 'Начать тест',
-        navResults: 'Результаты',
-        navEditQuestions: 'Редактор вопросов',
-        navAnalytics: 'Аналитика',
-        welcomeTitle: 'Оценка инженера по машинному обучению',
-        welcomeSubtitle: 'Комплексная оценка, охватывающая все основные навыки ML-инженера',
-        overviewTitle: 'Обзор теста',
-        overviewQuestions: 'Вопросы',
-        overviewMinutes: 'Минуты',
-        overviewPoints: 'Всего баллов',
-        coverageTitle: 'Охватываемые области:',
-        loadingCoverage: 'Загрузка информации о тесте...',
-        instructionsTitle: 'Инструкции:',
-        instruction1: 'У вас есть 60 минут, чтобы ответить на все вопросы',
-        instruction2: 'У каждого вопроса только один правильный ответ',
-        instruction3: 'Вы можете перемещаться между вопросами и изменять ответы',
-        instruction4: 'Вопросы оцениваются по сложности (1, 3 или 5 баллов)',
-        instruction5: 'Ваш прогресс будет сохранен автоматически',
-        beginAssessment: 'Начать оценку',
-        allowRetake: 'Разрешить пересдачу для этого пользователя',
-        qEditorTitle: 'Управление вопросами',
-        qEditorAddTitle: 'Добавить новый вопрос',
-        qEditorCategory: 'Категория:',
-        qEditorWeight: 'Вес (Баллы):',
-        qEditorEasy: '1 балл (Легкий)',
-        qEditorMedium: '3 балла (Средний)',
-        qEditorHard: '5 баллов (Сложный)',
-        qEditorText: 'Текст вопроса:',
-        qEditorOptA: 'Вариант A:',
-        qEditorOptB: 'Вариант B:',
-        qEditorOptC: 'Вариант C:',
-        qEditorOptD: 'Вариант D:',
-        qEditorCorrect: 'Правильный ответ:',
-        qEditorAddBtn: 'Добавить вопрос',
-        qEditorClearBtn: 'Очистить форму',
-        qBankTitle: 'Банк вопросов',
-        qBankFilter: 'Фильтр по категории:',
-        qBankAllCat: 'Все категории',
-        loadingQuestions: 'Загрузка вопросов...',
-        qBankExport: 'Экспорт вопросов',
-        qBankImport: 'Импорт вопросов',
-        qBankReset: 'Сбросить по умолчанию',
-        testTitle: 'Оценка инженера по машинному обучению',
-        testSubtitle: 'Ответьте на все вопросы за отведенное время',
-        testStartFromWelcome: 'Пожалуйста, начните тест с главного экрана.',
-        submitTestBtn: 'Завершить тест',
-        resultsTitle: 'Результаты теста',
-        resultsCompleteTest: 'Завершите тест, чтобы увидеть здесь свои результаты.',
-        analyticsTitle: 'Аналитика производительности',
-        loadingAnalytics: 'Загрузка данных аналитики...',
-        editBtn: 'Ред.',
-        deleteBtn: 'Удал.',
-        prevBtn: '← Назад',
-        nextBtn: 'Далее →',
-        reviewSubmitBtn: 'Проверить и завершить',
-        // Dynamic text
-        noQuestionsAvailable: 'Вопросы отсутствуют. Добавьте вопросы в режиме администратора.',
-        noQuestionsInCategory: 'Вопросов в этой категории не найдено.',
-        qCategory: 'Категория',
-        qAnswer: 'Ответ',
-        performanceByArea: 'Результаты по областям',
-        resCorrect: 'Правильно',
-        resPoints: 'Баллы',
-        resBlockScore: 'Оценка по блоку',
-        resScore: 'Результат',
-        resAssessmentFor: 'Оценка ML-инженера для',
-        resTimeUsed: 'Затраченное время',
-        resCompleted: 'Завершено',
-        backToWelcome: 'Вернуться на главный экран',
-        viewAnalytics: 'Посмотреть аналитику',
-        testCompletedThankYou: 'Вы завершили тест. Спасибо!',
-        analyticsTotalTests: 'Всего тестов пройдено',
-        analyticsAvgScore: 'Средний балл',
-        analyticsTotalQuestions: 'Всего вопросов',
-        analyticsPassRate: 'Процент сдачи',
-        analyticsRecentResults: 'Последние результаты'
-    }
-};
-let currentLang = 'en';
+const API_BASE_URL = '/api';
 
 // Global variables
 let currentMode = 'candidate';
@@ -177,7 +8,7 @@ let currentTest = [];
 let currentQuestionIndex = 0;
 let userAnswers = {};
 let testTimer;
-let timeLeft = 3600; // 60 minutes
+let timeLeft = 2700; // 45 minutes
 let testResults = [];
 let editingQuestionId = null;
 let userName = '';
@@ -190,57 +21,26 @@ const categoryNames = {
     probability_stats: 'Probability & Statistics',
     ml_algorithms: 'ML Algorithms',
     data_preparation: 'Data Preparation',
-    validation_metrics: 'Validation & Metrics'
+    validation_metrics: 'Validation & Metrics',
+    coding: 'Coding Tasks',
+    soft_communication: 'Communication',
+    soft_teamwork: 'Teamwork',
+    soft_selforg: 'Self-Organization',
+    soft_feedback: 'Feedback',
+    soft_creativity: 'Creativity',
+    soft_documentation: 'Documentation'
 };
-// --- NEW ---
-const categoryNamesRU = {
-    probability_stats: 'Вероятность и статистика',
-    ml_algorithms: 'Алгоритмы ML',
-    data_preparation: 'Подготовка данных',
-    validation_metrics: 'Валидация и метрики'
-};
 
-
-// --- NEW: i18n Functions ---
-function translateUI() {
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        if (translations[currentLang][key]) {
-            el.textContent = translations[currentLang][key];
-        }
-    });
-}
-
-function setLanguage(lang) {
-    currentLang = lang;
-    localStorage.setItem('preferredLang', lang);
-    document.querySelectorAll('.lang-switcher button').forEach(btn => btn.classList.remove('active'));
-    document.getElementById(`lang-${lang}`).classList.add('active');
-    
-    // Update dynamic category names in filters etc.
-    const categoryFilter = document.getElementById('categoryFilter');
-    if(categoryFilter){
-        categoryFilter.querySelectorAll('option').forEach(opt => {
-            const names = currentLang === 'ru' ? categoryNamesRU : categoryNames;
-            if(names[opt.value]){
-                opt.textContent = names[opt.value];
-            }
-        });
-        // re-translate "All Categories"
-        categoryFilter.querySelector('option[value="all"]').textContent = translations[currentLang].qBankAllCat;
-    }
-
-    translateUI();
-    
-    // Refresh currently visible dynamic content
-    if(document.getElementById('welcome').classList.contains('active')){
-       updateWelcomeStats();
-    }
-    if(document.getElementById('questionEditor').classList.contains('active')){
-       updateQuestionsList();
-    }
-}
-
+// Levels mapping
+const levels = [
+    { name: 'Below Junior', min: 0, max: 5 },
+    { name: 'Junior', min: 6, max: 24 },
+    { name: 'Middle', min: 25, max: 54 },
+    { name: 'Senior', min: 55, max: 79 },
+    { name: 'Senior+', min: 80, max: 99 },
+    { name: 'Tech Lead', min: 100, max: 104 },
+    { name: 'Head of', min: 105, max: Infinity }
+];
 
 // API Functions
 async function apiRequest(endpoint, options = {}) {
@@ -322,7 +122,18 @@ async function submitTestResults(results) {
         return response;
     } catch (error) {
         console.error('Failed to submit results:', error);
-        // Continue without saving to server
+    }
+}
+
+async function updateTestResult(id, updateData) {
+    try {
+        const response = await apiRequest(`/results/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(updateData)
+        });
+        return response;
+    } catch (error) {
+        console.error('Failed to update result:', error);
     }
 }
 
@@ -379,13 +190,14 @@ function updateWelcomeStats() {
     if (allQuestions.length === 0) {
         totalQuestionsEl.textContent = '0';
         totalPointsEl.textContent = '0';
-        coverageAreasEl.innerHTML = `<li style="color: #dc3545;">${translations[currentLang].noQuestionsAvailable}</li>`;
+        coverageAreasEl.innerHTML = '<li style="color: #dc3545;">No questions available. Please add questions in Administrator mode.</li>';
         return;
     }
 
     const totalQuestions = allQuestions.length;
     const totalPoints = allQuestions.reduce((sum, q) => sum + q.weight, 0);
 
+    // Count questions by category
     const categoryCounts = {};
     allQuestions.forEach(q => {
         categoryCounts[q.category] = (categoryCounts[q.category] || 0) + 1;
@@ -393,10 +205,9 @@ function updateWelcomeStats() {
 
     totalQuestionsEl.textContent = totalQuestions;
     totalPointsEl.textContent = totalPoints;
-    
-    const names = currentLang === 'ru' ? categoryNamesRU : categoryNames;
+
     const coverageHTML = Object.entries(categoryCounts).map(([category, count]) => 
-        `<li><strong>${names[category] || category}:</strong> ${count} ${translations[currentLang].overviewQuestions.toLowerCase()}</li>`
+        `<li><strong>${categoryNames[category] || category}:</strong> ${count} questions</li>`
     ).join('');
 
     coverageAreasEl.innerHTML = coverageHTML;
@@ -414,26 +225,21 @@ function setMode(mode) {
 
     currentMode = mode;
     document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelector(`[onclick="setMode('${mode}')"]`).classList.add('active');
+    event.target.classList.add('active');
 
     const candidateNav = document.getElementById('candidateNavigation');
     const adminNav = document.getElementById('adminNavigation');
-    // --- REMOVED: No longer need to manage the retake button ---
-    // const allowRetakeBtn = document.getElementById('allowRetakeBtn'); 
 
     if (mode === 'candidate') {
         candidateNav.classList.remove('hidden');
         adminNav.classList.add('hidden');
-        // allowRetakeBtn.classList.add('hidden'); // REMOVED
     } else {
         candidateNav.classList.add('hidden');
         adminNav.classList.remove('hidden');
-        // allowRetakeBtn.classList.remove('hidden'); // REMOVED
     }
 
     showSection('welcome');
 }
-
 
 // Add this helper to prevent direct access to admin sections without password
 function requireAdminAccess(sectionId) {
@@ -461,17 +267,20 @@ function showSection(sectionId) {
     
     document.getElementById(sectionId).classList.add('active');
     
+    // Find and activate the correct nav button
     const navButtons = document.querySelectorAll(`#${activeNav} .nav-btn`);
     navButtons.forEach(btn => {
-        const btnText = btn.getAttribute('data-i18n');
-        if ((sectionId === 'welcome' && btnText.includes('navStartTest')) ||
-            (sectionId === 'questionEditor' && btnText.includes('navEditQuestions')) ||
-            (sectionId === 'results' && btnText.includes('navResults')) ||
-            (sectionId === 'analytics' && btnText.includes('navAnalytics'))) {
+        const btnText = btn.textContent.toLowerCase();
+        if ((sectionId === 'welcome' && btnText.includes('start')) ||
+            (sectionId === 'questionEditor' && btnText.includes('edit')) ||
+            (sectionId === 'test' && btnText.includes('test')) ||
+            (sectionId === 'results' && btnText.includes('results')) ||
+            (sectionId === 'analytics' && btnText.includes('analytics'))) {
             btn.classList.add('active');
         }
     });
     
+    // Load data when entering specific sections
     if (sectionId === 'questionEditor') {
         loadQuestions().then(() => {
             updateQuestionsList();
@@ -486,27 +295,33 @@ async function addQuestion() {
     const category = document.getElementById('questionCategory').value;
     const weight = parseInt(document.getElementById('questionWeight').value);
     const text = document.getElementById('questionText').value.trim();
-    const optionA = document.getElementById('optionA').value.trim();
-    const optionB = document.getElementById('optionB').value.trim();
-    const optionC = document.getElementById('optionC').value.trim();
-    const optionD = document.getElementById('optionD').value.trim();
-    const correctAnswer = document.getElementById('correctAnswer').value;
-    
-    if (!text || !optionA || !optionB || !optionC || !optionD) {
+    const type = document.getElementById('questionType').value;
+    const options = type === 'multiple' ? {
+        A: document.getElementById('optionA').value.trim(),
+        B: document.getElementById('optionB').value.trim(),
+        C: document.getElementById('optionC').value.trim(),
+        D: document.getElementById('optionD').value.trim()
+    } : {};
+    const correctAnswer = type === 'multiple' ? document.getElementById('correctAnswer').value : null;
+    const test_cases = type === 'code' ? document.getElementById('testCases').value.trim() : '';
+
+    if (!text || (type === 'multiple' && (!options.A || !options.B || !options.C || !options.D))) {
         showError('Please fill in all fields');
         return;
     }
-    
+
     const questionData = {
         category,
         weight,
         text,
-        options: { A: optionA, B: optionB, C: optionC, D: optionD },
-        correctAnswer
+        type,
+        options,
+        correctAnswer,
+        test_cases
     };
-    
+
     const editingId = document.getElementById('editingQuestionId').value;
-    
+
     try {
         if (editingId) {
             await updateQuestion(editingId, questionData);
@@ -526,14 +341,16 @@ async function addQuestion() {
 
 function clearForm() {
     document.getElementById('questionText').value = '';
-    document.getElementById('optionA').value = '';
-    document.getElementById('optionB').value = '';
-    document.getElementById('optionC').value = '';
-    document.getElementById('optionD').value = '';
+    if (document.getElementById('optionA')) document.getElementById('optionA').value = '';
+    if (document.getElementById('optionB')) document.getElementById('optionB').value = '';
+    if (document.getElementById('optionC')) document.getElementById('optionC').value = '';
+    if (document.getElementById('optionD')) document.getElementById('optionD').value = '';
     document.getElementById('questionCategory').value = 'probability_stats';
     document.getElementById('questionWeight').value = '1';
-    document.getElementById('correctAnswer').value = 'A';
+    if (document.getElementById('correctAnswer')) document.getElementById('correctAnswer').value = 'A';
     document.getElementById('editingQuestionId').value = '';
+    if (document.getElementById('questionType')) document.getElementById('questionType').value = 'multiple';
+    if (document.getElementById('testCases')) document.getElementById('testCases').value = '';
 }
 
 function editQuestion(questionId) {
@@ -543,194 +360,66 @@ function editQuestion(questionId) {
     document.getElementById('questionCategory').value = question.category;
     document.getElementById('questionWeight').value = question.weight;
     document.getElementById('questionText').value = question.text;
-    document.getElementById('optionA').value = question.options.A;
-    document.getElementById('optionB').value = question.options.B;
-    document.getElementById('optionC').value = question.options.C;
-    document.getElementById('optionD').value = question.options.D;
-    document.getElementById('correctAnswer').value = question.correctAnswer;
-    document.getElementById('editingQuestionId').value = questionId;
-    
-    document.getElementById('questionText').focus();
+    document.getElementById('questionType').value = question.type;
+    if (question.type === 'multiple') {
+        document.getElementById('optionA').value = question.options.A;
+        document.getElementById('optionB').value = question.options.B;
+        document.getElementById('optionC').value = question.options.C;
+        document.getElementById('optionD').value = question.options.D;
+        document.getElementById('correctAnswer').value = question.correctAnswer;
+    }
+    if (question.test_cases) document.getElementById('testCases').value = question.test_cases;
+    document.getElementById('editingQuestionId').value = question.id;
 }
 
-async function deleteQuestion(questionId) {
-    if (!confirm('Are you sure you want to delete this question?')) {
-        return;
-    }
-    
-    try {
-        await deleteQuestionAPI(questionId);
-        await loadQuestions();
-        updateQuestionsList();
-        showSuccess('Question deleted successfully!');
-    } catch (error) {
-        showError(error.message);
-    }
-}
-
-function updateQuestionsList(filterCategory = 'all') {
-    const questionsList = document.getElementById('questionsList');
-    
-    if (allQuestions.length === 0) {
-        questionsList.innerHTML = `<div class="loading">${translations[currentLang].noQuestionsAvailable}</div>`;
-        return;
-    }
-    
-    const filteredQuestions = filterCategory === 'all' 
-        ? allQuestions 
-        : allQuestions.filter(q => q.category === filterCategory);
-    
-    if (filteredQuestions.length === 0) {
-        questionsList.innerHTML = `<div class="loading">${translations[currentLang].noQuestionsInCategory}</div>`;
-        return;
-    }
-    
-    const names = currentLang === 'ru' ? categoryNamesRU : categoryNames;
-    questionsList.innerHTML = filteredQuestions.map(q => `
-        <div class="question-item">
-            <div class="question-header">
-                <span class="question-points">${q.weight} pts</span>
-                <div class="question-actions">
-                    <button onclick="editQuestion('${q.id}')" data-i18n="editBtn">${translations[currentLang].editBtn}</button>
-                    <button onclick="deleteQuestion('${q.id}')" data-i18n="deleteBtn">${translations[currentLang].deleteBtn}</button>
-                </div>
-            </div>
-            <div style="margin-bottom: 8px;"><strong>${translations[currentLang].qCategory}:</strong> ${names[q.category] || q.category}</div>
-            <div style="margin-bottom: 8px;"><strong>Q:</strong> ${q.text}</div>
-            <div style="font-size: 14px; color: #666;"><strong>${translations[currentLang].qAnswer}:</strong> ${q.correctAnswer}) ${q.options[q.correctAnswer]}</div>
+function updateQuestionsList() {
+    // Assume you have a function to list questions in the editor, e.g., render table with edit/delete buttons
+    const listEl = document.getElementById('questionList'); // Assume ID
+    listEl.innerHTML = allQuestions.map(q => `
+        <div>
+            <span>${q.text.slice(0, 50)}... (${q.weight}pt, ${q.type})</span>
+            <button onclick="editQuestion('${q.id}')">Edit</button>
+            <button onclick="deleteQuestion('${q.id}')">Delete</button>
         </div>
     `).join('');
 }
 
-
-function filterQuestions(category) {
-    updateQuestionsList(category);
-}
-
-async function exportQuestions() {
-    if (allQuestions.length === 0) {
-        showError('No questions to export');
-        return;
-    }
-    
-    const dataStr = JSON.stringify(allQuestions, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    
-    const exportFileDefaultName = `ml_questions_${new Date().toISOString().split('T')[0]}.json`;
-    
-    const linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportFileDefaultName);
-    linkElement.click();
-}
-
-async function importQuestions(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    
-    const reader = new FileReader();
-    reader.onload = async function(e) {
-        try {
-            const importedQuestions = JSON.parse(e.target.result);
-            if (!Array.isArray(importedQuestions)) {
-                throw new Error('Invalid file format');
-            }
-            
-            if (confirm('This will replace all current questions. Continue?')) {
-                for (const question of importedQuestions) {
-                    await saveQuestion(question);
-                }
-                
-                await loadQuestions();
-                updateQuestionsList();
-                showSuccess('Questions imported successfully!');
-            }
-        } catch (error) {
-            showError('Error importing questions. Please check the file format.');
-        }
-    };
-    reader.readAsText(file);
-    
-    event.target.value = '';
-}
-
-async function resetToDefault() {
-    if (!confirm('This will reset all questions to the default set. This cannot be undone. Continue?')) {
-        return;
-    }
-    
-    try {
-        const response = await apiRequest('/questions/reset', { method: 'POST' });
+async function deleteQuestion(id) {
+    if (confirm('Delete question?')) {
+        await deleteQuestionAPI(id);
         await loadQuestions();
         updateQuestionsList();
-        clearForm();
-        showSuccess('Questions reset to default successfully!');
-    } catch (error) {
-        showError('Failed to reset questions');
     }
 }
 
-
-
-
 // Test Functions
-async function startGeneralTest() {
-    // Prompt for name
-    // Prompt for name
-    userName = prompt('Please enter your name:');
-    if (!userName || userName.trim() === '') {
-        showError('Name is required to start the test.');
-        return;
-    }
-
-    if (allQuestions.length === 0) {
-        await loadQuestions();
-        if (allQuestions.length === 0) {
-            showError('No questions available. Please contact administrator.');
-            return;
-        }
-    }
-    
-    currentTest = [...allQuestions];
-    currentTest = currentTest.sort(() => Math.random() - 0.5);
-    
+function startTest() {
+    userName = prompt('Enter your name:');
+    if (!userName) return;
+    currentTest = [...allQuestions]; // Copy all
     currentQuestionIndex = 0;
     userAnswers = {};
-    timeLeft = 3600; // 60 minutes
-    
+    timeLeft = 2700;
     showSection('test');
     showQuestion(currentQuestionIndex);
     startTimer();
-    
-    document.getElementById('submitTest').style.display = 'block';
-    
-    document.getElementById('testTitle').textContent = translations[currentLang].testTitle;
-    document.getElementById('testDescription').textContent = 
-        `${currentTest.length} questions • 60 minutes • All ML areas covered`;
 }
 
 function showQuestion(index) {
-    const testContainer = document.getElementById('testQuestions');
     const question = currentTest[index];
-    
-    if (!question) {
-        testContainer.innerHTML = '<p>No questions available.</p>';
-        return;
-    }
-    
-    const questionOf = `Question ${index + 1} of ${currentTest.length}`;
-    const questionOfRU = `Вопрос ${index + 1} из ${currentTest.length}`;
-
-    testContainer.innerHTML = `
-        <div class="question-card">
-            <div class="question-number">${index + 1}</div>
-            <h3>${currentLang === 'ru' ? questionOfRU : questionOf}</h3>
-            <div style="margin: 10px 0;">
-                <span style="background: #667eea; color: white; padding: 5px 15px; border-radius: 15px; font-size: 12px; font-weight: 600;">${question.weight} points</span>
+    let html = `
+        <div class="question-container">
+            <div class="question-header">
+                <span>Question ${index + 1} / ${currentTest.length}</span>
+                <span>Weight: ${question.weight} points</span>
+                <span>Type: ${question.type}</span>
             </div>
-            <p style="font-size: 1.1rem; margin: 20px 0;">${question.text}</p>
-            
-            <div class="answer-options">
+            <div class="question-text">${question.text}</div>
+    `;
+    
+    if (question.type === 'multiple') {
+        html += `
+            <div class="answers">
                 ${Object.entries(question.options).map(([key, value]) => `
                     <label class="answer-option ${userAnswers[question.id] === key ? 'selected' : ''}" onclick="selectAnswer('${question.id}', '${key}')">
                         <input type="radio" name="q${question.id}" value="${key}" ${userAnswers[question.id] === key ? 'checked' : ''}>
@@ -738,16 +427,25 @@ function showQuestion(index) {
                     </label>
                 `).join('')}
             </div>
-            
+        `;
+    } else if (question.type === 'open' || question.type === 'code') {
+        html += `
+            <textarea id="answer_${question.id}" rows="10" style="width:100%;" oninput="selectAnswer('${question.id}', this.value)">${userAnswers[question.id] || ''}</textarea>
+            ${question.test_cases ? '<p>Test cases: ' + question.test_cases + '</p>' : ''}
+        `;
+    }
+
+    html += `
             <div style="margin-top: 30px; display: flex; justify-content: space-between;">
-                <button class="btn" onclick="previousQuestion()" ${index === 0 ? 'disabled' : ''}>${translations[currentLang].prevBtn}</button>
+                <button class="btn" onclick="previousQuestion()" ${index === 0 ? 'disabled' : ''}>← Previous</button>
                 <button class="btn" onclick="nextQuestion()">
-                    ${index === currentTest.length - 1 ? translations[currentLang].reviewSubmitBtn : translations[currentLang].nextBtn}
+                    ${index === currentTest.length - 1 ? 'Review & Submit' : 'Next →'}
                 </button>
             </div>
         </div>
     `;
     
+    document.getElementById('questionContent').innerHTML = html; // Assume div ID
     updateProgress();
 }
 
@@ -757,10 +455,8 @@ function selectAnswer(questionId, answer) {
     const labels = document.querySelectorAll('.answer-option');
     labels.forEach(label => {
         label.classList.remove('selected');
-        const input = label.querySelector(`input[name="q${questionId}"]`);
-        if (input && input.value === answer) {
+        if (label.querySelector(`input[value="${answer}"]`)) {
             label.classList.add('selected');
-            input.checked = true;
         }
     });
 }
@@ -770,7 +466,7 @@ function nextQuestion() {
         currentQuestionIndex++;
         showQuestion(currentQuestionIndex);
     } else {
-        if (confirm('Ready to submit your test? You can still go back to review your answers.')) {
+        if (confirm('Ready to submit?')) {
             submitTest();
         }
     }
@@ -826,11 +522,11 @@ async function submitTest() {
     currentTest.forEach(question => {
         maxScore += question.weight;
         const userAnswer = userAnswers[question.id];
-        const isCorrect = userAnswer === question.correctAnswer;
-        
-        if (isCorrect) {
-            score += question.weight;
-        }
+        let isCorrect = false;
+        if (question.type === 'multiple') {
+            isCorrect = userAnswer === question.correctAnswer;
+            if (isCorrect) score += question.weight;
+        } // open/code scored 0 auto
         
         const block = question.category;
         if (!blockResults[block]) {
@@ -849,12 +545,13 @@ async function submitTest() {
             category: question.category,
             userAnswer: userAnswer || null,
             correctAnswer: question.correctAnswer,
-            isCorrect: isCorrect
+            isCorrect: isCorrect,
+            type: question.type
         });
     });
     
-    const percentage = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
-    const timeUsed = 3600 - timeLeft;
+    const percentage = Math.round((score / maxScore) * 100);
+    const timeUsed = 2700 - timeLeft;
     
     let grade = 'Poor';
     let gradeClass = 'grade-poor';
@@ -869,6 +566,14 @@ async function submitTest() {
         gradeClass = 'grade-fair';
     }
     
+    let level = 'Below Junior';
+    for (const lv of levels) {
+        if (score >= lv.min && score <= lv.max) {
+            level = lv.name;
+            break;
+        }
+    }
+    
     const result = {
         timestamp: new Date().toISOString(),
         score,
@@ -876,6 +581,7 @@ async function submitTest() {
         percentage,
         grade,
         gradeClass,
+        level,
         timeUsed: `${Math.floor(timeUsed / 60)}:${(timeUsed % 60).toString().padStart(2, '0')}`,
         answers: userAnswers,
         detailedAnswers: detailedAnswers,
@@ -884,43 +590,47 @@ async function submitTest() {
         userName: userName.trim()
     };
     
+    // Save results to server
     await submitTestResults(result);
+    
+    // Mark test as taken
+    localStorage.setItem('testTaken', 'true');
+    
     testResults.push(result);
     showResults(result);
     showSection('results');
 }
 
 function showResults(result) {
-    const names = currentLang === 'ru' ? categoryNamesRU : categoryNames;
     let detailedResults = Object.entries(result.blockResults).map(([block, blockResult]) => `
         <div class="result-block">
-            <h4>${names[block] || block}</h4>
-            <p><strong>${translations[currentLang].resCorrect}:</strong> ${blockResult.correct}/${blockResult.total} questions</p>
-            <p><strong>${translations[currentLang].resPoints}:</strong> ${blockResult.earnedPoints}/${blockResult.maxPoints}</p>
-            <p><strong>${translations[currentLang].resBlockScore}:</strong> ${Math.round((blockResult.earnedPoints / blockResult.maxPoints) * 100)}%</p>
+            <h4>${categoryNames[block] || block}</h4>
+            <p><strong>Correct:</strong> ${blockResult.correct}/${blockResult.total} questions</p>
+            <p><strong>Points:</strong> ${blockResult.earnedPoints}/${blockResult.maxPoints}</p>
+            <p><strong>Block Score:</strong> ${Math.round((blockResult.earnedPoints / blockResult.maxPoints) * 100)}%</p>
         </div>
     `).join('');
                         
     document.getElementById('resultsContent').innerHTML = `
         <div class="results-summary">
             <div class="score-display">${result.score}/${result.maxScore}</div>
-            <div style="font-size: 1.5rem; color: #666; margin-bottom: 10px;">${result.percentage}% ${translations[currentLang].resScore}</div>
-            <div class="grade-badge ${result.gradeClass}">${result.grade}</div>
+            <div style="font-size: 1.5rem; color: #666; margin-bottom: 10px;">${result.percentage}% Score</div>
+            <div class="grade-badge ${result.gradeClass}">${result.grade} - ${result.level}</div>
             <p style="margin-top: 20px; color: #666;">
-                <strong>${translations[currentLang].resAssessmentFor} ${result.userName}</strong> <br>
-                <strong>${translations[currentLang].resTimeUsed}:</strong> ${result.timeUsed} <br>
-                <strong>${translations[currentLang].resCompleted}:</strong> ${new Date(result.timestamp).toLocaleString()}
+                <strong>ML Engineer Assessment for ${result.userName}</strong> <br>
+                <strong>Time Used:</strong> ${result.timeUsed} <br>
+                <strong>Completed:</strong> ${new Date(result.timestamp).toLocaleString()}
             </p>
         </div>
         
         <div class="detailed-results">
-            <h3 data-i18n="performanceByArea">${translations[currentLang].performanceByArea}</h3>
+            <h3>Performance by Area</h3>
             ${detailedResults}
         </div>
         
         <div style="text-align: center; margin-top: 30px;">
-            ${currentMode === 'admin' ? `<button class="btn" onclick="showSection('welcome')">${translations[currentLang].backToWelcome}</button>` : `<p>${translations[currentLang].testCompletedThankYou}</p>`}
-            ${currentMode === 'admin' ? `<button class="btn" onclick="showSection('analytics')" style="margin-left: 10px;">${translations[currentLang].viewAnalytics}</button>` : ''}
+            ${currentMode === 'admin' ? '<button class="btn" onclick="showSection(\'welcome\')">Back to Welcome</button>' : '<p>You have completed the test. Thank you!</p>'}
+            ${currentMode === 'admin' ? '<button class="btn" onclick="showSection(\'analytics\')" style="margin-left: 10px;">View Analytics</button>' : ''}
         </div>
     `;
 }
@@ -928,7 +638,7 @@ function showResults(result) {
 // Analytics Functions
 async function loadAnalyticsData() {
     const analyticsContent = document.getElementById('analyticsContent');
-    analyticsContent.innerHTML = `<div class="loading" data-i18n="loadingAnalytics">${translations[currentLang].loadingAnalytics}</div>`;
+    analyticsContent.innerHTML = '<div class="loading">Loading analytics data...</div>';
     
     try {
         const data = await loadAnalytics();
@@ -948,40 +658,68 @@ function displayAnalytics(data) {
     analyticsContent.innerHTML = `
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px;">
             <div class="result-block">
-                <h4 data-i18n="analyticsTotalTests">${translations[currentLang].analyticsTotalTests}</h4>
+                <h4>Total Tests Taken</h4>
                 <div style="font-size: 2rem; font-weight: 700; color: #667eea;">${data.totalTests || 0}</div>
             </div>
             <div class="result-block">
-                <h4 data-i18n="analyticsAvgScore">${translations[currentLang].analyticsAvgScore}</h4>
+                <h4>Average Score</h4>
                 <div style="font-size: 2rem; font-weight: 700; color: #667eea;">${data.averageScore || 0}%</div>
             </div>
             <div class="result-block">
-                <h4 data-i18n="analyticsTotalQuestions">${translations[currentLang].analyticsTotalQuestions}</h4>
+                <h4>Total Questions</h4>
                 <div style="font-size: 2rem; font-weight: 700; color: #667eea;">${data.totalQuestions || 0}</div>
             </div>
             <div class="result-block">
-                <h4 data-i18n="analyticsPassRate">${translations[currentLang].analyticsPassRate}</h4>
+                <h4>Pass Rate</h4>
                 <div style="font-size: 2rem; font-weight: 700; color: #667eea;">${data.passRate || 0}%</div>
             </div>
         </div>
         
         <div class="detailed-results">
-            <h3 data-i18n="analyticsRecentResults">${translations[currentLang].analyticsRecentResults}</h3>
+            <h3>Recent Test Results</h3>
             ${data.recentResults ? data.recentResults.map(result => `
                 <div class="result-block">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div>
-                            <strong>${result.userName || 'Anonymous'}: ${result.score}/${result.maxScore} (${result.percentage}%)</strong>
+                            <strong>${result.userName || 'Anonymous'}: ${result.score}/${result.maxScore} (${result.percentage}%) - ${result.level}</strong>
                             <div style="color: #666; font-size: 0.9rem;">${new Date(result.timestamp).toLocaleString()}</div>
                         </div>
                         <div class="grade-badge ${result.gradeClass}" style="margin: 0; padding: 5px 15px; font-size: 0.9rem;">
                             ${result.grade}
                         </div>
                     </div>
+                    <div>
+                        <h5>Open/Code Answers for Manual Review:</h5>
+                        ${result.detailedAnswers.filter(a => a.type !== 'multiple').map(a => `
+                            <div>
+                                <p><strong>Q: ${a.questionText}</strong></p>
+                                <p>A: ${a.userAnswer || 'No answer'}</p>
+                            </div>
+                        `).join('')}
+                        <button class="btn" onclick="updateManualScore('${result.id}', ${result.score})">Update Score</button>
+                    </div>
                 </div>
             `).join('') : '<p>No recent results available.</p>'}
         </div>
     `;
+}
+
+async function updateManualScore(id, currentScore) {
+    const newScore = prompt('Enter updated score (for open/code questions):', currentScore);
+    if (newScore && !isNaN(newScore)) {
+        const parsedScore = parseInt(newScore);
+        let newLevel = 'Below Junior';
+        for (const lv of levels) {
+            if (parsedScore >= lv.min && parsedScore <= lv.max) {
+                newLevel = lv.name;
+                break;
+            }
+        }
+        const updateData = { score: parsedScore, level: newLevel };
+        await updateTestResult(id, updateData);
+        showSuccess('Score updated!');
+        loadAnalyticsData();
+    }
 }
 
 // Keyboard navigation
@@ -994,7 +732,7 @@ document.addEventListener('keydown', (e) => {
         } else if (e.key >= '1' && e.key <= '4') {
             const letters = ['A', 'B', 'C', 'D'];
             const answer = letters[parseInt(e.key) - 1];
-            if (currentTest[currentQuestionIndex]) {
+            if (currentTest[currentQuestionIndex] && currentTest[currentQuestionIndex].type === 'multiple') {
                 selectAnswer(currentTest[currentQuestionIndex].id, answer);
             }
         }
@@ -1003,15 +741,9 @@ document.addEventListener('keydown', (e) => {
 
 // Initialize the application
 async function initializeApp() {
-    const savedLang = localStorage.getItem('preferredLang') || 'en';
-    setLanguage(savedLang);
-
     setMode('candidate');
     showSection('welcome');
     await loadQuestions();
 }
 
-// Initialize when page loads
 document.addEventListener('DOMContentLoaded', initializeApp);
-
-
