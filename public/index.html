@@ -419,6 +419,33 @@
             border: 1px solid #c3e6cb;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
+        
+        .detailed-answer-item {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            padding: 15px;
+        }
+        .detailed-answer-item.correct {
+            border-left: 5px solid #28a745;
+        }
+        .detailed-answer-item.incorrect {
+            border-left: 5px solid #dc3545;
+        }
+        .detailed-answer-item p {
+            margin: 0 0 10px;
+        }
+        .user-answer {
+            background: #fff3cd;
+            padding: 8px;
+            border-radius: 5px;
+        }
+        .correct-answer {
+            background: #d4edda;
+            padding: 8px;
+            border-radius: 5px;
+        }
+
 
         @media (max-width: 768px) {
             .mode-selector {
@@ -449,9 +476,7 @@
     <div class="container">
         <!-- Header, Mode Selector, Navigation... (remains the same) -->
         <div class="header">
-<!-- Example with an actual image logo -->
-            <h1><img src="/img/logo.png" alt="Logo" style="height: 40px; vertical-align: middle; margin-right: 15px;"> 
-            <span data-i18n="mainTitle">ML Engineer Testing Platform at Anorbank </span></h1>
+            <h1 data-i18n="mainTitle">🧠 ML Engineer Testing Platform</h1>
             <p data-i18n="mainSubtitle">Comprehensive evaluation system for Machine Learning professionals</p>
             <div class="lang-switcher">
                 <button id="lang-en" onclick="setLanguage('en')">EN</button>
