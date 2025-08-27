@@ -1,958 +1,890 @@
-// Cloudflare Worker for ML Testing Platform Backend
+// =================================================================================
+// Configuration & Global State
+// =================================================================================
 
-// Default questions dataset
-const DEFAULT_QUESTIONS = [
-  // Hard Skills (50 points total)
-  // Блок 1: Вероятность и Статистика (10 вопросов, 10 баллов)
-  {
-    id: 'h1',
-    type: 'multiple',
-    category: 'probability_stats',
-    weight: 1,
-    text: 'Что такое p-value?',
-    options: {
-      A: 'Вероятность того, что нулевая гипотеза верна.',
-      B: 'Вероятность получения наблюдаемых (или более экстремальных) результатов, при условии, что нулевая гипотеза верна.',
-      C: 'Мощность статистического теста.',
-      D: 'Размер выборки, необходимый для проведения теста.'
-    },
-    correctAnswer: 'B'
-  },
-  {
-    id: 'h2',
-    type: 'multiple',
-    category: 'probability_stats',
-    weight: 1,
-    text: 'В контексте мониторинга банковского мошенничества, что такое Ошибка II рода?',
-    options: {
-      A: 'Система помечает легитимную транзакцию как мошенническую.',
-      B: 'Система пропускает мошенническую транзакцию, считая её легитимной.',
-      C: 'Клиент совершает ошибку при вводе данных.',
-      D: 'Модель не может обработать транзакцию из-за технического сбоя.'
-    },
-    correctAnswer: 'B'
-  },
-  {
-    id: 'h3',
-    type: 'multiple',
-    category: 'probability_stats',
-    weight: 1,
-    text: 'Какое статистическое распределение чаще всего используется для моделирования количества дефолтов по кредитам в портфеле за определённый период?',
-    options: {
-      A: 'Нормальное распределение.',
-      B: 'Распределение Пуассона.',
-      C: 'Равномерное распределение.',
-      D: 'Экспоненциальное распределение.'
-    },
-    correctAnswer: 'B'
-  },
-  {
-    id: 'h4',
-    type: 'multiple',
-    category: 'probability_stats',
-    weight: 1,
-    text: 'Что из перечисленного НЕ является обязательным условием для применения классической линейной регрессии?',
-    options: {
-      A: 'Линейная зависимость между предикторами и целевой переменной.',
-      B: 'Отсутствие мультиколлинеарности между предикторами.',
-      C: 'Нормальное распределение всех предикторов.',
-      D: 'Гомоскедастичность (постоянство дисперсии) остатков.'
-    },
-    correctAnswer: 'C'
-  },
-  {
-    id: 'h5',
-    type: 'multiple',
-    category: 'probability_stats',
-    weight: 1,
-    text: 'Зачем необходимо проводить A/B тестирование при внедрении новой скоринговой модели?',
-    options: {
-      A: 'Чтобы проверить, что код модели написан корректно.',
-      B: 'Чтобы измерить реальное влияние новой модели на бизнес-метрики (например, уровень одобрения и уровень дефолтности) по сравнению со старой.',
-      C: 'Чтобы определить, какая модель работает быстрее.',
-      D: 'Чтобы собрать больше данных для обучения.'
-    },
-    correctAnswer: 'B'
-  },
-  {
-    id: 'h6',
-    type: 'multiple',
-    category: 'probability_stats',
-    weight: 2,
-    text: 'Что такое Центральная Предельная Теорема?',
-    options: {
-      A: 'Теорема о том, что любая случайная величина имеет нормальное распределение.',
-      B: 'Теорема о том, что дисперсия выборки всегда меньше дисперсии генеральной совокупности.',
-      C: 'Теорема о том, что распределение выборочных средних стремится к нормальному по мере увеличения размера выборки, независимо от исходного распределения.',
-      D: 'Теорема о том, что p-value всегда должно быть меньше 0.05.'
-    },
-    correctAnswer: 'C'
-  },
-  {
-    id: 'h7',
-    type: 'multiple',
-    category: 'probability_stats',
-    weight: 1,
-    text: 'Вам нужно сравнить средний чек по кредитным картам для двух групп клиентов. Какой статистический тест наиболее подходит для этой задачи?',
-    options: {
-      A: 'Критерий хи-квадрат.',
-      B: 'T-тест для независимых выборок.',
-      C: 'Корреляционный анализ Пирсона.',
-      D: 'Дисперсионный анализ (ANOVA).'
-    },
-    correctAnswer: 'B'
-  },
-  {
-    id: 'h8',
-    type: 'multiple',
-    category: 'probability_stats',
-    weight: 1,
-    text: 'Что такое доверительный интервал?',
-    options: {
-      A: 'Диапазон, в котором, как мы полагаем, находится истинное значение параметра генеральной совокупности с определённым уровнем уверенности.',
-      B: 'Диапазон, в который попадают все значения выборки.',
-      C: 'Интервал, в котором p-value считается значимым.',
-      D: 'Интервал времени, в течение которого собирались данные.'
-    },
-    correctAnswer: 'A'
-  },
-  {
-    id: 'h9',
-    type: 'multiple',
-    category: 'probability_stats',
-    weight: 1,
-    text: 'Как проблема множественных сравнений влияет на интерпретацию p-value при проведении десятков A/B тестов одновременно?',
-    options: {
-      A: 'Никак не влияет.',
-      B: 'Уменьшает вероятность совершения ошибки I рода.',
-      C: 'Увеличивает вероятность случайно получить статистически значимый результат (ошибка I рода), поэтому требуется поправка (например, Бонферрони).',
-      D: 'Требует увеличения размера выборки для каждого теста.'
-    },
-    correctAnswer: 'C'
-  },
-  // Блок 2: Классические алгоритмы ML (10 вопросов, 10 баллов)
-  {
-    id: 'h11',
-    type: 'multiple',
-    category: 'ml_algorithms',
-    weight: 1,
-    text: 'Какой из перечисленных алгоритмов является методом кластеризации?',
-    options: {
-      A: 'Логистическая регрессия.',
-      B: 'Дерево решений.',
-      C: 'K-Means.',
-      D: 'Метод главных компонент (PCA).'
-    },
-    correctAnswer: 'C'
-  },
-  {
-    id: 'h12',
-    type: 'multiple',
-    category: 'ml_algorithms',
-    weight: 1,
-    text: 'В чем основная идея алгоритма градиентного бустинга?',
-    options: {
-      A: 'Он строит множество независимых деревьев, а затем усредняет их предсказания.',
-      B: 'Он последовательно строит деревья, где каждое последующее пытается исправить ошибки предыдущего.',
-      C: 'Он находит гиперплоскость, разделяющую классы с максимальным зазором.',
-      D: 'Он группирует данные на основе их схожести в пространстве признаков.'
-    },
-    correctAnswer: 'B'
-  },
-  {
-    id: 'h13',
-    type: 'multiple',
-    category: 'ml_algorithms',
-    weight: 1,
-    text: 'Для какой задачи НЕ подходит логистическая регрессия?',
-    options: {
-      A: 'Предсказание оттока клиентов (да/нет).',
-      B: 'Определение вероятности дефолта по кредиту.',
-      C: 'Прогнозирование суммы следующей транзакции клиента.',
-      D: 'Скоринг кредитных заявок (одобрить/отклонить).'
-    },
-    correctAnswer: 'C'
-  },
-  {
-    id: 'h15',
-    type: 'multiple',
-    category: 'ml_algorithms',
-    weight: 1,
-    text: 'Какой из алгоритмов наиболее чувствителен к масштабу признаков?',
-    options: {
-      A: 'Дерево решений.',
-      B: 'Случайный лес.',
-      C: 'Метод опорных векторов (SVM).',
-      D: 'Наивный байесовский классификатор.'
-    },
-    correctAnswer: 'C'
-  },
-  {
-    id: 'h16',
-    type: 'multiple',
-    category: 'ml_algorithms',
-    weight: 2,
-    text: 'Что такое компромисс между смещением и дисперсией (bias-variance trade-off)?',
-    options: {
-      A: 'Компромисс между скоростью обучения и точностью модели.',
-      B: 'Компромисс между ошибкой на обучающей выборке (смещение) и ошибкой на тестовой выборке (дисперсия).',
-      C: 'Компромисс между простотой модели (высокое смещение, низкая дисперсия) и её сложностью (низкое смещение, высокая дисперсия).',
-      D: 'Компромисс между количеством признаков и количеством наблюдений.'
-    },
-    correctAnswer: 'C'
-  },
-  {
-    id: 'h17',
-    type: 'multiple',
-    category: 'ml_algorithms',
-    weight: 1,
-    text: 'Какова основная цель L1-регуляризации (Lasso)?',
-    options: {
-      A: 'Уменьшить сложность модели путем обнуления весов наименее важных признаков, тем самым производя отбор признаков.',
-      B: 'Увеличить точность модели путем добавления новых признаков.',
-      C: 'Ускорить процесс обучения модели.',
-      D: 'Только уменьшить величину весов признаков, не обнуляя их.'
-    },
-    correctAnswer: 'A'
-  },
-  {
-    id: 'h18',
-    type: 'multiple',
-    category: 'ml_algorithms',
-    weight: 1,
-    text: 'Какой алгоритм лежит в основе популярной библиотеки CatBoost, делая её особенно эффективной для работы с категориальными признаками?',
-    options: {
-      A: 'Использование One-Hot Encoding для всех категориальных признаков.',
-      B: 'Использование Target Encoding с мерами по борьбе с переобучением (например, ordered target statistics).',
-      C: 'Игнорирование всех категориальных признаков.',
-      D: 'Преобразование категорий в случайные числа.'
-    },
-    correctAnswer: 'B'
-  },
-  {
-    id: 'h19',
-    type: 'multiple',
-    category: 'ml_algorithms',
-    weight: 1,
-    text: 'Какой метод используется для снижения размерности данных?',
-    options: {
-      A: 'K-Means.',
-      B: 'Метод главных компонент (PCA).',
-      C: 'Логистическая регрессия.',
-      D: 'Градиентный бустинг.'
-    },
-    correctAnswer: 'B'
-  },
-  {
-    id: 'h21',
-    type: 'multiple',
-    category: 'ml_algorithms',
-    weight: 1,
-    text: 'В чем основное преимущество ансамблевых моделей по сравнению с одним решающим деревом?',
-    options: {
-      A: 'Они всегда работают быстрее.',
-      B: 'Они более устойчивы к переобучению и в целом обладают более высокой обобщающей способностью.',
-      C: 'Они проще для интерпретации.',
-      D: 'Они требуют меньше данных для обучения.'
-    },
-    correctAnswer: 'B'
-  },
-  // Блок 3: Подготовка данных и Feature Engineering (5 вопросов, 5 баллов)
-  {
-    id: 'h23',
-    type: 'multiple',
-    category: 'data_preparation',
-    weight: 1,
-    text: 'Что такое One-Hot Encoding?',
-    options: {
-      A: 'Метод для заполнения пропущенных значений.',
-      B: 'Метод преобразования категориального признака в набор бинарных признаков (0/1).',
-      C: 'Метод для масштабирования числовых признаков.',
-      D: 'Метод для снижения размерности.'
-    },
-    correctAnswer: 'B'
-  },
-  {
-    id: 'h24',
-    type: 'multiple',
-    category: 'data_preparation',
-    weight: 1,
-    text: 'Зачем нужна стандартизация числовых признаков?',
-    options: {
-      A: 'Чтобы привести все значения к диапазону от 0 до 1.',
-      B: 'Чтобы преобразовать распределение признака к нормальному.',
-      C: 'Чтобы привести признаки к общему масштабу (среднее = 0, ст.отклонение = 1), что необходимо для многих алгоритмов (SVM, линейные модели).',
-      D: 'Чтобы удалить выбросы из данных.'
-    },
-    correctAnswer: 'C'
-  },
-  {
-    id: 'h25',
-    type: 'multiple',
-    category: 'data_preparation',
-    weight: 1,
-    text: 'Что из перечисленного является примером "утечки данных" (data leakage)?',
-    options: {
-      A: 'Использование информации о дефолте клиента для предсказания вероятности этого же самого дефолта.',
-      B: 'Наличие пропущенных значений в данных.',
-      C: 'Сильная корреляция между двумя признаками.',
-      D: 'Несбалансированные классы в данных.'
-    },
-    correctAnswer: 'A'
-  },
-  {
-    id: 'h26',
-    type: 'multiple',
-    category: 'data_preparation',
-    weight: 1,
-    text: 'Как бороться с несбалансированными данными в задачах классификации?',
-    options: {
-      A: 'Игнорировать это.',
-      B: 'Использовать SMOTE или undersampling.',
-      C: 'Всегда использовать метрику accuracy.',
-      D: 'Удалить миноритарный класс.'
-    },
-    correctAnswer: 'B'
-  },
-  {
-    id: 'h31',
-    type: 'multiple',
-    category: 'data_preparation',
-    weight: 1,
-    text: 'Какова цель разделения данных на обучающую и тестовую выборки?',
-    options: {
-      A: 'Чтобы переобучить модель.',
-      B: 'Чтобы оценить модель на данных, которые она не видела.',
-      C: 'Чтобы уменьшить размер набора данных.',
-      D: 'Чтобы увеличить количество признаков.'
-    },
-    correctAnswer: 'B'
-  },
-  // Блок 4: Валидация и Метрики (5 вопросов, 5 баллов)
-  {
-    id: 'h33',
-    type: 'multiple',
-    category: 'validation_metrics',
-    weight: 1,
-    text: 'Что такое метрика Accuracy?',
-    options: {
-      A: '(TP + TN) / общее количество',
-      B: 'TP / (TP + FP)',
-      C: 'TP / (TP + FN)',
-      D: '2 * precision * recall / (precision + recall)'
-    },
-    correctAnswer: 'A'
-  },
-  {
-    id: 'h34',
-    type: 'multiple',
-    category: 'validation_metrics',
-    weight: 1,
-    text: 'Когда F1-мера предпочтительнее Accuracy?',
-    options: {
-      A: 'При сбалансированных данных.',
-      B: 'При несбалансированных данных.',
-      C: 'В задачах регрессии.',
-      D: 'В обучении без учителя.'
-    },
-    correctAnswer: 'B'
-  },
-  {
-    id: 'h35',
-    type: 'multiple',
-    category: 'validation_metrics',
-    weight: 1,
-    text: 'Что представляет собой AUC-ROC?',
-    options: {
-      A: 'Площадь под кривой точности-полноты (precision-recall curve).',
-      B: 'Площадь под кривой рабочих характеристик приёмника (receiver operating characteristic curve).',
-      C: 'Средняя абсолютная ошибка.',
-      D: 'Коэффициент детерминации R-квадрат.'
-    },
-    correctAnswer: 'B'
-  },
-  {
-    id: 'h36',
-    type: 'multiple',
-    category: 'validation_metrics',
-    weight: 1,
-    text: 'Что такое k-блочная кросс-валидация (k-fold cross-validation)?',
-    options: {
-      A: 'Однократное разделение данных на обучающую и тестовую выборки.',
-      B: 'Разделение данных на k подмножеств и обучение модели k раз.',
-      C: 'Техника для переобучения модели.',
-      D: 'Метод аугментации данных.'
-    },
-    correctAnswer: 'B'
-  },
-  {
-    id: 'h37',
-    type: 'multiple',
-    category: 'validation_metrics',
-    weight: 1,
-    text: 'Что такое матрица ошибок (confusion matrix)?',
-    options: {
-      A: 'Таблица для оценки качества работы классификатора.',
-      B: 'График ошибок модели.',
-      C: 'Метрика для задач регрессии.',
-      D: 'Метод отбора признаков.'
-    },
-    correctAnswer: 'A'
-  },
-  // Блок 5: Кодинг (5 вопросов, 20 баллов)
-  {
-    id: 'h38',
-    type: 'code',
-    category: 'coding',
-    weight: 4,
-    text: 'Напишите функцию на Python для вычисления среднеквадратичной ошибки (MSE).',
-    test_cases: 'def mse(y_true, y_pred):\n    # Ваша реализация\n\nПример: mse([1,2,3], [1.1,1.9,3.0]) ≈ 0.0067'
-  },
-  {
-    id: 'h39',
-    type: 'code',
-    category: 'coding',
-    weight: 4,
-    text: 'Реализуйте линейную регрессию с нуля на Python.',
-    test_cases: 'Используйте numpy для вычислений. Реализуйте методы fit и predict.'
-  },
-  {
-    id: 'h40',
-    type: 'code',
-    category: 'coding',
-    weight: 4,
-    text: 'Напишите код для разделения данных на обучающую и тестовую выборки.',
-    test_cases: 'def train_test_split(X, y, test_size=0.2, random_state=42):\n    # Ваша реализация без использования sklearn'
-  },
-  {
-    id: 'h41',
-    type: 'code',
-    category: 'coding',
-    weight: 4,
-    text: 'Реализуйте алгоритм кластеризации k-means.',
-    test_cases: 'Базовая версия с евклидовым расстоянием.'
-  },
-  {
-    id: 'h42',
-    type: 'code',
-    category: 'coding',
-    weight: 4,
-    text: 'Напишите функцию для нормализации данных с использованием min-max масштабирования.',
-    test_cases: 'def min_max_normalize(data):\n    # Ваша реализация'
-  },
-  // Soft Skills (55 points total)
-  // Блок 6: Коммуникация (6 вопросов, 18 баллов)
-  {
-    id: 's1',
-    type: 'multiple',
-    category: 'soft_communication',
-    weight: 3,
-    text: 'Как бы вы объяснили сложную ML-модель нетехническому стейкхолдеру?',
-    options: {
-      A: 'Использовать технический жаргон, чтобы показать свою экспертизу.',
-      B: 'Использовать простые аналогии, визуализации и фокусироваться на бизнес-результате.',
-      C: 'Избегать деталей и сказать, что "это просто работает".',
-      D: 'Показать код модели.'
-    },
-    correctAnswer: 'B'
-  },
-  {
-    id: 's2',
-    type: 'open',
-    category: 'soft_communication',
-    weight: 3,
-    text: 'Приведите пример, когда вам нужно было объяснить сложный технический аспект проекта (например, выбор метрики или архитектуры модели) нетехническому менеджеру. Как вы построили свое объяснение и как убедились, что вас поняли правильно?'
-  },
-  {
-    id: 's3',
-    type: 'multiple',
-    category: 'soft_communication',
-    weight: 3,
-    text: 'Как лучше всего обрабатывать вопросы во время презентации?',
-    options: {
-      A: 'Игнорировать их до конца выступления.',
-      B: 'Отвечать четко и лаконично, убедившись, что ответ понятен.',
-      C: 'Сменить тему, если вопрос сложный.',
-      D: 'Занимать оборонительную позицию.'
-    },
-    correctAnswer: 'B'
-  },
-  {
-    id: 's4',
-    type: 'multiple',
-    category: 'soft_communication',
-    weight: 3,
-    text: 'Как вы убеждаетесь, что ваше сообщение понято правильно?',
-    options: {
-      A: 'Предполагаю, что если молчат, значит всё поняли.',
-      B: 'Задаю уточняющие вопросы и прошу дать обратную связь.',
-      C: 'Повторяю одно и то же несколько раз.',
-      D: 'Использую сложные термины, чтобы выглядеть умнее.'
-    },
-    correctAnswer: 'B'
-  },
-  {
-    id: 's5',
-    type: 'open',
-    category: 'soft_communication',
-    weight: 3,
-    text: 'Вам нужно обсудить результаты эксперимента с двумя группами: командой Data Scientists и отделом маркетинга. Какие ключевые различия будут в вашем подходе к коммуникации с каждой из этих групп?'
-  },
-  {
-    id: 's6',
-    type: 'multiple',
-    category: 'soft_communication',
-    weight: 3,
-    text: 'Что такое активное слушание?',
-    options: {
-      A: 'Ожидание своей очереди, чтобы высказаться.',
-      B: 'Полная концентрация на собеседнике, понимание, реакция и запоминание.',
-      C: 'Выполнение нескольких дел одновременно во время разговора.',
-      D: 'Перебивание собеседника для уточнений.'
-    },
-    correctAnswer: 'B'
-  },
-  // Блок 7: Работа в команде (5 вопросов, 16 баллов)
-  {
-    id: 's7',
-    type: 'multiple',
-    category: 'soft_teamwork',
-    weight: 3,
-    text: 'Как вы справляетесь с конфликтами в команде?',
-    options: {
-      A: 'Избегаю их любой ценой.',
-      B: 'Обсуждаю проблему открыто и ищу компромисс.',
-      C: 'Принимаю чью-то сторону.',
-      D: 'Игнорирую проблему, надеясь, что она решится сама.'
-    },
-    correctAnswer: 'B'
-  },
-  {
-    id: 's8',
-    type: 'open',
-    category: 'soft_teamwork',
-    weight: 3,
-    text: 'Опишите самый сложный командный проект, в котором вы участвовали. В чем заключалась основная сложность (техническая, организационная, межличностная) и каков был ваш личный вклад в её преодоление?'
-  },
-  {
-    id: 's9',
-    type: 'multiple',
-    category: 'soft_teamwork',
-    weight: 3,
-    text: 'Что важно для эффективной командной работы?',
-    options: {
-      A: 'Индивидуальный успех.',
-      B: 'Доверие и открытая коммуникация.',
-      C: 'Конкуренция внутри команды.',
-      D: 'Изоляция и работа в одиночку.'
-    },
-    correctAnswer: 'B'
-  },
-  {
-    id: 's10',
-    type: 'multiple',
-    category: 'soft_teamwork',
-    weight: 3,
-    text: 'Как вы вносите вклад в достижение командных целей?',
-    options: {
-      A: 'Фокусируюсь только на своих задачах.',
-      B: 'Делюсь знаниями и поддерживаю других.',
-      C: 'Делегирую всю сложную работу.',
-      D: 'Критикую идеи других.'
-    },
-    correctAnswer: 'B'
-  },
-  {
-    id: 's11',
-    type: 'open',
-    category: 'soft_teamwork',
-    weight: 4,
-    text: 'Вы заметили, что коллега в вашей команде систематически не успевает выполнять свои задачи, что тормозит общий прогресс. Ваши первые шаги?'
-  },
-  // Блок 8: Самоорганизация (3 вопроса, 5 баллов)
-  {
-    id: 's19',
-    type: 'open',
-    category: 'soft_selforg',
-    weight: 2,
-    text: 'Вам поручили задачу "исследовать возможность использования AI для улучшения клиентского опыта". Требования очень общие. Опишите по шагам, как вы будете декомпозировать эту задачу и какие артефакты (документы, встречи) создадите на первых этапах для её прояснения.'
-  },
-  {
-    id: 's20',
-    type: 'multiple',
-    category: 'soft_selforg',
-    weight: 1,
-    text: 'У вас есть свобода в выборе инструментов для проекта. Чем вы будете руководствоваться?',
-    options: {
-      A: 'Выберу самые новые и модные технологии, чтобы пополнить резюме.',
-      B: 'Выберу самые надежные и проверенные инструменты, даже если они не самые новые.',
-      C: 'Проанализирую и выберу инструмент, который лучше всего подходит под конкретную задачу, учитывая его плюсы и минусы.',
-      D: 'Выберу инструмент, который лучше всего знают мои коллеги, чтобы мне могли помочь.'
-    },
-    correctAnswer: 'C'
-  },
-  {
-    id: 's21',
-    type: 'multiple',
-    category: 'soft_selforg',
-    weight: 2,
-    text: 'Вы поняли, что ваша текущая работа над проектом зашла в тупик.',
-    options: {
-      A: 'Продолжу пробовать тот же подход, надеясь на другой результат.',
-      B: 'Сделаю шаг назад, чтобы переосмыслить проблему в целом, и, возможно, вернусь к этапу постановки задачи.',
-      C: 'Попрошу у менеджера другую задачу.',
-      D: 'Скрою проблему и сделаю вид, что всё идёт по плану.'
-    },
-    correctAnswer: 'B'
-  },
-  // Блок 9: Обратная связь (3 вопроса, 5 баллов)
-  {
-    id: 's22',
-    type: 'multiple',
-    category: 'soft_feedback',
-    weight: 2,
-    text: 'Вы видите ошибку в презентации руководителя перед важной встречей.',
-    options: {
-      A: 'Ничего не скажу, чтобы не ставить его в неловкое положение.',
-      B: 'Тактично сообщу ему об ошибке один на один до начала встречи.',
-      C: 'Укажу на ошибку публично во время его выступления.',
-      D: 'Расскажу об ошибке коллегам после совещания.'
-    },
-    correctAnswer: 'B'
-  },
-  {
-    id: 's23',
-    type: 'multiple',
-    category: 'soft_feedback',
-    weight: 1,
-    text: 'Вам кажется, что руководитель ставит вам нереалистичные сроки.',
-    options: {
-      A: 'Молча соглашусь и буду работать по ночам, рискуя выгореть.',
-      B: 'Подготовлю аргументированную оценку сроков, разобью задачу на этапы и предложу руководителю реалистичный план.',
-      C: 'Скажу, что это невозможно, и откажусь от задачи.',
-      D: 'Пообещаю успеть, но заранее буду знать, что сорву дедлайн.'
-    },
-    correctAnswer: 'B'
-  },
-  {
-    id: 's24',
-    type: 'multiple',
-    category: 'soft_feedback',
-    weight: 2,
-    text: 'Вашу модель раскритиковали на техническом комитете.',
-    options: {
-      A: 'Приму всю критику на свой счёт и демотивируюсь.',
-      B: 'Отделю критику модели от критики себя как личности, соберу все замечания и составлю план по их устранению.',
-      C: 'Начну спорить и доказывать, что критики не разбираются в теме.',
-      D: 'Решу, что ML — это не моё, и начну учить что-то другое.'
-    },
-    correctAnswer: 'B'
-  },
-  // Блок 10: Креативность (3 вопроса, 6 баллов)
-  {
-    id: 's25',
-    type: 'open',
-    category: 'soft_creativity',
-    weight: 3,
-    text: 'Перед вами стоит задача, для которой нет очевидного решения в стандартных библиотеках ML. Например, предсказать популярность нового, еще не выпущенного продукта. Какой исследовательский подход вы бы применили? Опишите ваш план действий.'
-  },
-  {
-    id: 's26',
-    type: 'multiple',
-    category: 'soft_creativity',
-    weight: 2,
-    text: 'Менеджер предлагает идею, которая кажется вам технически слабой.',
-    options: {
-      A: 'Сразу скажу, что идея плохая и работать не будет.',
-      B: 'Скажу: "Интересная идея. Давайте я проведу небольшое исследование и сделаю прототип, чтобы мы могли оценить её жизнеспособность на практике".',
-      C: 'Формально соглашусь, но делать ничего не буду.',
-      D: 'Предложу свою, "правильную" идею вместо его.'
-    },
-    correctAnswer: 'B'
-  },
-  {
-    id: 's27',
-    type: 'multiple',
-    category: 'soft_creativity',
-    weight: 1,
-    text: 'Ваша команда постоянно использует один и тот же подход ко всем задачам.',
-    options: {
-      A: 'Это хорошо, так как это стандарт, и всё работает предсказуемо.',
-      B: 'Предложу провести R&D день, чтобы изучить и попробовать новые методы, которые могут повысить нашу эффективность.',
-      C: 'Буду втайне пробовать новые методы в своих проектах.',
-      D: 'Считаю, что если что-то работает, не нужно это менять.'
-    },
-    correctAnswer: 'B'
-  },
-  // Блок 11: Документация (2 вопроса, 5 баллов)
-  {
-    id: 's28',
-    type: 'multiple',
-    category: 'soft_documentation',
-    weight: 2,
-    text: 'Проект завершён, модель работает. Осталось написать документацию.',
-    options: {
-      A: 'Считаю это наименее приоритетной задачей и отложу её на неопределённый срок.',
-      B: 'Считаю документацию неотъемлемой частью проекта и выделю на неё время.',
-      C: 'Попрошу джуниора написать документацию на мой код.',
-      D: 'Напишу самый необходимый минимум, чтобы формально закрыть задачу.'
-    },
-    correctAnswer: 'B'
-  },
-  {
-    id: 's29',
-    type: 'multiple',
-    category: 'soft_documentation',
-    weight: 3,
-    text: 'Вам нужно передать свой проект коллеге.',
-    options: {
-      A: 'Просто дам ему ссылку на Git-репозиторий.',
-      B: 'Организую встречу, где подробно расскажу о проекте, покажу ключевые части кода и оставлю ссылку на подробную документацию.',
-      C: 'Запишу для него короткое видео с обзором проекта.',
-      D: 'Буду доступен для вопросов, когда он сам начнёт разбираться.'
-    },
-    correctAnswer: 'B'
-  }
-];
+const API_BASE_URL = '/api';
+const ADMIN_PASSWORD = 'botabotabotaspeed'; // Change this to a secure password!
+const TEST_DURATION_SECONDS = 3600; // 60 minutes
 
-// CORS headers
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type'
+// Global variables
+let currentMode = 'candidate';
+let allQuestions = [];
+let currentTest = [];
+let currentQuestionIndex = 0;
+let userAnswers = {};
+let testTimer;
+let timeLeft = TEST_DURATION_SECONDS;
+let testResultId = null; // To store the ID of the current test result for updates
+let userName = '';
+
+// Data Mappings
+const categoryNames = {
+    probability_stats: 'Probability & Statistics',
+    ml_algorithms: 'ML Algorithms',
+    data_preparation: 'Data Preparation & Feature Engineering',
+    validation_metrics: 'Validation & Metrics',
+    coding: 'Coding',
+    soft_communication: 'Soft Skills: Communication',
+    soft_teamwork: 'Soft Skills: Teamwork',
+    soft_selforg: 'Soft Skills: Self-Organization',
+    soft_feedback: 'Soft Skills: Feedback',
+    soft_creativity: 'Soft Skills: Creativity',
+    soft_documentation: 'Soft Skills: Documentation'
 };
 
-// Worker code
-export async function onRequest(context) {
-  const { request, env } = context;
-  const url = new URL(request.url);
-  const path = url.pathname;
+const hardSkillCategories = ['probability_stats', 'ml_algorithms', 'data_preparation', 'validation_metrics', 'coding'];
+const softSkillCategories = ['soft_communication', 'soft_teamwork', 'soft_selforg', 'soft_feedback', 'soft_creativity', 'soft_documentation'];
 
-  if (request.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: corsHeaders });
-  }
+const levels = [
+    { name: 'Below Junior', min: 0, max: 5 },
+    { name: 'Junior', min: 6, max: 24 },
+    { name: 'Middle', min: 25, max: 54 },
+    { name: 'Senior', min: 55, max: 79 },
+    { name: 'Senior+', min: 80, max: 99 },
+    { name: 'Tech Lead', min: 100, max: 104 },
+    { name: 'Head of', min: 105, max: Infinity }
+];
 
-  try {
-    if (path === '/api/questions' && request.method === 'GET') {
-      return await getQuestions(env);
+// ... (translations object remains unchanged) ...
+const translations = {
+    en: {
+        mainTitle: "ML Engineer Testing Platform",
+        mainSubtitle: "Comprehensive evaluation system for Machine Learning professionals",
+        candidateMode: "Candidate Mode",
+        adminMode: "Administrator Mode",
+        navStartTest: "Start Test",
+        navResults: "Results",
+        navEditQuestions: "Edit Questions",
+        navAnalytics: "Analytics",
+        welcomeTitle: "Machine Learning Engineer Assessment",
+        welcomeSubtitle: "Comprehensive evaluation covering all essential ML engineering skills",
+        overviewTitle: "Test Overview",
+        overviewQuestions: "Questions",
+        overviewMinutes: "Minutes",
+        overviewPoints: "Total Points",
+        coverageTitle: "Coverage Areas:",
+        loadingCoverage: "Loading test information...",
+        instructionsTitle: "Instructions:",
+        instruction1: "You have 60 minutes to complete all questions",
+        instruction2: "Each question has one correct answer",
+        instruction3: "You can navigate between questions and change answers",
+        instruction4: "Questions are weighted by difficulty (1, 3, or 5 points)",
+        instruction5: "Your progress will be automatically saved",
+        beginAssessment: "Begin Assessment",
+        allowRetake: "Allow Retake for This User",
+        qEditorTitle: "Question Management",
+        qEditorAddTitle: "Add New Question",
+        qEditorType: "Question Type:",
+        qEditorCategory: "Category:",
+        qEditorWeight: "Weight (Points):",
+        qEditorText: "Question Text:",
+        qEditorOptA: "Option A:",
+        qEditorOptB: "Option B:",
+        qEditorOptC: "Option C:",
+        qEditorOptD: "Option D:",
+        qEditorCorrect: "Correct Answer:",
+        qEditorTestCases: "Test Cases:",
+        qEditorAddBtn: "Save Question",
+        qBankTitle: "Question Bank",
+        qBankFilter: "Filter by Category:",
+        qBankAllCat: "All Categories",
+        loadingQuestions: "Loading questions...",
+        qBankExport: "Export Questions",
+        qBankImport: "Import Questions",
+        qBankReset: "Reset to Default",
+        testTitle: "Machine Learning Engineer Assessment",
+        testSubtitle: "Answer all questions within the time limit",
+        testStartFromWelcome: "Please start the test from the welcome section.",
+        submitTestBtn: "Submit Test",
+        resultsTitle: "Test Results",
+        resultsCompleteTest: "Complete a test to see your results here.",
+        analyticsTitle: "Performance Analytics",
+        loadingAnalytics: "Loading analytics data...",
+        editBtn: "Edit",
+        deleteBtn: "Delete"
+    },
+    ru: {
+        mainTitle: "Платформа для тестирования ML-инженеров",
+        mainSubtitle: "Комплексная система оценки для специалистов по машинному обучению",
+        candidateMode: "Режим кандидата",
+        adminMode: "Режим администратора",
+        navStartTest: "Начать тест",
+        navResults: "Результаты",
+        navEditQuestions: "Редактировать вопросы",
+        navAnalytics: "Аналитика",
+        welcomeTitle: "Оценка инженера по машинному обучению",
+        welcomeSubtitle: "Комплексная оценка, охватывающая все основные навыки ML-инженера",
+        overviewTitle: "Обзор теста",
+        overviewQuestions: "Вопросы",
+        overviewMinutes: "Минуты",
+        overviewPoints: "Всего баллов",
+        coverageTitle: "Охватываемые области:",
+        loadingCoverage: "Загрузка информации о тесте...",
+        instructionsTitle: "Инструкции:",
+        instruction1: "У вас есть 60 минут, чтобы ответить на все вопросы",
+        instruction2: "У каждого вопроса один правильный ответ",
+        instruction3: "Вы можете переключаться между вопросами и изменять ответы",
+        instruction4: "Вопросы оцениваются по сложности (1, 3 или 5 баллов)",
+        instruction5: "Ваш прогресс будет автоматически сохранен",
+        beginAssessment: "Начать оценку",
+        allowRetake: "Разрешить пересдачу для этого пользователя",
+        qEditorTitle: "Управление вопросами",
+        qEditorAddTitle: "Добавить новый вопрос",
+        qEditorType: "Тип вопроса:",
+        qEditorCategory: "Категория:",
+        qEditorWeight: "Вес (баллы):",
+        qEditorText: "Текст вопроса:",
+        qEditorOptA: "Вариант A:",
+        qEditorOptB: "Вариант B:",
+        qEditorOptC: "Вариант C:",
+        qEditorOptD: "Вариант D:",
+        qEditorCorrect: "Правильный ответ:",
+        qEditorTestCases: "Тестовые случаи:",
+        qEditorAddBtn: "Сохранить вопрос",
+        qBankTitle: "Банк вопросов",
+        qBankFilter: "Фильтр по категориям:",
+        qBankAllCat: "Все категории",
+        loadingQuestions: "Загрузка вопросов...",
+        qBankExport: "Экспорт вопросов",
+        qBankImport: "Импорт вопросов",
+        qBankReset: "Сбросить по умолчанию",
+        testTitle: "Оценка инженера по машинному обучению",
+        testSubtitle: "Ответьте на все вопросы в течение установленного времени",
+        testStartFromWelcome: "Пожалуйста, начните тест из раздела приветствия.",
+        submitTestBtn: "Отправить тест",
+        resultsTitle: "Результаты теста",
+        resultsCompleteTest: "Завершите тест, чтобы увидеть здесь свои результаты.",
+        analyticsTitle: "Аналитика производительности",
+        loadingAnalytics: "Загрузка данных аналитики...",
+        editBtn: "Ред.",
+        deleteBtn: "Удал."
     }
-    if (path === '/api/questions' && request.method === 'POST') {
-      return await createQuestion(request, env);
-    }
-    if (path.startsWith('/api/questions/') && request.method === 'PUT') {
-      const id = path.split('/').pop();
-      return await updateQuestion(request, id, env);
-    }
-    if (path.startsWith('/api/questions/') && request.method === 'DELETE') {
-      const id = path.split('/').pop();
-      return await deleteQuestion(id, env);
-    }
-    if (path === '/api/questions/reset' && request.method === 'POST') {
-      return await resetQuestions(env);
-    }
-    if (path === '/api/results' && request.method === 'POST') {
-      return await saveTestResult(request, env);
-    }
-    if (path.startsWith('/api/results/') && request.method === 'PUT') {
-      const id = path.split('/').pop();
-      return await updateTestResult(request, id, env);
-    }
-    if (path === '/api/analytics' && request.method === 'GET') {
-      return await getAnalytics(env);
-    }
-    return new Response(JSON.stringify({ success: false, error: 'Invalid route or method' }), {
-      status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+};
+
+// =================================================================================
+// Language Functions
+// =================================================================================
+
+function setLanguage(lang) {
+    const langData = translations[lang];
+    if (!langData) return;
+
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (langData[key]) {
+            el.textContent = langData[key];
+        }
     });
-  } catch (error) {
-    console.error('Error handling request:', error);
-    return new Response(JSON.stringify({ success: false, error: 'Internal server error' }), {
-      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  }
+    
+    document.querySelectorAll('.lang-switcher button').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(`lang-${lang}`).classList.add('active');
+
+    localStorage.setItem('language', lang);
 }
 
-async function getQuestions(env) {
-  try {
-    let questions = await env.ML_QUESTIONS.get('questions', { type: 'json' });
-    if (!questions) {
-      questions = DEFAULT_QUESTIONS;
-      await env.ML_QUESTIONS.put('questions', JSON.stringify(questions));
-    }
-    return new Response(JSON.stringify({ success: true, questions }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  } catch (error) {
-    return new Response(JSON.stringify({ success: false, error: 'Failed to get questions' }), {
-      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  }
-}
+// =================================================================================
+// API Functions
+// =================================================================================
 
-async function createQuestion(request, env) {
-  try {
-    const question = await request.json();
-    let questions = await env.ML_QUESTIONS.get('questions', { type: 'json' }) || [];
-    question.id = crypto.randomUUID(); // String UUID
-    questions.push(question);
-    await env.ML_QUESTIONS.put('questions', JSON.stringify(questions));
-    return new Response(JSON.stringify({ success: true, question }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  } catch (error) {
-    return new Response(JSON.stringify({ success: false, error: 'Failed to create question' }), {
-      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  }
-}
-
-async function updateQuestion(request, id, env) {
-  try {
-    const questionData = await request.json();
-    let questions = await env.ML_QUESTIONS.get('questions', { type: 'json' }) || [];
-    const index = questions.findIndex(q => q.id === id);
-    if (index === -1) {
-      return new Response(JSON.stringify({ success: false, error: 'Question not found' }), {
-        status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-    questions[index] = { ...questionData, id };
-    await env.ML_QUESTIONS.put('questions', JSON.stringify(questions));
-    return new Response(JSON.stringify({ success: true, question: questions[index] }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  } catch (error) {
-    return new Response(JSON.stringify({ success: false, error: 'Failed to update question' }), {
-      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  }
-}
-
-async function deleteQuestion(id, env) {
-  try {
-    let questions = await env.ML_QUESTIONS.get('questions', { type: 'json' }) || [];
-    questions = questions.filter(q => q.id !== id);
-    await env.ML_QUESTIONS.put('questions', JSON.stringify(questions));
-    return new Response(JSON.stringify({ success: true }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  } catch (error) {
-    return new Response(JSON.stringify({ success: false, error: 'Failed to delete question' }), {
-      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  }
-}
-
-async function resetQuestions(env) {
-  try {
-    await env.ML_QUESTIONS.put('questions', JSON.stringify(DEFAULT_QUESTIONS));
-    return new Response(JSON.stringify({ success: true }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  } catch (error) {
-    return new Response(JSON.stringify({ success: false, error: 'Failed to reset questions' }), {
-      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  }
-}
-
-async function saveTestResult(request, env) {
-  try {
-    const result = await request.json();
-    result.id = crypto.randomUUID();
-    let results = await env.ML_QUESTIONS.get('results', { type: 'json' }) || [];
-    results.push(result);
-    if (results.length > 100) results = results.slice(-100);
-    await env.ML_QUESTIONS.put('results', JSON.stringify(results));
-    return new Response(JSON.stringify({ success: true, id: result.id }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  } catch (error) {
-    return new Response(JSON.stringify({ success: false, error: 'Failed to save result' }), {
-      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  }
-}
-
-async function updateTestResult(request, id, env) {
-  try {
-    const updateData = await request.json();
-    let results = await env.ML_QUESTIONS.get('results', { type: 'json' }) || [];
-    const index = results.findIndex(r => r.id === id);
-    if (index === -1) {
-      return new Response(JSON.stringify({ success: false, error: 'Result not found' }), {
-        status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-    results[index] = { ...results[index], ...updateData };
-    await env.ML_QUESTIONS.put('results', JSON.stringify(results));
-    return new Response(JSON.stringify({ success: true, result: results[index] }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  } catch (error) {
-    return new Response(JSON.stringify({ success: false, error: 'Failed to update result' }), {
-      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  }
-}
-
-async function getAnalytics(env) {
-  try {
-    const results = await env.ML_QUESTIONS.get('results', { type: 'json' }) || [];
-    const questions = await env.ML_QUESTIONS.get('questions', { type: 'json' }) || DEFAULT_QUESTIONS;
-    const totalTests = results.length;
-
-    if (totalTests === 0) {
-        return new Response(JSON.stringify({ 
-            success: true, 
-            totalTests: 0, 
-            averageScore: 0,
-            averageHardSkillScore: 0,
-            averageSoftSkillScore: 0,
-            totalQuestions: questions.length, 
-            passRate: 0, 
-            recentResults: [] 
-        }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+async function apiRequest(endpoint, options = {}) {
+    try {
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+            headers: { 'Content-Type': 'application/json', ...options.headers },
+            ...options
         });
+        if (!response.ok) {
+            const err = await response.json().catch(() => ({ error: `HTTP error! status: ${response.status}` }));
+            throw new Error(err.error);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('API request failed:', error);
+        showError(`Network error: ${error.message}. Please check your connection.`);
+        throw error;
     }
-
-    const averageScore = Math.round(results.reduce((sum, r) => sum + r.percentage, 0) / totalTests);
-    const passRate = Math.round((results.filter(r => r.percentage >= 60).length / totalTests) * 100);
-    
-    // Calculate average hard and soft skill scores
-    const totalHardSkillPercentage = results.reduce((sum, r) => {
-        const hardPercentage = (r.maxHardSkillScore > 0) ? (r.hardSkillScore / r.maxHardSkillScore) * 100 : 0;
-        return sum + hardPercentage;
-    }, 0);
-    const averageHardSkillScore = Math.round(totalHardSkillPercentage / totalTests);
-
-    const totalSoftSkillPercentage = results.reduce((sum, r) => {
-        const softPercentage = (r.maxSoftSkillScore > 0) ? (r.softSkillScore / r.maxSoftSkillScore) * 100 : 0;
-        return sum + softPercentage;
-    }, 0);
-    const averageSoftSkillScore = Math.round(totalSoftSkillPercentage / totalTests);
-    
-    const recentResults = results.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 10);
-    
-    return new Response(JSON.stringify({ 
-        success: true, 
-        totalTests, 
-        averageScore,
-        averageHardSkillScore,
-        averageSoftSkillScore,
-        totalQuestions: questions.length, 
-        passRate, 
-        recentResults 
-    }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  } catch (error) {
-    console.error('Analytics Error:', error);
-    return new Response(JSON.stringify({ success: false, error: 'Failed to get analytics' }), {
-      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  }
 }
 
+const loadQuestions = () => apiRequest('/questions');
+const saveQuestion = (question) => apiRequest('/questions', { method: 'POST', body: JSON.stringify(question) });
+const updateQuestion = (id, question) => apiRequest(`/questions/${id}`, { method: 'PUT', body: JSON.stringify(question) });
+const deleteQuestionAPI = (id) => apiRequest(`/questions/${id}`, { method: 'DELETE' });
+const resetQuestionsAPI = () => apiRequest('/questions/reset', { method: 'POST' });
+const submitTestResults = (results) => apiRequest('/results', { method: 'POST', body: JSON.stringify(results) });
+// MODIFIED: This is now specifically for grading.
+const gradeQuestionAPI = (resultId, questionId, pointsAwarded) => apiRequest(`/results/${resultId}`, { method: 'PUT', body: JSON.stringify({ questionId, pointsAwarded }) });
+const loadAnalytics = () => apiRequest('/analytics');
+
+// =================================================================================
+// UI Helper Functions
+// =================================================================================
+
+// ... (showError, showSuccess, updateWelcomeStats functions remain unchanged) ...
+function showError(message) {
+    const existing = document.querySelector('.error');
+    if (existing) existing.remove();
+    const div = document.createElement('div');
+    div.className = 'error';
+    div.textContent = message;
+    document.body.insertBefore(div, document.body.firstChild);
+    setTimeout(() => div.remove(), 5000);
+}
+
+function showSuccess(message) {
+    const existing = document.querySelector('.success');
+    if (existing) existing.remove();
+    const div = document.createElement('div');
+    div.className = 'success';
+    div.textContent = message;
+    document.body.insertBefore(div, document.body.firstChild);
+    setTimeout(() => div.remove(), 3000);
+}
+
+function updateWelcomeStats() {
+    document.getElementById('totalQuestions').textContent = allQuestions.length;
+    document.getElementById('totalPoints').textContent = allQuestions.reduce((sum, q) => sum + q.weight, 0);
+
+    const categoryCounts = allQuestions.reduce((acc, q) => {
+        acc[q.category] = (acc[q.category] || 0) + 1;
+        return acc;
+    }, {});
+
+    const coverageHTML = Object.entries(categoryCounts)
+        .map(([category, count]) => `<li><strong>${categoryNames[category] || category}:</strong> ${count} questions</li>`)
+        .join('');
+    document.getElementById('coverageAreas').innerHTML = coverageHTML || '<li>No questions loaded.</li>';
+}
+// =================================================================================
+// Mode and Navigation
+// =================================================================================
+
+// ... (setMode, requireAdminAccess, showSection functions remain unchanged) ...
+function setMode(mode) {
+    if (mode === 'admin') {
+        const pass = prompt('Enter Administrator Password:');
+        if (pass !== ADMIN_PASSWORD) {
+            showError('Incorrect password.');
+            return;
+        }
+    }
+
+    currentMode = mode;
+    document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`.mode-btn[onclick="setMode('${mode}')"]`).classList.add('active');
+
+    document.getElementById('candidateNavigation').classList.toggle('hidden', mode !== 'candidate');
+    document.getElementById('adminNavigation').classList.toggle('hidden', mode !== 'admin');
+
+    showSection('welcome'); // Default to welcome section on mode change
+}
+
+function requireAdminAccess(sectionId) {
+    if (currentMode !== 'admin') {
+        showError('Administrator access required for this section.');
+        showSection('welcome');
+        return false;
+    }
+    return true;
+}
+
+function showSection(sectionId) {
+    if (['questionEditor', 'analytics'].includes(sectionId) && !requireAdminAccess(sectionId)) {
+        return;
+    }
+
+    document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
+    document.getElementById(sectionId).classList.add('active');
+
+    const navId = currentMode === 'admin' ? 'adminNavigation' : 'candidateNavigation';
+    document.querySelectorAll(`#${navId} .nav-btn`).forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`#${navId} .nav-btn[onclick="showSection('${sectionId}')"]`)?.classList.add('active');
+
+    // Load data for specific sections
+    if (sectionId === 'questionEditor') {
+        updateQuestionsList();
+    } else if (sectionId === 'analytics') {
+        loadAnalyticsData();
+    } else if (sectionId === 'results' && currentMode === 'admin') {
+        loadAnalyticsData(); // For admin, show all in results too? But keep separate, or redirect to analytics
+    }
+}
+// =================================================================================
+// Question Management (Admin)
+// =================================================================================
+
+// ... (toggleQuestionTypeFields, addOrUpdateQuestion, clearForm, editQuestion, deleteQuestion, resetToDefault, updateQuestionsList, filterQuestions functions remain unchanged) ...
+function toggleQuestionTypeFields() {
+    const type = document.getElementById('questionType').value;
+    document.getElementById('multipleChoiceFields').classList.toggle('hidden', type !== 'multiple');
+    document.getElementById('codingFields').classList.toggle('hidden', type !== 'code');
+}
+
+async function addOrUpdateQuestion() {
+    const editingId = document.getElementById('editingQuestionId').value;
+    const questionData = {
+        type: document.getElementById('questionType').value,
+        category: document.getElementById('questionCategory').value,
+        weight: parseInt(document.getElementById('questionWeight').value, 10) || 1,
+        text: document.getElementById('questionText').value.trim(),
+        options: {},
+        correctAnswer: null,
+        test_cases: ''
+    };
+
+    if (questionData.type === 'multiple') {
+        questionData.options = {
+            A: document.getElementById('optionA').value.trim(), B: document.getElementById('optionB').value.trim(),
+            C: document.getElementById('optionC').value.trim(), D: document.getElementById('optionD').value.trim()
+        };
+        questionData.correctAnswer = document.getElementById('correctAnswer').value;
+        if (!questionData.options.A || !questionData.options.B) {
+            return showError('Options A and B are required for multiple choice questions.');
+        }
+    } else if (questionData.type === 'code') {
+        questionData.test_cases = document.getElementById('testCases').value.trim();
+    }
+
+    if (!questionData.text) return showError('Question text cannot be empty.');
+
+    try {
+        const action = editingId ? updateQuestion(editingId, questionData) : saveQuestion(questionData);
+        await action;
+        showSuccess(`Question ${editingId ? 'updated' : 'added'} successfully!`);
+        clearForm();
+        const data = await loadQuestions(); // Reload all questions
+        allQuestions = data.questions || [];
+        updateQuestionsList();
+    } catch (error) {
+        showError(`Failed to save question: ${error.message}`);
+    }
+}
+
+function clearForm() {
+    document.getElementById('editingQuestionId').value = '';
+    document.getElementById('questionType').value = 'multiple';
+    document.getElementById('questionCategory').value = 'probability_stats';
+    document.getElementById('questionWeight').value = '1';
+    document.getElementById('questionText').value = '';
+    document.getElementById('optionA').value = '';
+    document.getElementById('optionB').value = '';
+    document.getElementById('optionC').value = '';
+    document.getElementById('optionD').value = '';
+    document.getElementById('correctAnswer').value = 'A';
+    document.getElementById('testCases').value = '';
+    document.getElementById('formTitle').textContent = 'Add New Question';
+    toggleQuestionTypeFields();
+}
+
+function editQuestion(questionId) {
+    const question = allQuestions.find(q => q.id === questionId);
+    if (!question) return showError('Question not found.');
+
+    document.getElementById('editingQuestionId').value = question.id;
+    document.getElementById('formTitle').textContent = `Editing Question...`;
+    document.getElementById('questionType').value = question.type;
+    document.getElementById('questionCategory').value = question.category;
+    document.getElementById('questionWeight').value = question.weight;
+    document.getElementById('questionText').value = question.text;
+
+    if (question.type === 'multiple') {
+        document.getElementById('optionA').value = question.options.A || '';
+        document.getElementById('optionB').value = question.options.B || '';
+        document.getElementById('optionC').value = question.options.C || '';
+        document.getElementById('optionD').value = question.options.D || '';
+        document.getElementById('correctAnswer').value = question.correctAnswer || 'A';
+    } else if (question.type === 'code') {
+        document.getElementById('testCases').value = question.test_cases || '';
+    }
+
+    toggleQuestionTypeFields();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function deleteQuestion(questionId) {
+    if (confirm(`Are you sure you want to delete question ID: ${questionId}?`)) {
+        try {
+            await deleteQuestionAPI(questionId);
+            showSuccess('Question deleted.');
+            allQuestions = allQuestions.filter(q => q.id !== questionId);
+            updateQuestionsList();
+        } catch (error) {
+            showError(`Failed to delete question: ${error.message}`);
+        }
+    }
+}
+
+async function resetToDefault() {
+    if (confirm('This will delete all custom questions and restore the default set. Are you sure?')) {
+        try {
+            await resetQuestionsAPI();
+            showSuccess('Questions have been reset.');
+            const data = await loadQuestions();
+            allQuestions = data.questions || [];
+            updateWelcomeStats();
+            updateQuestionsList();
+        } catch (error) {
+            showError(`Failed to reset questions: ${error.message}`);
+        }
+    }
+}
+
+function updateQuestionsList() {
+    const listEl = document.getElementById('questionsList');
+    const filter = document.getElementById('categoryFilter').value;
+    const filtered = allQuestions.filter(q => filter === 'all' || q.category === filter);
+
+    if (filtered.length === 0) {
+        listEl.innerHTML = `<div class="loading">No questions found.</div>`;
+        return;
+    }
+    const html = filtered.map(q => `
+        <div class="question-item">
+            <div class="question-header">
+                <strong>${q.type.charAt(0).toUpperCase() + q.type.slice(1)}: ${categoryNames[q.category] || q.category}</strong>
+                <span class="question-points">${q.weight} pt${q.weight > 1 ? 's' : ''}</span>
+            </div>
+            <p>${q.text.substring(0, 100)}${q.text.length > 100 ? '...' : ''}</p>
+            <div class="question-actions">
+                <button onclick="editQuestion('${q.id}')" data-i18n="editBtn">Edit</button>
+                <button onclick="deleteQuestion('${q.id}')" data-i18n="deleteBtn">Delete</button>
+            </div>
+        </div>
+    `).join('');
+    listEl.innerHTML = html;
+}
+
+const filterQuestions = () => updateQuestionsList();
+// =================================================================================
+// Test Taking Flow
+// =================================================================================
+
+// ... (startGeneralTest, renderQuestion, selectAnswer, nextQuestion, previousQuestion, updateProgress, startTimer functions remain unchanged) ...
+function startGeneralTest() {
+    userName = prompt("Пожалуйста, введите ваше полное имя для начала теста:");
+    if (!userName || userName.trim() === '') {
+        return showError("Необходимо ввести имя, чтобы начать тест.");
+    }
+    currentTest = [...allQuestions]; // Use all available questions
+    currentQuestionIndex = 0;
+    userAnswers = {};
+    timeLeft = TEST_DURATION_SECONDS;
+    testResultId = null;
+    showSection('test');
+    document.getElementById('submitTest').style.display = 'block';
+    renderQuestion();
+    startTimer();
+}
+
+function renderQuestion() {
+    const question = currentTest[currentQuestionIndex];
+    const container = document.getElementById('testQuestions');
+    let optionsHTML = '';
+
+    if (question.type === 'multiple') {
+        optionsHTML = `<div class="answer-options">` +
+            Object.entries(question.options).map(([key, value]) => `
+                <div class="answer-option ${userAnswers[question.id] === key ? 'selected' : ''}" onclick="selectAnswer('${question.id}', '${key}')">
+                    <input type="radio" name="q${question.id}" value="${key}" ${userAnswers[question.id] === key ? 'checked' : ''} style="display:none;">
+                    <strong>${key})</strong> <label>${value}</label>
+                </div>
+            `).join('') + `</div>`;
+    } else if (question.type === 'open' || question.type === 'code') {
+        optionsHTML = `
+            <textarea class="form-group" style="min-height: 200px;" oninput="selectAnswer('${question.id}', this.value)" 
+            placeholder="Введите ваш ${question.type === 'code' ? 'код или решение' : 'ответ'} здесь...">${userAnswers[question.id] || ''}</textarea>
+            ${question.type === 'code' && question.test_cases ? `<div class="test-cases"><strong>Тестовые случаи:</strong><pre>${question.test_cases}</pre></div>` : ''}
+        `;
+    }
+
+    container.innerHTML = `
+        <div class="question-card">
+            <div class="question-number">${currentQuestionIndex + 1}</div>
+            <p style="font-size: 1.2rem; font-weight: 500;">${question.text}</p>
+            ${optionsHTML}
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+            <button class="btn btn-secondary" onclick="previousQuestion()" ${currentQuestionIndex === 0 ? 'disabled' : ''}>Назад</button>
+            <button class="btn" onclick="nextQuestion()">${currentQuestionIndex === currentTest.length - 1 ? 'Завершить' : 'Далее'}</button>
+        </div>
+    `;
+    updateProgress();
+}
+
+function selectAnswer(questionId, answer) {
+    userAnswers[questionId] = answer;
+    const question = currentTest.find(q => q.id === questionId);
+    
+    if (question && question.type === 'multiple') {
+        renderQuestion();
+    }
+}
+
+const nextQuestion = () => {
+    if (currentQuestionIndex < currentTest.length - 1) {
+        currentQuestionIndex++;
+        renderQuestion();
+    } else {
+        submitTest();
+    }
+};
+
+const previousQuestion = () => {
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        renderQuestion();
+    }
+};
+
+const updateProgress = () => {
+    const answeredCount = Object.keys(userAnswers).length;
+    document.getElementById('progressFill').style.width = `${(answeredCount / currentTest.length) * 100}%`;
+};
+
+function startTimer() {
+    clearInterval(testTimer);
+    const timerEl = document.getElementById('timer');
+    testTimer = setInterval(() => {
+        timeLeft--;
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        if (timeLeft <= 0) {
+            clearInterval(testTimer);
+            showError('Время вышло! Ваш тест будет отправлен автоматически.');
+            submitTest();
+        }
+    }, 1000);
+}
+
+/**
+ * MODIFIED: This function now initializes scores for all question types correctly.
+ */
+async function submitTest() {
+    if (!confirm('Вы уверены, что хотите завершить и отправить тест?')) return;
+    clearInterval(testTimer);
+
+    let score = 0;
+    let hardSkillScore = 0;
+    let softSkillScore = 0;
+
+    const maxScore = allQuestions.reduce((sum, q) => sum + q.weight, 0);
+    const maxHardSkillScore = allQuestions.filter(q => hardSkillCategories.includes(q.category)).reduce((sum, q) => sum + q.weight, 0);
+    const maxSoftSkillScore = allQuestions.filter(q => softSkillCategories.includes(q.category)).reduce((sum, q) => sum + q.weight, 0);
+
+    const detailedAnswers = allQuestions.map(q => {
+        const userAnswer = userAnswers[q.id];
+        const isCorrect = q.type === 'multiple' && userAnswer === q.correctAnswer;
+        
+        if (isCorrect) {
+            score += q.weight;
+            if (hardSkillCategories.includes(q.category)) {
+                hardSkillScore += q.weight;
+            } else if (softSkillCategories.includes(q.category)) {
+                softSkillScore += q.weight;
+            }
+        }
+        
+        return { 
+            questionId: q.id, 
+            text: q.text, 
+            type: q.type, 
+            category: q.category, 
+            weight: q.weight,
+            userAnswer: userAnswer || null, 
+            correctAnswer: q.correctAnswer, 
+            isCorrect,
+            // For MCQs, points are awarded now. For open questions, they are 0 until graded.
+            pointsAwarded: isCorrect ? q.weight : 0 
+        };
+    });
+
+    const level = levels.find(l => score >= l.min && score <= l.max)?.name || 'N/A';
+    
+    const result = {
+        userName: userName.trim(),
+        timestamp: new Date().toISOString(),
+        score,
+        maxScore,
+        hardSkillScore,
+        maxHardSkillScore,
+        softSkillScore,
+        maxSoftSkillScore,
+        percentage: maxScore > 0 ? Math.round((score / maxScore) * 100) : 0,
+        level,
+        detailedAnswers,
+    };
+    
+    try {
+        const response = await submitTestResults(result);
+        testResultId = response.id;
+        showSuccess('Тест успешно отправлен!');
+        showResults(result);
+    } catch (error) {
+        showError('Не удалось отправить результаты теста. Проверьте ваше соединение.');
+    }
+}
+
+// =================================================================================
+// Results & Analytics
+// =================================================================================
+
+// ... (showResults function remains unchanged) ...
+function showResults(result) {
+    const grade = result.percentage >= 80 ? { text: 'Excellent', class: 'grade-excellent' }
+        : result.percentage >= 60 ? { text: 'Good', class: 'grade-good' }
+        : result.percentage >= 40 ? { text: 'Fair', class: 'grade-fair' }
+        : { text: 'Needs Improvement', class: 'grade-poor' };
+
+    const blockResults = result.detailedAnswers.reduce((acc, ans) => {
+        const cat = ans.category;
+        if (!acc[cat]) acc[cat] = { correct: 0, total: 0 };
+        if (ans.isCorrect) acc[cat].correct++;
+        acc[cat].total++;
+        return acc;
+    }, {});
+    
+    const openAnswersHTML = result.detailedAnswers
+        .filter(ans => ans.type === 'open' || ans.type === 'code')
+        .map(ans => `
+            <div class="detailed-answer-item">
+                <p><strong>Вопрос (${categoryNames[ans.category] || ans.category} | ${ans.weight} ${ans.weight > 1 ? 'балла' : 'балл'}):</strong> ${ans.text}</p>
+                <p class="user-answer"><strong>Ответ кандидата:</strong><pre>${ans.userAnswer || 'Нет ответа'}</pre></p>
+            </div>
+        `).join('');
+
+    const detailedAnswersHTML = result.detailedAnswers.map(ans => {
+        const correctnessClass = ans.isCorrect ? 'correct' : 'incorrect';
+        let answerDetails = '';
+
+        if (ans.type === 'multiple') {
+            const allOptions = allQuestions.find(q => q.id === ans.questionId)?.options || {};
+            const userAnswerText = ans.userAnswer ? `${ans.userAnswer}) ${allOptions[ans.userAnswer]}` : 'Нет ответа';
+            const correctAnswerText = `${ans.correctAnswer}) ${allOptions[ans.correctAnswer]}`;
+            answerDetails = `
+                <p class="user-answer"><strong>Ваш ответ:</strong> ${userAnswerText}</p>
+                ${!ans.isCorrect ? `<p class="correct-answer"><strong>Правильный ответ:</strong> ${correctAnswerText}</p>` : ''}
+            `;
+        } else {
+            answerDetails = `<p class="user-answer"><strong>Ваш ответ:</strong><pre>${ans.userAnswer || 'Нет ответа'}</pre></p>`;
+        }
+
+        return `
+            <div class="detailed-answer-item ${correctnessClass}">
+                <p><strong>Вопрос (${ans.weight} ${ans.weight > 1 ? 'балла' : 'балл'}):</strong> ${ans.text}</p>
+                ${answerDetails}
+            </div>
+        `;
+    }).join('');
+    
+    const scoreBreakdownHTML = `
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; text-align: center; margin-bottom: 20px; margin-top: 20px;">
+            <div class="result-block">
+                <h4>Hard Skills</h4>
+                <div class="score-display" style="font-size: 2.5rem; margin-bottom: 0;">${result.hardSkillScore} / ${result.maxHardSkillScore}</div>
+            </div>
+            <div class="result-block">
+                <h4>Soft Skills</h4>
+                <div class="score-display" style="font-size: 2.5rem; margin-bottom: 0;">${result.softSkillScore} / ${result.maxSoftSkillScore}</div>
+            </div>
+        </div>
+    `;
+
+    document.getElementById('resultsContent').innerHTML = `
+        <div class="results-summary">
+            <h3>${result.userName}</h3>
+            <div class="score-display">${result.score} / ${result.maxScore}</div>
+            <div class="grade-badge ${grade.class}">${result.percentage}% - ${result.level} (${grade.text})</div>
+        </div>
+        ${scoreBreakdownHTML}
+        <h4>Результаты по категориям:</h4>
+        <div class="detailed-results">
+            ${Object.entries(blockResults).map(([cat, res]) => `
+                <div class="result-block">
+                    <strong>${categoryNames[cat] || cat}:</strong> ${res.correct} / ${res.total} правильно
+                </div>
+            `).join('')}
+        </div>
+        <button id="showDetailsBtn" class="btn" style="margin: 30px auto; display: block;">Показать детальный разбор</button>
+        <div id="detailedReview" class="hidden">
+            <hr style="margin: 30px 0;">
+            <h3>Разбор для проверяющего</h3>
+            <h4>Открытые и практические вопросы:</h4>
+            <div>
+                ${openAnswersHTML.length > 0 ? openAnswersHTML : '<p>В этом тесте не было открытых или практических вопросов.</p>'}
+            </div>
+            <hr style="margin: 30px 0;">
+            <h4>Полный разбор ответов:</h4>
+            <div>${detailedAnswersHTML}</div>
+        </div>
+    `;
+
+    document.getElementById('showDetailsBtn').addEventListener('click', () => {
+        const pass = prompt('Введите пароль проверяющего для просмотра детального разбора:');
+        if (pass === ADMIN_PASSWORD) {
+            document.getElementById('detailedReview').classList.remove('hidden');
+            document.getElementById('showDetailsBtn').classList.add('hidden');
+        } else if (pass !== null) {
+            showError('Неверный пароль.');
+        }
+    });
+
+    showSection('results');
+}
+
+async function loadAnalyticsData() {
+    const content = document.getElementById('analyticsContent');
+    content.innerHTML = `<div class="loading">Загрузка аналитики...</div>`;
+    try {
+        const data = await loadAnalytics();
+        displayAnalytics(data);
+    } catch (error) {
+        content.innerHTML = `<p>Не удалось загрузить данные аналитики.</p>`;
+    }
+}
+
+function toggleDetails(id) {
+    const el = document.getElementById(`details-${id}`);
+    el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+/**
+ * NEW: This function handles grading open questions via the API.
+ */
+async function gradeOpenQuestion(resultId, questionId, maxPoints) {
+    const inputEl = document.getElementById(`grade-${resultId}-${questionId}`);
+    const points = parseFloat(inputEl.value);
+
+    if (isNaN(points) || points < 0 || points > maxPoints) {
+        showError(`Пожалуйста, введите корректную оценку от 0 до ${maxPoints}.`);
+        return;
+    }
+
+    try {
+        await gradeQuestionAPI(resultId, questionId, points);
+        showSuccess('Оценка сохранена! Результаты обновляются...');
+        loadAnalyticsData(); // Reload all analytics to show the updated score
+    } catch (error) {
+        showError(`Не удалось сохранить оценку: ${error.message}`);
+    }
+}
+
+/**
+ * REBUILT: This function now renders the new grading UI for supervisors
+ * and separates open questions into hard and soft skills.
+ */
+function displayAnalytics(data) {
+    const recentHTML = data.recentResults.map(r => {
+        // --- Supervisor Grading View ---
+        const openAnswers = r.detailedAnswers.filter(ans => ans.type === 'open' || ans.type === 'code');
+        const hardSkillOpenAnswers = openAnswers.filter(ans => hardSkillCategories.includes(ans.category));
+        const softSkillOpenAnswers = openAnswers.filter(ans => softSkillCategories.includes(ans.category));
+
+        const createGradingHTML = (answers) => {
+            if (answers.length === 0) return '<p>Нет вопросов в данной категории.</p>';
+            return answers.map(ans => `
+                <div class="detailed-answer-item">
+                    <p><strong>Вопрос (${categoryNames[ans.category] || ans.category} | ${ans.weight} ${ans.weight > 1 ? 'балла' : 'балл'}):</strong> ${ans.text}</p>
+                    <p class="user-answer"><strong>Ответ:</strong><pre>${ans.userAnswer || 'Нет ответа'}</pre></p>
+                    <div class="grading-box">
+                        <label for="grade-${r.id}-${ans.questionId}">Оценка (из ${ans.weight}):</label>
+                        <input type="number" id="grade-${r.id}-${ans.questionId}" min="0" max="${ans.weight}" step="0.5" value="${ans.pointsAwarded || 0}">
+                        <button class="btn btn-secondary" onclick="gradeOpenQuestion('${r.id}', '${ans.questionId}', ${ans.weight})">Сохранить</button>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        const supervisorViewHTML = `
+            <h4>Оценка Hard Skills (Открытые и практические вопросы)</h4>
+            ${createGradingHTML(hardSkillOpenAnswers)}
+            <hr style="margin: 20px 0;">
+            <h4>Оценка Soft Skills (Открытые вопросы)</h4>
+            ${createGradingHTML(softSkillOpenAnswers)}
+        `;
+        
+        // --- Full Detail View (for all answers) ---
+        const detailedAnswersHTML = r.detailedAnswers.map(ans => {
+            const correctnessClass = ans.isCorrect ? 'correct' : 'incorrect';
+            let answerDetails = '';
+            if (ans.type === 'multiple') {
+                const allOptions = allQuestions.find(q => q.id === ans.questionId)?.options || {};
+                const userAnswerText = ans.userAnswer ? `${ans.userAnswer}) ${allOptions[ans.userAnswer] || ''}` : 'Нет ответа';
+                const correctAnswerText = ans.correctAnswer ? `${ans.correctAnswer}) ${allOptions[ans.correctAnswer] || ''}` : '';
+                answerDetails = `
+                    <p class="user-answer"><strong>Выбранный ответ:</strong> ${userAnswerText}</p>
+                    ${!ans.isCorrect && ans.correctAnswer ? `<p class="correct-answer"><strong>Правильный ответ:</strong> ${correctAnswerText}</p>` : ''}
+                `;
+            } else {
+                answerDetails = `<p class="user-answer"><strong>Данный ответ:</strong><pre>${ans.userAnswer || 'Нет ответа'}</pre></p>`;
+            }
+            return `
+                <div class="detailed-answer-item ${correctnessClass}">
+                    <p><strong>Вопрос (${ans.weight} ${ans.weight > 1 ? 'балла' : 'балл'}):</strong> ${ans.text}</p>
+                    ${answerDetails}
+                </div>
+            `;
+        }).join('');
+
+        return `
+            <div class="result-block">
+                <strong>${r.userName}</strong>: ${r.score}/${r.maxScore} (${r.percentage}%) - ${r.level}
+                <div style="font-size: 0.9rem; color: #333; margin-top: 5px;">
+                    Hard: <strong>${r.hardSkillScore || 0}/${r.maxHardSkillScore || 0}</strong> | Soft: <strong>${r.softSkillScore || 0}/${r.maxSoftSkillScore || 0}</strong>
+                </div>
+                <div style="font-size: 0.8rem; color: #666; margin-bottom: 10px;">${new Date(r.timestamp).toLocaleString()}</div>
+                <button class="btn btn-secondary" onclick="toggleDetails('supervisor-${r.id}')" style="margin-right: 10px; margin-bottom: 5px;">Для проверяющего</button>
+                <button class="btn" onclick="toggleDetails('${r.id}')" style="margin-bottom: 5px;">Все детали</button>
+                <div id="details-supervisor-${r.id}" style="display:none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
+                    ${supervisorViewHTML}
+                </div>
+                <div id="details-${r.id}" style="display:none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
+                    <h4>Все ответы</h4>
+                    ${detailedAnswersHTML}
+                </div>
+            </div>
+        `;
+    }).join('') || '<p>Нет недавних результатов.</p>';
+
+    document.getElementById('analyticsContent').innerHTML = `
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+            <div class="result-block"><h4>Всего тестов</h4><div class="score-display">${data.totalTests}</div></div>
+            <div class="result-block"><h4>Ср. балл</h4><div class="score-display">${data.averageScore}%</div></div>
+            <div class="result-block"><h4>Ср. Hard Skills</h4><div class="score-display">${data.averageHardSkillScore}%</div></div>
+            <div class="result-block"><h4>Ср. Soft Skills</h4><div class="score-display">${data.averageSoftSkillScore}%</div></div>
+        </div>
+        <h3>Недавние результаты</h3>
+        <div class="detailed-results">
+            ${recentHTML}
+        </div>
+    `;
+}
+
+
+// =================================================================================
+// Initialization
+// =================================================================================
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('questionType').addEventListener('change', toggleQuestionTypeFields);
+    initializeApp();
+    const savedLanguage = localStorage.getItem('language') || 'ru'; // Default to Russian
+    setLanguage(savedLanguage);
+});
+
+async function initializeApp() {
+    setMode('candidate');
+    showSection('welcome');
+    try {
+        const data = await loadQuestions();
+        allQuestions = data.questions || [];
+        updateWelcomeStats();
+        
+        const categoryFilter = document.getElementById('categoryFilter');
+        categoryFilter.innerHTML = `<option value="all">Все категории</option>` + 
+            Object.entries(categoryNames).map(([val, name]) => `<option value="${val}">${name}</option>`).join('');
+    } catch (error) {
+        showError("Не удалось инициализировать приложение путем загрузки вопросов.");
+    }
+}
 
 
