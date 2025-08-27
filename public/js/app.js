@@ -3,8 +3,8 @@
 // =================================================================================
 
 const API_BASE_URL = '/api';
-const ADMIN_PASSWORD = 'botabotabotaspeed'; // Change this to a secure password!
-const TEST_DURATION_SECONDS = 3600; // 60 minutes
+const ADMIN_PASSWORD = 'admin12'; // Change this to a secure password!
+const TEST_DURATION_SECONDS = 2700; // 60 minutes
 
 // Global variables
 let currentMode = 'candidate';
@@ -31,6 +31,9 @@ const categoryNames = {
     soft_creativity: 'Soft Skills: Creativity',
     soft_documentation: 'Soft Skills: Documentation'
 };
+
+const hardSkillCategories = ['probability_stats', 'ml_algorithms', 'data_preparation', 'validation_metrics', 'coding'];
+const softSkillCategories = ['soft_communication', 'soft_teamwork', 'soft_selforg', 'soft_feedback', 'soft_creativity', 'soft_documentation'];
 
 const levels = [
     { name: 'Below Junior', min: 0, max: 5 },
@@ -559,16 +562,30 @@ function startTimer() {
     }, 1000);
 }
 
+/** [MODIFIED] Calculates hard and soft skill scores upon submission. */
 async function submitTest() {
     if (!confirm('Are you sure you want to finish and submit your test?')) return;
     clearInterval(testTimer);
 
     let score = 0;
+    let hardSkillScore = 0;
+    let softSkillScore = 0;
+
     const maxScore = allQuestions.reduce((sum, q) => sum + q.weight, 0);
+    const maxHardSkillScore = allQuestions.filter(q => hardSkillCategories.includes(q.category)).reduce((sum, q) => sum + q.weight, 0);
+    const maxSoftSkillScore = allQuestions.filter(q => softSkillCategories.includes(q.category)).reduce((sum, q) => sum + q.weight, 0);
+
     const detailedAnswers = allQuestions.map(q => {
         const userAnswer = userAnswers[q.id];
         const isCorrect = q.type === 'multiple' && userAnswer === q.correctAnswer;
-        if (isCorrect) score += q.weight;
+        if (isCorrect) {
+            score += q.weight;
+            if (hardSkillCategories.includes(q.category)) {
+                hardSkillScore += q.weight;
+            } else if (softSkillCategories.includes(q.category)) {
+                softSkillScore += q.weight;
+            }
+        }
         return { questionId: q.id, text: q.text, type: q.type, category: q.category, userAnswer: userAnswer || null, correctAnswer: q.correctAnswer, isCorrect };
     });
 
@@ -579,6 +596,10 @@ async function submitTest() {
         timestamp: new Date().toISOString(),
         score,
         maxScore,
+        hardSkillScore,
+        maxHardSkillScore,
+        softSkillScore,
+        maxSoftSkillScore,
         percentage: maxScore > 0 ? Math.round((score / maxScore) * 100) : 0,
         level,
         detailedAnswers,
@@ -598,7 +619,7 @@ async function submitTest() {
 // Results & Analytics
 // =================================================================================
 
-/** [MODIFIED] Displays results, hiding detailed answers behind a password prompt. */
+/** [MODIFIED] Displays results with a hard/soft skill score breakdown. */
 function showResults(result) {
     const grade = result.percentage >= 80 ? { text: 'Excellent', class: 'grade-excellent' }
         : result.percentage >= 60 ? { text: 'Good', class: 'grade-good' }
@@ -647,12 +668,26 @@ function showResults(result) {
         `;
     }).join('');
     
+    const scoreBreakdownHTML = `
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; text-align: center; margin-bottom: 20px; margin-top: 20px;">
+            <div class="result-block">
+                <h4>Hard Skills Score</h4>
+                <div class="score-display" style="font-size: 2.5rem; margin-bottom: 0;">${result.hardSkillScore} / ${result.maxHardSkillScore}</div>
+            </div>
+            <div class="result-block">
+                <h4>Soft Skills Score</h4>
+                <div class="score-display" style="font-size: 2.5rem; margin-bottom: 0;">${result.softSkillScore} / ${result.maxSoftSkillScore}</div>
+            </div>
+        </div>
+    `;
+
     document.getElementById('resultsContent').innerHTML = `
         <div class="results-summary">
             <h3>${result.userName}</h3>
             <div class="score-display">${result.score} / ${result.maxScore}</div>
             <div class="grade-badge ${grade.class}">${result.percentage}% - ${result.level} (${grade.text})</div>
         </div>
+        ${scoreBreakdownHTML}
         <h4>Breakdown by Category:</h4>
         <div class="detailed-results">
             ${Object.entries(blockResults).map(([cat, res]) => `
@@ -704,7 +739,7 @@ function toggleDetails(id) {
     el.style.display = el.style.display === 'none' ? 'block' : 'none';
 }
 
-/** [MODIFIED] Analytics view now includes a separate toggle for the Supervisor View. */
+/** [MODIFIED] Analytics view now shows hard/soft skill scores and averages. */
 function displayAnalytics(data) {
     const recentHTML = data.recentResults.map(r => {
         const openAnswersHTML = r.detailedAnswers
@@ -741,6 +776,9 @@ function displayAnalytics(data) {
         return `
             <div class="result-block">
                 <strong>${r.userName}</strong>: ${r.score}/${r.maxScore} (${r.percentage}%) - ${r.level}
+                <div style="font-size: 0.9rem; color: #333; margin-top: 5px;">
+                    Hard: <strong>${r.hardSkillScore || 0}/${r.maxHardSkillScore || 0}</strong> | Soft: <strong>${r.softSkillScore || 0}/${r.maxSoftSkillScore || 0}</strong>
+                </div>
                 <div style="font-size: 0.8rem; color: #666; margin-bottom: 10px;">${new Date(r.timestamp).toLocaleString()}</div>
                 <button class="btn btn-secondary" onclick="toggleDetails('supervisor-${r.id}')" style="margin-right: 10px; margin-bottom: 5px;">Supervisor View</button>
                 <button class="btn" onclick="toggleDetails('${r.id}')" style="margin-bottom: 5px;">Full Details</button>
@@ -757,10 +795,11 @@ function displayAnalytics(data) {
     }).join('') || '<p>No recent results found.</p>';
 
     document.getElementById('analyticsContent').innerHTML = `
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
             <div class="result-block"><h4>Total Tests</h4><div class="score-display">${data.totalTests}</div></div>
-            <div class="result-block"><h4>Average Score</h4><div class="score-display">${data.averageScore}%</div></div>
-            <div class="result-block"><h4>Pass Rate (>=60%)</h4><div class="score-display">${data.passRate}%</div></div>
+            <div class="result-block"><h4>Avg. Score</h4><div class="score-display">${data.averageScore}%</div></div>
+            <div class="result-block"><h4>Avg. Hard Skills</h4><div class="score-display">${data.averageHardSkillScore}%</div></div>
+            <div class="result-block"><h4>Avg. Soft Skills</h4><div class="score-display">${data.averageSoftSkillScore}%</div></div>
         </div>
         <h3>Recent Results</h3>
         <div class="detailed-results">
