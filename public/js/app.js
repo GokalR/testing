@@ -298,6 +298,8 @@ function showSection(sectionId) {
         updateQuestionsList();
     } else if (sectionId === 'analytics') {
         loadAnalyticsData();
+    } else if (sectionId === 'results' && currentMode === 'admin') {
+        loadAnalyticsData(); // For admin, show all in results too? But keep separate, or redirect to analytics
     }
 }
 
@@ -660,7 +662,47 @@ async function loadAnalyticsData() {
     }
 }
 
+function toggleDetails(id) {
+    const el = document.getElementById(`details-${id}`);
+    el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
 function displayAnalytics(data) {
+    const recentHTML = data.recentResults.map(r => {
+        const detailedAnswersHTML = r.detailedAnswers.map(ans => {
+            const correctnessClass = ans.isCorrect ? 'correct' : 'incorrect';
+            let answerDetails = '';
+            if (ans.type === 'multiple') {
+                const allOptions = allQuestions.find(q => q.id === ans.questionId)?.options || {};
+                const userAnswerText = ans.userAnswer ? `${ans.userAnswer}) ${allOptions[ans.userAnswer] || ''}` : 'Not answered';
+                const correctAnswerText = ans.correctAnswer ? `${ans.correctAnswer}) ${allOptions[ans.correctAnswer] || ''}` : '';
+                answerDetails = `
+                    <p class="user-answer"><strong>Selected answer:</strong> ${userAnswerText}</p>
+                    ${!ans.isCorrect && ans.correctAnswer ? `<p class="correct-answer"><strong>Correct answer:</strong> ${correctAnswerText}</p>` : ''}
+                `;
+            } else {
+                answerDetails = `<p class="user-answer"><strong>Provided answer:</strong><pre>${ans.userAnswer || 'Not answered'}</pre></p>`;
+            }
+            return `
+                <div class="detailed-answer-item ${correctnessClass}">
+                    <p><strong>Question:</strong> ${ans.text}</p>
+                    ${answerDetails}
+                </div>
+            `;
+        }).join('');
+
+        return `
+            <div class="result-block">
+                <strong>${r.userName}</strong>: ${r.score}/${r.maxScore} (${r.percentage}%) - ${r.level}
+                <div style="font-size: 0.8rem; color: #666;">${new Date(r.timestamp).toLocaleString()}</div>
+                <button class="btn" onclick="toggleDetails('${r.id}')">Toggle Details</button>
+                <div id="details-${r.id}" style="display:none;">
+                    ${detailedAnswersHTML}
+                </div>
+            </div>
+        `;
+    }).join('') || '<p>No recent results found.</p>';
+
     document.getElementById('analyticsContent').innerHTML = `
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
             <div class="result-block"><h4>Total Tests</h4><div class="score-display">${data.totalTests}</div></div>
@@ -669,11 +711,7 @@ function displayAnalytics(data) {
         </div>
         <h3>Recent Results</h3>
         <div class="detailed-results">
-        ${data.recentResults.map(r => `
-            <div class="result-block">
-                <strong>${r.userName}</strong>: ${r.score}/${r.maxScore} (${r.percentage}%) - ${r.level}
-                <div style="font-size: 0.8rem; color: #666;">${new Date(r.timestamp).toLocaleString()}</div>
-            </div>`).join('') || '<p>No recent results found.</p>'}
+            ${recentHTML}
         </div>
     `;
 }
@@ -704,4 +742,3 @@ async function initializeApp() {
         showError("Failed to initialize the application by loading questions.");
     }
 }
-
