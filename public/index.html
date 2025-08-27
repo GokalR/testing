@@ -5,7 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ML Engineer Testing Platform</title>
     <style>
-        /* CSS remains the same */
+        :root {
+            --primary-red: #d32f2f;
+            --primary-red-dark: #b71c1c;
+            --light-gray: #f4f7f9;
+            --medium-gray: #e9ecef;
+            --dark-gray: #6c757d;
+            --text-color: #333;
+            --white: #ffffff;
+            --success: #28a745;
+            --warning: #ffc107;
+            --info: #17a2b8;
+            --danger: #dc3545;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -15,7 +28,8 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            background: linear-gradient(135deg, #ff6b6b 0%, #d32f2f 100%);
+            background: var(--light-gray);
+            color: var(--text-color);
             min-height: 100vh;
         }
 
@@ -28,8 +42,12 @@
         .header {
             position: relative;
             text-align: center;
-            color: white;
+            color: var(--white);
+            background: var(--primary-red);
+            padding: 40px 20px;
+            border-radius: 0 0 20px 20px;
             margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(211, 47, 47, 0.2);
         }
 
         .header h1 {
@@ -39,9 +57,9 @@
         
         .lang-switcher {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(255, 255, 255, 0.2);
+            top: 15px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.15);
             border-radius: 20px;
             padding: 5px;
         }
@@ -49,11 +67,12 @@
         .lang-switcher button {
             background: none;
             border: none;
-            color: white;
+            color: var(--white);
             padding: 5px 10px;
             cursor: pointer;
             font-weight: bold;
             border-radius: 15px;
+            transition: background 0.3s ease;
         }
 
         .lang-switcher button.active {
@@ -68,22 +87,22 @@
         }
 
         .mode-btn {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: var(--white);
+            color: var(--primary-red);
+            border: 2px solid var(--primary-red);
             padding: 15px 30px;
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
             font-size: 16px;
             font-weight: 600;
         }
 
         .mode-btn:hover, .mode-btn.active {
-            background: rgba(255, 255, 255, 0.3);
-            border-color: rgba(255, 255, 255, 0.5);
+            background: var(--primary-red);
+            color: var(--white);
             transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(211, 47, 47, 0.2);
         }
 
         .navigation {
@@ -94,28 +113,32 @@
         }
 
         .nav-btn {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: transparent;
+            color: var(--dark-gray);
+            border: 2px solid var(--medium-gray);
             padding: 12px 24px;
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
+            font-weight: 500;
         }
 
-        .nav-btn:hover, .nav-btn.active {
-            background: rgba(255, 255, 255, 0.3);
-            border-color: rgba(255, 255, 255, 0.5);
-            transform: translateY(-2px);
+        .nav-btn:hover {
+            border-color: var(--primary-red);
+            color: var(--primary-red);
+        }
+        
+        .nav-btn.active {
+            background: var(--primary-red);
+            border-color: var(--primary-red);
+            color: var(--white);
         }
 
         .content-section {
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--white);
             border-radius: 20px;
             padding: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
             display: none;
         }
 
@@ -129,181 +152,10 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Question editor styles */
-        .question-form {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 15px;
-            border: 2px solid #e9ecef;
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e9ecef;
-            border-radius: 10px;
-            font-size: 14px;
-        }
-
-        .form-group textarea {
-            resize: vertical;
-        }
-
-        .questions-list {
-            max-height: 500px;
-            overflow-y: auto;
-            border: 2px solid #e9ecef;
-            border-radius: 10px;
-            padding: 15px;
-        }
-
-        .question-item {
-            background: white;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 10px;
-            border: 1px solid #e9ecef;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        .question-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .question-points {
-            background: #d32f2f;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .question-actions button {
-            background: #17a2b8;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-right: 5px;
-            font-size: 12px;
-        }
-        
-        [data-i18n="editBtn"] { background: #17a2b8 !important; }
-        [data-i18n="deleteBtn"] { background: #dc3545 !important; }
-
-
-        .question-actions button:last-child {
-            background: #dc3545;
-        }
-
-        /* Test styles */
-        .test-header {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .timer {
-            background: #ff6b6b;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-weight: 600;
-            font-size: 18px;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #e9ecef;
-            border-radius: 4px;
-            margin: 20px 0;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(45deg, #ff6b6b, #d32f2f);
-            transition: width 0.3s ease;
-        }
-
-        .question-card {
-            background: white;
-            border: 2px solid #e9ecef;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .question-number {
-            background: #d32f2f;
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        .answer-options {
-            display: grid;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .answer-option {
-            padding: 15px;
-            border: 2px solid #e9ecef;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-        }
-
-        .answer-option:hover {
-            border-color: #ff6b6b;
-            background: #fff5f5;
-        }
-
-        .answer-option.selected {
-            border-color: #d32f2f;
-            background: #d32f2f;
-            color: white;
-        }
-
-        .answer-option input[type="radio"] {
-            margin-right: 15px;
-        }
-
+        /* Generic styles */
         .btn {
-            background: linear-gradient(45deg, #ff6b6b, #d32f2f);
-            color: white;
+            background: var(--primary-red);
+            color: var(--white);
             border: none;
             padding: 12px 24px;
             border-radius: 25px;
@@ -311,173 +163,114 @@
             font-size: 14px;
             font-weight: 600;
             transition: all 0.3s ease;
+            border: 2px solid var(--primary-red);
         }
 
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(211, 47, 47, 0.3);
+            background: var(--primary-red-dark);
+            border-color: var(--primary-red-dark);
         }
 
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
+            box-shadow: none;
         }
 
         .btn-secondary {
-            background: #6c757d;
+            background: var(--dark-gray);
+            border-color: var(--dark-gray);
         }
+        .btn-secondary:hover { background: #5a6268; border-color: #5a6268; }
 
         .btn-warning {
-            background: #ffc107;
-            color: #000;
+            background: var(--warning);
+            border-color: var(--warning);
+            color: var(--text-color);
         }
+        .btn-warning:hover { background: #e0a800; border-color: #e0a800; }
 
-        /* Results styles */
-        .results-summary {
-            background: #f8f9fa;
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            text-align: center;
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-color); }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 12px; border: 2px solid var(--medium-gray);
+            border-radius: 10px; font-size: 14px; transition: border-color 0.3s ease;
         }
-
-        .score-display {
-            font-size: 3rem;
-            font-weight: 700;
-            color: #d32f2f;
-            margin-bottom: 15px;
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none; border-color: var(--primary-red);
         }
+        .form-group textarea { resize: vertical; }
 
-        .grade-badge {
-            padding: 10px 25px;
-            border-radius: 25px;
-            font-weight: 600;
-            color: white;
-            font-size: 1.2rem;
-            margin: 20px 0;
-            display: inline-block;
+        .hidden { display: none !important; }
+        .loading { text-align: center; padding: 40px; color: var(--dark-gray); }
+
+        /* Question editor */
+        .question-form { background: var(--light-gray); padding: 25px; border-radius: 15px; border: 1px solid var(--medium-gray); margin-bottom: 20px; }
+        .questions-list { max-height: 500px; overflow-y: auto; padding: 10px; }
+        .question-item { background: var(--white); padding: 15px; margin-bottom: 10px; border-radius: 10px; border: 1px solid var(--medium-gray); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .question-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .question-points { background: var(--primary-red); color: var(--white); padding: 4px 12px; border-radius: 15px; font-size: 12px; font-weight: 600; }
+        .question-actions button {
+            color: var(--white); border: none; padding: 5px 10px;
+            border-radius: 5px; cursor: pointer; margin-right: 5px; font-size: 12px;
         }
+        [data-i18n="editBtn"] { background: var(--info) !important; }
+        [data-i18n="deleteBtn"] { background: var(--danger) !important; }
 
-        .grade-excellent { background: #28a745; }
-        .grade-good { background: #17a2b8; }
-        .grade-fair { background: #ffc107; color: #000; }
-        .grade-poor { background: #dc3545; }
+        /* Test styles */
+        .test-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .timer { background: var(--primary-red); color: var(--white); padding: 10px 20px; border-radius: 25px; font-weight: 600; font-size: 18px; }
+        .progress-bar { width: 100%; height: 8px; background: var(--medium-gray); border-radius: 4px; margin: 20px 0; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--primary-red); transition: width 0.3s ease; }
+        .question-card { background: var(--white); border-radius: 15px; padding: 30px; margin-bottom: 30px; }
+        .question-number { background: var(--primary-red); color: var(--white); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; margin-bottom: 15px; }
+        .answer-options { display: grid; gap: 15px; margin-top: 20px; }
+        .answer-option { padding: 15px; border: 2px solid var(--medium-gray); border-radius: 10px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; }
+        .answer-option:hover { border-color: var(--primary-red); background: #fff5f5; }
+        .answer-option.selected { border-color: var(--primary-red); background: var(--primary-red); color: var(--white); }
+        .answer-option input[type="radio"] { margin-right: 15px; }
 
-        .detailed-results {
-            display: grid;
-            gap: 20px;
+        /* Results & Analytics */
+        .results-summary { text-align: center; margin-bottom: 30px; }
+        .score-display { font-size: 3rem; font-weight: 700; color: var(--primary-red); margin-bottom: 15px; }
+        .grade-badge { padding: 10px 25px; border-radius: 25px; font-weight: 600; color: var(--white); font-size: 1.2rem; margin: 20px 0; display: inline-block; }
+        .grade-excellent { background: var(--success); }
+        .grade-good { background: var(--info); }
+        .grade-fair { background: var(--warning); color: var(--text-color); }
+        .grade-poor { background: var(--danger); }
+        .detailed-results { display: grid; gap: 20px; }
+        .result-block { background: var(--white); padding: 20px; border-radius: 10px; border-left: 4px solid var(--primary-red); border: 1px solid var(--medium-gray); }
+        .detailed-answer-item { border: 1px solid #e0e0e0; border-radius: 8px; margin-bottom: 15px; padding: 15px; }
+        .detailed-answer-item.correct { border-left: 5px solid var(--success); }
+        .detailed-answer-item.incorrect { border-left: 5px solid var(--danger); }
+        .user-answer { background: #fff3cd; padding: 8px; border-radius: 5px; }
+        .correct-answer { background: #d4edda; padding: 8px; border-radius: 5px; }
+
+        /* Notifications */
+        .error, .success {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1000;
+            width: 90%; max-width: 600px; padding: 15px; border-radius: 10px;
+            margin: 0; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
-
-        .result-block {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            border-left: 4px solid #d32f2f;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-        }
-
-        .error {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1000;
-            width: 90%;
-            max-width: 600px;
-            background: #f8d7da;
-            color: #721c24;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 0;
-            border: 1px solid #f5c6cb;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .success {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1000;
-            width: 90%;
-            max-width: 600px;
-            background: #d4edda;
-            color: #155724;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 0;
-            border: 1px solid #c3e6cb;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
         
-        .detailed-answer-item {
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            padding: 15px;
-        }
-        .detailed-answer-item.correct {
-            border-left: 5px solid #28a745;
-        }
-        .detailed-answer-item.incorrect {
-            border-left: 5px solid #dc3545;
-        }
-        .detailed-answer-item p {
-            margin: 0 0 10px;
-        }
-        .user-answer {
-            background: #fff3cd;
-            padding: 8px;
-            border-radius: 5px;
-        }
-        .correct-answer {
-            background: #d4edda;
-            padding: 8px;
-            border-radius: 5px;
-        }
-
-
         @media (max-width: 768px) {
-            .mode-selector {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .navigation {
-                flex-wrap: wrap;
-            }
-            
-            .test-header {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .question-form {
-                padding: 15px;
-            }
-
-            .container {
-                padding: 10px;
-            }
+            .mode-selector, .test-header { flex-direction: column; align-items: center; }
+            .navigation { flex-wrap: wrap; }
+            .container { padding: 10px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header, Mode Selector, Navigation... (remains the same) -->
         <div class="header">
             <h1><img src="/img/logo.png" alt="Logo" style="height: 40px; vertical-align: middle; margin-right: 15px;"> 
-            <span data-i18n="mainTitle">ML Engineer Testing Platform</span></h1>            <p data-i18n="mainSubtitle">Comprehensive evaluation system for Machine Learning professionals</p>
+            <span data-i18n="mainTitle">ML Engineer Testing Platform</span></h1>
+            <p data-i18n="mainSubtitle">Comprehensive evaluation system for Machine Learning professionals</p>
             <div class="lang-switcher">
                 <button id="lang-en" onclick="setLanguage('en')">EN</button>
                 <button id="lang-ru" onclick="setLanguage('ru')">RU</button>
@@ -497,15 +290,15 @@
 
         <!-- Admin Navigation -->
         <div id="adminNavigation" class="navigation hidden">
-            <button class="nav-btn active" onclick="showSection('welcome')" data-i18n="navStartTest">Start Test</button>
+            <button class="nav-btn" onclick="showSection('welcome')" data-i18n="navStartTest">Start Test</button>
             <button class="nav-btn" onclick="showSection('questionEditor')" data-i18n="navEditQuestions">Edit Questions</button>
             <button class="nav-btn" onclick="showSection('results')" data-i18n="navResults">Results</button>
-            <button class="nav-btn" onclick="showSection('analytics')" data-i18n="navAnalytics">Analytics</button>
+            <button class="nav-btn active" onclick="showSection('analytics')" data-i18n="navAnalytics">Analytics</button>
         </div>
 
         <!-- Welcome Section -->
-        <div id="welcome" class="content-section active">
-            <div style="text-align: center; max-width: 800px; margin: 0 auto;">
+        <div id="welcome" class="content-section">
+             <div style="text-align: center; max-width: 800px; margin: 0 auto;">
                 <h2 data-i18n="welcomeTitle">Machine Learning Engineer Assessment</h2>
                 <p style="font-size: 1.2rem; margin: 30px 0; color: #666;" data-i18n="welcomeSubtitle">
                     Comprehensive evaluation covering all essential ML engineering skills
@@ -516,30 +309,30 @@
                     
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 20px 0;">
                         <div style="text-align: center;">
-                            <div style="font-size: 2rem; font-weight: 700; color: #d32f2f;" id="totalQuestions">--</div>
+                            <div style="font-size: 2rem; font-weight: 700; color: var(--primary-red);" id="totalQuestions">--</div>
                             <div style="color: #666;" data-i18n="overviewQuestions">Questions</div>
                         </div>
                         <div style="text-align: center;">
-                            <div style="font-size: 2rem; font-weight: 700; color: #d32f2f;">60</div>
+                            <div style="font-size: 2rem; font-weight: 700; color: var(--primary-red);">60</div>
                             <div style="color: #666;" data-i18n="overviewMinutes">Minutes</div>
                         </div>
                         <div style="text-align: center;">
-                            <div style="font-size: 2rem; font-weight: 700; color: #d32f2f;" id="totalPoints">--</div>
+                            <div style="font-size: 2rem; font-weight: 700; color: var(--primary-red);" id="totalPoints">--</div>
                             <div style="color: #666;" data-i18n="overviewPoints">Total Points</div>
                         </div>
                     </div>
                 </div>
                 
-                <div style="background: white; padding: 25px; border-radius: 15px; margin: 30px 0; text-align: left; border: 2px solid #e9ecef;">
+                <div style="background: white; padding: 25px; border-radius: 15px; margin: 30px 0; text-align: left; border: 1px solid var(--medium-gray);">
                     <h4 style="color: #333; margin-bottom: 15px;" data-i18n="coverageTitle">Coverage Areas:</h4>
-                    <ul style="color: #666; line-height: 1.8;" id="coverageAreas">
+                    <ul style="color: #666; line-height: 1.8; list-style-position: inside;" id="coverageAreas">
                         <li data-i18n="loadingCoverage">Loading test information...</li>
                     </ul>
                 </div>
                 
-                <div style="background: #fff3cd; padding: 20px; border-radius: 10px; margin: 30px 0; border-left: 4px solid #ffc107;">
+                <div style="background: #fff3cd; padding: 20px; border-radius: 10px; margin: 30px 0; border-left: 4px solid var(--warning);">
                     <h4 style="color: #856404; margin-bottom: 10px;" data-i18n="instructionsTitle">Instructions:</h4>
-                    <ul id="instructionsList" style="color: #856404; text-align: left; line-height: 1.6;">
+                    <ul id="instructionsList" style="color: #856404; text-align: left; line-height: 1.6; list-style-position: inside;">
                         <li data-i18n="instruction1">You have 60 minutes to complete all questions</li>
                         <li data-i18n="instruction2">Each question has one correct answer</li>
                         <li data-i18n="instruction3">You can navigate between questions and change answers</li>
@@ -551,162 +344,68 @@
                 <button class="btn" onclick="startGeneralTest()" style="font-size: 1.2rem; padding: 15px 40px; margin-top: 20px;" data-i18n="beginAssessment">
                     Begin Assessment
                 </button>
-                <button id="allowRetakeBtn" class="btn btn-warning hidden" onclick="allowRetake()" style="font-size: 1.2rem; padding: 15px 40px; margin-top: 10px;" data-i18n="allowRetake">
-                    Allow Retake for This User
-                </button>
             </div>
         </div>
+        
         <!-- Question Editor Section -->
         <div id="questionEditor" class="content-section">
             <h2 data-i18n="qEditorTitle">Question Management</h2>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px;">
                 <div class="question-form">
                     <h3 id="formTitle" data-i18n="qEditorAddTitle">Add New Question</h3>
                     <input type="hidden" id="editingQuestionId">
-
-                    <div class="form-group">
-                        <label for="questionType" data-i18n="qEditorType">Question Type:</label>
-                        <select id="questionType">
-                            <option value="multiple">Multiple Choice</option>
-                            <option value="open">Open Ended</option>
-                            <option value="code">Coding Task</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="questionCategory" data-i18n="qEditorCategory">Category:</label>
-                        <select id="questionCategory">
-                            <option value="probability_stats">Probability & Statistics</option>
-                            <option value="ml_algorithms">ML Algorithms</option>
-                            <option value="data_preparation">Data Preparation</option>
-                            <option value="validation_metrics">Validation & Metrics</option>
-                            <option value="coding">Coding</option>
-                            <option value="soft_communication">Soft Skills: Communication</option>
-                            <option value="soft_teamwork">Soft Skills: Teamwork</option>
-                            <option value="soft_selforg">Soft Skills: Self-Organization</option>
-                            <option value="soft_feedback">Soft Skills: Feedback</option>
-                            <option value="soft_creativity">Soft Skills: Creativity</option>
-                            <option value="soft_documentation">Soft Skills: Documentation</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="questionWeight" data-i18n="qEditorWeight">Weight (Points):</label>
-                        <input type="number" id="questionWeight" value="1" min="1" max="10">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="questionText" data-i18n="qEditorText">Question Text:</label>
-                        <textarea id="questionText" rows="4" placeholder="Enter your question here..."></textarea>
-                    </div>
-
+                     <div class="form-group"><label for="questionType" data-i18n="qEditorType">Question Type:</label><select id="questionType"><option value="multiple">Multiple Choice</option><option value="open">Open Ended</option><option value="code">Coding Task</option></select></div>
+                    <div class="form-group"><label for="questionCategory" data-i18n="qEditorCategory">Category:</label><select id="questionCategory"><option value="probability_stats">Probability & Statistics</option><option value="ml_algorithms">ML Algorithms</option><option value="data_preparation">Data Preparation</option><option value="validation_metrics">Validation & Metrics</option><option value="coding">Coding</option><option value="soft_communication">Soft Skills: Communication</option><option value="soft_teamwork">Soft Skills: Teamwork</option><option value="soft_selforg">Soft Skills: Self-Organization</option><option value="soft_feedback">Soft Skills: Feedback</option><option value="soft_creativity">Soft Skills: Creativity</option><option value="soft_documentation">Soft Skills: Documentation</option></select></div>
+                    <div class="form-group"><label for="questionWeight" data-i18n="qEditorWeight">Weight (Points):</label><input type="number" id="questionWeight" value="1" min="1" max="10"></div>
+                    <div class="form-group"><label for="questionText" data-i18n="qEditorText">Question Text:</label><textarea id="questionText" rows="4" placeholder="Enter your question here..."></textarea></div>
                     <div id="multipleChoiceFields">
-                        <div class="form-group">
-                            <label for="optionA" data-i18n="qEditorOptA">Option A:</label>
-                            <input type="text" id="optionA" placeholder="Option A">
-                        </div>
-                        <div class="form-group">
-                            <label for="optionB" data-i18n="qEditorOptB">Option B:</label>
-                            <input type="text" id="optionB" placeholder="Option B">
-                        </div>
-                        <div class="form-group">
-                            <label for="optionC" data-i18n="qEditorOptC">Option C:</label>
-                            <input type="text" id="optionC" placeholder="Option C">
-                        </div>
-                        <div class="form-group">
-                            <label for="optionD" data-i18n="qEditorOptD">Option D:</label>
-                            <input type="text" id="optionD" placeholder="Option D">
-                        </div>
-                        <div class="form-group">
-                            <label for="correctAnswer" data-i18n="qEditorCorrect">Correct Answer:</label>
-                            <select id="correctAnswer">
-                                <option value="A">A</option>
-                                <option value="B">B</option>
-                                <option value="C">C</option>
-                                <option value="D">D</option>
-                            </select>
-                        </div>
+                        <div class="form-group"><label for="optionA" data-i18n="qEditorOptA">Option A:</label><input type="text" id="optionA" placeholder="Option A"></div>
+                        <div class="form-group"><label for="optionB" data-i18n="qEditorOptB">Option B:</label><input type="text" id="optionB" placeholder="Option B"></div>
+                        <div class="form-group"><label for="optionC" data-i18n="qEditorOptC">Option C:</label><input type="text" id="optionC" placeholder="Option C"></div>
+                        <div class="form-group"><label for="optionD" data-i18n="qEditorOptD">Option D:</label><input type="text" id="optionD" placeholder="Option D"></div>
+                        <div class="form-group"><label for="correctAnswer" data-i18n="qEditorCorrect">Correct Answer:</label><select id="correctAnswer"><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
                     </div>
-
-                    <div id="codingFields" class="hidden">
-                        <div class="form-group">
-                            <label for="testCases" data-i18n="qEditorTestCases">Test Cases:</label>
-                            <textarea id="testCases" rows="3" placeholder="Describe the test cases for this coding task..."></textarea>
-                        </div>
-                    </div>
-
+                    <div id="codingFields" class="hidden"><div class="form-group"><label for="testCases" data-i18n="qEditorTestCases">Test Cases:</label><textarea id="testCases" rows="3" placeholder="Describe the test cases for this coding task..."></textarea></div></div>
                     <button class="btn" onclick="addOrUpdateQuestion()" style="width: 100%; margin-bottom: 10px;" data-i18n="qEditorAddBtn">Save Question</button>
                     <button class="btn btn-secondary" onclick="clearForm()" style="width: 100%;">Clear & New</button>
                 </div>
-
-                <!-- Question Bank (remains the same) -->
-                <div class="question-form">
+                 <div class="question-form">
                     <h3 data-i18n="qBankTitle">Question Bank</h3>
-                    
-                    <div class="form-group">
-                        <label data-i18n="qBankFilter">Filter by Category:</label>
-                        <select onchange="filterQuestions(this.value)" id="categoryFilter">
-                            <option value="all" data-i18n="qBankAllCat">All Categories</option>
-                            <!-- Options will be populated by JS -->
-                        </select>
-                    </div>
-                    
-                    <div id="questionsList" class="questions-list">
-                        <div class="loading" data-i18n="loadingQuestions">Loading questions...</div>
-                    </div>
-                    
-                    <div style="margin-top: 20px; text-align: center;">
-                        <button class="btn" onclick="exportQuestions()" data-i18n="qBankExport">Export Questions</button>
-                        <button class="btn" onclick="document.getElementById('importFile').click()" style="margin-left: 10px;" data-i18n="qBankImport">Import Questions</button>
-                        <button class="btn btn-warning" onclick="resetToDefault()" style="margin-left: 10px;" data-i18n="qBankReset">Reset to Default</button>
+                    <div class="form-group"><label data-i18n="qBankFilter">Filter by Category:</label><select onchange="filterQuestions()" id="categoryFilter"><option value="all" data-i18n="qBankAllCat">All Categories</option></select></div>
+                    <div id="questionsList" class="questions-list"><div class="loading" data-i18n="loadingQuestions">Loading questions...</div></div>
+                    <div style="margin-top: 20px; text-align: center; display:flex; gap: 10px;">
+                        <button class="btn" onclick="exportQuestions()" data-i18n="qBankExport" style="flex:1;">Export</button>
+                        <button class="btn" onclick="document.getElementById('importFile').click()" data-i18n="qBankImport" style="flex:1;">Import</button>
+                        <button class="btn btn-warning" onclick="resetToDefault()" data-i18n="qBankReset" style="flex:1;">Reset</button>
                         <input type="file" id="importFile" style="display: none;" accept=".json" onchange="importQuestions(event)">
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Other sections (Test, Results, Analytics) remain the same -->
+        <!-- Test Section -->
         <div id="test" class="content-section">
             <div class="test-header">
-                <div>
-                    <h2 id="testTitle" data-i18n="testTitle">Machine Learning Engineer Assessment</h2>
-                    <p id="testDescription" data-i18n="testSubtitle">Answer all questions within the time limit</p>
-                </div>
+                <div><h2 id="testTitle" data-i18n="testTitle">Machine Learning Engineer Assessment</h2><p id="testDescription" data-i18n="testSubtitle">Answer all questions within the time limit</p></div>
                 <div class="timer" id="timer">60:00</div>
             </div>
-            
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-            </div>
-            
-            <div id="testQuestions">
-                <p data-i18n="testStartFromWelcome">Please start the test from the welcome section.</p>
-            </div>
-            
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 0%"></div></div>
+            <div id="testQuestions"><p data-i18n="testStartFromWelcome">Please start the test from the welcome section.</p></div>
             <button class="btn" id="submitTest" onclick="submitTest()" style="display: none;" data-i18n="submitTestBtn">Submit Test</button>
         </div>
 
         <!-- Results Section -->
         <div id="results" class="content-section">
             <h2 data-i18n="resultsTitle">Test Results</h2>
-            
-            <div id="resultsContent">
-                <p data-i18n="resultsCompleteTest">Complete a test to see your results here.</p>
-            </div>
+            <div id="resultsContent"><p data-i18n="resultsCompleteTest">Complete a test to see your results here.</p></div>
         </div>
 
         <!-- Analytics Section -->
         <div id="analytics" class="content-section">
             <h2 data-i18n="analyticsTitle">Performance Analytics</h2>
-            <div id="analyticsContent">
-                <div class="loading" data-i18n="loadingAnalytics">Loading analytics data...</div>
-            </div>
+            <div id="analyticsContent"><div class="loading" data-i18n="loadingAnalytics">Loading analytics data...</div></div>
         </div>
     </div>
-
-    <!-- The reference to app.js can be removed if you bundle, but for this structure it is fine -->
     <script src="js/app.js"></script>
 </body>
 </html>
-
-
