@@ -42,6 +42,143 @@ const levels = [
     { name: 'Head of', min: 105, max: Infinity }
 ];
 
+const translations = {
+    en: {
+        mainTitle: "🧠 ML Engineer Testing Platform",
+        mainSubtitle: "Comprehensive evaluation system for Machine Learning professionals",
+        candidateMode: "Candidate Mode",
+        adminMode: "Administrator Mode",
+        navStartTest: "Start Test",
+        navResults: "Results",
+        navEditQuestions: "Edit Questions",
+        navAnalytics: "Analytics",
+        welcomeTitle: "Machine Learning Engineer Assessment",
+        welcomeSubtitle: "Comprehensive evaluation covering all essential ML engineering skills",
+        overviewTitle: "Test Overview",
+        overviewQuestions: "Questions",
+        overviewMinutes: "Minutes",
+        overviewPoints: "Total Points",
+        coverageTitle: "Coverage Areas:",
+        loadingCoverage: "Loading test information...",
+        instructionsTitle: "Instructions:",
+        instruction1: "You have 60 minutes to complete all questions",
+        instruction2: "Each question has one correct answer",
+        instruction3: "You can navigate between questions and change answers",
+        instruction4: "Questions are weighted by difficulty (1, 3, or 5 points)",
+        instruction5: "Your progress will be automatically saved",
+        beginAssessment: "Begin Assessment",
+        allowRetake: "Allow Retake for This User",
+        qEditorTitle: "Question Management",
+        qEditorAddTitle: "Add New Question",
+        qEditorType: "Question Type:",
+        qEditorCategory: "Category:",
+        qEditorWeight: "Weight (Points):",
+        qEditorText: "Question Text:",
+        qEditorOptA: "Option A:",
+        qEditorOptB: "Option B:",
+        qEditorOptC: "Option C:",
+        qEditorOptD: "Option D:",
+        qEditorCorrect: "Correct Answer:",
+        qEditorTestCases: "Test Cases:",
+        qEditorAddBtn: "Save Question",
+        qBankTitle: "Question Bank",
+        qBankFilter: "Filter by Category:",
+        qBankAllCat: "All Categories",
+        loadingQuestions: "Loading questions...",
+        qBankExport: "Export Questions",
+        qBankImport: "Import Questions",
+        qBankReset: "Reset to Default",
+        testTitle: "Machine Learning Engineer Assessment",
+        testSubtitle: "Answer all questions within the time limit",
+        testStartFromWelcome: "Please start the test from the welcome section.",
+        submitTestBtn: "Submit Test",
+        resultsTitle: "Test Results",
+        resultsCompleteTest: "Complete a test to see your results here.",
+        analyticsTitle: "Performance Analytics",
+        loadingAnalytics: "Loading analytics data...",
+        editBtn: "Edit",
+        deleteBtn: "Delete"
+    },
+    ru: {
+        mainTitle: "🧠 Платформа для тестирования ML-инженеров",
+        mainSubtitle: "Комплексная система оценки для специалистов по машинному обучению",
+        candidateMode: "Режим кандидата",
+        adminMode: "Режим администратора",
+        navStartTest: "Начать тест",
+        navResults: "Результаты",
+        navEditQuestions: "Редактировать вопросы",
+        navAnalytics: "Аналитика",
+        welcomeTitle: "Оценка инженера по машинному обучению",
+        welcomeSubtitle: "Комплексная оценка, охватывающая все основные навыки ML-инженера",
+        overviewTitle: "Обзор теста",
+        overviewQuestions: "Вопросы",
+        overviewMinutes: "Минуты",
+        overviewPoints: "Всего баллов",
+        coverageTitle: "Охватываемые области:",
+        loadingCoverage: "Загрузка информации о тесте...",
+        instructionsTitle: "Инструкции:",
+        instruction1: "У вас есть 60 минут, чтобы ответить на все вопросы",
+        instruction2: "У каждого вопроса один правильный ответ",
+        instruction3: "Вы можете переключаться между вопросами и изменять ответы",
+        instruction4: "Вопросы оцениваются по сложности (1, 3 или 5 баллов)",
+        instruction5: "Ваш прогресс будет автоматически сохранен",
+        beginAssessment: "Начать оценку",
+        allowRetake: "Разрешить пересдачу для этого пользователя",
+        qEditorTitle: "Управление вопросами",
+        qEditorAddTitle: "Добавить новый вопрос",
+        qEditorType: "Тип вопроса:",
+        qEditorCategory: "Категория:",
+        qEditorWeight: "Вес (баллы):",
+        qEditorText: "Текст вопроса:",
+        qEditorOptA: "Вариант A:",
+        qEditorOptB: "Вариант B:",
+        qEditorOptC: "Вариант C:",
+        qEditorOptD: "Вариант D:",
+        qEditorCorrect: "Правильный ответ:",
+        qEditorTestCases: "Тестовые случаи:",
+        qEditorAddBtn: "Сохранить вопрос",
+        qBankTitle: "Банк вопросов",
+        qBankFilter: "Фильтр по категориям:",
+        qBankAllCat: "Все категории",
+        loadingQuestions: "Загрузка вопросов...",
+        qBankExport: "Экспорт вопросов",
+        qBankImport: "Импорт вопросов",
+        qBankReset: "Сбросить по умолчанию",
+        testTitle: "Оценка инженера по машинному обучению",
+        testSubtitle: "Ответьте на все вопросы в течение установленного времени",
+        testStartFromWelcome: "Пожалуйста, начните тест из раздела приветствия.",
+        submitTestBtn: "Отправить тест",
+        resultsTitle: "Результаты теста",
+        resultsCompleteTest: "Завершите тест, чтобы увидеть здесь свои результаты.",
+        analyticsTitle: "Аналитика производительности",
+        loadingAnalytics: "Загрузка данных аналитики...",
+        editBtn: "Ред.",
+        deleteBtn: "Удал."
+    }
+};
+
+
+// =================================================================================
+// Language Functions
+// =================================================================================
+
+function setLanguage(lang) {
+    const langData = translations[lang];
+    if (!langData) return;
+
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (langData[key]) {
+            el.textContent = langData[key];
+        }
+    });
+    
+    document.querySelectorAll('.lang-switcher button').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(`lang-${lang}`).classList.add('active');
+
+    localStorage.setItem('language', lang);
+}
+
 // =================================================================================
 // API Functions
 // =================================================================================
@@ -521,6 +658,8 @@ function displayAnalytics(data) {
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('questionType').addEventListener('change', toggleQuestionTypeFields);
     initializeApp();
+    const savedLanguage = localStorage.getItem('language') || 'en';
+    setLanguage(savedLanguage);
 });
 
 async function initializeApp() {
