@@ -599,10 +599,12 @@ async function submitTest() {
     let score = 0;
     let maxScore = 0;
     const blockResults = {};
+    const detailedAnswers = [];
     
     currentTest.forEach(question => {
         maxScore += question.weight;
-        const isCorrect = userAnswers[question.id] === question.correctAnswer;
+        const userAnswer = userAnswers[question.id];
+        const isCorrect = userAnswer === question.correctAnswer;
         
         if (isCorrect) {
             score += question.weight;
@@ -618,6 +620,15 @@ async function submitTest() {
             blockResults[block].correct++;
             blockResults[block].earnedPoints += question.weight;
         }
+
+        detailedAnswers.push({
+            questionId: question.id,
+            questionText: question.text,
+            category: question.category,
+            userAnswer: userAnswer || null,
+            correctAnswer: question.correctAnswer,
+            isCorrect: isCorrect
+        });
     });
     
     const percentage = Math.round((score / maxScore) * 100);
@@ -645,6 +656,7 @@ async function submitTest() {
         gradeClass,
         timeUsed: `${Math.floor(timeUsed / 60)}:${(timeUsed % 60).toString().padStart(2, '0')}`,
         answers: userAnswers,
+        detailedAnswers: detailedAnswers, // Added detailed answers
         questions: currentTest.length,
         blockResults,
         userName: userName.trim()
@@ -786,3 +798,4 @@ async function initializeApp() {
 
 // Initialize when page loads
 document.addEventListener('DOMContentLoaded', initializeApp);
+
