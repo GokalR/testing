@@ -14,9 +14,8 @@ let currentQuestionIndex = 0;
 let userAnswers = {};
 let testTimer;
 let timeLeft = TEST_DURATION_SECONDS;
-let testResultId = null;
+let testResultId = null; // To store the ID of the current test result for updates
 let userName = '';
-let latestAnalyticsData = { recentResults: [] }; // Store analytics data
 
 // Data Mappings
 const categoryNames = {
@@ -297,10 +296,13 @@ function showSection(sectionId) {
     document.querySelectorAll(`#${navId} .nav-btn`).forEach(btn => btn.classList.remove('active'));
     document.querySelector(`#${navId} .nav-btn[onclick="showSection('${sectionId}')"]`)?.classList.add('active');
 
+    // Load data for specific sections
     if (sectionId === 'questionEditor') {
         updateQuestionsList();
     } else if (sectionId === 'analytics') {
         loadAnalyticsData();
+    } else if (sectionId === 'results' && currentMode === 'admin') {
+        loadAnalyticsData(); // For admin, show all in results too? But keep separate, or redirect to analytics
     }
 }
 
@@ -346,7 +348,7 @@ async function addOrUpdateQuestion() {
         await action;
         showSuccess(`Question ${editingId ? 'updated' : 'added'} successfully!`);
         clearForm();
-        const data = await loadQuestions();
+        const data = await loadQuestions(); // Reload all questions
         allQuestions = data.questions || [];
         updateQuestionsList();
     } catch (error) {
@@ -459,7 +461,7 @@ function startGeneralTest() {
     if (!userName || userName.trim() === '') {
         return showError("Необходимо ввести имя, чтобы начать тест.");
     }
-    currentTest = [...allQuestions];
+    currentTest = [...allQuestions]; // Use all available questions
     currentQuestionIndex = 0;
     userAnswers = {};
     timeLeft = TEST_DURATION_SECONDS;
@@ -508,6 +510,7 @@ function renderQuestion() {
 function selectAnswer(questionId, answer) {
     userAnswers[questionId] = answer;
     const question = currentTest.find(q => q.id === questionId);
+    
     if (question && question.type === 'multiple') {
         renderQuestion();
     }
@@ -555,46 +558,58 @@ async function submitTest() {
     if (!confirm('Вы уверены, что хотите завершить и отправить тест?')) return;
     clearInterval(testTimer);
 
-    let score = 0, hardSkillScore = 0, softSkillScore = 0;
+    let score = 0;
+    let hardSkillScore = 0;
+    let softSkillScore = 0;
+
     const maxScore = allQuestions.reduce((sum, q) => sum + q.weight, 0);
     const maxHardSkillScore = allQuestions.filter(q => hardSkillCategories.includes(q.category)).reduce((sum, q) => sum + q.weight, 0);
     const maxSoftSkillScore = allQuestions.filter(q => softSkillCategories.includes(q.category)).reduce((sum, q) => sum + q.weight, 0);
 
     const detailedAnswers = allQuestions.map(q => {
         const userAnswer = userAnswers[q.id];
-        let isCorrect = null;
-        let supervisorScore = null;
-
-        if (q.type === 'multiple') {
-            isCorrect = userAnswer === q.correctAnswer;
-            if (isCorrect) {
-                score += q.weight;
-                if (hardSkillCategories.includes(q.category)) hardSkillScore += q.weight;
-                else if (softSkillCategories.includes(q.category)) softSkillScore += q.weight;
+        const isCorrect = q.type === 'multiple' && userAnswer === q.correctAnswer;
+        if (isCorrect) {
+            score += q.weight;
+            if (hardSkillCategories.includes(q.category)) {
+                hardSkillScore += q.weight;
+            } else if (softSkillCategories.includes(q.category)) {
+                softSkillScore += q.weight;
             }
         }
-        
         return { 
-            questionId: q.id, text: q.text, type: q.type, category: q.category, weight: q.weight,
-            userAnswer: userAnswer || null, correctAnswer: q.correctAnswer, isCorrect, supervisorScore 
+            questionId: q.id, 
+            text: q.text, 
+            type: q.type, 
+            category: q.category, 
+            weight: q.weight,
+            userAnswer: userAnswer || null, 
+            correctAnswer: q.correctAnswer, 
+            isCorrect 
         };
     });
 
     const level = levels.find(l => score >= l.min && score <= l.max)?.name || 'N/A';
     
     const result = {
-        userName: userName.trim(), timestamp: new Date().toISOString(),
-        score, maxScore, hardSkillScore, maxHardSkillScore, softSkillScore, maxSoftSkillScore,
+        userName: userName.trim(),
+        timestamp: new Date().toISOString(),
+        score,
+        maxScore,
+        hardSkillScore,
+        maxHardSkillScore,
+        softSkillScore,
+        maxSoftSkillScore,
         percentage: maxScore > 0 ? Math.round((score / maxScore) * 100) : 0,
-        level, detailedAnswers,
+        level,
+        detailedAnswers,
     };
     
     try {
         const response = await submitTestResults(result);
-        testResultId = response.id; // Store the ID of the new result
+        testResultId = response.id;
         showSuccess('Тест успешно отправлен!');
-        // Pass the fresh result object, now including its ID from the response, to the showResults function
-        showResults({ ...result, id: response.id }); 
+        showResults(result);
     } catch (error) {
         showError('Не удалось отправить результаты теста. Проверьте ваше соединение.');
     }
@@ -614,69 +629,79 @@ function showResults(result) {
         const cat = ans.category;
         if (!acc[cat]) acc[cat] = { correct: 0, total: 0 };
         if (ans.isCorrect) acc[cat].correct++;
-        if (ans.supervisorScore > 0) acc[cat].correct++; // Simplified view, can be improved
         acc[cat].total++;
         return acc;
     }, {});
     
-    const renderOpenQuestion = (ans, resultId) => {
-        const isGraded = ans.supervisorScore !== null;
-        return `
+    const openAnswersHTML = result.detailedAnswers
+        .filter(ans => ans.type === 'open' || ans.type === 'code')
+        .map(ans => `
             <div class="detailed-answer-item">
-                <p><strong>Вопрос (${ans.weight} ${ans.weight > 1 ? 'балла' : 'балл'}):</strong> ${ans.text}</p>
+                <p><strong>Вопрос (${categoryNames[ans.category] || ans.category} | ${ans.weight} ${ans.weight > 1 ? 'балла' : 'балл'}):</strong> ${ans.text}</p>
                 <p class="user-answer"><strong>Ответ кандидата:</strong><pre>${ans.userAnswer || 'Нет ответа'}</pre></p>
-                <div class="supervisor-grade" id="grade-container-${resultId}-${ans.questionId}">
-                    <label>Оценка: </label>
-                    <input type="number" min="0" max="${ans.weight}" value="${isGraded ? ans.supervisorScore : ''}" ${isGraded ? 'disabled' : ''} style="width: 70px; padding: 5px; margin-right: 10px;">
-                    <button class="btn" onclick="saveGrade('${resultId}', '${ans.questionId}')" ${isGraded ? 'disabled' : ''}>${isGraded ? 'Сохранено' : 'Сохранить оценку'}</button>
-                </div>
-            </div>`;
-    };
-
-    const openHardSkillsHTML = result.detailedAnswers
-        .filter(ans => (ans.type === 'open' || ans.type === 'code') && hardSkillCategories.includes(ans.category))
-        .map(ans => renderOpenQuestion(ans, result.id)).join('');
-
-    const openSoftSkillsHTML = result.detailedAnswers
-        .filter(ans => (ans.type === 'open' || ans.type === 'code') && softSkillCategories.includes(ans.category))
-        .map(ans => renderOpenQuestion(ans, result.id)).join('');
+            </div>
+        `).join('');
 
     const detailedAnswersHTML = result.detailedAnswers.map(ans => {
         const correctnessClass = ans.isCorrect ? 'correct' : 'incorrect';
         let answerDetails = '';
+
         if (ans.type === 'multiple') {
             const allOptions = allQuestions.find(q => q.id === ans.questionId)?.options || {};
             const userAnswerText = ans.userAnswer ? `${ans.userAnswer}) ${allOptions[ans.userAnswer]}` : 'Нет ответа';
             const correctAnswerText = `${ans.correctAnswer}) ${allOptions[ans.correctAnswer]}`;
-            answerDetails = `<p class="user-answer"><strong>Ваш ответ:</strong> ${userAnswerText}</p>${!ans.isCorrect ? `<p class="correct-answer"><strong>Правильный ответ:</strong> ${correctAnswerText}</p>` : ''}`;
+            answerDetails = `
+                <p class="user-answer"><strong>Ваш ответ:</strong> ${userAnswerText}</p>
+                ${!ans.isCorrect ? `<p class="correct-answer"><strong>Правильный ответ:</strong> ${correctAnswerText}</p>` : ''}
+            `;
         } else {
             answerDetails = `<p class="user-answer"><strong>Ваш ответ:</strong><pre>${ans.userAnswer || 'Нет ответа'}</pre></p>`;
         }
-        return `<div class="detailed-answer-item ${correctnessClass}"><p><strong>Вопрос (${ans.weight} ${ans.weight > 1 ? 'балла' : 'балл'}):</strong> ${ans.text}</p>${answerDetails}</div>`;
+
+        return `
+            <div class="detailed-answer-item ${correctnessClass}">
+                <p><strong>Вопрос (${ans.weight} ${ans.weight > 1 ? 'балла' : 'балл'}):</strong> ${ans.text}</p>
+                ${answerDetails}
+            </div>
+        `;
     }).join('');
     
-    document.getElementById('resultsContent').innerHTML = `
-        <div id="result-summary-${result.id}">
-            <div class="results-summary">
-                <h3>${result.userName}</h3>
-                <div class="score-display">${result.score} / ${result.maxScore}</div>
-                <div class="grade-badge ${grade.class}">${result.percentage}% - ${result.level} (${grade.text})</div>
+    const scoreBreakdownHTML = `
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; text-align: center; margin-bottom: 20px; margin-top: 20px;">
+            <div class="result-block">
+                <h4>Hard Skills</h4>
+                <div class="score-display" style="font-size: 2.5rem; margin-bottom: 0;">${result.hardSkillScore} / ${result.maxHardSkillScore}</div>
             </div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; text-align: center; margin-bottom: 20px; margin-top: 20px;">
-                <div class="result-block"><h4>Hard Skills</h4><div class="score-display" style="font-size: 2.5rem; margin-bottom: 0;">${result.hardSkillScore} / ${result.maxHardSkillScore}</div></div>
-                <div class="result-block"><h4>Soft Skills</h4><div class="score-display" style="font-size: 2.5rem; margin-bottom: 0;">${result.softSkillScore} / ${result.maxSoftSkillScore}</div></div>
+            <div class="result-block">
+                <h4>Soft Skills</h4>
+                <div class="score-display" style="font-size: 2.5rem; margin-bottom: 0;">${result.softSkillScore} / ${result.maxSoftSkillScore}</div>
             </div>
         </div>
+    `;
+
+    document.getElementById('resultsContent').innerHTML = `
+        <div class="results-summary">
+            <h3>${result.userName}</h3>
+            <div class="score-display">${result.score} / ${result.maxScore}</div>
+            <div class="grade-badge ${grade.class}">${result.percentage}% - ${result.level} (${grade.text})</div>
+        </div>
+        ${scoreBreakdownHTML}
         <h4>Результаты по категориям:</h4>
-        <div class="detailed-results">${Object.entries(blockResults).map(([cat, res]) => `<div class="result-block"><strong>${categoryNames[cat] || cat}:</strong> ${res.correct} / ${res.total} правильно</div>`).join('')}</div>
+        <div class="detailed-results">
+            ${Object.entries(blockResults).map(([cat, res]) => `
+                <div class="result-block">
+                    <strong>${categoryNames[cat] || cat}:</strong> ${res.correct} / ${res.total} правильно
+                </div>
+            `).join('')}
+        </div>
         <button id="showDetailsBtn" class="btn" style="margin: 30px auto; display: block;">Показать детальный разбор</button>
         <div id="detailedReview" class="hidden">
             <hr style="margin: 30px 0;">
             <h3>Разбор для проверяющего</h3>
-            <h4>Hard Skills (Coding)</h4>
-            ${openHardSkillsHTML || '<p>Нет вопросов для оценки.</p>'}
-            <h4 style="margin-top:20px;">Soft Skills</h4>
-            ${openSoftSkillsHTML || '<p>Нет вопросов для оценки.</p>'}
+            <h4>Открытые и практические вопросы:</h4>
+            <div>
+                ${openAnswersHTML.length > 0 ? openAnswersHTML : '<p>В этом тесте не было открытых или практических вопросов.</p>'}
+            </div>
             <hr style="margin: 30px 0;">
             <h4>Полный разбор ответов:</h4>
             <div>${detailedAnswersHTML}</div>
@@ -688,7 +713,9 @@ function showResults(result) {
         if (pass === ADMIN_PASSWORD) {
             document.getElementById('detailedReview').classList.remove('hidden');
             document.getElementById('showDetailsBtn').classList.add('hidden');
-        } else if (pass !== null) { showError('Неверный пароль.'); }
+        } else if (pass !== null) {
+            showError('Неверный пароль.');
+        }
     });
 
     showSection('results');
@@ -698,8 +725,8 @@ async function loadAnalyticsData() {
     const content = document.getElementById('analyticsContent');
     content.innerHTML = `<div class="loading">Загрузка аналитики...</div>`;
     try {
-        latestAnalyticsData = await loadAnalytics();
-        displayAnalytics(latestAnalyticsData);
+        const data = await loadAnalytics();
+        displayAnalytics(data);
     } catch (error) {
         content.innerHTML = `<p>Не удалось загрузить данные аналитики.</p>`;
     }
@@ -711,47 +738,57 @@ function toggleDetails(id) {
 }
 
 function displayAnalytics(data) {
-    const renderOpenQuestionForAnalytics = (ans, result) => {
-        const isGraded = ans.supervisorScore !== null;
-        return `
-            <div class="detailed-answer-item">
-                <p><strong>Вопрос (${ans.weight} ${ans.weight > 1 ? 'балла' : 'балл'}):</strong> ${ans.text}</p>
-                <p class="user-answer"><strong>Ответ:</strong><pre>${ans.userAnswer || 'Нет ответа'}</pre></p>
-                <div class="supervisor-grade" id="grade-container-${result.id}-${ans.questionId}">
-                     <label>Оценка: </label>
-                    <input type="number" min="0" max="${ans.weight}" value="${isGraded ? ans.supervisorScore : ''}" ${isGraded ? 'disabled' : ''} style="width: 70px; padding: 5px; margin-right: 10px;">
-                    <button class="btn" onclick='saveGrade("${result.id}", "${ans.questionId}")' ${isGraded ? 'disabled' : ''}>${isGraded ? 'Сохранено' : 'Сохранить'}</button>
-                </div>
-            </div>`;
-    };
-
     const recentHTML = data.recentResults.map(r => {
-        const openHardSkillsHTML = r.detailedAnswers
-            .filter(ans => (ans.type === 'open' || ans.type === 'code') && hardSkillCategories.includes(ans.category))
-            .map(ans => renderOpenQuestionForAnalytics(ans, r)).join('');
-        const openSoftSkillsHTML = r.detailedAnswers
-            .filter(ans => (ans.type === 'open' || ans.type === 'code') && softSkillCategories.includes(ans.category))
-            .map(ans => renderOpenQuestionForAnalytics(ans, r)).join('');
-
-        const detailedAnswersHTML = r.detailedAnswers.map(ans => { /* ... detailed answers rendering ... */ }).join('');
+        const openAnswersHTML = r.detailedAnswers
+            .filter(ans => ans.type === 'open' || ans.type === 'code')
+            .map(ans => `
+                <div class="detailed-answer-item">
+                     <p><strong>Вопрос (${ans.weight} ${ans.weight > 1 ? 'балла' : 'балл'}):</strong> ${ans.text}</p>
+                     <p class="user-answer"><strong>Ответ:</strong><pre>${ans.userAnswer || 'Нет ответа'}</pre></p>
+                </div>
+            `).join('');
+            
+        const detailedAnswersHTML = r.detailedAnswers.map(ans => {
+            const correctnessClass = ans.isCorrect ? 'correct' : 'incorrect';
+            let answerDetails = '';
+            if (ans.type === 'multiple') {
+                const allOptions = allQuestions.find(q => q.id === ans.questionId)?.options || {};
+                const userAnswerText = ans.userAnswer ? `${ans.userAnswer}) ${allOptions[ans.userAnswer] || ''}` : 'Нет ответа';
+                const correctAnswerText = ans.correctAnswer ? `${ans.correctAnswer}) ${allOptions[ans.correctAnswer] || ''}` : '';
+                answerDetails = `
+                    <p class="user-answer"><strong>Выбранный ответ:</strong> ${userAnswerText}</p>
+                    ${!ans.isCorrect && ans.correctAnswer ? `<p class="correct-answer"><strong>Правильный ответ:</strong> ${correctAnswerText}</p>` : ''}
+                `;
+            } else {
+                answerDetails = `<p class="user-answer"><strong>Данный ответ:</strong><pre>${ans.userAnswer || 'Нет ответа'}</pre></p>`;
+            }
+            return `
+                <div class="detailed-answer-item ${correctnessClass}">
+                    <p><strong>Вопрос (${ans.weight} ${ans.weight > 1 ? 'балла' : 'балл'}):</strong> ${ans.text}</p>
+                    ${answerDetails}
+                </div>
+            `;
+        }).join('');
 
         return `
-            <div class="result-block" id="result-block-${r.id}">
-                <div id="result-summary-${r.id}">
-                    <strong>${r.userName}</strong>: ${r.score}/${r.maxScore} (${r.percentage}%) - ${r.level}
-                    <div style="font-size: 0.9rem; color: #333; margin-top: 5px;">
-                        Hard: <strong>${r.hardSkillScore || 0}/${r.maxHardSkillScore || 0}</strong> | Soft: <strong>${r.softSkillScore || 0}/${r.maxSoftSkillScore || 0}</strong>
-                    </div>
+            <div class="result-block">
+                <strong>${r.userName}</strong>: ${r.score}/${r.maxScore} (${r.percentage}%) - ${r.level}
+                <div style="font-size: 0.9rem; color: #333; margin-top: 5px;">
+                    Hard: <strong>${r.hardSkillScore || 0}/${r.maxHardSkillScore || 0}</strong> | Soft: <strong>${r.softSkillScore || 0}/${r.maxSoftSkillScore || 0}</strong>
                 </div>
                 <div style="font-size: 0.8rem; color: #666; margin-bottom: 10px;">${new Date(r.timestamp).toLocaleString()}</div>
                 <button class="btn btn-secondary" onclick="toggleDetails('supervisor-${r.id}')" style="margin-right: 10px; margin-bottom: 5px;">Для проверяющего</button>
+                <button class="btn" onclick="toggleDetails('${r.id}')" style="margin-bottom: 5px;">Все детали</button>
                 <div id="details-supervisor-${r.id}" style="display:none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
-                    <h4>Hard Skills (Coding)</h4>
-                    ${openHardSkillsHTML || '<p>Нет вопросов для оценки.</p>'}
-                    <h4 style="margin-top:20px;">Soft Skills</h4>
-                    ${openSoftSkillsHTML || '<p>Нет вопросов для оценки.</p>'}
+                    <h4>Открытые и практические вопросы</h4>
+                    ${openAnswersHTML.length > 0 ? openAnswersHTML : '<p>Нет открытых вопросов.</p>'}
                 </div>
-            </div>`;
+                <div id="details-${r.id}" style="display:none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
+                    <h4>Все ответы</h4>
+                    ${detailedAnswersHTML}
+                </div>
+            </div>
+        `;
     }).join('') || '<p>Нет недавних результатов.</p>';
 
     document.getElementById('analyticsContent').innerHTML = `
@@ -762,66 +799,10 @@ function displayAnalytics(data) {
             <div class="result-block"><h4>Ср. Soft Skills</h4><div class="score-display">${data.averageSoftSkillScore}%</div></div>
         </div>
         <h3>Недавние результаты</h3>
-        <div class="detailed-results">${recentHTML}</div>`;
-}
-
-async function saveGrade(resultId, questionId) {
-    const container = document.getElementById(`grade-container-${resultId}-${questionId}`);
-    const input = container.querySelector('input[type="number"]');
-    const button = container.querySelector('button');
-    const grade = parseInt(input.value, 10);
-
-    const result = latestAnalyticsData.recentResults.find(r => r.id === resultId);
-    const answer = result.detailedAnswers.find(a => a.questionId === questionId);
-
-    if (isNaN(grade) || grade < 0 || grade > answer.weight) {
-        return showError(`Оценка должна быть числом от 0 до ${answer.weight}.`);
-    }
-
-    answer.supervisorScore = grade;
-
-    // Recalculate all scores
-    let newTotalScore = 0;
-    let newHardScore = 0;
-    let newSoftScore = 0;
-
-    result.detailedAnswers.forEach(ans => {
-        if (ans.isCorrect) { // Multiple choice correct answers
-            newTotalScore += ans.weight;
-            if (hardSkillCategories.includes(ans.category)) newHardScore += ans.weight;
-            else if (softSkillCategories.includes(ans.category)) newSoftScore += ans.weight;
-        } else if (ans.supervisorScore !== null) { // Graded open/code questions
-            newTotalScore += ans.supervisorScore;
-            if (hardSkillCategories.includes(ans.category)) newHardScore += ans.supervisorScore;
-            else if (softSkillCategories.includes(ans.category)) newSoftScore += ans.supervisorScore;
-        }
-    });
-
-    result.score = newTotalScore;
-    result.hardSkillScore = newHardScore;
-    result.softSkillScore = newSoftScore;
-    result.percentage = result.maxScore > 0 ? Math.round((newTotalScore / result.maxScore) * 100) : 0;
-    result.level = levels.find(l => newTotalScore >= l.min && newTotalScore <= l.max)?.name || 'N/A';
-    
-    try {
-        await updateTestResult(result.id, result);
-        showSuccess('Оценка сохранена!');
-        input.disabled = true;
-        button.disabled = true;
-        button.textContent = 'Сохранено';
-
-        // Update summary display
-        const summary = document.getElementById(`result-summary-${result.id}`);
-        if(summary) {
-             summary.innerHTML = `<strong>${result.userName}</strong>: ${result.score}/${result.maxScore} (${result.percentage}%) - ${result.level}
-                <div style="font-size: 0.9rem; color: #333; margin-top: 5px;">
-                    Hard: <strong>${result.hardSkillScore || 0}/${result.maxHardSkillScore || 0}</strong> | Soft: <strong>${result.softSkillScore || 0}/${result.maxSoftSkillScore || 0}</strong>
-                </div>`;
-        }
-    } catch (error) {
-        showError(`Не удалось сохранить оценку: ${error.message}`);
-        answer.supervisorScore = null; // Revert on failure
-    }
+        <div class="detailed-results">
+            ${recentHTML}
+        </div>
+    `;
 }
 
 // =================================================================================
@@ -831,7 +812,7 @@ async function saveGrade(resultId, questionId) {
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('questionType').addEventListener('change', toggleQuestionTypeFields);
     initializeApp();
-    const savedLanguage = localStorage.getItem('language') || 'ru';
+    const savedLanguage = localStorage.getItem('language') || 'ru'; // Default to Russian
     setLanguage(savedLanguage);
 });
 
@@ -849,5 +830,5 @@ async function initializeApp() {
     } catch (error) {
         showError("Не удалось инициализировать приложение путем загрузки вопросов.");
     }
-}```
+}
 
