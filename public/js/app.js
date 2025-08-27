@@ -11,6 +11,10 @@ let testTimer;
 let timeLeft = 3600; // 60 minutes
 let testResults = [];
 let editingQuestionId = null;
+let userName = '';
+
+// Add this for password protection
+const ADMIN_PASSWORD = 'botabotabotaspeed'; // Change this to a secure password!
 
 // Category names mapping
 const categoryNames = {
@@ -182,6 +186,14 @@ function updateWelcomeStats() {
 
 // Mode and Navigation Functions
 function setMode(mode) {
+    if (mode === 'admin') {
+        const enteredPassword = prompt('Enter admin password:');
+        if (enteredPassword !== ADMIN_PASSWORD) {
+            showError('Incorrect password. Access denied.');
+            return; // Stay in candidate mode
+        }
+    }
+
     currentMode = mode;
     document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
     event.target.classList.add('active');
@@ -200,7 +212,21 @@ function setMode(mode) {
     showSection('welcome');
 }
 
+// Add this helper to prevent direct access to admin sections without password
+function requireAdminAccess(sectionId) {
+    if (currentMode !== 'admin') {
+        showError('Admin access required.');
+        showSection('welcome');
+        return false;
+    }
+    return true;
+}
+
 function showSection(sectionId) {
+    if (['questionEditor', 'analytics'].includes(sectionId) && !requireAdminAccess(sectionId)) {
+        return;
+    }
+
     document.querySelectorAll('.content-section').forEach(section => {
         section.classList.remove('active');
     });
@@ -344,8 +370,8 @@ function updateQuestionsList(filterCategory = 'all') {
             <div class="question-header">
                 <span class="question-points">${q.weight} pts</span>
                 <div class="question-actions">
-                    <button onclick="editQuestion(${q.id})">Edit</button>
-                    <button onclick="deleteQuestion(${q.id})">Delete</button>
+                    <button onclick="editQuestion('${q.id}')">Edit</button>
+                    <button onclick="deleteQuestion('${q.id}')">Delete</button>
                 </div>
             </div>
             <div style="margin-bottom: 8px;"><strong>Category:</strong> ${categoryNames[q.category] || q.category}</div>
@@ -425,6 +451,20 @@ async function resetToDefault() {
 
 // Test Functions
 async function startGeneralTest() {
+    // Check if test already taken
+    const testTaken = localStorage.getItem('testTaken');
+    if (testTaken === 'true') {
+        showError('You have already taken the test. Only one attempt is allowed.');
+        return;
+    }
+
+    // Prompt for name
+    userName = prompt('Please enter your name:');
+    if (!userName || userName.trim() === '') {
+        showError('Name is required to start the test.');
+        return;
+    }
+
     if (allQuestions.length === 0) {
         await loadQuestions();
         if (allQuestions.length === 0) {
@@ -471,7 +511,7 @@ function showQuestion(index) {
             
             <div class="answer-options">
                 ${Object.entries(question.options).map(([key, value]) => `
-                    <label class="answer-option ${userAnswers[question.id] === key ? 'selected' : ''}" onclick="selectAnswer(${question.id}, '${key}')">
+                    <label class="answer-option ${userAnswers[question.id] === key ? 'selected' : ''}" onclick="selectAnswer('${question.id}', '${key}')">
                         <input type="radio" name="q${question.id}" value="${key}" ${userAnswers[question.id] === key ? 'checked' : ''}>
                         <strong>${key})</strong> ${value}
                     </label>
@@ -493,10 +533,14 @@ function showQuestion(index) {
 function selectAnswer(questionId, answer) {
     userAnswers[questionId] = answer;
     
-    document.querySelectorAll('.answer-option').forEach(option => {
-        option.classList.remove('selected');
+    // Find the label that was clicked
+    const labels = document.querySelectorAll('.answer-option');
+    labels.forEach(label => {
+        label.classList.remove('selected');
+        if (label.querySelector(`input[value="${answer}"]`)) {
+            label.classList.add('selected');
+        }
     });
-    event.currentTarget.classList.add('selected');
 }
 
 function nextQuestion() {
@@ -602,11 +646,15 @@ async function submitTest() {
         timeUsed: `${Math.floor(timeUsed / 60)}:${(timeUsed % 60).toString().padStart(2, '0')}`,
         answers: userAnswers,
         questions: currentTest.length,
-        blockResults
+        blockResults,
+        userName: userName.trim()
     };
     
     // Save results to server
     await submitTestResults(result);
+    
+    // Mark test as taken
+    localStorage.setItem('testTaken', 'true');
     
     testResults.push(result);
     showResults(result);
@@ -629,7 +677,7 @@ function showResults(result) {
             <div style="font-size: 1.5rem; color: #666; margin-bottom: 10px;">${result.percentage}% Score</div>
             <div class="grade-badge ${result.gradeClass}">${result.grade}</div>
             <p style="margin-top: 20px; color: #666;">
-                <strong>ML Engineer Assessment</strong> <br>
+                <strong>ML Engineer Assessment for ${result.userName}</strong> <br>
                 <strong>Time Used:</strong> ${result.timeUsed} <br>
                 <strong>Completed:</strong> ${new Date(result.timestamp).toLocaleString()}
             </p>
@@ -641,7 +689,7 @@ function showResults(result) {
         </div>
         
         <div style="text-align: center; margin-top: 30px;">
-            <button class="btn" onclick="showSection('welcome')">Take Test Again</button>
+            ${currentMode === 'admin' ? '<button class="btn" onclick="showSection(\'welcome\')">Back to Welcome</button>' : '<p>You have completed the test. Thank you!</p>'}
             ${currentMode === 'admin' ? '<button class="btn" onclick="showSection(\'analytics\')" style="margin-left: 10px;">View Analytics</button>' : ''}
         </div>
     `;
@@ -693,7 +741,7 @@ function displayAnalytics(data) {
                 <div class="result-block">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div>
-                            <strong>${result.score}/${result.maxScore} (${result.percentage}%)</strong>
+                            <strong>${result.userName || 'Anonymous'}: ${result.score}/${result.maxScore} (${result.percentage}%)</strong>
                             <div style="color: #666; font-size: 0.9rem;">${new Date(result.timestamp).toLocaleString()}</div>
                         </div>
                         <div class="grade-badge ${result.gradeClass}" style="margin: 0; padding: 5px 15px; font-size: 0.9rem;">
@@ -728,6 +776,12 @@ async function initializeApp() {
     setMode('candidate');
     showSection('welcome');
     await loadQuestions();
+    
+    // Optionally hide admin button by default (uncomment if you added data-mode to HTML)
+    // const adminButton = document.querySelector('.mode-btn[data-mode="admin"]');
+    // if (adminButton) {
+    //     adminButton.style.display = 'none';
+    // }
 }
 
 // Initialize when page loads
