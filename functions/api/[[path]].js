@@ -3,18 +3,18 @@
 // Default questions dataset
 const DEFAULT_QUESTIONS = [
   // Hard Skills (50 points total)
-  // Block 1: Probability and Statistics (10 questions, 15 points)
+  // Блок 1: Вероятность и Статистика (10 вопросов, 10 баллов)
   {
     id: 'h1',
     type: 'multiple',
     category: 'probability_stats',
     weight: 1,
-    text: 'What is p-value?',
+    text: 'Что такое p-value?',
     options: {
-      A: 'Probability that the null hypothesis is true.',
-      B: 'Probability of obtaining the observed (or more extreme) results, assuming the null hypothesis is true.',
-      C: 'Power of the statistical test.',
-      D: 'Sample size required for the test.'
+      A: 'Вероятность того, что нулевая гипотеза верна.',
+      B: 'Вероятность получения наблюдаемых (или более экстремальных) результатов, при условии, что нулевая гипотеза верна.',
+      C: 'Мощность статистического теста.',
+      D: 'Размер выборки, необходимый для проведения теста.'
     },
     correctAnswer: 'B'
   },
@@ -22,13 +22,13 @@ const DEFAULT_QUESTIONS = [
     id: 'h2',
     type: 'multiple',
     category: 'probability_stats',
-    weight: 2,
-    text: 'In the context of banking fraud monitoring, what is a Type II Error?',
+    weight: 1,
+    text: 'В контексте мониторинга банковского мошенничества, что такое Ошибка II рода?',
     options: {
-      A: 'The system marks a legitimate transaction as fraudulent.',
-      B: 'The system misses a fraudulent transaction, considering it legitimate.',
-      C: 'The client makes an error in data entry.',
-      D: 'The model cannot process the transaction due to a technical failure.'
+      A: 'Система помечает легитимную транзакцию как мошенническую.',
+      B: 'Система пропускает мошенническую транзакцию, считая её легитимной.',
+      C: 'Клиент совершает ошибку при вводе данных.',
+      D: 'Модель не может обработать транзакцию из-за технического сбоя.'
     },
     correctAnswer: 'B'
   },
@@ -37,12 +37,12 @@ const DEFAULT_QUESTIONS = [
     type: 'multiple',
     category: 'probability_stats',
     weight: 1,
-    text: 'Which statistical distribution is most often used for modeling the number of credit defaults in a portfolio over a certain period?',
+    text: 'Какое статистическое распределение чаще всего используется для моделирования количества дефолтов по кредитам в портфеле за определённый период?',
     options: {
-      A: 'Normal distribution.',
-      B: 'Poisson distribution.',
-      C: 'Uniform distribution.',
-      D: 'Exponential distribution.'
+      A: 'Нормальное распределение.',
+      B: 'Распределение Пуассона.',
+      C: 'Равномерное распределение.',
+      D: 'Экспоненциальное распределение.'
     },
     correctAnswer: 'B'
   },
@@ -50,13 +50,13 @@ const DEFAULT_QUESTIONS = [
     id: 'h4',
     type: 'multiple',
     category: 'probability_stats',
-    weight: 2,
-    text: 'Which of the following is NOT a prerequisite for applying classical linear regression?',
+    weight: 1,
+    text: 'Что из перечисленного НЕ является обязательным условием для применения классической линейной регрессии?',
     options: {
-      A: 'Linear dependence between predictors and the target variable.',
-      B: 'Absence of multicollinearity between predictors.',
-      C: 'Normal distribution of all predictors.',
-      D: 'Homoscedasticity (constant variance) of residuals.'
+      A: 'Линейная зависимость между предикторами и целевой переменной.',
+      B: 'Отсутствие мультиколлинеарности между предикторами.',
+      C: 'Нормальное распределение всех предикторов.',
+      D: 'Гомоскедастичность (постоянство дисперсии) остатков.'
     },
     correctAnswer: 'C'
   },
@@ -64,13 +64,13 @@ const DEFAULT_QUESTIONS = [
     id: 'h5',
     type: 'multiple',
     category: 'probability_stats',
-    weight: 2,
-    text: 'Why is it necessary to conduct A/B testing when implementing a new scoring model?',
+    weight: 1,
+    text: 'Зачем необходимо проводить A/B тестирование при внедрении новой скоринговой модели?',
     options: {
-      A: 'To check if the model code is correctly written.',
-      B: 'To measure the real impact of the new model on business metrics (e.g., approval rate and default level) compared to the old one.',
-      C: 'To determine which model works faster.',
-      D: 'To collect more data for training.'
+      A: 'Чтобы проверить, что код модели написан корректно.',
+      B: 'Чтобы измерить реальное влияние новой модели на бизнес-метрики (например, уровень одобрения и уровень дефолтности) по сравнению со старой.',
+      C: 'Чтобы определить, какая модель работает быстрее.',
+      D: 'Чтобы собрать больше данных для обучения.'
     },
     correctAnswer: 'B'
   },
@@ -78,13 +78,13 @@ const DEFAULT_QUESTIONS = [
     id: 'h6',
     type: 'multiple',
     category: 'probability_stats',
-    weight: 3,
-    text: 'What is the Central Limit Theorem?',
+    weight: 2,
+    text: 'Что такое Центральная Предельная Теорема?',
     options: {
-      A: 'Theorem stating that any random variable has a normal distribution.',
-      B: 'Theorem that the variance of the sample is always less than the variance of the population.',
-      C: 'Theorem that the distribution of sample means tends to normal as the sample size increases, regardless of the original distribution.',
-      D: 'Theorem that p-value should always be less than 0.05.'
+      A: 'Теорема о том, что любая случайная величина имеет нормальное распределение.',
+      B: 'Теорема о том, что дисперсия выборки всегда меньше дисперсии генеральной совокупности.',
+      C: 'Теорема о том, что распределение выборочных средних стремится к нормальному по мере увеличения размера выборки, независимо от исходного распределения.',
+      D: 'Теорема о том, что p-value всегда должно быть меньше 0.05.'
     },
     correctAnswer: 'C'
   },
@@ -93,12 +93,12 @@ const DEFAULT_QUESTIONS = [
     type: 'multiple',
     category: 'probability_stats',
     weight: 1,
-    text: 'You need to compare the average check on credit cards for two groups of clients. Which statistical test is most suitable for this task?',
+    text: 'Вам нужно сравнить средний чек по кредитным картам для двух групп клиентов. Какой статистический тест наиболее подходит для этой задачи?',
     options: {
-      A: 'Chi-square test.',
-      B: 'T-test for independent samples.',
-      C: 'Pearson correlation analysis.',
-      D: 'Analysis of variance (ANOVA).'
+      A: 'Критерий хи-квадрат.',
+      B: 'T-тест для независимых выборок.',
+      C: 'Корреляционный анализ Пирсона.',
+      D: 'Дисперсионный анализ (ANOVA).'
     },
     correctAnswer: 'B'
   },
@@ -107,12 +107,12 @@ const DEFAULT_QUESTIONS = [
     type: 'multiple',
     category: 'probability_stats',
     weight: 1,
-    text: 'What is a confidence interval?',
+    text: 'Что такое доверительный интервал?',
     options: {
-      A: 'Range in which we believe the true value of the population parameter lies with a certain level of confidence.',
-      B: 'Range into which all sample values fall.',
-      C: 'Interval in which p-value is considered significant.',
-      D: 'Time interval during which data was collected.'
+      A: 'Диапазон, в котором, как мы полагаем, находится истинное значение параметра генеральной совокупности с определённым уровнем уверенности.',
+      B: 'Диапазон, в который попадают все значения выборки.',
+      C: 'Интервал, в котором p-value считается значимым.',
+      D: 'Интервал времени, в течение которого собирались данные.'
     },
     correctAnswer: 'A'
   },
@@ -121,41 +121,27 @@ const DEFAULT_QUESTIONS = [
     type: 'multiple',
     category: 'probability_stats',
     weight: 1,
-    text: 'How does the multiple comparisons problem affect the interpretation of p-value when conducting dozens of A/B tests simultaneously?',
+    text: 'Как проблема множественных сравнений влияет на интерпретацию p-value при проведении десятков A/B тестов одновременно?',
     options: {
-      A: 'Does not affect it.',
-      B: 'Decreases the probability of making a Type I error.',
-      C: 'Increases the probability of randomly obtaining a statistically significant result (Type I error), so correction (e.g., Bonferroni) is required.',
-      D: 'Requires increasing the sample size for each test.'
+      A: 'Никак не влияет.',
+      B: 'Уменьшает вероятность совершения ошибки I рода.',
+      C: 'Увеличивает вероятность случайно получить статистически значимый результат (ошибка I рода), поэтому требуется поправка (например, Бонферрони).',
+      D: 'Требует увеличения размера выборки для каждого теста.'
     },
     correctAnswer: 'C'
   },
-  {
-    id: 'h10',
-    type: 'multiple',
-    category: 'probability_stats',
-    weight: 1,
-    text: 'What is the coefficient of determination (R-squared) in regression analysis?',
-    options: {
-      A: 'Measure of correlation between two variables.',
-      B: 'Proportion of the variance in the dependent variable explained by the model.',
-      C: 'Average model error.',
-      D: 'Number of features in the model.'
-    },
-    correctAnswer: 'B'
-  },
-  // Block 2: Classical ML Algorithms (12 questions, 15 points)
+  // Блок 2: Классические алгоритмы ML (10 вопросов, 10 баллов)
   {
     id: 'h11',
     type: 'multiple',
     category: 'ml_algorithms',
     weight: 1,
-    text: 'Which of the listed algorithms is a clustering method?',
+    text: 'Какой из перечисленных алгоритмов является методом кластеризации?',
     options: {
-      A: 'Logistic regression.',
-      B: 'Decision tree.',
+      A: 'Логистическая регрессия.',
+      B: 'Дерево решений.',
       C: 'K-Means.',
-      D: 'Principal component analysis (PCA).'
+      D: 'Метод главных компонент (PCA).'
     },
     correctAnswer: 'C'
   },
@@ -164,12 +150,12 @@ const DEFAULT_QUESTIONS = [
     type: 'multiple',
     category: 'ml_algorithms',
     weight: 1,
-    text: 'What is the main idea of the gradient boosting algorithm?',
+    text: 'В чем основная идея алгоритма градиентного бустинга?',
     options: {
-      A: 'It builds many independent trees and then averages their predictions.',
-      B: 'It sequentially builds trees, where each subsequent tree tries to correct the errors of the previous one.',
-      C: 'It finds a hyperplane separating classes with maximum margin.',
-      D: 'It groups data based on their similarity in feature space.'
+      A: 'Он строит множество независимых деревьев, а затем усредняет их предсказания.',
+      B: 'Он последовательно строит деревья, где каждое последующее пытается исправить ошибки предыдущего.',
+      C: 'Он находит гиперплоскость, разделяющую классы с максимальным зазором.',
+      D: 'Он группирует данные на основе их схожести в пространстве признаков.'
     },
     correctAnswer: 'B'
   },
@@ -178,26 +164,12 @@ const DEFAULT_QUESTIONS = [
     type: 'multiple',
     category: 'ml_algorithms',
     weight: 1,
-    text: 'For which task is logistic regression NOT suitable?',
+    text: 'Для какой задачи НЕ подходит логистическая регрессия?',
     options: {
-      A: 'Predicting customer churn (yes/no).',
-      B: 'Determining the probability of default on a loan.',
-      C: 'Predicting the amount of the next client transaction.',
-      D: 'Scoring credit applications (approve/reject).'
-    },
-    correctAnswer: 'C'
-  },
-  {
-    id: 'h14',
-    type: 'multiple',
-    category: 'ml_algorithms',
-    weight: 1,
-    text: 'What is the "curse of dimensionality"?',
-    options: {
-      A: 'Problem where the model becomes too complex for interpretation.',
-      B: 'Problem of model overfitting due to a large number of features.',
-      C: 'Phenomenon where data becomes very sparse in high-dimensional space, complicating many algorithms.',
-      D: 'Error occurring when using too many trees in a random forest.'
+      A: 'Предсказание оттока клиентов (да/нет).',
+      B: 'Определение вероятности дефолта по кредиту.',
+      C: 'Прогнозирование суммы следующей транзакции клиента.',
+      D: 'Скоринг кредитных заявок (одобрить/отклонить).'
     },
     correctAnswer: 'C'
   },
@@ -206,12 +178,12 @@ const DEFAULT_QUESTIONS = [
     type: 'multiple',
     category: 'ml_algorithms',
     weight: 1,
-    text: 'Which of the algorithms is most sensitive to the scale of features?',
+    text: 'Какой из алгоритмов наиболее чувствителен к масштабу признаков?',
     options: {
-      A: 'Decision tree.',
-      B: 'Random forest.',
-      C: 'Support vector machine (SVM).',
-      D: 'Naive Bayes classifier.'
+      A: 'Дерево решений.',
+      B: 'Случайный лес.',
+      C: 'Метод опорных векторов (SVM).',
+      D: 'Наивный байесовский классификатор.'
     },
     correctAnswer: 'C'
   },
@@ -220,12 +192,12 @@ const DEFAULT_QUESTIONS = [
     type: 'multiple',
     category: 'ml_algorithms',
     weight: 2,
-    text: 'What is the bias-variance trade-off?',
+    text: 'Что такое компромисс между смещением и дисперсией (bias-variance trade-off)?',
     options: {
-      A: 'Trade-off between training speed and model accuracy.',
-      B: 'Trade-off between error on training sample (bias) and error on test sample (variance).',
-      C: 'Trade-off between model simplicity (high bias, low variance) and complexity (low bias, high variance).',
-      D: 'Trade-off between number of features and number of observations.'
+      A: 'Компромисс между скоростью обучения и точностью модели.',
+      B: 'Компромисс между ошибкой на обучающей выборке (смещение) и ошибкой на тестовой выборке (дисперсия).',
+      C: 'Компромисс между простотой модели (высокое смещение, низкая дисперсия) и её сложностью (низкое смещение, высокая дисперсия).',
+      D: 'Компромисс между количеством признаков и количеством наблюдений.'
     },
     correctAnswer: 'C'
   },
@@ -233,13 +205,13 @@ const DEFAULT_QUESTIONS = [
     id: 'h17',
     type: 'multiple',
     category: 'ml_algorithms',
-    weight: 2,
-    text: 'What is the main purpose of L1-regularization (Lasso)?',
+    weight: 1,
+    text: 'Какова основная цель L1-регуляризации (Lasso)?',
     options: {
-      A: 'Reduce model complexity by zeroing weights of least important features, thus performing feature selection.',
-      B: 'Increase model accuracy by adding new features.',
-      C: 'Speed up the model training process.',
-      D: 'Only reduce the magnitude of feature weights without zeroing them.'
+      A: 'Уменьшить сложность модели путем обнуления весов наименее важных признаков, тем самым производя отбор признаков.',
+      B: 'Увеличить точность модели путем добавления новых признаков.',
+      C: 'Ускорить процесс обучения модели.',
+      D: 'Только уменьшить величину весов признаков, не обнуляя их.'
     },
     correctAnswer: 'A'
   },
@@ -247,13 +219,13 @@ const DEFAULT_QUESTIONS = [
     id: 'h18',
     type: 'multiple',
     category: 'ml_algorithms',
-    weight: 2,
-    text: 'What algorithm underlies the popular CatBoost library, making it especially effective for working with categorical features?',
+    weight: 1,
+    text: 'Какой алгоритм лежит в основе популярной библиотеки CatBoost, делая её особенно эффективной для работы с категориальными признаками?',
     options: {
-      A: 'Using One-Hot Encoding for all categorical features.',
-      B: 'Using Target Encoding with measures to combat overfitting (e.g., ordered target statistics).',
-      C: 'Ignoring all categorical features.',
-      D: 'Converting categories to random numbers.'
+      A: 'Использование One-Hot Encoding для всех категориальных признаков.',
+      B: 'Использование Target Encoding с мерами по борьбе с переобучением (например, ordered target statistics).',
+      C: 'Игнорирование всех категориальных признаков.',
+      D: 'Преобразование категорий в случайные числа.'
     },
     correctAnswer: 'B'
   },
@@ -262,26 +234,12 @@ const DEFAULT_QUESTIONS = [
     type: 'multiple',
     category: 'ml_algorithms',
     weight: 1,
-    text: 'Which method is used for dimensionality reduction of data?',
+    text: 'Какой метод используется для снижения размерности данных?',
     options: {
       A: 'K-Means.',
-      B: 'Principal component analysis (PCA).',
-      C: 'Logistic regression.',
-      D: 'Gradient boosting.'
-    },
-    correctAnswer: 'B'
-  },
-  {
-    id: 'h20',
-    type: 'multiple',
-    category: 'ml_algorithms',
-    weight: 1,
-    text: 'For the task of predicting a client\'s account balance for the next month, which type of model is most suitable?',
-    options: {
-      A: 'Classification model.',
-      B: 'Time series model (e.g., ARIMA, LSTM).',
-      C: 'Clustering model.',
-      D: 'Anomaly detection model.'
+      B: 'Метод главных компонент (PCA).',
+      C: 'Логистическая регрессия.',
+      D: 'Градиентный бустинг.'
     },
     correctAnswer: 'B'
   },
@@ -290,41 +248,27 @@ const DEFAULT_QUESTIONS = [
     type: 'multiple',
     category: 'ml_algorithms',
     weight: 1,
-    text: 'What is the main advantage of ensemble models compared to a single decision tree?',
+    text: 'В чем основное преимущество ансамблевых моделей по сравнению с одним решающим деревом?',
     options: {
-      A: 'They always work faster.',
-      B: 'They are more resistant to overfitting and generally have higher generalization ability.',
-      C: 'They are simpler to interpret.',
-      D: 'They require less data for training.'
+      A: 'Они всегда работают быстрее.',
+      B: 'Они более устойчивы к переобучению и в целом обладают более высокой обобщающей способностью.',
+      C: 'Они проще для интерпретации.',
+      D: 'Они требуют меньше данных для обучения.'
     },
     correctAnswer: 'B'
   },
-  {
-    id: 'h22',
-    type: 'multiple',
-    category: 'ml_algorithms',
-    weight: 1,
-    text: 'Explain the principle of the K-Nearest Neighbors algorithm.',
-    options: {
-      A: 'It assigns an object to the class to which the majority of its k nearest neighbors belong.',
-      B: 'It divides the data into k clusters.',
-      C: 'It builds k independent trees.',
-      D: 'It finds k principal components.'
-    },
-    correctAnswer: 'A'
-  },
-  // Block 3: Data Preparation & Feature Engineering (10 questions, 10 points)
+  // Блок 3: Подготовка данных и Feature Engineering (5 вопросов, 5 баллов)
   {
     id: 'h23',
     type: 'multiple',
     category: 'data_preparation',
     weight: 1,
-    text: 'What is One-Hot Encoding?',
+    text: 'Что такое One-Hot Encoding?',
     options: {
-      A: 'Method for filling missing values.',
-      B: 'Method for converting a categorical feature into a set of binary features (0/1).',
-      C: 'Method for scaling numerical features.',
-      D: 'Method for dimensionality reduction.'
+      A: 'Метод для заполнения пропущенных значений.',
+      B: 'Метод преобразования категориального признака в набор бинарных признаков (0/1).',
+      C: 'Метод для масштабирования числовых признаков.',
+      D: 'Метод для снижения размерности.'
     },
     correctAnswer: 'B'
   },
@@ -333,12 +277,12 @@ const DEFAULT_QUESTIONS = [
     type: 'multiple',
     category: 'data_preparation',
     weight: 1,
-    text: 'Why is standardization of numerical features needed?',
+    text: 'Зачем нужна стандартизация числовых признаков?',
     options: {
-      A: 'To bring all values to the range from 0 to 1.',
-      B: 'To transform the feature distribution to normal.',
-      C: 'To bring features to a common scale (mean = 0, std = 1), which is necessary for many algorithms (SVM, linear models).',
-      D: 'To remove outliers from data.'
+      A: 'Чтобы привести все значения к диапазону от 0 до 1.',
+      B: 'Чтобы преобразовать распределение признака к нормальному.',
+      C: 'Чтобы привести признаки к общему масштабу (среднее = 0, ст.отклонение = 1), что необходимо для многих алгоритмов (SVM, линейные модели).',
+      D: 'Чтобы удалить выбросы из данных.'
     },
     correctAnswer: 'C'
   },
@@ -347,12 +291,12 @@ const DEFAULT_QUESTIONS = [
     type: 'multiple',
     category: 'data_preparation',
     weight: 1,
-    text: 'Which of the following is an example of "data leakage"?',
+    text: 'Что из перечисленного является примером "утечки данных" (data leakage)?',
     options: {
-      A: 'Using information about a client\'s default to predict the probability of that same default.',
-      B: 'Presence of missing values in data.',
-      C: 'Strong correlation between two features.',
-      D: 'Unbalanced classes in data.'
+      A: 'Использование информации о дефолте клиента для предсказания вероятности этого же самого дефолта.',
+      B: 'Наличие пропущенных значений в данных.',
+      C: 'Сильная корреляция между двумя признаками.',
+      D: 'Несбалансированные классы в данных.'
     },
     correctAnswer: 'A'
   },
@@ -361,108 +305,38 @@ const DEFAULT_QUESTIONS = [
     type: 'multiple',
     category: 'data_preparation',
     weight: 1,
-    text: 'How to handle imbalanced data in classification?',
+    text: 'Как бороться с несбалансированными данными в задачах классификации?',
     options: {
-      A: 'Ignore it.',
-      B: 'Use SMOTE or undersampling.',
-      C: 'Always use accuracy.',
-      D: 'Remove minority class.'
+      A: 'Игнорировать это.',
+      B: 'Использовать SMOTE или undersampling.',
+      C: 'Всегда использовать метрику accuracy.',
+      D: 'Удалить миноритарный класс.'
     },
     correctAnswer: 'B'
-  },
-  {
-    id: 'h27',
-    type: 'multiple',
-    category: 'data_preparation',
-    weight: 1,
-    text: 'What is label encoding?',
-    options: {
-      A: 'Converting categories to numbers.',
-      B: 'One-Hot variant.',
-      C: 'Target encoding.',
-      D: 'Scaling.'
-    },
-    correctAnswer: 'A'
-  },
-  {
-    id: 'h28',
-    type: 'multiple',
-    category: 'data_preparation',
-    weight: 1,
-    text: 'Why is feature selection needed?',
-    options: {
-      A: 'To reduce dimensionality.',
-      B: 'To add features.',
-      C: 'To increase bias.',
-      D: 'To overfit.'
-    },
-    correctAnswer: 'A'
-  },
-  {
-    id: 'h29',
-    type: 'multiple',
-    category: 'data_preparation',
-    weight: 1,
-    text: 'What is min-max scaling?',
-    options: {
-      A: 'Scaling features to [0,1] range.',
-      B: 'Scaling to mean 0 and std 1.',
-      C: 'Log transformation.',
-      D: 'Box-Cox transformation.'
-    },
-    correctAnswer: 'A'
-  },
-  {
-    id: 'h30',
-    type: 'multiple',
-    category: 'data_preparation',
-    weight: 1,
-    text: 'What are methods to handle missing data?',
-    options: {
-      A: 'Delete rows with missing values.',
-      B: 'Impute with mean/median/mode.',
-      C: 'Use algorithms that handle missing values.',
-      D: 'All of the above.'
-    },
-    correctAnswer: 'D'
   },
   {
     id: 'h31',
     type: 'multiple',
     category: 'data_preparation',
     weight: 1,
-    text: 'What is the purpose of train-test split?',
+    text: 'Какова цель разделения данных на обучающую и тестовую выборки?',
     options: {
-      A: 'To overfit the model.',
-      B: 'To evaluate the model on unseen data.',
-      C: 'To reduce the dataset size.',
-      D: 'To increase the number of features.'
+      A: 'Чтобы переобучить модель.',
+      B: 'Чтобы оценить модель на данных, которые она не видела.',
+      C: 'Чтобы уменьшить размер набора данных.',
+      D: 'Чтобы увеличить количество признаков.'
     },
     correctAnswer: 'B'
   },
-  {
-    id: 'h32',
-    type: 'multiple',
-    category: 'data_preparation',
-    weight: 1,
-    text: 'How to handle outliers in data?',
-    options: {
-      A: 'Ignore them.',
-      B: 'Remove or cap them.',
-      C: 'Add more outliers.',
-      D: 'Multiply the values.'
-    },
-    correctAnswer: 'B'
-  },
-  // Block 4: Validation & Metrics (5 questions, 5 points)
+  // Блок 4: Валидация и Метрики (5 вопросов, 5 баллов)
   {
     id: 'h33',
     type: 'multiple',
     category: 'validation_metrics',
     weight: 1,
-    text: 'What is accuracy metric?',
+    text: 'Что такое метрика Accuracy?',
     options: {
-      A: '(TP + TN) / total',
+      A: '(TP + TN) / общее количество',
       B: 'TP / (TP + FP)',
       C: 'TP / (TP + FN)',
       D: '2 * precision * recall / (precision + recall)'
@@ -474,12 +348,12 @@ const DEFAULT_QUESTIONS = [
     type: 'multiple',
     category: 'validation_metrics',
     weight: 1,
-    text: 'When is F1 score preferred over accuracy?',
+    text: 'Когда F1-мера предпочтительнее Accuracy?',
     options: {
-      A: 'Balanced dataset',
-      B: 'Imbalanced dataset',
-      C: 'Regression tasks',
-      D: 'Unsupervised learning'
+      A: 'При сбалансированных данных.',
+      B: 'При несбалансированных данных.',
+      C: 'В задачах регрессии.',
+      D: 'В обучении без учителя.'
     },
     correctAnswer: 'B'
   },
@@ -488,12 +362,12 @@ const DEFAULT_QUESTIONS = [
     type: 'multiple',
     category: 'validation_metrics',
     weight: 1,
-    text: 'What does AUC-ROC represent?',
+    text: 'Что представляет собой AUC-ROC?',
     options: {
-      A: 'Area under precision-recall curve',
-      B: 'Area under receiver operating characteristic curve',
-      C: 'Mean absolute error',
-      D: 'R-squared'
+      A: 'Площадь под кривой точности-полноты (precision-recall curve).',
+      B: 'Площадь под кривой рабочих характеристик приёмника (receiver operating characteristic curve).',
+      C: 'Средняя абсолютная ошибка.',
+      D: 'Коэффициент детерминации R-квадрат.'
     },
     correctAnswer: 'B'
   },
@@ -502,12 +376,12 @@ const DEFAULT_QUESTIONS = [
     type: 'multiple',
     category: 'validation_metrics',
     weight: 1,
-    text: 'What is k-fold cross-validation?',
+    text: 'Что такое k-блочная кросс-валидация (k-fold cross-validation)?',
     options: {
-      A: 'Splitting data into train and test once',
-      B: 'Dividing data into k subsets and training k times',
-      C: 'Overfitting technique',
-      D: 'Data augmentation'
+      A: 'Однократное разделение данных на обучающую и тестовую выборки.',
+      B: 'Разделение данных на k подмножеств и обучение модели k раз.',
+      C: 'Техника для переобучения модели.',
+      D: 'Метод аугментации данных.'
     },
     correctAnswer: 'B'
   },
@@ -516,69 +390,69 @@ const DEFAULT_QUESTIONS = [
     type: 'multiple',
     category: 'validation_metrics',
     weight: 1,
-    text: 'What is a confusion matrix?',
+    text: 'Что такое матрица ошибок (confusion matrix)?',
     options: {
-      A: 'Table to evaluate classification performance',
-      B: 'Plot of errors',
-      C: 'Metric for regression',
-      D: 'Feature selection method'
+      A: 'Таблица для оценки качества работы классификатора.',
+      B: 'График ошибок модели.',
+      C: 'Метрика для задач регрессии.',
+      D: 'Метод отбора признаков.'
     },
     correctAnswer: 'A'
   },
-  // Block 5: Coding (5 questions, 5 points)
+  // Блок 5: Кодинг (5 вопросов, 20 баллов)
   {
     id: 'h38',
     type: 'code',
     category: 'coding',
-    weight: 1,
-    text: 'Write a Python function to compute mean squared error.',
-    test_cases: 'def mse(y_true, y_pred):\n    return sum((a - b)**2 for a, b in zip(y_true, y_pred)) / len(y_true)\n\nExample: mse([1,2,3], [1.1,1.9,3.0]) ≈ 0.0067'
+    weight: 4,
+    text: 'Напишите функцию на Python для вычисления среднеквадратичной ошибки (MSE).',
+    test_cases: 'def mse(y_true, y_pred):\n    # Ваша реализация\n\nПример: mse([1,2,3], [1.1,1.9,3.0]) ≈ 0.0067'
   },
   {
     id: 'h39',
     type: 'code',
     category: 'coding',
-    weight: 1,
-    text: 'Implement linear regression from scratch in Python.',
-    test_cases: 'Use numpy for calculations.'
+    weight: 4,
+    text: 'Реализуйте линейную регрессию с нуля на Python.',
+    test_cases: 'Используйте numpy для вычислений. Реализуйте методы fit и predict.'
   },
   {
     id: 'h40',
     type: 'code',
     category: 'coding',
-    weight: 1,
-    text: 'Write code to split data into train and test sets.',
-    test_cases: 'def train_test_split(X, y, test_size=0.2):\n    # implementation'
+    weight: 4,
+    text: 'Напишите код для разделения данных на обучающую и тестовую выборки.',
+    test_cases: 'def train_test_split(X, y, test_size=0.2, random_state=42):\n    # Ваша реализация без использования sklearn'
   },
   {
     id: 'h41',
     type: 'code',
     category: 'coding',
-    weight: 1,
-    text: 'Implement k-means clustering algorithm.',
-    test_cases: 'Basic version with Euclidean distance.'
+    weight: 4,
+    text: 'Реализуйте алгоритм кластеризации k-means.',
+    test_cases: 'Базовая версия с евклидовым расстоянием.'
   },
   {
     id: 'h42',
     type: 'code',
     category: 'coding',
-    weight: 1,
-    text: 'Write a function to normalize data using min-max scaling.',
-    test_cases: 'def min_max_normalize(data):\n    # implementation'
+    weight: 4,
+    text: 'Напишите функцию для нормализации данных с использованием min-max масштабирования.',
+    test_cases: 'def min_max_normalize(data):\n    # Ваша реализация'
   },
   // Soft Skills (55 points total)
-  // Block 5: Communication (6 questions, 18 points)
+  // Блок 6: Коммуникация (6 вопросов, 18 баллов)
   {
     id: 's1',
     type: 'multiple',
     category: 'soft_communication',
     weight: 3,
-    text: 'How would you explain a complex ML model to a non-technical stakeholder?',
+    text: 'Как бы вы объяснили сложную ML-модель нетехническому стейкхолдеру?',
     options: {
-      A: 'Use technical jargon.',
-      B: 'Use simple analogies and visuals.',
-      C: 'Avoid details.',
-      D: 'Show the code.'
+      A: 'Использовать технический жаргон, чтобы показать свою экспертизу.',
+      B: 'Использовать простые аналогии, визуализации и фокусироваться на бизнес-результате.',
+      C: 'Избегать деталей и сказать, что "это просто работает".',
+      D: 'Показать код модели.'
     },
     correctAnswer: 'B'
   },
@@ -587,19 +461,19 @@ const DEFAULT_QUESTIONS = [
     type: 'open',
     category: 'soft_communication',
     weight: 3,
-    text: 'Describe a time when you had to present technical findings to a business team.'
+    text: 'Опишите случай, когда вам приходилось представлять технические результаты бизнес-команде.'
   },
   {
     id: 's3',
     type: 'multiple',
     category: 'soft_communication',
     weight: 3,
-    text: 'What is the best way to handle questions during a presentation?',
+    text: 'Как лучше всего обрабатывать вопросы во время презентации?',
     options: {
-      A: 'Ignore them.',
-      B: 'Answer clearly and concisely.',
-      C: 'Change the topic.',
-      D: 'Get defensive.'
+      A: 'Игнорировать их до конца выступления.',
+      B: 'Отвечать четко и лаконично, убедившись, что ответ понятен.',
+      C: 'Сменить тему, если вопрос сложный.',
+      D: 'Занимать оборонительную позицию.'
     },
     correctAnswer: 'B'
   },
@@ -608,12 +482,12 @@ const DEFAULT_QUESTIONS = [
     type: 'multiple',
     category: 'soft_communication',
     weight: 3,
-    text: 'How do you ensure your message is understood?',
+    text: 'Как вы убеждаетесь, что ваше сообщение понято правильно?',
     options: {
-      A: 'Assume it is.',
-      B: 'Ask for feedback.',
-      C: 'Repeat multiple times.',
-      D: 'Use complex terms.'
+      A: 'Предполагаю, что если молчат, значит всё поняли.',
+      B: 'Задаю уточняющие вопросы и прошу дать обратную связь.',
+      C: 'Повторяю одно и то же несколько раз.',
+      D: 'Использую сложные термины, чтобы выглядеть умнее.'
     },
     correctAnswer: 'B'
   },
@@ -622,34 +496,34 @@ const DEFAULT_QUESTIONS = [
     type: 'open',
     category: 'soft_communication',
     weight: 3,
-    text: 'How do you adapt your communication style to different audiences?'
+    text: 'Как вы адаптируете свой стиль общения для разной аудитории?'
   },
   {
     id: 's6',
     type: 'multiple',
     category: 'soft_communication',
     weight: 3,
-    text: 'What is active listening?',
+    text: 'Что такое активное слушание?',
     options: {
-      A: 'Waiting for your turn to speak.',
-      B: 'Fully concentrating, understanding, responding.',
-      C: 'Multitasking while listening.',
-      D: 'Interrupting to clarify.'
+      A: 'Ожидание своей очереди, чтобы высказаться.',
+      B: 'Полная концентрация на собеседнике, понимание, реакция и запоминание.',
+      C: 'Выполнение нескольких дел одновременно во время разговора.',
+      D: 'Перебивание собеседника для уточнений.'
     },
     correctAnswer: 'B'
   },
-  // Block 6: Teamwork (5 questions, 16 points)
+  // Блок 7: Работа в команде (5 вопросов, 16 баллов)
   {
     id: 's7',
     type: 'multiple',
     category: 'soft_teamwork',
     weight: 3,
-    text: 'How do you handle conflicts in a team?',
+    text: 'Как вы справляетесь с конфликтами в команде?',
     options: {
-      A: 'Avoid them.',
-      B: 'Discuss openly and find compromise.',
-      C: 'Take sides.',
-      D: 'Ignore the issue.'
+      A: 'Избегаю их любой ценой.',
+      B: 'Обсуждаю проблему открыто и ищу компромисс.',
+      C: 'Принимаю чью-то сторону.',
+      D: 'Игнорирую проблему, надеясь, что она решится сама.'
     },
     correctAnswer: 'B'
   },
@@ -658,19 +532,19 @@ const DEFAULT_QUESTIONS = [
     type: 'open',
     category: 'soft_teamwork',
     weight: 3,
-    text: 'Describe a time when you collaborated on a project.'
+    text: 'Опишите случай, когда вы успешно сотрудничали в проекте.'
   },
   {
     id: 's9',
     type: 'multiple',
     category: 'soft_teamwork',
     weight: 3,
-    text: 'What is important for effective teamwork?',
+    text: 'Что важно для эффективной командной работы?',
     options: {
-      A: 'Individual success.',
-      B: 'Trust and communication.',
-      C: 'Competition.',
-      D: 'Isolation.'
+      A: 'Индивидуальный успех.',
+      B: 'Доверие и открытая коммуникация.',
+      C: 'Конкуренция внутри команды.',
+      D: 'Изоляция и работа в одиночку.'
     },
     correctAnswer: 'B'
   },
@@ -679,12 +553,12 @@ const DEFAULT_QUESTIONS = [
     type: 'multiple',
     category: 'soft_teamwork',
     weight: 3,
-    text: 'How do you contribute to team goals?',
+    text: 'Как вы вносите вклад в достижение командных целей?',
     options: {
-      A: 'Focus on personal tasks only.',
-      B: 'Share knowledge and support others.',
-      C: 'Delegate all work.',
-      D: 'Criticize others.'
+      A: 'Фокусируюсь только на своих задачах.',
+      B: 'Делюсь знаниями и поддерживаю других.',
+      C: 'Делегирую всю сложную работу.',
+      D: 'Критикую идеи других.'
     },
     correctAnswer: 'B'
   },
@@ -693,27 +567,27 @@ const DEFAULT_QUESTIONS = [
     type: 'open',
     category: 'soft_teamwork',
     weight: 4,
-    text: 'How do you deal with a non-performing team member?'
+    text: 'Как вы поступите, если заметите, что один из членов команды не справляется со своими задачами?'
   },
-  // Block 7: Self-Organization (3 questions, 5 points)
+  // Блок 8: Самоорганизация (3 вопроса, 5 баллов)
   {
     id: 's19',
     type: 'open',
     category: 'soft_selforg',
     weight: 2,
-    text: 'Situation: You receive a task with very vague requirements.'
+    text: 'Ситуация: Вы получили задачу с очень расплывчатыми требованиями. Ваши действия?'
   },
   {
     id: 's20',
     type: 'multiple',
     category: 'soft_selforg',
     weight: 1,
-    text: 'You have freedom in choosing tools for the project.',
+    text: 'У вас есть свобода в выборе инструментов для проекта. Чем вы будете руководствоваться?',
     options: {
-      A: 'I will choose the newest and trendiest technologies to boost my resume.',
-      B: 'I will choose the most reliable and proven tools, even if they are not the newest.',
-      C: 'I will analyze and choose the tool that best fits the specific task, considering its pros and cons.',
-      D: 'I will choose the tool that my colleagues know best, so they can support me easier.'
+      A: 'Выберу самые новые и модные технологии, чтобы пополнить резюме.',
+      B: 'Выберу самые надежные и проверенные инструменты, даже если они не самые новые.',
+      C: 'Проанализирую и выберу инструмент, который лучше всего подходит под конкретную задачу, учитывая его плюсы и минусы.',
+      D: 'Выберу инструмент, который лучше всего знают мои коллеги, чтобы мне могли помочь.'
     },
     correctAnswer: 'C'
   },
@@ -722,27 +596,27 @@ const DEFAULT_QUESTIONS = [
     type: 'multiple',
     category: 'soft_selforg',
     weight: 2,
-    text: 'You realize that your current work on the project has reached a dead end.',
+    text: 'Вы поняли, что ваша текущая работа над проектом зашла в тупик.',
     options: {
-      A: 'I will continue trying the same approach, hoping for a different result.',
-      B: 'I will take a step back to rethink the problem as a whole, and possibly return to the task setting stage.',
-      C: 'I will ask the manager to give me another task.',
-      D: 'I will hide the problem and pretend that everything is going according to plan.'
+      A: 'Продолжу пробовать тот же подход, надеясь на другой результат.',
+      B: 'Сделаю шаг назад, чтобы переосмыслить проблему в целом, и, возможно, вернусь к этапу постановки задачи.',
+      C: 'Попрошу у менеджера другую задачу.',
+      D: 'Скрою проблему и сделаю вид, что всё идёт по плану.'
     },
     correctAnswer: 'B'
   },
-  // Block 8: Feedback (3 questions, 5 points)
+  // Блок 9: Обратная связь (3 вопроса, 5 баллов)
   {
     id: 's22',
     type: 'multiple',
     category: 'soft_feedback',
     weight: 2,
-    text: 'You see an error in the manager\'s presentation before an important meeting.',
+    text: 'Вы видите ошибку в презентации руководителя перед важной встречей.',
     options: {
-      A: 'I will say nothing to avoid putting him in an awkward position.',
-      B: 'I will tactfully inform him about the error one-on-one before the meeting.',
-      C: 'I will point out the error publicly during his speech.',
-      D: 'I will tell colleagues about the error after the meeting.'
+      A: 'Ничего не скажу, чтобы не ставить его в неловкое положение.',
+      B: 'Тактично сообщу ему об ошибке один на один до начала встречи.',
+      C: 'Укажу на ошибку публично во время его выступления.',
+      D: 'Расскажу об ошибке коллегам после совещания.'
     },
     correctAnswer: 'B'
   },
@@ -751,12 +625,12 @@ const DEFAULT_QUESTIONS = [
     type: 'multiple',
     category: 'soft_feedback',
     weight: 1,
-    text: 'It seems to you that your manager sets unrealistic deadlines for you.',
+    text: 'Вам кажется, что руководитель ставит вам нереалистичные сроки.',
     options: {
-      A: 'I will silently agree and work at night, risking burnout.',
-      B: 'I will prepare an argued assessment of deadlines, break the task into stages and suggest a realistic plan to the manager.',
-      C: 'I will say that it is impossible and refuse the task.',
-      D: 'I will promise to make it in time, but I will know in advance that I will miss the deadline.'
+      A: 'Молча соглашусь и буду работать по ночам, рискуя выгореть.',
+      B: 'Подготовлю аргументированную оценку сроков, разобью задачу на этапы и предложу руководителю реалистичный план.',
+      C: 'Скажу, что это невозможно, и откажусь от задачи.',
+      D: 'Пообещаю успеть, но заранее буду знать, что сорву дедлайн.'
     },
     correctAnswer: 'B'
   },
@@ -765,34 +639,34 @@ const DEFAULT_QUESTIONS = [
     type: 'multiple',
     category: 'soft_feedback',
     weight: 2,
-    text: 'Your model was criticized at the technical committee.',
+    text: 'Вашу модель раскритиковали на техническом комитете.',
     options: {
-      A: 'I will take all the criticism personally and be demotivated.',
-      B: 'I will separate criticism of the model from criticism of myself as a person, collect all comments and make a plan to eliminate them.',
-      C: 'I will start arguing and prove that the critics do not understand the topic.',
-      D: 'I will decide that ML is not for me, and start learning something else.'
+      A: 'Приму всю критику на свой счёт и демотивируюсь.',
+      B: 'Отделю критику модели от критики себя как личности, соберу все замечания и составлю план по их устранению.',
+      C: 'Начну спорить и доказывать, что критики не разбираются в теме.',
+      D: 'Решу, что ML — это не моё, и начну учить что-то другое.'
     },
     correctAnswer: 'B'
   },
-  // Block 9: Creativity (3 questions, 6 points)
+  // Блок 10: Креативность (3 вопроса, 6 баллов)
   {
     id: 's25',
     type: 'open',
     category: 'soft_creativity',
     weight: 3,
-    text: 'Situation: You need to solve a task for which there are no standard, "off-the-shelf" solutions.'
+    text: 'Ситуация: Вам нужно решить задачу, для которой нет стандартных, "коробочных" решений. Ваши действия?'
   },
   {
     id: 's26',
     type: 'multiple',
     category: 'soft_creativity',
     weight: 2,
-    text: 'The manager suggests an idea that seems technically weak to you.',
+    text: 'Менеджер предлагает идею, которая кажется вам технически слабой.',
     options: {
-      A: 'I will immediately say that the idea is bad and will not work.',
-      B: 'I will say: "Interesting idea. Let me conduct a small research and make a prototype so that we can evaluate its viability in practice".',
-      C: 'I will formally agree, but do nothing.',
-      D: 'I will suggest my "correct" idea instead of his.'
+      A: 'Сразу скажу, что идея плохая и работать не будет.',
+      B: 'Скажу: "Интересная идея. Давайте я проведу небольшое исследование и сделаю прототип, чтобы мы могли оценить её жизнеспособность на практике".',
+      C: 'Формально соглашусь, но делать ничего не буду.',
+      D: 'Предложу свою, "правильную" идею вместо его.'
     },
     correctAnswer: 'B'
   },
@@ -801,27 +675,27 @@ const DEFAULT_QUESTIONS = [
     type: 'multiple',
     category: 'soft_creativity',
     weight: 1,
-    text: 'Your team constantly uses the same approach to all tasks.',
+    text: 'Ваша команда постоянно использует один и тот же подход ко всем задачам.',
     options: {
-      A: 'This is good, as it is a standard, and everything works predictably.',
-      B: 'I will suggest conducting an R&D day to study and try new methods that can increase our efficiency.',
-      C: 'I will secretly try new methods in my projects.',
-      D: 'I believe that if something works, there is no need to change it.'
+      A: 'Это хорошо, так как это стандарт, и всё работает предсказуемо.',
+      B: 'Предложу провести R&D день, чтобы изучить и попробовать новые методы, которые могут повысить нашу эффективность.',
+      C: 'Буду втайне пробовать новые методы в своих проектах.',
+      D: 'Считаю, что если что-то работает, не нужно это менять.'
     },
     correctAnswer: 'B'
   },
-  // Block 10: Documentation (3 questions, 5 points)
+  // Блок 11: Документация (2 вопроса, 5 баллов)
   {
     id: 's28',
     type: 'multiple',
     category: 'soft_documentation',
     weight: 2,
-    text: 'The project is completed, the model works. It remains to write the documentation.',
+    text: 'Проект завершён, модель работает. Осталось написать документацию.',
     options: {
-      A: 'I consider this the least priority task and will postpone it indefinitely.',
-      B: 'I consider documentation an integral part of the project and will allocate time for it.',
-      C: 'I will ask a junior specialist to write documentation for my code.',
-      D: 'I will write the minimum necessary to formally close the task.'
+      A: 'Считаю это наименее приоритетной задачей и отложу её на неопределённый срок.',
+      B: 'Считаю документацию неотъемлемой частью проекта и выделю на неё время.',
+      C: 'Попрошу джуниора написать документацию на мой код.',
+      D: 'Напишу самый необходимый минимум, чтобы формально закрыть задачу.'
     },
     correctAnswer: 'B'
   },
@@ -829,22 +703,15 @@ const DEFAULT_QUESTIONS = [
     id: 's29',
     type: 'multiple',
     category: 'soft_documentation',
-    weight: 2,
-    text: 'You need to hand over your project to a colleague.',
+    weight: 3,
+    text: 'Вам нужно передать свой проект коллеге.',
     options: {
-      A: 'I will just give him a link to the Git repository.',
-      B: 'I will organize a meeting where I will tell in detail about the project, show key parts of the code and leave a link to detailed documentation.',
-      C: 'I will record a short video with a project overview for him.',
-      D: 'I will be available for questions when he starts figuring it out himself.'
+      A: 'Просто дам ему ссылку на Git-репозиторий.',
+      B: 'Организую встречу, где подробно расскажу о проекте, покажу ключевые части кода и оставлю ссылку на подробную документацию.',
+      C: 'Запишу для него короткое видео с обзором проекта.',
+      D: 'Буду доступен для вопросов, когда он сам начнёт разбираться.'
     },
     correctAnswer: 'B'
-  },
-  {
-    id: 's30',
-    type: 'open',
-    category: 'soft_documentation',
-    weight: 1,
-    text: 'What documentation style do you prefer?'
   }
 ];
 
@@ -1033,10 +900,12 @@ async function getAnalytics(env) {
     const results = await env.ML_QUESTIONS.get('results', { type: 'json' }) || [];
     const questions = await env.ML_QUESTIONS.get('questions', { type: 'json' }) || DEFAULT_QUESTIONS;
     const totalTests = results.length;
-    const averagePercentage = totalTests > 0 ? Math.round(results.reduce((sum, r) => sum + r.percentage, 0) / totalTests) : 0;
+    const averageScore = totalTests > 0 ? Math.round(results.reduce((sum, r) => sum + r.percentage, 0) / totalTests) : 0;
     const passRate = totalTests > 0 ? Math.round((results.filter(r => r.percentage >= 60).length / totalTests) * 100) : 0;
     const recentResults = results.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 10);
-    return new Response(JSON.stringify({ success: true, totalTests, averagePercentage, totalQuestions: questions.length, passRate, recentResults }), {
+    
+    // Use averagePercentage instead of averageScore for clarity
+    return new Response(JSON.stringify({ success: true, totalTests, averageScore: averageScore, totalQuestions: questions.length, passRate, recentResults }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
@@ -1045,7 +914,6 @@ async function getAnalytics(env) {
     });
   }
 }
-
 
 
 
