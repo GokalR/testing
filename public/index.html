@@ -242,7 +242,7 @@
         .grade-fair { background: var(--warning); color: var(--text-color); }
         .grade-poor { background: var(--danger); }
         .detailed-results { display: grid; gap: 20px; }
-        .result-block { background: var(--white); padding: 20px; border-radius: 10px; border-left: 4px solid var(--primary-red); border: 1px solid var(--medium-gray); }
+        .result-block { background: var(--white); padding: 20px; border-radius: 10px; border: 1px solid var(--medium-gray); }
         .detailed-answer-item { border: 1px solid #e0e0e0; border-radius: 8px; margin-bottom: 15px; padding: 15px; }
         .detailed-answer-item.correct { border-left: 5px solid var(--success); }
         .detailed-answer-item.incorrect { border-left: 5px solid var(--danger); }
@@ -258,6 +258,36 @@
         .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
         .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
         
+        /* --- NEW STYLES FOR GRADING --- */
+        .grading-box {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f0f8ff; /* A light, noticeable color */
+            border: 1px solid #cce7ff;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .grading-box label {
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .grading-box input[type="number"] {
+            width: 70px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .grading-box button {
+            padding: 5px 10px;
+            font-size: 0.9em;
+        }
+        /* --- END OF NEW STYLES --- */
+
         @media (max-width: 768px) {
             .mode-selector, .test-header { flex-direction: column; align-items: center; }
             .navigation { flex-wrap: wrap; }
@@ -268,6 +298,7 @@
 <body>
     <div class="container">
         <div class="header">
+            <!-- Make sure you have an image at `public/img/logo.png` or change this path -->
             <h1><img src="/img/logo.png" alt="Logo" style="height: 40px; vertical-align: middle; margin-right: 15px;"> 
             <span data-i18n="mainTitle">ML Engineer Testing Platform</span></h1>
             <p data-i18n="mainSubtitle">Comprehensive evaluation system for Machine Learning professionals</p>
@@ -292,8 +323,7 @@
         <div id="adminNavigation" class="navigation hidden">
             <button class="nav-btn" onclick="showSection('welcome')" data-i18n="navStartTest">Start Test</button>
             <button class="nav-btn" onclick="showSection('questionEditor')" data-i18n="navEditQuestions">Edit Questions</button>
-            <button class="nav-btn" onclick="showSection('results')" data-i18n="navResults">Results</button>
-            <button class="nav-btn active" onclick="showSection('analytics')" data-i18n="navAnalytics">Analytics</button>
+            <button class="nav-btn" onclick="showSection('analytics')" data-i18n="navAnalytics">Analytics</button>
         </div>
 
         <!-- Welcome Section -->
