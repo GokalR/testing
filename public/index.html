@@ -358,21 +358,37 @@
         }
 
         .error {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            width: 90%;
+            max-width: 600px;
             background: #f8d7da;
             color: #721c24;
             padding: 15px;
             border-radius: 10px;
-            margin: 20px 0;
+            margin: 0;
             border: 1px solid #f5c6cb;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
         .success {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            width: 90%;
+            max-width: 600px;
             background: #d4edda;
             color: #155724;
             padding: 15px;
             border-radius: 10px;
-            margin: 20px 0;
+            margin: 0;
             border: 1px solid #c3e6cb;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
         @media (max-width: 768px) {
@@ -415,7 +431,6 @@
         <!-- Candidate Navigation -->
         <div id="candidateNavigation" class="navigation">
             <button class="nav-btn active" onclick="showSection('welcome')">Start Test</button>
-            <button class="nav-btn" onclick="showSection('test')">Take Test</button>
             <button class="nav-btn" onclick="showSection('results')">Results</button>
         </div>
 
@@ -423,7 +438,6 @@
         <div id="adminNavigation" class="navigation hidden">
             <button class="nav-btn active" onclick="showSection('welcome')">Start Test</button>
             <button class="nav-btn" onclick="showSection('questionEditor')">Edit Questions</button>
-            <button class="nav-btn" onclick="showSection('test')">Take Test</button>
             <button class="nav-btn" onclick="showSection('results')">Results</button>
             <button class="nav-btn" onclick="showSection('analytics')">Analytics</button>
         </div>
