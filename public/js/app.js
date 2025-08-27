@@ -509,10 +509,16 @@ function renderQuestion() {
     updateProgress();
 }
 
+/** [FIXED] Handles selecting an answer without disruptive re-rendering for text inputs. */
 function selectAnswer(questionId, answer) {
     userAnswers[questionId] = answer;
-    // Re-render to update UI state, which is simple and effective for this app size
-    renderQuestion();
+    const question = currentTest.find(q => q.id === questionId);
+    
+    // Only re-render for multiple choice to show the "selected" state.
+    // For text areas, re-rendering on every keypress is disruptive.
+    if (question && question.type === 'multiple') {
+        renderQuestion();
+    }
 }
 
 const nextQuestion = () => {
@@ -592,6 +598,7 @@ async function submitTest() {
 // Results & Analytics
 // =================================================================================
 
+/** [MODIFIED] Displays results, hiding detailed answers behind a password prompt. */
 function showResults(result) {
     const grade = result.percentage >= 80 ? { text: 'Excellent', class: 'grade-excellent' }
         : result.percentage >= 60 ? { text: 'Good', class: 'grade-good' }
@@ -606,6 +613,16 @@ function showResults(result) {
         return acc;
     }, {});
     
+    // Supervisor-focused view for open questions
+    const openAnswersHTML = result.detailedAnswers
+        .filter(ans => ans.type === 'open' || ans.type === 'code')
+        .map(ans => `
+            <div class="detailed-answer-item">
+                <p><strong>Question (${categoryNames[ans.category] || ans.category}):</strong> ${ans.text}</p>
+                <p class="user-answer"><strong>Candidate's Answer:</strong><pre>${ans.userAnswer || 'Not answered'}</pre></p>
+            </div>
+        `).join('');
+
     const detailedAnswersHTML = result.detailedAnswers.map(ans => {
         const correctnessClass = ans.isCorrect ? 'correct' : 'incorrect';
         let answerDetails = '';
@@ -644,10 +661,30 @@ function showResults(result) {
                 </div>
             `).join('')}
         </div>
-        <hr style="margin: 30px 0;">
-        <h4>Detailed Answers:</h4>
-        <div>${detailedAnswersHTML}</div>
+        <button id="showDetailsBtn" class="btn" style="margin: 30px auto; display: block;">Show Detailed Review</button>
+        <div id="detailedReview" class="hidden">
+            <hr style="margin: 30px 0;">
+            <h3>Supervisor Review Section</h3>
+            <h4>Open & Coding Questions:</h4>
+            <div>
+                ${openAnswersHTML.length > 0 ? openAnswersHTML : '<p>No open-ended or coding questions in this test.</p>'}
+            </div>
+            <hr style="margin: 30px 0;">
+            <h4>Full Detailed Answers:</h4>
+            <div>${detailedAnswersHTML}</div>
+        </div>
     `;
+
+    document.getElementById('showDetailsBtn').addEventListener('click', () => {
+        const pass = prompt('Enter supervisor password to view detailed answers:');
+        if (pass === ADMIN_PASSWORD) {
+            document.getElementById('detailedReview').classList.remove('hidden');
+            document.getElementById('showDetailsBtn').classList.add('hidden');
+        } else if (pass !== null) { // if user didn't click cancel
+            showError('Incorrect password.');
+        }
+    });
+
     showSection('results');
 }
 
@@ -667,8 +704,18 @@ function toggleDetails(id) {
     el.style.display = el.style.display === 'none' ? 'block' : 'none';
 }
 
+/** [MODIFIED] Analytics view now includes a separate toggle for the Supervisor View. */
 function displayAnalytics(data) {
     const recentHTML = data.recentResults.map(r => {
+        const openAnswersHTML = r.detailedAnswers
+            .filter(ans => ans.type === 'open' || ans.type === 'code')
+            .map(ans => `
+                <div class="detailed-answer-item">
+                     <p><strong>Question:</strong> ${ans.text}</p>
+                     <p class="user-answer"><strong>Answer:</strong><pre>${ans.userAnswer || 'Not answered'}</pre></p>
+                </div>
+            `).join('');
+            
         const detailedAnswersHTML = r.detailedAnswers.map(ans => {
             const correctnessClass = ans.isCorrect ? 'correct' : 'incorrect';
             let answerDetails = '';
@@ -694,9 +741,15 @@ function displayAnalytics(data) {
         return `
             <div class="result-block">
                 <strong>${r.userName}</strong>: ${r.score}/${r.maxScore} (${r.percentage}%) - ${r.level}
-                <div style="font-size: 0.8rem; color: #666;">${new Date(r.timestamp).toLocaleString()}</div>
-                <button class="btn" onclick="toggleDetails('${r.id}')">Toggle Details</button>
-                <div id="details-${r.id}" style="display:none;">
+                <div style="font-size: 0.8rem; color: #666; margin-bottom: 10px;">${new Date(r.timestamp).toLocaleString()}</div>
+                <button class="btn btn-secondary" onclick="toggleDetails('supervisor-${r.id}')" style="margin-right: 10px; margin-bottom: 5px;">Supervisor View</button>
+                <button class="btn" onclick="toggleDetails('${r.id}')" style="margin-bottom: 5px;">Full Details</button>
+                <div id="details-supervisor-${r.id}" style="display:none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
+                    <h4>Open & Coding Questions</h4>
+                    ${openAnswersHTML.length > 0 ? openAnswersHTML : '<p>No open-ended questions.</p>'}
+                </div>
+                <div id="details-${r.id}" style="display:none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
+                    <h4>All Answers</h4>
                     ${detailedAnswersHTML}
                 </div>
             </div>
@@ -723,7 +776,7 @@ function displayAnalytics(data) {
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('questionType').addEventListener('change', toggleQuestionTypeFields);
     initializeApp();
-    const savedLanguage = localStorage.getItem('language') || 'en';
+    const savedLanguage = localStorage.getItem('language') || 'ru'; // Default to Russian
     setLanguage(savedLanguage);
 });
 
@@ -742,3 +795,4 @@ async function initializeApp() {
         showError("Failed to initialize the application by loading questions.");
     }
 }
+
