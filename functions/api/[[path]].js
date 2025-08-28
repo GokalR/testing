@@ -751,15 +751,6 @@ const corsHeaders = {
 // Added constants for recalculation on the backend
 const hardSkillCategories = ['probability_stats', 'ml_algorithms', 'data_preparation', 'validation_metrics', 'coding'];
 const softSkillCategories = ['soft_communication', 'soft_teamwork', 'soft_selforg', 'soft_feedback', 'soft_creativity', 'soft_documentation'];
-const levels = [
-    { name: 'Below Junior', min: 0, max: 5 },
-    { name: 'Junior', min: 6, max: 24 },
-    { name: 'Middle', min: 25, max: 54 },
-    { name: 'Senior', min: 55, max: 79 },
-    { name: 'Senior+', min: 80, max: 99 },
-    { name: 'Tech Lead', min: 100, max: 104 },
-    { name: 'Head of', min: 105, max: Infinity }
-];
 
 
 // Worker code
@@ -1069,6 +1060,7 @@ async function getAnalytics(env) {
     });
   }
 }
+
 
 
 
