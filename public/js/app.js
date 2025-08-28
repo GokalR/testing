@@ -725,7 +725,7 @@ function showResults(result) {
         <div class="results-summary">
             <h3>${result.userName}</h3>
             <div class="score-display">${result.score} / ${result.maxScore}</div>
-            <div class="grade-badge ${grade.class}">${result.percentage}% - ${result.level} (${grade.text})</div>
+            <div class="grade-badge ${grade.class}">${result.percentage}% (${grade.text})</div>
         </div>
         ${scoreBreakdownHTML}
         <h4>Результаты по категориям:</h4>
@@ -853,7 +853,7 @@ function displayAnalytics(data) {
 
         return `
             <div class="result-block">
-                <strong>${r.userName}</strong>: ${r.score}/${r.maxScore} (${r.percentage}%) - ${r.level}
+                <strong>${r.userName}</strong>: ${r.score}/${r.maxScore} (${r.percentage}%)
                 <div style="font-size: 0.9rem; color: #333; margin-top: 5px;">
                     Hard: <strong>${r.hardSkillScore || 0}/${r.maxHardSkillScore || 0}</strong> | Soft: <strong>${r.softSkillScore || 0}/${r.maxSoftSkillScore || 0}</strong>
                 </div>
@@ -911,6 +911,7 @@ async function initializeApp() {
         showError("Не удалось инициализировать приложение путем загрузки вопросов.");
     }
 }
+
 
 
 
