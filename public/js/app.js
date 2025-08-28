@@ -3,7 +3,7 @@
 // =================================================================================
 
 const API_BASE_URL = '/api';
-const ADMIN_PASSWORD = 'botabotabotaspeed'; // Change this to a secure password!
+const ADMIN_PASSWORD = 'bota13'; // Change this to a secure password!
 const TEST_DURATION_SECONDS = 3600; // 60 minutes
 
 // ... (Global variables, Data Mappings, translations remain unchanged) ...
@@ -911,6 +911,7 @@ async function initializeApp() {
         showError("Не удалось инициализировать приложение путем загрузки вопросов.");
     }
 }
+
 
 
 
