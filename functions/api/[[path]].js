@@ -465,7 +465,6 @@ const DEFAULT_QUESTIONS = [
     text: 'Напишите функцию для нормализации данных с использованием robust scaling (устойчивого к выбросам, на основе медианы и IQR).',
     test_cases: ''
   },
-    // ... (The rest of the soft skills questions remain unchanged) ...
   // Soft Skills (55 points total, unchanged)
   // Блок 6: Communication (6 вопросов, 18 баллов)
   {
@@ -1088,7 +1087,6 @@ async function replaceResults(request, env) {
     });
   }
 }
-
 
 
 
