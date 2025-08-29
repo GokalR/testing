@@ -1,11 +1,11 @@
 const DEFAULT_QUESTIONS = [
-  // Hard Skills (50 points total)
-  // Блок 1: Вероятность и Статистика (10 вопросов, 10 баллов) - added one more question to reach 10, made some options more tricky with common misconceptions
+  // Hard Skills (adjusted max ~44 points total)
+  // Блок 1: Вероятность и Статистика (10 вопросов, 8 баллов total) - weights 0.8 for multiple
   {
     id: 'h1',
     type: 'multiple',
     category: 'probability_stats',
-    weight: 1,
+    weight: 0.8,
     text: 'Что такое p-value в контексте статистического тестирования гипотез?',
     options: {
       A: 'Вероятность того, что альтернативная гипотеза верна, если нулевая отвергнута.',
@@ -19,7 +19,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h2',
     type: 'multiple',
     category: 'probability_stats',
-    weight: 1,
+    weight: 0.8,
     text: 'В контексте мониторинга банковского мошенничества, что такое Ошибка II рода, и почему она может быть особенно опасной?',
     options: {
       A: 'Система помечает легитимную транзакцию как мошенническую, что приводит к неудобствам для клиентов.',
@@ -33,7 +33,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h3',
     type: 'multiple',
     category: 'probability_stats',
-    weight: 1,
+    weight: 0.8,
     text: 'Какое статистическое распределение чаще всего используется для моделирования количества дефолтов по кредитам в портфеле за определённый период, особенно когда события редки и независимы?',
     options: {
       A: 'Нормальное распределение, поскольку оно универсально для больших выборок.',
@@ -47,7 +47,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h4',
     type: 'multiple',
     category: 'probability_stats',
-    weight: 1,
+    weight: 0.8,
     text: 'Что из перечисленного НЕ является обязательным условием для применения классической линейной регрессии, хотя и может улучшить интерпретируемость модели?',
     options: {
       A: 'Линейная зависимость между предикторами и целевой переменной.',
@@ -61,7 +61,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h5',
     type: 'multiple',
     category: 'probability_stats',
-    weight: 1,
+    weight: 0.8,
     text: 'Зачем необходимо проводить A/B тестирование при внедрении новой скоринговой модели в банке?',
     options: {
       A: 'Чтобы проверить, что код модели не содержит синтаксических ошибок.',
@@ -75,7 +75,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h6',
     type: 'multiple',
     category: 'probability_stats',
-    weight: 1,
+    weight: 0.8,
     text: 'Что такое Центральная Предельная Теорема, и почему она важна для анализа больших данных в ML?',
     options: {
       A: 'Теорема о том, что любая случайная величина имеет нормальное распределение при большом объеме данных.',
@@ -89,7 +89,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h7',
     type: 'multiple',
     category: 'probability_stats',
-    weight: 1,
+    weight: 0.8,
     text: 'Вам нужно сравнить средний чек по кредитным картам для двух групп клиентов (мужчины и женщины). Предполагая, что дисперсии неизвестны и могут быть неравны, какой статистический тест наиболее подходит?',
     options: {
       A: 'Критерий хи-квадрат для проверки независимости.',
@@ -103,7 +103,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h8',
     type: 'multiple',
     category: 'probability_stats',
-    weight: 1,
+    weight: 0.8,
     text: 'Что такое доверительный интервал для параметра, и как его интерпретировать?',
     options: {
       A: 'Диапазон, в котором с определённой вероятностью находится истинное значение параметра генеральной совокупности.',
@@ -117,7 +117,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h9',
     type: 'multiple',
     category: 'probability_stats',
-    weight: 1,
+    weight: 0.8,
     text: 'Как проблема множественных сравнений влияет на интерпретацию p-value при проведении десятков A/B тестов одновременно, и как её корректировать?',
     options: {
       A: 'Никак не влияет, поскольку каждый тест независим.',
@@ -131,7 +131,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h10',
     type: 'multiple',
     category: 'probability_stats',
-    weight: 1,
+    weight: 0.8,
     text: 'В задаче предсказания риска дефолта, как интерпретировать коэффициент корреляции Спирмена между двумя признаками?',
     options: {
       A: 'Он измеряет линейную зависимость, как и коэффициент Пирсона.',
@@ -141,12 +141,12 @@ const DEFAULT_QUESTIONS = [
     },
     correctAnswer: 'B'
   },
-  // Блок 2: Классические алгоритмы ML (10 вопросов, 10 баллов) - added one more, made questions/options more advanced with nuances
+  // Блок 2: Классические алгоритмы ML (10 вопросов, 8 баллов total)
   {
     id: 'h11',
     type: 'multiple',
     category: 'ml_algorithms',
-    weight: 1,
+    weight: 0.8,
     text: 'Какой из перечисленных алгоритмов является методом неиерархической кластеризации без учителя?',
     options: {
       A: 'Логистическая регрессия для бинарной классификации.',
@@ -160,7 +160,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h12',
     type: 'multiple',
     category: 'ml_algorithms',
-    weight: 1,
+    weight: 0.8,
     text: 'В чем основная идея алгоритма градиентного бустинга, такого как XGBoost, и как он справляется с переобучением?',
     options: {
       A: 'Он строит множество независимых деревьев, а затем усредняет их предсказания, как в случайном лесе.',
@@ -174,7 +174,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h13',
     type: 'multiple',
     category: 'ml_algorithms',
-    weight: 1,
+    weight: 0.8,
     text: 'Для какой задачи НЕ подходит логистическая регрессия в её стандартной форме?',
     options: {
       A: 'Предсказание оттока клиентов (бинарный исход: да/нет).',
@@ -188,7 +188,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h14',
     type: 'multiple',
     category: 'ml_algorithms',
-    weight: 1,
+    weight: 0.8,
     text: 'Какой алгоритм использует функцию потерь hinge loss и подходит для задач с большим запасом разделения классов?',
     options: {
       A: 'Наивный байесовский классификатор.',
@@ -202,7 +202,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h15',
     type: 'multiple',
     category: 'ml_algorithms',
-    weight: 1,
+    weight: 0.8,
     text: 'Какой из алгоритмов наиболее чувствителен к масштабу признаков и требует нормализации данных?',
     options: {
       A: 'Дерево решений, поскольку оно использует пороговые splits.',
@@ -216,7 +216,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h16',
     type: 'multiple',
     category: 'ml_algorithms',
-    weight: 1,
+    weight: 0.8,
     text: 'Что такое компромисс между смещением и дисперсией (bias-variance trade-off), и как он проявляется в выборе глубины дерева решений?',
     options: {
       A: 'Компромисс между скоростью обучения и точностью модели на валидации.',
@@ -230,7 +230,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h17',
     type: 'multiple',
     category: 'ml_algorithms',
-    weight: 1,
+    weight: 0.8,
     text: 'Какова основная цель L1-регуляризации (Lasso) в линейных моделях, и в чем её отличие от L2?',
     options: {
       A: 'Уменьшить сложность модели путем обнуления весов наименее важных признаков, тем самым производя отбор признаков; в отличие от L2, которая сжимает веса, но не обнуляет.',
@@ -244,7 +244,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h18',
     type: 'multiple',
     category: 'ml_algorithms',
-    weight: 1,
+    weight: 0.8,
     text: 'Какой алгоритм лежит в основе библиотеки CatBoost, делая её эффективной для категориальных признаков без ручного кодирования?',
     options: {
       A: 'Автоматическое One-Hot Encoding для всех категориальных признаков с регуляризацией.',
@@ -258,7 +258,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h19',
     type: 'multiple',
     category: 'ml_algorithms',
-    weight: 1,
+    weight: 0.8,
     text: 'Какой метод используется для снижения размерности данных с сохранением максимальной дисперсии?',
     options: {
       A: 'K-Means для кластеризации.',
@@ -272,7 +272,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h20',
     type: 'multiple',
     category: 'ml_algorithms',
-    weight: 1,
+    weight: 0.8,
     text: 'В чем основное преимущество ансамблевых моделей, таких как Random Forest, по сравнению с одним решающим деревом?',
     options: {
       A: 'Они всегда обучаются быстрее за счет параллелизации.',
@@ -282,12 +282,12 @@ const DEFAULT_QUESTIONS = [
     },
     correctAnswer: 'B'
   },
-  // Блок 3: Подготовка данных и Feature Engineering (5 вопросов, 5 баллов) - made options trickier
+  // Блок 3: Подготовка данных и Feature Engineering (5 вопросов, 4 балла total)
   {
     id: 'h23',
     type: 'multiple',
     category: 'data_preparation',
-    weight: 1,
+    weight: 0.8,
     text: 'Что такое One-Hot Encoding, и когда оно может привести к проблемам?',
     options: {
       A: 'Метод заполнения пропусков средним значением категории.',
@@ -301,7 +301,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h24',
     type: 'multiple',
     category: 'data_preparation',
-    weight: 1,
+    weight: 0.8,
     text: 'Зачем нужна стандартизация числовых признаков, и для каких алгоритмов она критична?',
     options: {
       A: 'Чтобы привести все значения к диапазону [0,1], критична для деревьев решений.',
@@ -315,13 +315,13 @@ const DEFAULT_QUESTIONS = [
     id: 'h25',
     type: 'multiple',
     category: 'data_preparation',
-    weight: 1,
+    weight: 0.8,
     text: 'Что из перечисленного является примером "утечки данных" (data leakage) в пайплайне ML?',
     options: {
       A: 'Использование будущих данных (например, статус дефолта) для создания признаков в задаче предсказания дефолта.',
       B: 'Наличие пропущенных значений в тестовом наборе.',
       C: 'Сильная корреляция между двумя признаками в обучении.',
-      D: 'Несбалансированные классы, требующие resampling.'
+      D: 'Несбалансированные классы в данных.'
     },
     correctAnswer: 'A'
   },
@@ -329,13 +329,13 @@ const DEFAULT_QUESTIONS = [
     id: 'h26',
     type: 'multiple',
     category: 'data_preparation',
-    weight: 1,
+    weight: 0.8,
     text: 'Как бороться с несбалансированными данными в задачах классификации, чтобы избежать bias к большинству?',
     options: {
       A: 'Игнорировать проблему, если accuracy высокая.',
-      B: 'Использовать техники вроде SMOTE для oversampling миноритарного класса или undersampling мажоритарного.',
-      C: 'Всегда использовать метрику accuracy как основную.',
-      D: 'Удалить миноритарный класс для упрощения задачи.'
+      B: 'Использовать resampling (oversampling/undersampling), class weights или метрики вроде F1.',
+      C: 'Удалить минорный класс для упрощения задачи.',
+      D: 'Всегда использовать SVM, который устойчив к imbalance.'
     },
     correctAnswer: 'B'
   },
@@ -343,28 +343,28 @@ const DEFAULT_QUESTIONS = [
     id: 'h31',
     type: 'multiple',
     category: 'data_preparation',
-    weight: 1,
+    weight: 0.8,
     text: 'Какова основная цель разделения данных на обучающую, валидационную и тестовую выборки?',
     options: {
-      A: 'Чтобы искусственно переобучить модель на подмножествах.',
-      B: 'Чтобы оценить обобщающую способность модели на unseen данных и тюнить гиперпараметры.',
-      C: 'Чтобы уменьшить общий размер набора данных для ускорения.',
-      D: 'Чтобы увеличить количество признаков путем дублирования.'
+      A: 'Увеличить объем данных для обучения модели.',
+      B: 'Оценить обобщающую способность модели на unseen data, избегая overfitting.',
+      C: 'Сократить время обучения модели за счет меньших наборов.',
+      D: 'Автоматически балансировать классы в выборках.'
     },
     correctAnswer: 'B'
   },
-  // Блок 4: Валидация и Метрики (5 вопросов, 5 баллов) - improved with more context
+  // Блок 4: Валидация и Метрики (5 вопросов, 4 балла total)
   {
     id: 'h33',
     type: 'multiple',
     category: 'validation_metrics',
-    weight: 1,
+    weight: 0.8,
     text: 'Что такое метрика Accuracy в бинарной классификации?',
     options: {
-      A: '(TP + TN) / (TP + TN + FP + FN)',
-      B: 'TP / (TP + FP) - precision',
-      C: 'TP / (TP + FN) - recall',
-      D: '2 * precision * recall / (precision + recall) - F1'
+      A: 'Доля правильно классифицированных наблюдений из всех (TP+TN)/(TP+TN+FP+FN).',
+      B: 'Гармоническое среднее precision и recall.',
+      C: 'Площадь под кривой ROC, измеряющая качество ранжирования.',
+      D: 'Доля истинно положительных из всех положительных предсказаний (TP/(TP+FP)).'
     },
     correctAnswer: 'A'
   },
@@ -372,13 +372,13 @@ const DEFAULT_QUESTIONS = [
     id: 'h34',
     type: 'multiple',
     category: 'validation_metrics',
-    weight: 1,
+    weight: 0.8,
     text: 'Когда F1-мера предпочтительнее Accuracy, особенно в задачах вроде детекции мошенничества?',
     options: {
-      A: 'При сбалансированных классах, где accuracy достаточна.',
-      B: 'При несбалансированных классах, где accuracy может быть misleading.',
-      C: 'В задачах регрессии для оценки ошибок.',
-      D: 'В обучении без учителя для кластеризации.'
+      A: 'Когда классы сбалансированы и ошибки равнозначны.',
+      B: 'Когда классы несбалансированы, и важен баланс между precision и recall.',
+      C: 'Когда задача регрессии, а не классификации.',
+      D: 'Когда нужно измерить качество ранжирования, как AUC.'
     },
     correctAnswer: 'B'
   },
@@ -386,13 +386,13 @@ const DEFAULT_QUESTIONS = [
     id: 'h35',
     type: 'multiple',
     category: 'validation_metrics',
-    weight: 1,
+    weight: 0.8,
     text: 'Что представляет собой AUC-ROC, и почему она полезна для имбалансных данных?',
     options: {
-      A: 'Площадь под precision-recall curve, фокусируется на положительном классе.',
-      B: 'Площадь под ROC curve, измеряет способность различать классы независимо от threshold.',
-      C: 'Средняя абсолютная ошибка (MAE) для регрессии.',
-      D: 'R-squared для объясненной дисперсии.'
+      A: 'Площадь под precision-recall кривой, фокусируется на минорном классе.',
+      B: 'Площадь под ROC-кривой (TPR vs FPR), устойчива к imbalance, измеряет качество ранжирования.',
+      C: 'Среднее арифметическое precision и recall.',
+      D: 'Доля ошибок II рода в confusion matrix.'
     },
     correctAnswer: 'B'
   },
@@ -400,13 +400,13 @@ const DEFAULT_QUESTIONS = [
     id: 'h36',
     type: 'multiple',
     category: 'validation_metrics',
-    weight: 1,
+    weight: 0.8,
     text: 'Что такое k-блочная кросс-валидация (k-fold cross-validation), и когда её использовать?',
     options: {
-      A: 'Однократное разделение на train/test без повторений.',
-      B: 'Разделение данных на k фолдов, обучение k раз с усреднением метрик для надежной оценки.',
-      C: 'Техника для преднамеренного переобучения модели.',
-      D: 'Метод аугментации данных путем ротации.'
+      A: 'Разделение данных на k частей, где одна - тест, остальные - train; для больших данных.',
+      B: 'Разделение на k фолдов, поочередно каждый как валидация; для надежной оценки при малых данных.',
+      C: 'Рандомное семплирование с возвращением для бутстрепа.',
+      D: 'Только для временных рядов с rolling window.'
     },
     correctAnswer: 'B'
   },
@@ -414,24 +414,24 @@ const DEFAULT_QUESTIONS = [
     id: 'h37',
     type: 'multiple',
     category: 'validation_metrics',
-    weight: 1,
+    weight: 0.8,
     text: 'Что такое матрица ошибок (confusion matrix), и как из неё вычислить precision?',
     options: {
-      A: 'Таблица для визуализации TP, TN, FP, FN; precision = TP / (TP + FP).',
-      B: 'График ошибок модели по эпохам обучения.',
-      C: 'Метрика для регрессии, такая как MSE.',
-      D: 'Метод отбора признаков на основе корреляций.'
+      A: 'Таблица с TP, FP, TN, FN; precision = TP / (TP + FP).',
+      B: 'График TPR vs FPR для ROC.',
+      C: 'Матрица корреляций между признаками.',
+      D: 'Таблица с метриками для разных threshold.'
     },
     correctAnswer: 'A'
   },
-  // Блок 5: Кодинг (5 вопросов, 20 баллов) - made tasks more difficult, added complexity to test_cases
+  // Блок 5: Coding (5 вопросов, 20 баллов total) - weights unchanged
   {
     id: 'h38',
     type: 'code',
     category: 'coding',
     weight: 4,
     text: 'Напишите функцию на Python для вычисления среднеквадратичной ошибки (MSE) и средней абсолютной ошибки (MAE) в одном вызове. Верните словарь с обоими значениями.',
-    test_cases: 'def compute_errors(y_true, y_pred):\n    # Ваша реализация, используйте numpy\n\nПример: compute_errors(np.array([1,2,3]), np.array([1.1,1.9,3.0])) → {"mse": approx(0.0067), "mae": approx(0.0667)}'
+    test_cases: ''
   },
   {
     id: 'h39',
@@ -439,7 +439,7 @@ const DEFAULT_QUESTIONS = [
     category: 'coding',
     weight: 4,
     text: 'Реализуйте линейную регрессию с нуля на Python, включая L2-регуляризацию (Ridge). Используйте градиентный спуск для оптимизации.',
-    test_cases: 'class RidgeRegression:\n    def __init__(self, alpha=1.0, lr=0.01, n_iters=1000):\n        pass\n    def fit(self, X, y):\n        # ...\n    def predict(self, X):\n        # ...\n\nТестировать на синтетических данных с шумом.'
+    test_cases: ''
   },
   {
     id: 'h40',
@@ -447,7 +447,7 @@ const DEFAULT_QUESTIONS = [
     category: 'coding',
     weight: 4,
     text: 'Напишите код для стратифицированного разделения данных на обучающую и тестовую выборки (учитывая баланс классов).',
-    test_cases: 'def stratified_train_test_split(X, y, test_size=0.2, random_state=42):\n    # Ваша реализация без sklearn, используйте numpy\n\nДолжен сохранять пропорции классов в y.'
+    test_cases: ''
   },
   {
     id: 'h41',
@@ -455,7 +455,7 @@ const DEFAULT_QUESTIONS = [
     category: 'coding',
     weight: 4,
     text: 'Реализуйте алгоритм кластеризации k-means с нуля, включая инициализацию центроидов методом k-means++ для лучшей сходимости.',
-    test_cases: 'class KMeans:\n    def __init__(self, n_clusters=3, max_iter=300):\n        pass\n    def fit(self, X):\n        # ...\n    def predict(self, X):\n        # ...\n\nИспользовать евклидово расстояние, тестировать на 2D данных.'
+    test_cases: ''
   },
   {
     id: 'h42',
@@ -463,10 +463,10 @@ const DEFAULT_QUESTIONS = [
     category: 'coding',
     weight: 4,
     text: 'Напишите функцию для нормализации данных с использованием robust scaling (устойчивого к выбросам, на основе медианы и IQR).',
-    test_cases: 'def robust_normalize(data):\n    # Ваша реализация с numpy, формула: (x - median) / IQR\n\nПример на данных с выбросами.'
+    test_cases: ''
   },
-  // Soft Skills (55 points total) - made open questions more difficult/in-depth with higher weights where possible, multiples lower
-  // Блок 6: Коммуникация (6 вопросов, 18 баллов) - opens weight 4 (increased), multiples 2 (decreased)
+  // Soft Skills (55 points total, unchanged)
+  // Блок 6: Communication (6 вопросов, 18 баллов)
   {
     id: 's1',
     type: 'multiple',
@@ -474,10 +474,10 @@ const DEFAULT_QUESTIONS = [
     weight: 2,
     text: 'Как бы вы объяснили сложную ML-модель (например, нейронную сеть с attention) нетехническому стейкхолдеру в банке?',
     options: {
-      A: 'Использовать технический жаргон, чтобы подчеркнуть сложность и обосновать бюджет.',
-      B: 'Использовать простые аналогии (например, "как мозг, фокусирующийся на ключевых сигналах"), визуализации и фокус на бизнес-выгодах (ROI, accuracy).',
-      C: 'Избегать деталей, сказав "это state-of-the-art, просто доверяйте".',
-      D: 'Показать сырой код и графики loss curves без объяснений.'
+      A: 'Расскажу про все layers, weights и activation functions.',
+      B: 'Использую аналогию: "Это как умный ассистент, который фокусируется на ключевых частях данных, как человек на важных словах в предложении, чтобы предсказать риск дефолта."',
+      C: 'Покажу код и графики loss curves.',
+      D: 'Скажу, что это black box, но работает хорошо.'
     },
     correctAnswer: 'B'
   },
@@ -495,10 +495,10 @@ const DEFAULT_QUESTIONS = [
     weight: 2,
     text: 'Как лучше всего обрабатывать неожиданные вопросы во время презентации ML-результатов на встрече с руководством?',
     options: {
-      A: 'Отложить все вопросы до конца, чтобы не сбиваться с ритма.',
-      B: 'Отвечать четко, лаконично, с примерами/данными, и подтвердить понимание, спросив "Это отвечает на ваш вопрос?".',
-      C: 'Сменить тему, если вопрос выходит за рамки слайдов.',
-      D: 'Занимать оборонительную позицию и доказывать, почему вопрос нерелевантен.'
+      A: 'Игнорирую, если не по теме.',
+      B: 'Признаю вопрос, обещаю follow-up с данными, если не готов ответить сразу.',
+      C: 'Делаю вид, что знаю, и даю approximate ответ.',
+      D: 'Переадресую вопрос аудитории.'
     },
     correctAnswer: 'B'
   },
@@ -509,10 +509,10 @@ const DEFAULT_QUESTIONS = [
     weight: 2,
     text: 'Как вы убеждаетесь, что ваше сообщение (например, отчет о модели) понято правильно командой?',
     options: {
-      A: 'Предполагаю, что отсутствие вопросов значит полное понимание.',
-      B: 'Задаю уточняющие вопросы ("Можете перефразировать своими словами?"), прошу фидбек и фиксирую в чате.',
-      C: 'Повторяю ключевые моменты несколько раз для подчеркивания.',
-      D: 'Использую сложные термины, чтобы стимулировать вопросы.'
+      A: 'Предполагаю, что если вопросов нет, то понято.',
+      B: 'Задаю clarifying questions: "Что вы думаете по этому пункту?" или прошу paraphrase.',
+      C: 'Отправляю email и жду replies.',
+      D: 'Использую сложный jargon для точности.'
     },
     correctAnswer: 'B'
   },
@@ -530,14 +530,14 @@ const DEFAULT_QUESTIONS = [
     weight: 4,
     text: 'Что такое активное слушание в контексте командного обсуждения ML-проекта, и как оно помогает избежать недоразумений?',
     options: {
-      A: 'Ожидание своей очереди, чтобы высказать контраргументы.',
-      B: 'Полная концентрация на собеседнике, перефразирование для подтверждения ("Если я правильно понял, вы имеете в виду..."), эмпатия и запоминание ключевых идей.',
-      C: 'Многозадачность (проверка почты) во время разговора для эффективности.',
-      D: 'Частое перебивание для быстрых уточнений и ускорения дискуссии.'
+      A: 'Слушаю passively и соглашаюсь.',
+      B: 'Перефразирую услышанное, задаю clarifying questions, фокусируюсь на speaker без distractions.',
+      C: 'Записываю notes, но не вмешиваюсь.',
+      D: 'Думаю о своем response во время speaking.'
     },
     correctAnswer: 'B'
   },
-  // Блок 7: Работа в команде (5 вопросов, 16 баллов) - opens 4, multiples 3/2
+  // Блок 7: Teamwork (5 вопросов, 17 баллов)
   {
     id: 's7',
     type: 'multiple',
@@ -545,10 +545,10 @@ const DEFAULT_QUESTIONS = [
     weight: 2,
     text: 'Как вы справляетесь с конфликтами в команде (например, разногласия по выбору алгоритма)?',
     options: {
-      A: 'Избегаю их, соглашаясь с большинством.',
-      B: 'Обсуждаю проблему открыто, фокусируясь на фактах/данных, ищу компромисс или эксперимент для проверки идей.',
-      C: 'Принимаю сторону лидера команды автоматически.',
-      D: 'Игнорирую, надеясь на саморазрешение.'
+      A: 'Избегаю conflicts.',
+      B: 'Организую discussion, выслушиваю стороны, ищу compromise на основе data/experiments.',
+      C: 'Принимаю сторону majority.',
+      D: 'Эскалирую to manager сразу.'
     },
     correctAnswer: 'B'
   },
@@ -566,10 +566,10 @@ const DEFAULT_QUESTIONS = [
     weight: 2,
     text: 'Что важно для эффективной командной работы в ML-команде?',
     options: {
-      A: 'Индивидуальный успех каждого члена для личного роста.',
-      B: 'Доверие, открытая коммуникация, распределение ролей и регулярные ревью.',
-      C: 'Конкуренция внутри команды для мотивации.',
-      D: 'Изоляция задач для минимизации зависимостей.'
+      A: 'Работать independently.',
+      B: 'Clear roles, regular syncs, shared goals и mutual support.',
+      C: 'Competitive environment.',
+      D: 'Minimal communication.'
     },
     correctAnswer: 'B'
   },
@@ -580,10 +580,10 @@ const DEFAULT_QUESTIONS = [
     weight: 3,
     text: 'Как вы вносите вклад в достижение командных целей в cross-functional команде (DS + Dev + Business)?',
     options: {
-      A: 'Фокусируюсь строго на своих DS-задачах без отвлечений.',
-      B: 'Делюсь знаниями (e.g., объясняю метрики), поддерживаю других, предлагаю помощь и участвую в планировании.',
-      C: 'Делегирую сложные части другим специалистам.',
-      D: 'Критикую идеи, чтобы повысить качество дискуссии.'
+      A: 'Фокусируюсь only на DS tasks.',
+      B: 'Делюсь expertise, адаптирую output под needs других, участвую в planning.',
+      C: 'Жду instructions.',
+      D: 'Избегаю meetings.'
     },
     correctAnswer: 'B'
   },
@@ -594,7 +594,7 @@ const DEFAULT_QUESTIONS = [
     weight: 5,
     text: 'Вы заметили, что коллега в вашей ML-команде систематически не успевает с задачами (e.g., feature engineering), тормозя deploy модели. Опишите ваши первые шаги: как соберете факты, подойдете к разговору (приватно/с менеджером), предложите помощь и спланируете follow-up. Учтите возможные причины (overload, skill gap) и как избежать эскалации.'
   },
-  // Блок 8: Самоорганизация (3 вопроса, 5 баллов) - open 3 (increased), multiples 1
+  // Блок 8: Self-Organization (3 вопроса, 5 баллов)
   {
     id: 's19',
     type: 'open',
@@ -609,10 +609,10 @@ const DEFAULT_QUESTIONS = [
     weight: 1,
     text: 'У вас есть свобода в выборе инструментов для ML-проекта (e.g., framework для deep learning). Чем вы будете руководствоваться?',
     options: {
-      A: 'Выберу trending технологии (e.g., latest PyTorch version) для резюме.',
-      B: 'Выберу надежные, но устаревшие инструменты для стабильности.',
-      C: 'Проанализирую задачу, сравню pros/cons (e.g., TensorFlow vs PyTorch по community/support), учту team expertise и scalability.',
-      D: 'Выберу то, что знают коллеги, чтобы делегировать.'
+      A: 'Выберу newest и trendy.',
+      B: 'Что знаю best.',
+      C: 'Project needs, team familiarity, scalability и community support.',
+      D: 'Random choice.'
     },
     correctAnswer: 'C'
   },
@@ -623,14 +623,14 @@ const DEFAULT_QUESTIONS = [
     weight: 1,
     text: 'Вы поняли, что ваша работа над ML-проектом (e.g., tuning hyperparameters) зашла в тупик с низкими метриками.',
     options: {
-      A: 'Продолжу тот же подход, увеличивая iterations.',
-      B: 'Сделаю шаг назад: переосмыслю проблему, вернусь к data exploration, проконсультируюсь с командой и попробую альтернативы.',
-      C: 'Попрошу менеджера перераспределить задачу.',
-      D: 'Скрою проблему до дедлайна.'
+      A: 'Продолжу same approach.',
+      B: 'Пересмотрю assumptions, проконсультируюсь с коллегами, попробую alternatives.',
+      C: 'Сдам as is.',
+      D: 'Брошу project.'
     },
     correctAnswer: 'B'
   },
-  // Блок 9: Обратная связь (3 вопроса, 5 баллов) - multiples 1-2
+  // Блок 9: Feedback (3 вопроса, 5 баллов)
   {
     id: 's22',
     type: 'multiple',
@@ -638,10 +638,10 @@ const DEFAULT_QUESTIONS = [
     weight: 2,
     text: 'Вы видите фактическую ошибку в презентации руководителя перед ключевой встречей (e.g., wrong metric interpretation).',
     options: {
-      A: 'Молчу, чтобы не подрывать авторитет.',
-      B: 'Тактично сообщу приватно до встречи, с доказательствами и предложением fix.',
-      C: 'Укажу публично во время презентации для clarity.',
-      D: 'Обсудю с коллегами после.'
+      A: 'Молчу to avoid conflict.',
+      B: 'Приватно укажу с evidence, предложу correction politely.',
+      C: 'Исправлю publicly.',
+      D: 'Игнорирую.'
     },
     correctAnswer: 'B'
   },
@@ -652,10 +652,10 @@ const DEFAULT_QUESTIONS = [
     weight: 1,
     text: 'Вам кажется, что руководитель ставит нереалистичные сроки на ML-задачу (e.g., full pipeline in 1 week).',
     options: {
-      A: 'Соглашусь и переработаю, рискуя burnout.',
-      B: 'Подготовлю breakdown задач, оценку времени (e.g., Gantt chart) и предложу реалистичный план с приоритетами.',
-      C: 'Откажусь от задачи как impossible.',
-      D: 'Пообещаю, но намеренно задержу.'
+      A: 'Соглашусь и overwork.',
+      B: 'Предоставлю breakdown tasks с realistic estimates, предложу priorities.',
+      C: 'Откажусь from task.',
+      D: 'Жалуюсь colleagues.'
     },
     correctAnswer: 'B'
   },
@@ -666,14 +666,14 @@ const DEFAULT_QUESTIONS = [
     weight: 2,
     text: 'Вашу ML-модель раскритиковали на review (e.g., poor generalization).',
     options: {
-      A: 'Приму лично и демотивируюсь.',
-      B: 'Отделю feedback от self, соберу notes, составлю action plan (e.g., add regularization) и поблагодарю за input.',
-      C: 'Спорю, доказывая некомпетентность критиков.',
-      D: 'Решу сменить карьеру.'
+      A: 'Защищаюсь aggressively.',
+      B: 'Благодарю за feedback, спрашиваю details, планирую improvements.',
+      C: 'Игнорирую criticism.',
+      D: 'Ухожу from meeting.'
     },
     correctAnswer: 'B'
   },
-  // Блок 10: Креативность (3 вопроса, 6 баллов) - open 4 (increased), multiples 1
+  // Блок 10: Creativity (3 вопроса, 6 баллов)
   {
     id: 's25',
     type: 'open',
@@ -688,10 +688,10 @@ const DEFAULT_QUESTIONS = [
     weight: 1,
     text: 'Менеджер предлагает идею, которая кажется технически слабой (e.g., simple rule-based вместо ML).',
     options: {
-      A: 'Сразу отвергну как bad idea.',
-      B: 'Скажу "Интересно, давайте прототипируем и протестируем на данных для оценки feasibility и сравнения с alternatives".',
-      C: 'Соглашусь формально, но игнорирую.',
-      D: 'Навяжу свою идею как superior.'
+      A: 'Соглашусь blindly.',
+      B: 'Предложу hybrid approach или pilot test для comparison.',
+      C: 'Отвергну immediately.',
+      D: 'Игнорирую suggestion.'
     },
     correctAnswer: 'B'
   },
@@ -709,7 +709,7 @@ const DEFAULT_QUESTIONS = [
     },
     correctAnswer: 'B'
   },
-  // Блок 11: Документация (2 вопроса, 5 баллов) - multiples 2-3
+  // Блок 11: Документация (2 вопроса, 5 баллов)
   {
     id: 's28',
     type: 'multiple',
@@ -804,6 +804,9 @@ export async function onRequest(context) {
     if (path === '/api/analytics' && request.method === 'GET') {
       return await getAnalytics(env);
     }
+    if (path === '/api/results/replace' && request.method === 'POST') {
+      return await replaceResults(request, env);
+    }
     return new Response(JSON.stringify({ success: false, error: 'Invalid route or method' }), {
       status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
@@ -815,7 +818,6 @@ export async function onRequest(context) {
   }
 }
 
-// ... (getQuestions, createQuestion, updateQuestion, deleteQuestion, resetQuestions, saveTestResult, getAnalytics functions are the same as before)...
 async function getQuestions(env) {
   try {
     let questions = await env.ML_QUESTIONS.get('questions', { type: 'json' });
@@ -850,7 +852,6 @@ async function createQuestion(request, env) {
   }
 }
 
-// NEW FUNCTION to handle bulk import
 async function replaceQuestions(request, env) {
   try {
     const newQuestions = await request.json();
@@ -869,7 +870,6 @@ async function replaceQuestions(request, env) {
     });
   }
 }
-
 
 async function updateQuestion(request, id, env) {
   try {
@@ -938,7 +938,6 @@ async function saveTestResult(request, env) {
     });
   }
 }
-
 
 async function updateTestResult(request, id, env) {
   try {
@@ -1065,6 +1064,25 @@ async function getAnalytics(env) {
   } catch (error) {
     console.error('Analytics Error:', error);
     return new Response(JSON.stringify({ success: false, error: 'Failed to get analytics' }), {
+      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+}
+
+async function replaceResults(request, env) {
+  try {
+    const newResults = await request.json();
+    if (!Array.isArray(newResults)) {
+      return new Response(JSON.stringify({ success: false, error: 'Invalid data format: Array expected.' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    await env.ML_QUESTIONS.put('results', JSON.stringify(newResults));
+    return new Response(JSON.stringify({ success: true, count: newResults.length }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ success: false, error: 'Failed to replace results' }), {
       status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
