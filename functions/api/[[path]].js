@@ -453,7 +453,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h41',
     type: 'code',
     category: 'coding',
-    weight: 6,
+    weight: 7,
     text: 'Реализуйте алгоритм кластеризации k-means с нуля, включая инициализацию центроидов методом k-means++ для лучшей сходимости.',
     test_cases: ''
   },
@@ -1087,6 +1087,7 @@ async function replaceResults(request, env) {
     });
   }
 }
+
 
 
 
