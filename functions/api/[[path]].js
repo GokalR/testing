@@ -921,10 +921,23 @@ async function resetQuestions(env) {
   }
 }
 
+// MODIFIED FUNCTION 1
 async function saveTestResult(request, env) {
   try {
     const result = await request.json();
     result.id = crypto.randomUUID();
+
+    // Sanitize and round the scores received from the client
+    if (result.score) {
+      result.score = parseFloat(result.score.toFixed(2));
+    }
+    if (result.hardSkillScore) {
+      result.hardSkillScore = parseFloat(result.hardSkillScore.toFixed(2));
+    }
+    if (result.softSkillScore) {
+      result.softSkillScore = parseFloat(result.softSkillScore.toFixed(2));
+    }
+
     let results = await env.ML_QUESTIONS.get('results', { type: 'json' }) || [];
     results.push(result);
     if (results.length > 100) results = results.slice(-100);
@@ -933,12 +946,14 @@ async function saveTestResult(request, env) {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
+    console.error('Failed to save result:', error);
     return new Response(JSON.stringify({ success: false, error: 'Failed to save result' }), {
       status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
 }
 
+// MODIFIED FUNCTION 2
 async function updateTestResult(request, id, env) {
   try {
     const { questionId, pointsAwarded } = await request.json();
@@ -988,16 +1003,13 @@ async function updateTestResult(request, id, env) {
       }
     });
 
-    // Update the main result object with the new totals, rounding to fix floating point issues
-    const roundedScore = Math.round(newScore * 100) / 100;
-    const roundedHardSkillScore = Math.round(newHardSkillScore * 100) / 100;
-    const roundedSoftSkillScore = Math.round(newSoftSkillScore * 100) / 100;
-
-    result.score = roundedScore;
-    result.hardSkillScore = roundedHardSkillScore;
-    result.softSkillScore = roundedSoftSkillScore;
-    result.percentage = result.maxScore > 0 ? Math.round((roundedScore / result.maxScore) * 100) : 0;
-    result.level = levels.find(l => roundedScore >= l.min && roundedScore <= l.max)?.name || 'N/A';
+    // Update the main result object with the new, correctly rounded totals
+    result.score = parseFloat(newScore.toFixed(2));
+    result.hardSkillScore = parseFloat(newHardSkillScore.toFixed(2));
+    result.softSkillScore = parseFloat(newSoftSkillScore.toFixed(2));
+    
+    result.percentage = result.maxScore > 0 ? Math.round((result.score / result.maxScore) * 100) : 0;
+    result.level = levels.find(l => result.score >= l.min && result.score <= l.max)?.name || 'N/A';
     
     // Save the updated result back into the main results array
     results[resultIndex] = result;
@@ -1091,7 +1103,6 @@ async function replaceResults(request, env) {
     });
   }
 }
-
 
 
 
