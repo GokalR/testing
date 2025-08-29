@@ -240,7 +240,8 @@ function showSuccess(message) {
 
 function updateWelcomeStats() {
     document.getElementById('totalQuestions').textContent = allQuestions.length;
-    document.getElementById('totalPoints').textContent = allQuestions.reduce((sum, q) => sum + q.weight, 0);
+    const totalPoints = allQuestions.reduce((sum, q) => sum + q.weight, 0);
+    document.getElementById('totalPoints').textContent = parseFloat(totalPoints.toFixed(2));
 
     const categoryCounts = allQuestions.reduce((acc, q) => {
         acc[q.category] = (acc[q.category] || 0) + 1;
@@ -911,6 +912,7 @@ async function initializeApp() {
         showError("Не удалось инициализировать приложение путем загрузки вопросов.");
     }
 }
+
 
 
 
