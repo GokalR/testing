@@ -988,12 +988,16 @@ async function updateTestResult(request, id, env) {
       }
     });
 
-    // Update the main result object with the new totals
-    result.score = newScore;
-    result.hardSkillScore = newHardSkillScore;
-    result.softSkillScore = newSoftSkillScore;
-    result.percentage = result.maxScore > 0 ? Math.round((newScore / result.maxScore) * 100) : 0;
-    result.level = levels.find(l => newScore >= l.min && newScore <= l.max)?.name || 'N/A';
+    // Update the main result object with the new totals, rounding to fix floating point issues
+    const roundedScore = Math.round(newScore * 100) / 100;
+    const roundedHardSkillScore = Math.round(newHardSkillScore * 100) / 100;
+    const roundedSoftSkillScore = Math.round(newSoftSkillScore * 100) / 100;
+
+    result.score = roundedScore;
+    result.hardSkillScore = roundedHardSkillScore;
+    result.softSkillScore = roundedSoftSkillScore;
+    result.percentage = result.maxScore > 0 ? Math.round((roundedScore / result.maxScore) * 100) : 0;
+    result.level = levels.find(l => roundedScore >= l.min && roundedScore <= l.max)?.name || 'N/A';
     
     // Save the updated result back into the main results array
     results[resultIndex] = result;
@@ -1087,10 +1091,6 @@ async function replaceResults(request, env) {
     });
   }
 }
-
-
-
-
 
 
 
