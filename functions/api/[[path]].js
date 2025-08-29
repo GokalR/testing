@@ -1,11 +1,11 @@
 const DEFAULT_QUESTIONS = [
-  // Hard Skills (adjusted max ~44 points total)
-  // Блок 1: Вероятность и Статистика (10 вопросов, 8 баллов total) - weights 0.8 for multiple
+  // Hard Skills (50 points total)
+  // Блок 1: Вероятность и Статистика (10 вопросов, 10 баллов total)
   {
     id: 'h1',
     type: 'multiple',
     category: 'probability_stats',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'Что такое p-value в контексте статистического тестирования гипотез?',
     options: {
       A: 'Вероятность того, что альтернативная гипотеза верна, если нулевая отвергнута.',
@@ -19,7 +19,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h2',
     type: 'multiple',
     category: 'probability_stats',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'В контексте мониторинга банковского мошенничества, что такое Ошибка II рода, и почему она может быть особенно опасной?',
     options: {
       A: 'Система помечает легитимную транзакцию как мошенническую, что приводит к неудобствам для клиентов.',
@@ -33,7 +33,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h3',
     type: 'multiple',
     category: 'probability_stats',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'Какое статистическое распределение чаще всего используется для моделирования количества дефолтов по кредитам в портфеле за определённый период, особенно когда события редки и независимы?',
     options: {
       A: 'Нормальное распределение, поскольку оно универсально для больших выборок.',
@@ -47,7 +47,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h4',
     type: 'multiple',
     category: 'probability_stats',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'Что из перечисленного НЕ является обязательным условием для применения классической линейной регрессии, хотя и может улучшить интерпретируемость модели?',
     options: {
       A: 'Линейная зависимость между предикторами и целевой переменной.',
@@ -61,7 +61,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h5',
     type: 'multiple',
     category: 'probability_stats',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'Зачем необходимо проводить A/B тестирование при внедрении новой скоринговой модели в банке?',
     options: {
       A: 'Чтобы проверить, что код модели не содержит синтаксических ошибок.',
@@ -75,7 +75,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h6',
     type: 'multiple',
     category: 'probability_stats',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'Что такое Центральная Предельная Теорема, и почему она важна для анализа больших данных в ML?',
     options: {
       A: 'Теорема о том, что любая случайная величина имеет нормальное распределение при большом объеме данных.',
@@ -89,7 +89,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h7',
     type: 'multiple',
     category: 'probability_stats',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'Вам нужно сравнить средний чек по кредитным картам для двух групп клиентов (мужчины и женщины). Предполагая, что дисперсии неизвестны и могут быть неравны, какой статистический тест наиболее подходит?',
     options: {
       A: 'Критерий хи-квадрат для проверки независимости.',
@@ -103,7 +103,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h8',
     type: 'multiple',
     category: 'probability_stats',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'Что такое доверительный интервал для параметра, и как его интерпретировать?',
     options: {
       A: 'Диапазон, в котором с определённой вероятностью находится истинное значение параметра генеральной совокупности.',
@@ -117,7 +117,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h9',
     type: 'multiple',
     category: 'probability_stats',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'Как проблема множественных сравнений влияет на интерпретацию p-value при проведении десятков A/B тестов одновременно, и как её корректировать?',
     options: {
       A: 'Никак не влияет, поскольку каждый тест независим.',
@@ -131,7 +131,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h10',
     type: 'multiple',
     category: 'probability_stats',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'В задаче предсказания риска дефолта, как интерпретировать коэффициент корреляции Спирмена между двумя признаками?',
     options: {
       A: 'Он измеряет линейную зависимость, как и коэффициент Пирсона.',
@@ -141,12 +141,12 @@ const DEFAULT_QUESTIONS = [
     },
     correctAnswer: 'B'
   },
-  // Блок 2: Классические алгоритмы ML (10 вопросов, 8 баллов total)
+  // Блок 2: Классические алгоритмы ML (10 вопросов, 10 баллов total)
   {
     id: 'h11',
     type: 'multiple',
     category: 'ml_algorithms',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'Какой из перечисленных алгоритмов является методом неиерархической кластеризации без учителя?',
     options: {
       A: 'Логистическая регрессия для бинарной классификации.',
@@ -160,7 +160,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h12',
     type: 'multiple',
     category: 'ml_algorithms',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'В чем основная идея алгоритма градиентного бустинга, такого как XGBoost, и как он справляется с переобучением?',
     options: {
       A: 'Он строит множество независимых деревьев, а затем усредняет их предсказания, как в случайном лесе.',
@@ -174,7 +174,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h13',
     type: 'multiple',
     category: 'ml_algorithms',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'Для какой задачи НЕ подходит логистическая регрессия в её стандартной форме?',
     options: {
       A: 'Предсказание оттока клиентов (бинарный исход: да/нет).',
@@ -188,7 +188,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h14',
     type: 'multiple',
     category: 'ml_algorithms',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'Какой алгоритм использует функцию потерь hinge loss и подходит для задач с большим запасом разделения классов?',
     options: {
       A: 'Наивный байесовский классификатор.',
@@ -202,7 +202,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h15',
     type: 'multiple',
     category: 'ml_algorithms',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'Какой из алгоритмов наиболее чувствителен к масштабу признаков и требует нормализации данных?',
     options: {
       A: 'Дерево решений, поскольку оно использует пороговые splits.',
@@ -216,7 +216,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h16',
     type: 'multiple',
     category: 'ml_algorithms',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'Что такое компромисс между смещением и дисперсией (bias-variance trade-off), и как он проявляется в выборе глубины дерева решений?',
     options: {
       A: 'Компромисс между скоростью обучения и точностью модели на валидации.',
@@ -230,7 +230,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h17',
     type: 'multiple',
     category: 'ml_algorithms',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'Какова основная цель L1-регуляризации (Lasso) в линейных моделях, и в чем её отличие от L2?',
     options: {
       A: 'Уменьшить сложность модели путем обнуления весов наименее важных признаков, тем самым производя отбор признаков; в отличие от L2, которая сжимает веса, но не обнуляет.',
@@ -244,7 +244,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h18',
     type: 'multiple',
     category: 'ml_algorithms',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'Какой алгоритм лежит в основе библиотеки CatBoost, делая её эффективной для категориальных признаков без ручного кодирования?',
     options: {
       A: 'Автоматическое One-Hot Encoding для всех категориальных признаков с регуляризацией.',
@@ -258,7 +258,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h19',
     type: 'multiple',
     category: 'ml_algorithms',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'Какой метод используется для снижения размерности данных с сохранением максимальной дисперсии?',
     options: {
       A: 'K-Means для кластеризации.',
@@ -272,7 +272,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h20',
     type: 'multiple',
     category: 'ml_algorithms',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'В чем основное преимущество ансамблевых моделей, таких как Random Forest, по сравнению с одним решающим деревом?',
     options: {
       A: 'Они всегда обучаются быстрее за счет параллелизации.',
@@ -282,12 +282,12 @@ const DEFAULT_QUESTIONS = [
     },
     correctAnswer: 'B'
   },
-  // Блок 3: Подготовка данных и Feature Engineering (5 вопросов, 4 балла total)
+  // Блок 3: Подготовка данных и Feature Engineering (5 вопросов, 5 баллов total)
   {
     id: 'h23',
     type: 'multiple',
     category: 'data_preparation',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'Что такое One-Hot Encoding, и когда оно может привести к проблемам?',
     options: {
       A: 'Метод заполнения пропусков средним значением категории.',
@@ -301,7 +301,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h24',
     type: 'multiple',
     category: 'data_preparation',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'Зачем нужна стандартизация числовых признаков, и для каких алгоритмов она критична?',
     options: {
       A: 'Чтобы привести все значения к диапазону [0,1], критична для деревьев решений.',
@@ -315,7 +315,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h25',
     type: 'multiple',
     category: 'data_preparation',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'Что из перечисленного является примером "утечки данных" (data leakage) в пайплайне ML?',
     options: {
       A: 'Использование будущих данных (например, статус дефолта) для создания признаков в задаче предсказания дефолта.',
@@ -329,7 +329,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h26',
     type: 'multiple',
     category: 'data_preparation',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'Как бороться с несбалансированными данными в задачах классификации, чтобы избежать bias к большинству?',
     options: {
       A: 'Игнорировать проблему, если accuracy высокая.',
@@ -343,7 +343,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h31',
     type: 'multiple',
     category: 'data_preparation',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'Какова основная цель разделения данных на обучающую, валидационную и тестовую выборки?',
     options: {
       A: 'Увеличить объем данных для обучения модели.',
@@ -353,12 +353,12 @@ const DEFAULT_QUESTIONS = [
     },
     correctAnswer: 'B'
   },
-  // Блок 4: Валидация и Метрики (5 вопросов, 4 балла total)
+  // Блок 4: Валидация и Метрики (5 вопросов, 5 баллов total)
   {
     id: 'h33',
     type: 'multiple',
     category: 'validation_metrics',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'Что такое метрика Accuracy в бинарной классификации?',
     options: {
       A: 'Доля правильно классифицированных наблюдений из всех (TP+TN)/(TP+TN+FP+FN).',
@@ -372,7 +372,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h34',
     type: 'multiple',
     category: 'validation_metrics',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'Когда F1-мера предпочтительнее Accuracy, особенно в задачах вроде детекции мошенничества?',
     options: {
       A: 'Когда классы сбалансированы и ошибки равнозначны.',
@@ -386,7 +386,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h35',
     type: 'multiple',
     category: 'validation_metrics',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'Что представляет собой AUC-ROC, и почему она полезна для имбалансных данных?',
     options: {
       A: 'Площадь под precision-recall кривой, фокусируется на минорном классе.',
@@ -400,7 +400,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h36',
     type: 'multiple',
     category: 'validation_metrics',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'Что такое k-блочная кросс-валидация (k-fold cross-validation), и когда её использовать?',
     options: {
       A: 'Разделение данных на k частей, где одна - тест, остальные - train; для больших данных.',
@@ -414,7 +414,7 @@ const DEFAULT_QUESTIONS = [
     id: 'h37',
     type: 'multiple',
     category: 'validation_metrics',
-    weight: 0.8,
+    weight: 1, // updated from 0.8
     text: 'Что такое матрица ошибок (confusion matrix), и как из неё вычислить precision?',
     options: {
       A: 'Таблица с TP, FP, TN, FN; precision = TP / (TP + FP).',
@@ -1087,6 +1087,7 @@ async function replaceResults(request, env) {
     });
   }
 }
+
 
 
 
