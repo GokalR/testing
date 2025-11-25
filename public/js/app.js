@@ -2,11 +2,72 @@
 // Configuration & Global State
 // =================================================================================
 
-const API_BASE_URL = '/api';
 const ADMIN_PASSWORD = 'bota13'; // Change this to a secure password!
-const TEST_DURATION_SECONDS = 3600; // 60 minutes
 
-// ... (Global variables, Data Mappings, translations remain unchanged) ...
+// Test configurations
+const TEST_CONFIGS = {
+    ml_assessment: {
+        name: 'Full ML Assessment',
+        nameRu: 'Полная оценка ML',
+        apiBase: '/api',
+        duration: 3600, // 60 minutes
+        headerClass: '',
+        categories: {
+            probability_stats: 'Probability & Statistics',
+            ml_algorithms: 'ML Algorithms',
+            data_preparation: 'Data Preparation & Feature Engineering',
+            validation_metrics: 'Validation & Metrics',
+            coding: 'Coding',
+            soft_communication: 'Soft Skills: Communication',
+            soft_teamwork: 'Soft Skills: Teamwork',
+            soft_selforg: 'Soft Skills: Self-Organization',
+            soft_feedback: 'Soft Skills: Feedback',
+            soft_creativity: 'Soft Skills: Creativity',
+            soft_documentation: 'Soft Skills: Documentation'
+        },
+        hardSkillCategories: ['probability_stats', 'ml_algorithms', 'data_preparation', 'validation_metrics', 'coding'],
+        softSkillCategories: ['soft_communication', 'soft_teamwork', 'soft_selforg', 'soft_feedback', 'soft_creativity', 'soft_documentation'],
+        levels: [
+            { name: 'Below Junior', min: 0, max: 5 },
+            { name: 'Junior', min: 6, max: 24 },
+            { name: 'Middle', min: 25, max: 54 },
+            { name: 'Senior', min: 55, max: 79 },
+            { name: 'Senior+', min: 80, max: 99 },
+            { name: 'Tech Lead', min: 100, max: 104 },
+            { name: 'Head of', min: 105, max: Infinity }
+        ]
+    },
+    ml_fundamentals: {
+        name: 'ML Fundamentals',
+        nameRu: 'Основы ML',
+        apiBase: '/api/fundamentals',
+        duration: 900, // 15 minutes
+        headerClass: 'fundamentals',
+        categories: {
+            supervised_learning: 'Supervised Learning',
+            svm_kernels: 'SVM & Kernels',
+            dimensionality_reduction: 'Dimensionality Reduction',
+            ensemble_methods: 'Ensemble Methods',
+            neural_networks: 'Neural Networks',
+            clustering: 'Clustering',
+            model_evaluation: 'Model Evaluation'
+        },
+        hardSkillCategories: ['supervised_learning', 'svm_kernels', 'dimensionality_reduction', 'ensemble_methods', 'neural_networks', 'clustering', 'model_evaluation'],
+        softSkillCategories: [],
+        levels: [
+            { name: 'Needs Study', min: 0, max: 9 },
+            { name: 'Basic', min: 10, max: 14 },
+            { name: 'Intermediate', min: 15, max: 19 },
+            { name: 'Good', min: 20, max: 22 },
+            { name: 'Excellent', min: 23, max: 25 }
+        ]
+    }
+};
+
+// Current selected test
+let currentTestId = 'ml_assessment';
+let currentTestConfig = TEST_CONFIGS[currentTestId];
+
 // Global variables
 let currentMode = 'candidate';
 let allQuestions = [];
@@ -14,38 +75,11 @@ let currentTest = [];
 let currentQuestionIndex = 0;
 let userAnswers = {};
 let testTimer;
-let timeLeft = TEST_DURATION_SECONDS;
-let testResultId = null; // To store the ID of the current test result for updates
+let timeLeft = currentTestConfig.duration;
+let testResultId = null;
 let userName = '';
 
-// Data Mappings
-const categoryNames = {
-    probability_stats: 'Probability & Statistics',
-    ml_algorithms: 'ML Algorithms',
-    data_preparation: 'Data Preparation & Feature Engineering',
-    validation_metrics: 'Validation & Metrics',
-    coding: 'Coding',
-    soft_communication: 'Soft Skills: Communication',
-    soft_teamwork: 'Soft Skills: Teamwork',
-    soft_selforg: 'Soft Skills: Self-Organization',
-    soft_feedback: 'Soft Skills: Feedback',
-    soft_creativity: 'Soft Skills: Creativity',
-    soft_documentation: 'Soft Skills: Documentation'
-};
-
-const hardSkillCategories = ['probability_stats', 'ml_algorithms', 'data_preparation', 'validation_metrics', 'coding'];
-const softSkillCategories = ['soft_communication', 'soft_teamwork', 'soft_selforg', 'soft_feedback', 'soft_creativity', 'soft_documentation'];
-
-const levels = [
-    { name: 'Below Junior', min: 0, max: 5 },
-    { name: 'Junior', min: 6, max: 24 },
-    { name: 'Middle', min: 25, max: 54 },
-    { name: 'Senior', min: 55, max: 79 },
-    { name: 'Senior+', min: 80, max: 99 },
-    { name: 'Tech Lead', min: 100, max: 104 },
-    { name: 'Head of', min: 105, max: Infinity }
-];
-
+// Translations
 const translations = {
     en: {
         mainTitle: "ML Engineer Testing Platform",
@@ -58,6 +92,8 @@ const translations = {
         navAnalytics: "Analytics",
         welcomeTitle: "Machine Learning Engineer Assessment",
         welcomeSubtitle: "Comprehensive evaluation covering all essential ML engineering skills",
+        welcomeTitleFund: "ML Fundamentals Test",
+        welcomeSubtitleFund: "Quick assessment of core Machine Learning concepts",
         overviewTitle: "Test Overview",
         overviewQuestions: "Questions",
         overviewMinutes: "Minutes",
@@ -66,12 +102,16 @@ const translations = {
         loadingCoverage: "Loading test information...",
         instructionsTitle: "Instructions:",
         instruction1: "You have 60 minutes to complete all questions",
+        instruction1Fund: "You have 15 minutes to complete all questions",
         instruction2: "Each question has one correct answer",
         instruction3: "You can navigate between questions and change answers",
-        instruction4: "Questions are weighted by difficulty (1, 3, or 5 points)",
+        instruction4: "Questions are weighted by difficulty",
         instruction5: "Your progress will be automatically saved",
         beginAssessment: "Begin Assessment",
-        allowRetake: "Allow Retake for This User",
+        testFullTitle: "Full ML Assessment",
+        testFullDesc: "Comprehensive evaluation with hard & soft skills",
+        testFundamentalsTitle: "ML Fundamentals",
+        testFundamentalsDesc: "Quick test of core ML/DS concepts for students",
         qEditorTitle: "Question Management",
         qEditorAddTitle: "Add New Question",
         qEditorType: "Question Type:",
@@ -114,6 +154,8 @@ const translations = {
         navAnalytics: "Аналитика",
         welcomeTitle: "Оценка инженера по машинному обучению",
         welcomeSubtitle: "Комплексная оценка, охватывающая все основные навыки ML-инженера",
+        welcomeTitleFund: "Тест по основам ML",
+        welcomeSubtitleFund: "Быстрая проверка базовых концепций машинного обучения",
         overviewTitle: "Обзор теста",
         overviewQuestions: "Вопросы",
         overviewMinutes: "Минуты",
@@ -122,12 +164,16 @@ const translations = {
         loadingCoverage: "Загрузка информации о тесте...",
         instructionsTitle: "Инструкции:",
         instruction1: "У вас есть 60 минут, чтобы ответить на все вопросы",
+        instruction1Fund: "У вас есть 15 минут, чтобы ответить на все вопросы",
         instruction2: "У каждого вопроса один правильный ответ",
         instruction3: "Вы можете переключаться между вопросами и изменять ответы",
-        instruction4: "Вопросы оцениваются по сложности (1, 3 или 5 баллов)",
+        instruction4: "Вопросы оцениваются по сложности",
         instruction5: "Ваш прогресс будет автоматически сохранен",
         beginAssessment: "Начать оценку",
-        allowRetake: "Разрешить пересдачу для этого пользователя",
+        testFullTitle: "Полная оценка ML",
+        testFullDesc: "Комплексная оценка hard и soft skills",
+        testFundamentalsTitle: "Основы ML",
+        testFundamentalsDesc: "Быстрый тест базовых концепций ML/DS для студентов",
         qEditorTitle: "Управление вопросами",
         qEditorAddTitle: "Добавить новый вопрос",
         qEditorType: "Тип вопроса:",
@@ -161,11 +207,14 @@ const translations = {
     }
 };
 
+let currentLanguage = 'ru';
+
 // =================================================================================
 // Language Functions
 // =================================================================================
-// ... (setLanguage function is unchanged) ...
+
 function setLanguage(lang) {
+    currentLanguage = lang;
     const langData = translations[lang];
     if (!langData) return;
 
@@ -180,13 +229,95 @@ function setLanguage(lang) {
     document.getElementById(`lang-${lang}`).classList.add('active');
 
     localStorage.setItem('language', lang);
+    
+    // Update dynamic content
+    updateWelcomeStats();
+    updateTestBadge();
 }
+
+// =================================================================================
+// Test Selection
+// =================================================================================
+
+async function selectTest(testId) {
+    if (!TEST_CONFIGS[testId]) return;
+    
+    currentTestId = testId;
+    currentTestConfig = TEST_CONFIGS[testId];
+    timeLeft = currentTestConfig.duration;
+    
+    // Update UI
+    document.querySelectorAll('.test-card').forEach(card => card.classList.remove('active'));
+    document.getElementById(`card-${testId}`).classList.add('active');
+    
+    // Update header style
+    const header = document.getElementById('mainHeader');
+    header.className = 'header ' + currentTestConfig.headerClass;
+    
+    // Update test badge
+    updateTestBadge();
+    
+    // Update category dropdown
+    updateCategoryDropdown();
+    
+    // Update editing test name
+    const editingNameEl = document.getElementById('editingTestName');
+    if (editingNameEl) {
+        editingNameEl.textContent = currentLanguage === 'ru' ? currentTestConfig.nameRu : currentTestConfig.name;
+    }
+    
+    // Update button style
+    const beginBtn = document.getElementById('beginAssessmentBtn');
+    if (currentTestId === 'ml_fundamentals') {
+        beginBtn.classList.add('btn-blue');
+    } else {
+        beginBtn.classList.remove('btn-blue');
+    }
+    
+    // Load questions for selected test
+    try {
+        const data = await loadQuestions();
+        allQuestions = data.questions || [];
+        updateWelcomeStats();
+        if (currentMode === 'admin') {
+            updateQuestionsList();
+        }
+    } catch (error) {
+        showError("Failed to load questions for selected test.");
+    }
+}
+
+function updateTestBadge() {
+    const badge = document.getElementById('currentTestBadge');
+    if (badge) {
+        badge.textContent = currentLanguage === 'ru' ? currentTestConfig.nameRu : currentTestConfig.name;
+    }
+}
+
+function updateCategoryDropdown() {
+    const categoryFilter = document.getElementById('categoryFilter');
+    const questionCategory = document.getElementById('questionCategory');
+    
+    const categoryOptions = Object.entries(currentTestConfig.categories)
+        .map(([val, name]) => `<option value="${val}">${name}</option>`)
+        .join('');
+    
+    if (categoryFilter) {
+        categoryFilter.innerHTML = `<option value="all">All Categories</option>` + categoryOptions;
+    }
+    
+    if (questionCategory) {
+        questionCategory.innerHTML = categoryOptions;
+    }
+}
+
 // =================================================================================
 // API Functions
 // =================================================================================
+
 async function apiRequest(endpoint, options = {}) {
     try {
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        const response = await fetch(`${currentTestConfig.apiBase}${endpoint}`, {
             headers: { 'Content-Type': 'application/json', ...options.headers },
             ...options
         });
@@ -202,22 +333,20 @@ async function apiRequest(endpoint, options = {}) {
     }
 }
 
-
 const loadQuestions = () => apiRequest('/questions');
 const saveQuestion = (question) => apiRequest('/questions', { method: 'POST', body: JSON.stringify(question) });
 const updateQuestion = (id, question) => apiRequest(`/questions/${id}`, { method: 'PUT', body: JSON.stringify(question) });
 const deleteQuestionAPI = (id) => apiRequest(`/questions/${id}`, { method: 'DELETE' });
 const resetQuestionsAPI = () => apiRequest('/questions/reset', { method: 'POST' });
-// NEW API function for bulk import
 const replaceQuestionsAPI = (questions) => apiRequest('/questions/replace', { method: 'POST', body: JSON.stringify(questions) });
 const submitTestResults = (results) => apiRequest('/results', { method: 'POST', body: JSON.stringify(results) });
 const gradeQuestionAPI = (resultId, questionId, pointsAwarded) => apiRequest(`/results/${resultId}`, { method: 'PUT', body: JSON.stringify({ questionId, pointsAwarded }) });
 const loadAnalytics = () => apiRequest('/analytics');
 
 // =================================================================================
-// UI Helper Functions & Navigation & Test Flow
+// UI Helper Functions
 // =================================================================================
-// ... (All functions in these sections are the same as the previous response) ...
+
 function showError(message) {
     const existing = document.querySelector('.error');
     if (existing) existing.remove();
@@ -240,19 +369,52 @@ function showSuccess(message) {
 
 function updateWelcomeStats() {
     document.getElementById('totalQuestions').textContent = allQuestions.length;
-    const totalPoints = allQuestions.reduce((sum, q) => sum + q.weight, 0);
+    const totalPoints = allQuestions.reduce((sum, q) => sum + (q.weight || 1), 0);
     document.getElementById('totalPoints').textContent = parseFloat(totalPoints.toFixed(2));
+    
+    // Update duration
+    const durationEl = document.getElementById('testDuration');
+    if (durationEl) {
+        durationEl.textContent = Math.floor(currentTestConfig.duration / 60);
+    }
 
+    // Update welcome title based on test type
+    const welcomeTitle = document.getElementById('welcomeTitle');
+    const welcomeSubtitle = document.getElementById('welcomeSubtitle');
+    const langData = translations[currentLanguage];
+    
+    if (currentTestId === 'ml_fundamentals') {
+        if (welcomeTitle) welcomeTitle.textContent = langData.welcomeTitleFund || langData.welcomeTitle;
+        if (welcomeSubtitle) welcomeSubtitle.textContent = langData.welcomeSubtitleFund || langData.welcomeSubtitle;
+    } else {
+        if (welcomeTitle) welcomeTitle.textContent = langData.welcomeTitle;
+        if (welcomeSubtitle) welcomeSubtitle.textContent = langData.welcomeSubtitle;
+    }
+
+    // Update coverage areas
     const categoryCounts = allQuestions.reduce((acc, q) => {
         acc[q.category] = (acc[q.category] || 0) + 1;
         return acc;
     }, {});
 
     const coverageHTML = Object.entries(categoryCounts)
-        .map(([category, count]) => `<li><strong>${categoryNames[category] || category}:</strong> ${count} questions</li>`)
+        .map(([category, count]) => `<li><strong>${currentTestConfig.categories[category] || category}:</strong> ${count} questions</li>`)
         .join('');
     document.getElementById('coverageAreas').innerHTML = coverageHTML || '<li>No questions loaded.</li>';
+    
+    // Update instruction based on test
+    const instruction1 = document.querySelector('[data-i18n="instruction1"]');
+    if (instruction1) {
+        const langData = translations[currentLanguage];
+        instruction1.textContent = currentTestId === 'ml_fundamentals' 
+            ? (langData.instruction1Fund || langData.instruction1)
+            : langData.instruction1;
+    }
 }
+
+// =================================================================================
+// Navigation & Mode
+// =================================================================================
 
 function setMode(mode) {
     if (mode === 'admin') {
@@ -270,7 +432,7 @@ function setMode(mode) {
     document.getElementById('candidateNavigation').classList.toggle('hidden', mode !== 'candidate');
     document.getElementById('adminNavigation').classList.toggle('hidden', mode !== 'admin');
 
-    showSection('welcome'); // Default to welcome section on mode change
+    showSection('welcome');
 }
 
 function requireAdminAccess(sectionId) {
@@ -292,23 +454,22 @@ function showSection(sectionId) {
 
     const navId = currentMode === 'admin' ? 'adminNavigation' : 'candidateNavigation';
     document.querySelectorAll(`#${navId} .nav-btn`).forEach(btn => btn.classList.remove('active'));
-    // Admin nav has 'analytics', candidate nav does not, so use optional chaining
     const navButton = document.querySelector(`#adminNavigation .nav-btn[onclick="showSection('${sectionId}')"]`) || 
                       document.querySelector(`#candidateNavigation .nav-btn[onclick="showSection('${sectionId}')"]`);
     if(navButton) navButton.classList.add('active');
 
-    // Load data for specific sections
     if (sectionId === 'questionEditor') {
         updateQuestionsList();
+        updateCategoryDropdown();
     } else if (sectionId === 'analytics') {
         loadAnalyticsData();
     }
 }
+
 // =================================================================================
 // Question Management (Admin)
 // =================================================================================
 
-// ... (toggleQuestionTypeFields, addOrUpdateQuestion, etc. are unchanged) ...
 function toggleQuestionTypeFields() {
     const type = document.getElementById('questionType').value;
     document.getElementById('multipleChoiceFields').classList.toggle('hidden', type !== 'multiple');
@@ -329,8 +490,10 @@ async function addOrUpdateQuestion() {
 
     if (questionData.type === 'multiple') {
         questionData.options = {
-            A: document.getElementById('optionA').value.trim(), B: document.getElementById('optionB').value.trim(),
-            C: document.getElementById('optionC').value.trim(), D: document.getElementById('optionD').value.trim()
+            A: document.getElementById('optionA').value.trim(), 
+            B: document.getElementById('optionB').value.trim(),
+            C: document.getElementById('optionC').value.trim(), 
+            D: document.getElementById('optionD').value.trim()
         };
         questionData.correctAnswer = document.getElementById('correctAnswer').value;
         if (!questionData.options.A || !questionData.options.B) {
@@ -347,7 +510,7 @@ async function addOrUpdateQuestion() {
         await action;
         showSuccess(`Question ${editingId ? 'updated' : 'added'} successfully!`);
         clearForm();
-        const data = await loadQuestions(); // Reload all questions
+        const data = await loadQuestions();
         allQuestions = data.questions || [];
         updateQuestionsList();
     } catch (error) {
@@ -358,7 +521,6 @@ async function addOrUpdateQuestion() {
 function clearForm() {
     document.getElementById('editingQuestionId').value = '';
     document.getElementById('questionType').value = 'multiple';
-    document.getElementById('questionCategory').value = 'probability_stats';
     document.getElementById('questionWeight').value = '1';
     document.getElementById('questionText').value = '';
     document.getElementById('optionA').value = '';
@@ -423,12 +585,11 @@ async function resetToDefault() {
         }
     }
 }
-// NEW: Export functionality
+
 function exportQuestions() {
     const dataStr = JSON.stringify(allQuestions, null, 2);
     const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    
-    const exportFileDefaultName = 'questions.json';
+    const exportFileDefaultName = `${currentTestId}_questions.json`;
     
     let linkElement = document.createElement('a');
     linkElement.setAttribute('href', dataUri);
@@ -437,7 +598,6 @@ function exportQuestions() {
     showSuccess('Exporting questions...');
 }
 
-// NEW: Import functionality
 function importQuestions(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -459,7 +619,6 @@ function importQuestions(event) {
         } catch (error) {
             showError(`Import failed: ${error.message}`);
         } finally {
-            // Reset file input to allow re-uploading the same file
             document.getElementById('importFile').value = '';
         }
     };
@@ -478,7 +637,7 @@ function updateQuestionsList() {
     const html = filtered.map(q => `
         <div class="question-item">
             <div class="question-header">
-                <strong>${q.type.charAt(0).toUpperCase() + q.type.slice(1)}: ${categoryNames[q.category] || q.category}</strong>
+                <strong>${q.type.charAt(0).toUpperCase() + q.type.slice(1)}: ${currentTestConfig.categories[q.category] || q.category}</strong>
                 <span class="question-points">${q.weight} pt${q.weight > 1 ? 's' : ''}</span>
             </div>
             <p>${q.text.substring(0, 100)}${q.text.length > 100 ? '...' : ''}</p>
@@ -494,22 +653,39 @@ function updateQuestionsList() {
 const filterQuestions = () => updateQuestionsList();
 
 // =================================================================================
-// Test Taking Flow, Results & Analytics
+// Test Taking Flow
 // =================================================================================
 
-// ... (All functions in these sections are the same as the previous response) ...
 function startGeneralTest() {
-    userName = prompt("Пожалуйста, введите ваше полное имя для начала теста:");
+    userName = prompt("Please enter your full name to begin the test:");
     if (!userName || userName.trim() === '') {
-        return showError("Необходимо ввести имя, чтобы начать тест.");
+        return showError("Name is required to start the test.");
     }
-    currentTest = [...allQuestions]; // Use all available questions
+    currentTest = [...allQuestions];
     currentQuestionIndex = 0;
     userAnswers = {};
-    timeLeft = TEST_DURATION_SECONDS;
+    timeLeft = currentTestConfig.duration;
     testResultId = null;
+    
+    // Update timer style
+    const timerEl = document.getElementById('timer');
+    if (currentTestId === 'ml_fundamentals') {
+        timerEl.classList.add('blue');
+    } else {
+        timerEl.classList.remove('blue');
+    }
+    
     showSection('test');
     document.getElementById('submitTest').style.display = 'block';
+    
+    // Update submit button style
+    const submitBtn = document.getElementById('submitTest');
+    if (currentTestId === 'ml_fundamentals') {
+        submitBtn.classList.add('btn-blue');
+    } else {
+        submitBtn.classList.remove('btn-blue');
+    }
+    
     renderQuestion();
     startTimer();
 }
@@ -530,20 +706,23 @@ function renderQuestion() {
     } else if (question.type === 'open' || question.type === 'code') {
         optionsHTML = `
             <textarea class="form-group" style="min-height: 200px;" oninput="selectAnswer('${question.id}', this.value)" 
-            placeholder="Введите ваш ${question.type === 'code' ? 'код или решение' : 'ответ'} здесь...">${userAnswers[question.id] || ''}</textarea>
-            ${question.type === 'code' && question.test_cases ? `<div class="test-cases"><strong>Тестовые случаи:</strong><pre>${question.test_cases}</pre></div>` : ''}
+            placeholder="Enter your ${question.type === 'code' ? 'code or solution' : 'answer'} here...">${userAnswers[question.id] || ''}</textarea>
+            ${question.type === 'code' && question.test_cases ? `<div class="test-cases"><strong>Test Cases:</strong><pre>${question.test_cases}</pre></div>` : ''}
         `;
     }
 
+    // Question number styling
+    const qNumClass = currentTestId === 'ml_fundamentals' ? 'question-number blue' : 'question-number';
+
     container.innerHTML = `
         <div class="question-card">
-            <div class="question-number">${currentQuestionIndex + 1}</div>
+            <div class="${qNumClass}">${currentQuestionIndex + 1}</div>
             <p style="font-size: 1.2rem; font-weight: 500;">${question.text}</p>
             ${optionsHTML}
         </div>
         <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-            <button class="btn btn-secondary" onclick="previousQuestion()" ${currentQuestionIndex === 0 ? 'disabled' : ''}>Назад</button>
-            <button class="btn" onclick="nextQuestion()">${currentQuestionIndex === currentTest.length - 1 ? 'Завершить' : 'Далее'}</button>
+            <button class="btn btn-secondary" onclick="previousQuestion()" ${currentQuestionIndex === 0 ? 'disabled' : ''}>Back</button>
+            <button class="btn ${currentTestId === 'ml_fundamentals' ? 'btn-blue' : ''}" onclick="nextQuestion()">${currentQuestionIndex === currentTest.length - 1 ? 'Finish' : 'Next'}</button>
         </div>
     `;
     updateProgress();
@@ -590,34 +769,35 @@ function startTimer() {
         
         if (timeLeft <= 0) {
             clearInterval(testTimer);
-            showError('Время вышло! Ваш тест будет отправлен автоматически.');
+            showError('Time is up! Your test will be submitted automatically.');
             submitTest();
         }
     }, 1000);
 }
 
 async function submitTest() {
-    if (!confirm('Вы уверены, что хотите завершить и отправить тест?')) return;
+    if (!confirm('Are you sure you want to finish and submit the test?')) return;
     clearInterval(testTimer);
 
     let score = 0;
     let hardSkillScore = 0;
     let softSkillScore = 0;
 
-    const maxScore = allQuestions.reduce((sum, q) => sum + q.weight, 0);
-    const maxHardSkillScore = allQuestions.filter(q => hardSkillCategories.includes(q.category)).reduce((sum, q) => sum + q.weight, 0);
-    const maxSoftSkillScore = allQuestions.filter(q => softSkillCategories.includes(q.category)).reduce((sum, q) => sum + q.weight, 0);
+    const maxScore = allQuestions.reduce((sum, q) => sum + (q.weight || 1), 0);
+    const maxHardSkillScore = allQuestions.filter(q => currentTestConfig.hardSkillCategories.includes(q.category)).reduce((sum, q) => sum + (q.weight || 1), 0);
+    const maxSoftSkillScore = allQuestions.filter(q => currentTestConfig.softSkillCategories.includes(q.category)).reduce((sum, q) => sum + (q.weight || 1), 0);
 
     const detailedAnswers = allQuestions.map(q => {
         const userAnswer = userAnswers[q.id];
         const isCorrect = q.type === 'multiple' && userAnswer === q.correctAnswer;
+        const points = q.weight || 1;
         
         if (isCorrect) {
-            score += q.weight;
-            if (hardSkillCategories.includes(q.category)) {
-                hardSkillScore += q.weight;
-            } else if (softSkillCategories.includes(q.category)) {
-                softSkillScore += q.weight;
+            score += points;
+            if (currentTestConfig.hardSkillCategories.includes(q.category)) {
+                hardSkillScore += points;
+            } else if (currentTestConfig.softSkillCategories.includes(q.category)) {
+                softSkillScore += points;
             }
         }
         
@@ -626,19 +806,19 @@ async function submitTest() {
             text: q.text, 
             type: q.type, 
             category: q.category, 
-            weight: q.weight,
+            weight: points,
             userAnswer: userAnswer || null, 
             correctAnswer: q.correctAnswer, 
             isCorrect,
-            // For MCQs, points are awarded now. For open questions, they are 0 until graded.
-            pointsAwarded: isCorrect ? q.weight : 0 
+            pointsAwarded: isCorrect ? points : 0 
         };
     });
 
-    const level = levels.find(l => score >= l.min && score <= l.max)?.name || 'N/A';
+    const level = currentTestConfig.levels.find(l => score >= l.min && score <= l.max)?.name || 'N/A';
     
     const result = {
         userName: userName.trim(),
+        testType: currentTestId,
         timestamp: new Date().toISOString(),
         score,
         maxScore,
@@ -654,12 +834,16 @@ async function submitTest() {
     try {
         const response = await submitTestResults(result);
         testResultId = response.id;
-        showSuccess('Тест успешно отправлен!');
+        showSuccess('Test submitted successfully!');
         showResults(result);
     } catch (error) {
-        showError('Не удалось отправить результаты теста. Проверьте ваше соединение.');
+        showError('Failed to submit test results. Please check your connection.');
     }
 }
+
+// =================================================================================
+// Results Display
+// =================================================================================
 
 function showResults(result) {
     const grade = result.percentage >= 80 ? { text: 'Excellent', class: 'grade-excellent' }
@@ -676,12 +860,32 @@ function showResults(result) {
         return acc;
     }, {});
     
+    // Score display class
+    const scoreClass = currentTestId === 'ml_fundamentals' ? 'score-display blue' : 'score-display';
+    
+    // Build score breakdown (only show hard/soft for full assessment)
+    let scoreBreakdownHTML = '';
+    if (currentTestId === 'ml_assessment') {
+        scoreBreakdownHTML = `
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; text-align: center; margin-bottom: 20px; margin-top: 20px;">
+                <div class="result-block">
+                    <h4>Hard Skills</h4>
+                    <div class="score-display" style="font-size: 2.5rem; margin-bottom: 0;">${result.hardSkillScore} / ${result.maxHardSkillScore}</div>
+                </div>
+                <div class="result-block">
+                    <h4>Soft Skills</h4>
+                    <div class="score-display" style="font-size: 2.5rem; margin-bottom: 0;">${result.softSkillScore} / ${result.maxSoftSkillScore}</div>
+                </div>
+            </div>
+        `;
+    }
+
     const openAnswersHTML = result.detailedAnswers
         .filter(ans => ans.type === 'open' || ans.type === 'code')
         .map(ans => `
             <div class="detailed-answer-item">
-                <p><strong>Вопрос (${categoryNames[ans.category] || ans.category} | ${ans.weight} ${ans.weight > 1 ? 'балла' : 'балл'}):</strong> ${ans.text}</p>
-                <p class="user-answer"><strong>Ответ кандидата:</strong><pre>${ans.userAnswer || 'Нет ответа'}</pre></p>
+                <p><strong>Question (${currentTestConfig.categories[ans.category] || ans.category} | ${ans.weight} pt${ans.weight > 1 ? 's' : ''}):</strong> ${ans.text}</p>
+                <p class="user-answer"><strong>Answer:</strong><pre>${ans.userAnswer || 'No answer'}</pre></p>
             </div>
         `).join('');
 
@@ -691,87 +895,79 @@ function showResults(result) {
 
         if (ans.type === 'multiple') {
             const allOptions = allQuestions.find(q => q.id === ans.questionId)?.options || {};
-            const userAnswerText = ans.userAnswer ? `${ans.userAnswer}) ${allOptions[ans.userAnswer]}` : 'Нет ответа';
+            const userAnswerText = ans.userAnswer ? `${ans.userAnswer}) ${allOptions[ans.userAnswer]}` : 'No answer';
             const correctAnswerText = `${ans.correctAnswer}) ${allOptions[ans.correctAnswer]}`;
             answerDetails = `
-                <p class="user-answer"><strong>Ваш ответ:</strong> ${userAnswerText}</p>
-                ${!ans.isCorrect ? `<p class="correct-answer"><strong>Правильный ответ:</strong> ${correctAnswerText}</p>` : ''}
+                <p class="user-answer"><strong>Your answer:</strong> ${userAnswerText}</p>
+                ${!ans.isCorrect ? `<p class="correct-answer"><strong>Correct answer:</strong> ${correctAnswerText}</p>` : ''}
             `;
         } else {
-            answerDetails = `<p class="user-answer"><strong>Ваш ответ:</strong><pre>${ans.userAnswer || 'Нет ответа'}</pre></p>`;
+            answerDetails = `<p class="user-answer"><strong>Your answer:</strong><pre>${ans.userAnswer || 'No answer'}</pre></p>`;
         }
 
         return `
             <div class="detailed-answer-item ${correctnessClass}">
-                <p><strong>Вопрос (${ans.weight} ${ans.weight > 1 ? 'балла' : 'балл'}):</strong> ${ans.text}</p>
+                <p><strong>Question (${ans.weight} pt${ans.weight > 1 ? 's' : ''}):</strong> ${ans.text}</p>
                 ${answerDetails}
             </div>
         `;
     }).join('');
-    
-    const scoreBreakdownHTML = `
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; text-align: center; margin-bottom: 20px; margin-top: 20px;">
-            <div class="result-block">
-                <h4>Hard Skills</h4>
-                <div class="score-display" style="font-size: 2.5rem; margin-bottom: 0;">${result.hardSkillScore} / ${result.maxHardSkillScore}</div>
-            </div>
-            <div class="result-block">
-                <h4>Soft Skills</h4>
-                <div class="score-display" style="font-size: 2.5rem; margin-bottom: 0;">${result.softSkillScore} / ${result.maxSoftSkillScore}</div>
-            </div>
-        </div>
-    `;
 
     document.getElementById('resultsContent').innerHTML = `
         <div class="results-summary">
             <h3>${result.userName}</h3>
-            <div class="score-display">${result.score} / ${result.maxScore}</div>
+            <p style="color: var(--dark-gray); margin-bottom: 10px;">${currentLanguage === 'ru' ? currentTestConfig.nameRu : currentTestConfig.name}</p>
+            <div class="${scoreClass}">${result.score} / ${result.maxScore}</div>
             <div class="grade-badge ${grade.class}">${result.percentage}% (${grade.text})</div>
+            <p style="margin-top: 15px; font-size: 1.2rem;"><strong>Level: ${result.level}</strong></p>
         </div>
         ${scoreBreakdownHTML}
-        <h4>Результаты по категориям:</h4>
+        <h4>Results by Category:</h4>
         <div class="detailed-results">
             ${Object.entries(blockResults).map(([cat, res]) => `
                 <div class="result-block">
-                    <strong>${categoryNames[cat] || cat}:</strong> ${res.awarded} / ${allQuestions.filter(q=>q.category===cat).reduce((s,i)=>s+i.weight,0)} баллов
+                    <strong>${currentTestConfig.categories[cat] || cat}:</strong> ${res.awarded} / ${allQuestions.filter(q=>q.category===cat).reduce((s,i)=>s+(i.weight||1),0)} points
                 </div>
             `).join('')}
         </div>
-        <button id="showDetailsBtn" class="btn" style="margin: 30px auto; display: block;">Показать детальный разбор</button>
+        <button id="showDetailsBtn" class="btn ${currentTestId === 'ml_fundamentals' ? 'btn-blue' : ''}" style="margin: 30px auto; display: block;">Show Detailed Review</button>
         <div id="detailedReview" class="hidden">
             <hr style="margin: 30px 0;">
-            <h3>Разбор для проверяющего</h3>
-            <h4>Открытые и практические вопросы:</h4>
-            <div>
-                ${openAnswersHTML.length > 0 ? openAnswersHTML : '<p>В этом тесте не было открытых или практических вопросов.</p>'}
-            </div>
-            <hr style="margin: 30px 0;">
-            <h4>Полный разбор ответов:</h4>
+            ${openAnswersHTML.length > 0 ? `
+                <h3>Open & Practical Questions:</h3>
+                <div>${openAnswersHTML}</div>
+                <hr style="margin: 30px 0;">
+            ` : ''}
+            <h4>Full Answer Review:</h4>
             <div>${detailedAnswersHTML}</div>
         </div>
     `;
 
     document.getElementById('showDetailsBtn').addEventListener('click', () => {
-        const pass = prompt('Введите пароль проверяющего для просмотра детального разбора:');
+        const pass = prompt('Enter supervisor password to view detailed review:');
         if (pass === ADMIN_PASSWORD) {
             document.getElementById('detailedReview').classList.remove('hidden');
             document.getElementById('showDetailsBtn').classList.add('hidden');
         } else if (pass !== null) {
-            showError('Неверный пароль.');
+            showError('Incorrect password.');
         }
     });
 
     showSection('results');
 }
 
+// =================================================================================
+// Analytics
+// =================================================================================
+
 async function loadAnalyticsData() {
     const content = document.getElementById('analyticsContent');
-    content.innerHTML = `<div class="loading">Загрузка аналитики...</div>`;
+    content.innerHTML = `<div class="loading">Loading analytics...</div>`;
     try {
         const data = await loadAnalytics();
         displayAnalytics(data);
     } catch (error) {
-        content.innerHTML = `<p>Не удалось загрузить данные аналитики.</p>`;
+        content.innerHTML = `<p>Failed to load analytics data.</p>`;
     }
 }
 
@@ -786,100 +982,131 @@ async function gradeOpenQuestion(resultId, questionId, maxPoints) {
     const points = parseFloat(inputEl.value);
 
     if (isNaN(points) || points < 0 || points > maxPoints) {
-        showError(`Пожалуйста, введите корректную оценку от 0 до ${maxPoints}.`);
+        showError(`Please enter a valid grade from 0 to ${maxPoints}.`);
         return;
     }
 
     try {
         await gradeQuestionAPI(resultId, questionId, points);
-        showSuccess('Оценка сохранена! Результаты обновляются...');
-        loadAnalyticsData(); // Reload all analytics to show the updated score
+        showSuccess('Grade saved! Results updating...');
+        loadAnalyticsData();
     } catch (error) {
-        showError(`Не удалось сохранить оценку: ${error.message}`);
+        showError(`Failed to save grade: ${error.message}`);
     }
 }
 
 function displayAnalytics(data) {
-    const recentHTML = data.recentResults.map(r => {
-        // --- Supervisor Grading View ---
-        const openAnswers = r.detailedAnswers.filter(ans => ans.type === 'open' || ans.type === 'code');
-        const hardSkillOpenAnswers = openAnswers.filter(ans => hardSkillCategories.includes(ans.category));
-        const softSkillOpenAnswers = openAnswers.filter(ans => softSkillCategories.includes(ans.category));
+    // Check if it's fundamentals test (different analytics structure)
+    const isFundamentals = currentTestId === 'ml_fundamentals';
+    
+    const recentHTML = (data.recentResults || []).map(r => {
+        const openAnswers = (r.detailedAnswers || []).filter(ans => ans.type === 'open' || ans.type === 'code');
+        const hardSkillOpenAnswers = openAnswers.filter(ans => currentTestConfig.hardSkillCategories.includes(ans.category));
+        const softSkillOpenAnswers = openAnswers.filter(ans => currentTestConfig.softSkillCategories.includes(ans.category));
 
         const createGradingHTML = (answers) => {
-            if (answers.length === 0) return '<p>Нет вопросов в данной категории.</p>';
+            if (answers.length === 0) return '<p>No questions in this category.</p>';
             return answers.map(ans => `
                 <div class="detailed-answer-item">
-                    <p><strong>Вопрос (${categoryNames[ans.category] || ans.category} | ${ans.weight} ${ans.weight > 1 ? 'балла' : 'балл'}):</strong> ${ans.text}</p>
-                    <p class="user-answer"><strong>Ответ:</strong><pre>${ans.userAnswer || 'Нет ответа'}</pre></p>
+                    <p><strong>Question (${currentTestConfig.categories[ans.category] || ans.category} | ${ans.weight} pt${ans.weight > 1 ? 's' : ''}):</strong> ${ans.text}</p>
+                    <p class="user-answer"><strong>Answer:</strong><pre>${ans.userAnswer || 'No answer'}</pre></p>
                     <div class="grading-box">
-                        <label for="grade-${r.id}-${ans.questionId}">Оценка (из ${ans.weight}):</label>
+                        <label for="grade-${r.id}-${ans.questionId}">Grade (out of ${ans.weight}):</label>
                         <input type="number" id="grade-${r.id}-${ans.questionId}" min="0" max="${ans.weight}" step="0.5" value="${ans.pointsAwarded || 0}">
-                        <button class="btn btn-secondary" onclick="gradeOpenQuestion('${r.id}', '${ans.questionId}', ${ans.weight})">Сохранить</button>
+                        <button class="btn btn-secondary" onclick="gradeOpenQuestion('${r.id}', '${ans.questionId}', ${ans.weight})">Save</button>
                     </div>
                 </div>
             `).join('');
         };
 
-        const supervisorViewHTML = `
-            <h4>Оценка Hard Skills (Открытые и практические вопросы)</h4>
-            ${createGradingHTML(hardSkillOpenAnswers)}
-            <hr style="margin: 20px 0;">
-            <h4>Оценка Soft Skills (Открытые вопросы)</h4>
-            ${createGradingHTML(softSkillOpenAnswers)}
-        `;
-        
-        // --- Full Detail View (for all answers) ---
-        const detailedAnswersHTML = r.detailedAnswers.map(ans => {
+        let supervisorViewHTML = '';
+        if (!isFundamentals && (hardSkillOpenAnswers.length > 0 || softSkillOpenAnswers.length > 0)) {
+            supervisorViewHTML = `
+                <h4>Hard Skills Grading (Open Questions)</h4>
+                ${createGradingHTML(hardSkillOpenAnswers)}
+                <hr style="margin: 20px 0;">
+                <h4>Soft Skills Grading (Open Questions)</h4>
+                ${createGradingHTML(softSkillOpenAnswers)}
+            `;
+        }
+
+        const detailedAnswersHTML = (r.detailedAnswers || []).map(ans => {
             const correctnessClass = ans.isCorrect ? 'correct' : 'incorrect';
             let answerDetails = '';
             if (ans.type === 'multiple') {
                 const allOptions = allQuestions.find(q => q.id === ans.questionId)?.options || {};
-                const userAnswerText = ans.userAnswer ? `${ans.userAnswer}) ${allOptions[ans.userAnswer] || ''}` : 'Нет ответа';
+                const userAnswerText = ans.userAnswer ? `${ans.userAnswer}) ${allOptions[ans.userAnswer] || ''}` : 'No answer';
                 const correctAnswerText = ans.correctAnswer ? `${ans.correctAnswer}) ${allOptions[ans.correctAnswer] || ''}` : '';
                 answerDetails = `
-                    <p class="user-answer"><strong>Выбранный ответ:</strong> ${userAnswerText}</p>
-                    ${!ans.isCorrect && ans.correctAnswer ? `<p class="correct-answer"><strong>Правильный ответ:</strong> ${correctAnswerText}</p>` : ''}
+                    <p class="user-answer"><strong>Selected:</strong> ${userAnswerText}</p>
+                    ${!ans.isCorrect && ans.correctAnswer ? `<p class="correct-answer"><strong>Correct:</strong> ${correctAnswerText}</p>` : ''}
                 `;
             } else {
-                answerDetails = `<p class="user-answer"><strong>Данный ответ:</strong><pre>${ans.userAnswer || 'Нет ответа'}</pre></p>`;
+                answerDetails = `<p class="user-answer"><strong>Answer:</strong><pre>${ans.userAnswer || 'No answer'}</pre></p>`;
             }
             return `
                 <div class="detailed-answer-item ${correctnessClass}">
-                    <p><strong>Вопрос (${ans.weight} ${ans.weight > 1 ? 'балла' : 'балл'}):</strong> ${ans.text}</p>
+                    <p><strong>Question (${ans.weight} pt${ans.weight > 1 ? 's' : ''}):</strong> ${ans.text}</p>
                     ${answerDetails}
                 </div>
             `;
         }).join('');
 
-        return `
-            <div class="result-block">
-                <strong>${r.userName}</strong>: ${r.score}/${r.maxScore} (${r.percentage}%)
+        // Score breakdown for full assessment
+        let scoreBreakdown = '';
+        if (!isFundamentals) {
+            scoreBreakdown = `
                 <div style="font-size: 0.9rem; color: #333; margin-top: 5px;">
                     Hard: <strong>${r.hardSkillScore || 0}/${r.maxHardSkillScore || 0}</strong> | Soft: <strong>${r.softSkillScore || 0}/${r.maxSoftSkillScore || 0}</strong>
                 </div>
+            `;
+        }
+
+        return `
+            <div class="result-block">
+                <strong>${r.userName}</strong>: ${r.score}/${r.maxScore} (${r.percentage}%) - ${r.level || 'N/A'}
+                ${scoreBreakdown}
                 <div style="font-size: 0.8rem; color: #666; margin-bottom: 10px;">${new Date(r.timestamp).toLocaleString()}</div>
-                <button class="btn btn-secondary" onclick="toggleDetails('supervisor-${r.id}')" style="margin-right: 10px; margin-bottom: 5px;">Для проверяющего</button>
-                <button class="btn" onclick="toggleDetails('${r.id}')" style="margin-bottom: 5px;">Все детали</button>
-                <div id="details-supervisor-${r.id}" style="display:none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
-                    ${supervisorViewHTML}
-                </div>
+                ${supervisorViewHTML ? `<button class="btn btn-secondary" onclick="toggleDetails('supervisor-${r.id}')" style="margin-right: 10px; margin-bottom: 5px;">For Supervisor</button>` : ''}
+                <button class="btn ${isFundamentals ? 'btn-blue' : ''}" onclick="toggleDetails('${r.id}')" style="margin-bottom: 5px;">All Details</button>
+                ${supervisorViewHTML ? `
+                    <div id="details-supervisor-${r.id}" style="display:none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
+                        ${supervisorViewHTML}
+                    </div>
+                ` : ''}
                 <div id="details-${r.id}" style="display:none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
-                    <h4>Все ответы</h4>
+                    <h4>All Answers</h4>
                     ${detailedAnswersHTML}
                 </div>
             </div>
         `;
-    }).join('') || '<p>Нет недавних результатов.</p>';
+    }).join('') || '<p>No recent results.</p>';
+
+    // Build summary cards
+    let summaryCardsHTML = '';
+    if (isFundamentals) {
+        summaryCardsHTML = `
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                <div class="result-block"><h4>Total Tests</h4><div class="score-display blue">${data.totalTests}</div></div>
+                <div class="result-block"><h4>Avg Score</h4><div class="score-display blue">${data.averageScore || 0}/${data.totalQuestions || 25}</div></div>
+                <div class="result-block"><h4>Avg Percentage</h4><div class="score-display blue">${data.averagePercentage || 0}%</div></div>
+                <div class="result-block"><h4>Pass Rate</h4><div class="score-display blue">${data.passRate || 0}%</div></div>
+            </div>
+        `;
+    } else {
+        summaryCardsHTML = `
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                <div class="result-block"><h4>Total Tests</h4><div class="score-display">${data.totalTests}</div></div>
+                <div class="result-block"><h4>Avg Score</h4><div class="score-display">${data.averageScore}%</div></div>
+                <div class="result-block"><h4>Avg Hard Skills</h4><div class="score-display">${data.averageHardSkillScore}%</div></div>
+                <div class="result-block"><h4>Avg Soft Skills</h4><div class="score-display">${data.averageSoftSkillScore}%</div></div>
+            </div>
+        `;
+    }
 
     document.getElementById('analyticsContent').innerHTML = `
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
-            <div class="result-block"><h4>Всего тестов</h4><div class="score-display">${data.totalTests}</div></div>
-            <div class="result-block"><h4>Ср. балл</h4><div class="score-display">${data.averageScore}%</div></div>
-            <div class="result-block"><h4>Ср. Hard Skills</h4><div class="score-display">${data.averageHardSkillScore}%</div></div>
-            <div class="result-block"><h4>Ср. Soft Skills</h4><div class="score-display">${data.averageSoftSkillScore}%</div></div>
-        </div>
-        <h3>Недавние результаты</h3>
+        ${summaryCardsHTML}
+        <h3>Recent Results</h3>
         <div class="detailed-results">
             ${recentHTML}
         </div>
@@ -893,31 +1120,14 @@ function displayAnalytics(data) {
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('questionType').addEventListener('change', toggleQuestionTypeFields);
     initializeApp();
-    const savedLanguage = localStorage.getItem('language') || 'ru'; // Default to Russian
+    const savedLanguage = localStorage.getItem('language') || 'ru';
     setLanguage(savedLanguage);
 });
 
 async function initializeApp() {
     setMode('candidate');
     showSection('welcome');
-    try {
-        const data = await loadQuestions();
-        allQuestions = data.questions || [];
-        updateWelcomeStats();
-        
-        const categoryFilter = document.getElementById('categoryFilter');
-        categoryFilter.innerHTML = `<option value="all">Все категории</option>` + 
-            Object.entries(categoryNames).map(([val, name]) => `<option value="${val}">${name}</option>`).join('');
-    } catch (error) {
-        showError("Не удалось инициализировать приложение путем загрузки вопросов.");
-    }
+    
+    // Load initial test
+    await selectTest('ml_assessment');
 }
-
-
-
-
-
-
-
-
-
