@@ -4,4 +4,8 @@ compatibility_date = "2024-08-14"
 [[kv_namespaces]]
 binding = "ML_QUESTIONS"
 id = "561f956bd5df4149bafb1227a49733b2"
-preview_id = "bcdac980e2c84b479c1050850878d8c5"
+
+# Second test: ML Fundamentals (15-min quick test for students)
+[[kv_namespaces]]
+binding = "ML_FUNDAMENTALS"
+id = "bca4ff265bff480ebfb9efe736c5bd38"
