@@ -4,7 +4,7 @@
 
 const API_BASE_URL = '/api';
 const ADMIN_PASSWORD = 'bota13'; // Change this to a secure password!
-const TEST_DURATION_SECONDS = 900; // CHANGED: 15 minutes (was 3600)
+const TEST_DURATION_SECONDS = 900; // 15 minutes
 
 // ... (Global variables, Data Mappings, translations remain unchanged) ...
 // Global variables
@@ -49,15 +49,15 @@ const levels = [
 const translations = {
     en: {
         mainTitle: "ML Engineer Testing Platform",
-        mainSubtitle: "Comprehensive evaluation system for Machine Learning professionals",
+        mainSubtitle: "Quick testing system for Machine Learning professionals",
         candidateMode: "Candidate Mode",
         adminMode: "Administrator Mode",
         navStartTest: "Start Test",
         navResults: "Results",
         navEditQuestions: "Edit Questions",
         navAnalytics: "Analytics",
-        welcomeTitle: "Hard Skills Assessment", // CHANGED
-        welcomeSubtitle: "Focused evaluation covering ML algorithms & Statistics", // CHANGED
+        welcomeTitle: "Hard Skills Assessment",
+        welcomeSubtitle: "Quick evaluation covering essential ML algorithms & Statistics",
         overviewTitle: "Test Overview",
         overviewQuestions: "Questions",
         overviewMinutes: "Minutes",
@@ -65,7 +65,7 @@ const translations = {
         coverageTitle: "Coverage Areas:",
         loadingCoverage: "Loading test information...",
         instructionsTitle: "Instructions:",
-        instruction1: "You have 15 minutes to complete all questions", // CHANGED
+        instruction1: "You have 15 minutes to complete all questions",
         instruction2: "Each question has one correct answer",
         instruction3: "You can navigate between questions and change answers",
         instruction4: "Questions are weighted by difficulty (1, 3, or 5 points)",
@@ -92,7 +92,7 @@ const translations = {
         qBankExport: "Export Questions",
         qBankImport: "Import Questions",
         qBankReset: "Reset to Default",
-        testTitle: "Hard Skills Assessment", // CHANGED
+        testTitle: "Hard Skills Assessment",
         testSubtitle: "Answer all questions within the time limit",
         testStartFromWelcome: "Please start the test from the welcome section.",
         submitTestBtn: "Submit Test",
@@ -103,17 +103,18 @@ const translations = {
         editBtn: "Edit",
         deleteBtn: "Delete"
     },
+    // We keep RU for compatibility, but updated to reflect "Quick" if user switches
     ru: {
         mainTitle: "Платформа для тестирования ML-инженеров",
-        mainSubtitle: "Комплексная система оценки для специалистов по машинному обучению",
+        mainSubtitle: "Система быстрого тестирования для специалистов по машинному обучению",
         candidateMode: "Режим кандидата",
         adminMode: "Режим администратора",
         navStartTest: "Начать тест",
         navResults: "Результаты",
         navEditQuestions: "Редактировать вопросы",
         navAnalytics: "Аналитика",
-        welcomeTitle: "Hard Skills Оценка", // CHANGED
-        welcomeSubtitle: "Фокус на алгоритмах ML и статистике", // CHANGED
+        welcomeTitle: "Оценка Hard Skills",
+        welcomeSubtitle: "Быстрая оценка, охватывающая основные алгоритмы ML и статистику",
         overviewTitle: "Обзор теста",
         overviewQuestions: "Вопросы",
         overviewMinutes: "Минуты",
@@ -121,7 +122,7 @@ const translations = {
         coverageTitle: "Охватываемые области:",
         loadingCoverage: "Загрузка информации о тесте...",
         instructionsTitle: "Инструкции:",
-        instruction1: "У вас есть 15 минут, чтобы ответить на все вопросы", // CHANGED
+        instruction1: "У вас есть 15 минут, чтобы ответить на все вопросы",
         instruction2: "У каждого вопроса один правильный ответ",
         instruction3: "Вы можете переключаться между вопросами и изменять ответы",
         instruction4: "Вопросы оцениваются по сложности (1, 3 или 5 баллов)",
@@ -148,7 +149,7 @@ const translations = {
         qBankExport: "Экспорт вопросов",
         qBankImport: "Импорт вопросов",
         qBankReset: "Сбросить по умолчанию",
-        testTitle: "Hard Skills Оценка", // CHANGED
+        testTitle: "Оценка Hard Skills",
         testSubtitle: "Ответьте на все вопросы в течение установленного времени",
         testStartFromWelcome: "Пожалуйста, начните тест из раздела приветствия.",
         submitTestBtn: "Отправить тест",
@@ -164,7 +165,6 @@ const translations = {
 // =================================================================================
 // Language Functions
 // =================================================================================
-// ... (setLanguage function is unchanged) ...
 function setLanguage(lang) {
     const langData = translations[lang];
     if (!langData) return;
@@ -181,6 +181,7 @@ function setLanguage(lang) {
 
     localStorage.setItem('language', lang);
 }
+
 // =================================================================================
 // API Functions
 // =================================================================================
@@ -202,13 +203,11 @@ async function apiRequest(endpoint, options = {}) {
     }
 }
 
-
 const loadQuestions = () => apiRequest('/questions');
 const saveQuestion = (question) => apiRequest('/questions', { method: 'POST', body: JSON.stringify(question) });
 const updateQuestion = (id, question) => apiRequest(`/questions/${id}`, { method: 'PUT', body: JSON.stringify(question) });
 const deleteQuestionAPI = (id) => apiRequest(`/questions/${id}`, { method: 'DELETE' });
 const resetQuestionsAPI = () => apiRequest('/questions/reset', { method: 'POST' });
-// NEW API function for bulk import
 const replaceQuestionsAPI = (questions) => apiRequest('/questions/replace', { method: 'POST', body: JSON.stringify(questions) });
 const submitTestResults = (results) => apiRequest('/results', { method: 'POST', body: JSON.stringify(results) });
 const gradeQuestionAPI = (resultId, questionId, pointsAwarded) => apiRequest(`/results/${resultId}`, { method: 'PUT', body: JSON.stringify({ questionId, pointsAwarded }) });
@@ -217,7 +216,6 @@ const loadAnalytics = () => apiRequest('/analytics');
 // =================================================================================
 // UI Helper Functions & Navigation & Test Flow
 // =================================================================================
-// ... (All functions in these sections are the same as the previous response) ...
 function showError(message) {
     const existing = document.querySelector('.error');
     if (existing) existing.remove();
@@ -270,7 +268,7 @@ function setMode(mode) {
     document.getElementById('candidateNavigation').classList.toggle('hidden', mode !== 'candidate');
     document.getElementById('adminNavigation').classList.toggle('hidden', mode !== 'admin');
 
-    showSection('welcome'); // Default to welcome section on mode change
+    showSection('welcome'); 
 }
 
 function requireAdminAccess(sectionId) {
@@ -292,23 +290,22 @@ function showSection(sectionId) {
 
     const navId = currentMode === 'admin' ? 'adminNavigation' : 'candidateNavigation';
     document.querySelectorAll(`#${navId} .nav-btn`).forEach(btn => btn.classList.remove('active'));
-    // Admin nav has 'analytics', candidate nav does not, so use optional chaining
+    
     const navButton = document.querySelector(`#adminNavigation .nav-btn[onclick="showSection('${sectionId}')"]`) || 
                       document.querySelector(`#candidateNavigation .nav-btn[onclick="showSection('${sectionId}')"]`);
     if(navButton) navButton.classList.add('active');
 
-    // Load data for specific sections
     if (sectionId === 'questionEditor') {
         updateQuestionsList();
     } else if (sectionId === 'analytics') {
         loadAnalyticsData();
     }
 }
+
 // =================================================================================
 // Question Management (Admin)
 // =================================================================================
 
-// ... (toggleQuestionTypeFields, addOrUpdateQuestion, etc. are unchanged) ...
 function toggleQuestionTypeFields() {
     const type = document.getElementById('questionType').value;
     document.getElementById('multipleChoiceFields').classList.toggle('hidden', type !== 'multiple');
@@ -347,7 +344,7 @@ async function addOrUpdateQuestion() {
         await action;
         showSuccess(`Question ${editingId ? 'updated' : 'added'} successfully!`);
         clearForm();
-        const data = await loadQuestions(); // Reload all questions
+        const data = await loadQuestions(); 
         allQuestions = data.questions || [];
         updateQuestionsList();
     } catch (error) {
@@ -423,11 +420,10 @@ async function resetToDefault() {
         }
     }
 }
-// NEW: Export functionality
+
 function exportQuestions() {
     const dataStr = JSON.stringify(allQuestions, null, 2);
     const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    
     const exportFileDefaultName = 'questions.json';
     
     let linkElement = document.createElement('a');
@@ -437,7 +433,6 @@ function exportQuestions() {
     showSuccess('Exporting questions...');
 }
 
-// NEW: Import functionality
 function importQuestions(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -459,7 +454,6 @@ function importQuestions(event) {
         } catch (error) {
             showError(`Import failed: ${error.message}`);
         } finally {
-            // Reset file input to allow re-uploading the same file
             document.getElementById('importFile').value = '';
         }
     };
@@ -497,13 +491,13 @@ const filterQuestions = () => updateQuestionsList();
 // Test Taking Flow, Results & Analytics
 // =================================================================================
 
-// ... (All functions in these sections are the same as the previous response) ...
 function startGeneralTest() {
-    userName = prompt("Пожалуйста, введите ваше полное имя для начала теста:");
+    // TRANSLATED to English
+    userName = prompt("Please enter your full name to start the test:");
     if (!userName || userName.trim() === '') {
-        return showError("Необходимо ввести имя, чтобы начать тест.");
+        return showError("You must enter a name to start the test.");
     }
-    currentTest = [...allQuestions]; // Use all available questions
+    currentTest = [...allQuestions]; 
     currentQuestionIndex = 0;
     userAnswers = {};
     timeLeft = TEST_DURATION_SECONDS;
@@ -528,13 +522,15 @@ function renderQuestion() {
                 </div>
             `).join('') + `</div>`;
     } else if (question.type === 'open' || question.type === 'code') {
+        // TRANSLATED placeholders to English
         optionsHTML = `
             <textarea class="form-group" style="min-height: 200px;" oninput="selectAnswer('${question.id}', this.value)" 
-            placeholder="Введите ваш ${question.type === 'code' ? 'код или решение' : 'ответ'} здесь...">${userAnswers[question.id] || ''}</textarea>
-            ${question.type === 'code' && question.test_cases ? `<div class="test-cases"><strong>Тестовые случаи:</strong><pre>${question.test_cases}</pre></div>` : ''}
+            placeholder="Enter your ${question.type === 'code' ? 'code or solution' : 'answer'} here...">${userAnswers[question.id] || ''}</textarea>
+            ${question.type === 'code' && question.test_cases ? `<div class="test-cases"><strong>Test Cases:</strong><pre>${question.test_cases}</pre></div>` : ''}
         `;
     }
 
+    // TRANSLATED buttons to English
     container.innerHTML = `
         <div class="question-card">
             <div class="question-number">${currentQuestionIndex + 1}</div>
@@ -542,8 +538,8 @@ function renderQuestion() {
             ${optionsHTML}
         </div>
         <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-            <button class="btn btn-secondary" onclick="previousQuestion()" ${currentQuestionIndex === 0 ? 'disabled' : ''}>Назад</button>
-            <button class="btn" onclick="nextQuestion()">${currentQuestionIndex === currentTest.length - 1 ? 'Завершить' : 'Далее'}</button>
+            <button class="btn btn-secondary" onclick="previousQuestion()" ${currentQuestionIndex === 0 ? 'disabled' : ''}>Back</button>
+            <button class="btn" onclick="nextQuestion()">${currentQuestionIndex === currentTest.length - 1 ? 'Finish' : 'Next'}</button>
         </div>
     `;
     updateProgress();
@@ -590,14 +586,16 @@ function startTimer() {
         
         if (timeLeft <= 0) {
             clearInterval(testTimer);
-            showError('Время вышло! Ваш тест будет отправлен автоматически.');
+            // TRANSLATED to English
+            showError('Time is up! Your test will be submitted automatically.');
             submitTest();
         }
     }, 1000);
 }
 
 async function submitTest() {
-    if (!confirm('Вы уверены, что хотите завершить и отправить тест?')) return;
+    // TRANSLATED to English
+    if (!confirm('Are you sure you want to finish and submit the test?')) return;
     clearInterval(testTimer);
 
     let score = 0;
@@ -630,7 +628,6 @@ async function submitTest() {
             userAnswer: userAnswer || null, 
             correctAnswer: q.correctAnswer, 
             isCorrect,
-            // For MCQs, points are awarded now. For open questions, they are 0 until graded.
             pointsAwarded: isCorrect ? q.weight : 0 
         };
     });
@@ -654,10 +651,10 @@ async function submitTest() {
     try {
         const response = await submitTestResults(result);
         testResultId = response.id;
-        showSuccess('Тест успешно отправлен!');
+        showSuccess('Test submitted successfully!');
         showResults(result);
     } catch (error) {
-        showError('Не удалось отправить результаты теста. Проверьте ваше соединение.');
+        showError('Failed to submit test results. Please check your connection.');
     }
 }
 
@@ -676,34 +673,36 @@ function showResults(result) {
         return acc;
     }, {});
     
+    // TRANSLATED to English
     const openAnswersHTML = result.detailedAnswers
         .filter(ans => ans.type === 'open' || ans.type === 'code')
         .map(ans => `
             <div class="detailed-answer-item">
-                <p><strong>Вопрос (${categoryNames[ans.category] || ans.category} | ${ans.weight} ${ans.weight > 1 ? 'балла' : 'балл'}):</strong> ${ans.text}</p>
-                <p class="user-answer"><strong>Ответ кандидата:</strong><pre>${ans.userAnswer || 'Нет ответа'}</pre></p>
+                <p><strong>Question (${categoryNames[ans.category] || ans.category} | ${ans.weight} ${ans.weight > 1 ? 'points' : 'point'}):</strong> ${ans.text}</p>
+                <p class="user-answer"><strong>Candidate Answer:</strong><pre>${ans.userAnswer || 'No answer'}</pre></p>
             </div>
         `).join('');
 
+    // TRANSLATED to English
     const detailedAnswersHTML = result.detailedAnswers.map(ans => {
         const correctnessClass = (ans.type === 'multiple' && ans.isCorrect) ? 'correct' : (ans.type === 'multiple' && !ans.isCorrect) ? 'incorrect' : '';
         let answerDetails = '';
 
         if (ans.type === 'multiple') {
             const allOptions = allQuestions.find(q => q.id === ans.questionId)?.options || {};
-            const userAnswerText = ans.userAnswer ? `${ans.userAnswer}) ${allOptions[ans.userAnswer]}` : 'Нет ответа';
+            const userAnswerText = ans.userAnswer ? `${ans.userAnswer}) ${allOptions[ans.userAnswer]}` : 'No answer';
             const correctAnswerText = `${ans.correctAnswer}) ${allOptions[ans.correctAnswer]}`;
             answerDetails = `
-                <p class="user-answer"><strong>Ваш ответ:</strong> ${userAnswerText}</p>
-                ${!ans.isCorrect ? `<p class="correct-answer"><strong>Правильный ответ:</strong> ${correctAnswerText}</p>` : ''}
+                <p class="user-answer"><strong>Your Answer:</strong> ${userAnswerText}</p>
+                ${!ans.isCorrect ? `<p class="correct-answer"><strong>Correct Answer:</strong> ${correctAnswerText}</p>` : ''}
             `;
         } else {
-            answerDetails = `<p class="user-answer"><strong>Ваш ответ:</strong><pre>${ans.userAnswer || 'Нет ответа'}</pre></p>`;
+            answerDetails = `<p class="user-answer"><strong>Your Answer:</strong><pre>${ans.userAnswer || 'No answer'}</pre></p>`;
         }
 
         return `
             <div class="detailed-answer-item ${correctnessClass}">
-                <p><strong>Вопрос (${ans.weight} ${ans.weight > 1 ? 'балла' : 'балл'}):</strong> ${ans.text}</p>
+                <p><strong>Question (${ans.weight} ${ans.weight > 1 ? 'points' : 'point'}):</strong> ${ans.text}</p>
                 ${answerDetails}
             </div>
         `;
@@ -722,6 +721,7 @@ function showResults(result) {
         </div>
     `;
 
+    // TRANSLATED to English
     document.getElementById('resultsContent').innerHTML = `
         <div class="results-summary">
             <h3>${result.userName}</h3>
@@ -729,35 +729,35 @@ function showResults(result) {
             <div class="grade-badge ${grade.class}">${result.percentage}% (${grade.text})</div>
         </div>
         ${scoreBreakdownHTML}
-        <h4>Результаты по категориям:</h4>
+        <h4>Results by Category:</h4>
         <div class="detailed-results">
             ${Object.entries(blockResults).map(([cat, res]) => `
                 <div class="result-block">
-                    <strong>${categoryNames[cat] || cat}:</strong> ${res.awarded} / ${allQuestions.filter(q=>q.category===cat).reduce((s,i)=>s+i.weight,0)} баллов
+                    <strong>${categoryNames[cat] || cat}:</strong> ${res.awarded} / ${allQuestions.filter(q=>q.category===cat).reduce((s,i)=>s+i.weight,0)} points
                 </div>
             `).join('')}
         </div>
-        <button id="showDetailsBtn" class="btn" style="margin: 30px auto; display: block;">Показать детальный разбор</button>
+        <button id="showDetailsBtn" class="btn" style="margin: 30px auto; display: block;">Show Detailed Review</button>
         <div id="detailedReview" class="hidden">
             <hr style="margin: 30px 0;">
-            <h3>Разбор для проверяющего</h3>
-            <h4>Открытые и практические вопросы:</h4>
+            <h3>Supervisor Review</h3>
+            <h4>Open & Practical Questions:</h4>
             <div>
-                ${openAnswersHTML.length > 0 ? openAnswersHTML : '<p>В этом тесте не было открытых или практических вопросов.</p>'}
+                ${openAnswersHTML.length > 0 ? openAnswersHTML : '<p>There were no open or practical questions in this test.</p>'}
             </div>
             <hr style="margin: 30px 0;">
-            <h4>Полный разбор ответов:</h4>
+            <h4>Full Answer Review:</h4>
             <div>${detailedAnswersHTML}</div>
         </div>
     `;
 
     document.getElementById('showDetailsBtn').addEventListener('click', () => {
-        const pass = prompt('Введите пароль проверяющего для просмотра детального разбора:');
+        const pass = prompt('Enter supervisor password to view detailed review:');
         if (pass === ADMIN_PASSWORD) {
             document.getElementById('detailedReview').classList.remove('hidden');
             document.getElementById('showDetailsBtn').classList.add('hidden');
         } else if (pass !== null) {
-            showError('Неверный пароль.');
+            showError('Incorrect password.');
         }
     });
 
@@ -766,12 +766,12 @@ function showResults(result) {
 
 async function loadAnalyticsData() {
     const content = document.getElementById('analyticsContent');
-    content.innerHTML = `<div class="loading">Загрузка аналитики...</div>`;
+    content.innerHTML = `<div class="loading">Loading analytics...</div>`;
     try {
         const data = await loadAnalytics();
         displayAnalytics(data);
     } catch (error) {
-        content.innerHTML = `<p>Не удалось загрузить данные аналитики.</p>`;
+        content.innerHTML = `<p>Failed to load analytics data.</p>`;
     }
 }
 
@@ -786,67 +786,68 @@ async function gradeOpenQuestion(resultId, questionId, maxPoints) {
     const points = parseFloat(inputEl.value);
 
     if (isNaN(points) || points < 0 || points > maxPoints) {
-        showError(`Пожалуйста, введите корректную оценку от 0 до ${maxPoints}.`);
+        // TRANSLATED to English
+        showError(`Please enter a valid grade from 0 to ${maxPoints}.`);
         return;
     }
 
     try {
         await gradeQuestionAPI(resultId, questionId, points);
-        showSuccess('Оценка сохранена! Результаты обновляются...');
-        loadAnalyticsData(); // Reload all analytics to show the updated score
+        showSuccess('Grade saved! Results updating...');
+        loadAnalyticsData(); 
     } catch (error) {
-        showError(`Не удалось сохранить оценку: ${error.message}`);
+        showError(`Failed to save grade: ${error.message}`);
     }
 }
 
 function displayAnalytics(data) {
     const recentHTML = data.recentResults.map(r => {
-        // --- Supervisor Grading View ---
         const openAnswers = r.detailedAnswers.filter(ans => ans.type === 'open' || ans.type === 'code');
         const hardSkillOpenAnswers = openAnswers.filter(ans => hardSkillCategories.includes(ans.category));
         const softSkillOpenAnswers = openAnswers.filter(ans => softSkillCategories.includes(ans.category));
 
+        // TRANSLATED to English
         const createGradingHTML = (answers) => {
-            if (answers.length === 0) return '<p>Нет вопросов в данной категории.</p>';
+            if (answers.length === 0) return '<p>No questions in this category.</p>';
             return answers.map(ans => `
                 <div class="detailed-answer-item">
-                    <p><strong>Вопрос (${categoryNames[ans.category] || ans.category} | ${ans.weight} ${ans.weight > 1 ? 'балла' : 'балл'}):</strong> ${ans.text}</p>
-                    <p class="user-answer"><strong>Ответ:</strong><pre>${ans.userAnswer || 'Нет ответа'}</pre></p>
+                    <p><strong>Question (${categoryNames[ans.category] || ans.category} | ${ans.weight} ${ans.weight > 1 ? 'points' : 'point'}):</strong> ${ans.text}</p>
+                    <p class="user-answer"><strong>Answer:</strong><pre>${ans.userAnswer || 'No answer'}</pre></p>
                     <div class="grading-box">
-                        <label for="grade-${r.id}-${ans.questionId}">Оценка (из ${ans.weight}):</label>
+                        <label for="grade-${r.id}-${ans.questionId}">Grade (out of ${ans.weight}):</label>
                         <input type="number" id="grade-${r.id}-${ans.questionId}" min="0" max="${ans.weight}" step="0.5" value="${ans.pointsAwarded || 0}">
-                        <button class="btn btn-secondary" onclick="gradeOpenQuestion('${r.id}', '${ans.questionId}', ${ans.weight})">Сохранить</button>
+                        <button class="btn btn-secondary" onclick="gradeOpenQuestion('${r.id}', '${ans.questionId}', ${ans.weight})">Save</button>
                     </div>
                 </div>
             `).join('');
         };
 
         const supervisorViewHTML = `
-            <h4>Оценка Hard Skills (Открытые и практические вопросы)</h4>
+            <h4>Hard Skills Grading (Open & Practical)</h4>
             ${createGradingHTML(hardSkillOpenAnswers)}
             <hr style="margin: 20px 0;">
-            <h4>Оценка Soft Skills (Открытые вопросы)</h4>
+            <h4>Soft Skills Grading (Open)</h4>
             ${createGradingHTML(softSkillOpenAnswers)}
         `;
         
-        // --- Full Detail View (for all answers) ---
+        // TRANSLATED to English
         const detailedAnswersHTML = r.detailedAnswers.map(ans => {
             const correctnessClass = ans.isCorrect ? 'correct' : 'incorrect';
             let answerDetails = '';
             if (ans.type === 'multiple') {
                 const allOptions = allQuestions.find(q => q.id === ans.questionId)?.options || {};
-                const userAnswerText = ans.userAnswer ? `${ans.userAnswer}) ${allOptions[ans.userAnswer] || ''}` : 'Нет ответа';
+                const userAnswerText = ans.userAnswer ? `${ans.userAnswer}) ${allOptions[ans.userAnswer] || ''}` : 'No answer';
                 const correctAnswerText = ans.correctAnswer ? `${ans.correctAnswer}) ${allOptions[ans.correctAnswer] || ''}` : '';
                 answerDetails = `
-                    <p class="user-answer"><strong>Выбранный ответ:</strong> ${userAnswerText}</p>
-                    ${!ans.isCorrect && ans.correctAnswer ? `<p class="correct-answer"><strong>Правильный ответ:</strong> ${correctAnswerText}</p>` : ''}
+                    <p class="user-answer"><strong>Selected:</strong> ${userAnswerText}</p>
+                    ${!ans.isCorrect && ans.correctAnswer ? `<p class="correct-answer"><strong>Correct:</strong> ${correctAnswerText}</p>` : ''}
                 `;
             } else {
-                answerDetails = `<p class="user-answer"><strong>Данный ответ:</strong><pre>${ans.userAnswer || 'Нет ответа'}</pre></p>`;
+                answerDetails = `<p class="user-answer"><strong>Answer:</strong><pre>${ans.userAnswer || 'No answer'}</pre></p>`;
             }
             return `
                 <div class="detailed-answer-item ${correctnessClass}">
-                    <p><strong>Вопрос (${ans.weight} ${ans.weight > 1 ? 'балла' : 'балл'}):</strong> ${ans.text}</p>
+                    <p><strong>Question (${ans.weight} ${ans.weight > 1 ? 'points' : 'point'}):</strong> ${ans.text}</p>
                     ${answerDetails}
                 </div>
             `;
@@ -859,27 +860,28 @@ function displayAnalytics(data) {
                     Hard: <strong>${r.hardSkillScore || 0}/${r.maxHardSkillScore || 0}</strong> | Soft: <strong>${r.softSkillScore || 0}/${r.maxSoftSkillScore || 0}</strong>
                 </div>
                 <div style="font-size: 0.8rem; color: #666; margin-bottom: 10px;">${new Date(r.timestamp).toLocaleString()}</div>
-                <button class="btn btn-secondary" onclick="toggleDetails('supervisor-${r.id}')" style="margin-right: 10px; margin-bottom: 5px;">Для проверяющего</button>
-                <button class="btn" onclick="toggleDetails('${r.id}')" style="margin-bottom: 5px;">Все детали</button>
+                <button class="btn btn-secondary" onclick="toggleDetails('supervisor-${r.id}')" style="margin-right: 10px; margin-bottom: 5px;">For Supervisor</button>
+                <button class="btn" onclick="toggleDetails('${r.id}')" style="margin-bottom: 5px;">All Details</button>
                 <div id="details-supervisor-${r.id}" style="display:none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
                     ${supervisorViewHTML}
                 </div>
                 <div id="details-${r.id}" style="display:none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
-                    <h4>Все ответы</h4>
+                    <h4>All Answers</h4>
                     ${detailedAnswersHTML}
                 </div>
             </div>
         `;
-    }).join('') || '<p>Нет недавних результатов.</p>';
+    }).join('') || '<p>No recent results.</p>';
 
+    // TRANSLATED to English
     document.getElementById('analyticsContent').innerHTML = `
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
-            <div class="result-block"><h4>Всего тестов</h4><div class="score-display">${data.totalTests}</div></div>
-            <div class="result-block"><h4>Ср. балл</h4><div class="score-display">${data.averageScore}%</div></div>
-            <div class="result-block"><h4>Ср. Hard Skills</h4><div class="score-display">${data.averageHardSkillScore}%</div></div>
-            <div class="result-block"><h4>Ср. Soft Skills</h4><div class="score-display">${data.averageSoftSkillScore}%</div></div>
+            <div class="result-block"><h4>Total Tests</h4><div class="score-display">${data.totalTests}</div></div>
+            <div class="result-block"><h4>Avg Score</h4><div class="score-display">${data.averageScore}%</div></div>
+            <div class="result-block"><h4>Avg Hard Skills</h4><div class="score-display">${data.averageHardSkillScore}%</div></div>
+            <div class="result-block"><h4>Avg Soft Skills</h4><div class="score-display">${data.averageSoftSkillScore}%</div></div>
         </div>
-        <h3>Недавние результаты</h3>
+        <h3>Recent Results</h3>
         <div class="detailed-results">
             ${recentHTML}
         </div>
@@ -893,7 +895,8 @@ function displayAnalytics(data) {
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('questionType').addEventListener('change', toggleQuestionTypeFields);
     initializeApp();
-    const savedLanguage = localStorage.getItem('language') || 'ru'; // Default to Russian
+    // CHANGED: Default to 'en' (English)
+    const savedLanguage = localStorage.getItem('language') || 'en'; 
     setLanguage(savedLanguage);
 });
 
@@ -905,10 +908,11 @@ async function initializeApp() {
         allQuestions = data.questions || [];
         updateWelcomeStats();
         
+        // TRANSLATED to English
         const categoryFilter = document.getElementById('categoryFilter');
-        categoryFilter.innerHTML = `<option value="all">Все категории</option>` + 
+        categoryFilter.innerHTML = `<option value="all">All Categories</option>` + 
             Object.entries(categoryNames).map(([val, name]) => `<option value="${val}">${name}</option>`).join('');
     } catch (error) {
-        showError("Не удалось инициализировать приложение путем загрузки вопросов.");
+        showError("Failed to initialize app by loading questions.");
     }
 }
