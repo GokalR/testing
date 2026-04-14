@@ -15,6 +15,21 @@ export default defineConfig({
     __VUE_I18N_LEGACY_API__: false,
     __INTLIFY_PROD_DEVTOOLS__: false,
   },
+  build: {
+    rollupOptions: {
+      output: {
+        chunkFileNames: (chunkInfo) => {
+          const name = (chunkInfo.name || 'chunk').replace(/^_+/, '')
+          return `assets/${name}-[hash].js`
+        },
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: (assetInfo) => {
+          const name = (assetInfo.name || 'asset').replace(/^_+/, '')
+          return `assets/${name}-[hash][extname]`
+        },
+      },
+    },
+  },
   server: {
     port: 5173,
     open: true,
