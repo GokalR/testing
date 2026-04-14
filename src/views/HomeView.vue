@@ -216,7 +216,7 @@ const sortedRegions = computed(() =>
         </div>
       </header>
 
-      <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-6 items-start">
+      <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_600px] gap-6 items-start">
         <UzbekistanMap v-model="selected" />
 
         <!-- Right column: summary (top) + region list (bottom) stacked -->

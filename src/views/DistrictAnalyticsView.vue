@@ -35,7 +35,7 @@ function selectDistrict(key) {
 
 // Drill-down analytics (null in overview mode)
 const analytics = computed(() =>
-  districtKey.value ? buildDistrictAnalytics(districtKey.value) : null,
+  districtKey.value ? buildDistrictAnalytics(districtKey.value, t) : null,
 )
 
 const title = computed(() =>

@@ -423,6 +423,176 @@
       "vsPrev": "o'tgan oyga nisbatan",
       "stable": "→ barqaror"
     },
+    "data": {
+      "company": {
+        "name": "«Shohruh Tekstil» MChJ",
+        "contact": "Shohruh Karimov · Direktor"
+      },
+      "accounts": {
+        "nbu": { "bank": "NBU — asosiy" },
+        "hbk": { "bank": "Xalq Banki — zaxira" },
+        "cash": { "bank": "Kassa — naqd pul", "number": "Ichki hisob", "short": "Kassa" }
+      },
+      "badges": {
+        "settlement": "Hisob-kitob",
+        "activeDot": "● Faol",
+        "reserve": "Zaxira",
+        "cash": "Naqd",
+        "bookkeeping": "Hisobot"
+      },
+      "kpi": {
+        "balance": "Umumiy qoldiq",
+        "balanceSub": "Barcha hisoblar bo'yicha",
+        "inflow": "Tushumlar",
+        "outflow": "Chiqimlar",
+        "currentMonth": "Joriy oy",
+        "netCf": "Sof CF",
+        "netCfSub": "Tushum − Chiqim",
+        "runwayValue": "{n} oy",
+        "runwayDelta": "≈ {n} oy",
+        "runwaySub": "Joriy xarajat sur'atida"
+      },
+      "months": {
+        "may": "May", "jun": "Iyun", "jul": "Iyul", "aug": "Avg", "sep": "Sen", "oct": "Okt",
+        "nov": "Noy", "dec": "Dek", "jan": "Yan", "feb": "Fev", "mar": "Mar", "apr": "Apr"
+      },
+      "shortMonths": {
+        "apr": "apr"
+      },
+      "shortDate": {
+        "may01": "01.05",
+        "may03": "03.05",
+        "may05": "05.05",
+        "may10": "10.05",
+        "may15": "15.05",
+        "apr25": "25.04",
+        "jul15": "15.07",
+        "jun30": "30.06",
+        "apr14_2026": "14.04.2026",
+        "apr13_2026": "13.04.2026",
+        "apr10_2026": "10.04.2026",
+        "apr08_2026": "08.04.2026",
+        "apr07_2026": "07.04.2026",
+        "apr05_2026": "05.04.2026",
+        "apr03_2026": "03.04.2026",
+        "apr01_2026": "01.04.2026"
+      },
+      "cat": {
+        "purchases": "Xaridlar",
+        "salary": "Ish haqi",
+        "taxes": "Soliqlar",
+        "rent": "Ijara",
+        "marketing": "Marketing",
+        "other": "Boshqalar",
+        "income": "Daromad",
+        "logistics": "Logistika",
+        "govContracts": "Davlat shartnomalari",
+        "operational": "Operatsion",
+        "insurance": "Sug'urta",
+        "financial": "Moliyaviy",
+        "sales": "Tovar sotuvi",
+        "interest": "Depozit foizlari",
+        "others": "Boshqa tushumlar"
+      },
+      "cp": {
+        "txCount": "{n} amaliyot · {m}",
+        "agroPrime": "Agro Prime",
+        "uzPakTrans": "Uzpak Trans",
+        "megaSnab": "Mega Snab",
+        "gnk": "DSQ",
+        "sarmat": "«Sarmat» YaTT",
+        "ipRashidov": "«Rashidov» YaTT",
+        "arendaGroup": "Arenda Grupp",
+        "megaLogist": "«MegaLogist» MChJ",
+        "uzAgroSig": "Uzagrosug'urta"
+      },
+      "ai": {
+        "expGrowthTitle": "Xarajatlar byudjetdan 22% oshdi",
+        "expGrowthText": "«Marketing» toifasi rejadan oshdi. Byudjetni qayta ko'rib chiqish tavsiya etiladi.",
+        "runwayTitle": "Runway ≈ 4 oy",
+        "runwayText": "Joriy xarajat sur'atida mablag' avgust oxirigacha yetadi.",
+        "cfPositiveTitle": "To'rt oydan beri ijobiy CF",
+        "cfPositiveText": "Barqaror pul oqimi investitsiyalarni rejalashtirishga imkon beradi.",
+        "timeToday": "Bugun · {time}",
+        "timeYesterday": "Kecha · {time}"
+      },
+      "tx": {
+        "paymentContract": "№{n} shartnoma bo'yicha to'lov",
+        "purchaseBatch": "№{n} partiyani sotib olish",
+        "vatMarch": "2026-yil mart uchun QQS",
+        "logisticsApr": "Logistika · aprel",
+        "paymentInvoice": "№{n} hisob-faktura bo'yicha to'lov",
+        "salaryPayout": "Xodimlarga ish haqi",
+        "salaryStaffApr": "Aprel uchun ish haqi to'lovi",
+        "govContract": "Davlat shartnomasi №{n}",
+        "advanceCash": "Naqd pul avansi"
+      },
+      "rec": {
+        "warehouseRent": "Ombor ijarasi",
+        "staffSalary": "Xodimlarga ish haqi",
+        "staffCount": "{n} kishi",
+        "vatTax": "QQS",
+        "internetPhone": "Internet va telefoniya",
+        "propertyIns": "Mol-mulk sug'urtasi",
+        "subscription": "Abonent to'lovi",
+        "hbkCoupon": "HBK Depozit kuponi",
+        "deposit": "№{n} depozit",
+        "agroInstall": "Agro Prime · bo'lib to'lash",
+        "payment": "{n}/{total} to'lov"
+      },
+      "period": {
+        "monthly": "Har oyda",
+        "quarterly": "Har chorakda",
+        "perQuarter": "Chorakda bir marta"
+      },
+      "status": {
+        "fundsOk": "Mablag' yetarli",
+        "fundsLow": "2.4M yetishmaydi",
+        "expected": "Kutilmoqda",
+        "confirmed": "Tasdiqlangan"
+      },
+      "cpType": {
+        "payer": "To'lovchi",
+        "recipient": "Oluvchi",
+        "gov": "Davlat organi"
+      },
+      "cpStatus": {
+        "regular": "Doimiy",
+        "oneTime": "Bir martalik"
+      },
+      "pnl": {
+        "groupRevenue": "Tushum",
+        "revenue": "Jami tushum",
+        "salesGoods": "Tovar sotuvi",
+        "govContracts": "Davlat shartnomalari",
+        "interestOther": "Foizlar va boshqalar",
+        "otherIncome": "Boshqa daromadlar",
+        "groupCogs": "Tannarx",
+        "materials": "Materiallar va xom ashyo",
+        "directLabor": "To'g'ridan-to'g'ri mehnat",
+        "prodOverhead": "Ishlab chiqarish ustamalar",
+        "transportLogistics": "Transport va logistika",
+        "grossProfit": "Yalpi foyda",
+        "metaMargin38": "Marja 38.1%",
+        "groupOpex": "Operatsion xarajatlar",
+        "payroll": "Ish haqi va ma'muriyat",
+        "officeRent": "Ofis ijarasi",
+        "marketingAd": "Marketing va reklama",
+        "warnOverspend": "Ortiqcha sarflash",
+        "depreciation": "Amortizatsiya",
+        "otherOpex": "Boshqa operatsion",
+        "ebit": "Operatsion foyda (EBIT)",
+        "metaMargin24": "Marja 24.1%",
+        "groupBelowOp": "Operatsiondan tashqari",
+        "interestExp": "Kredit foizlari",
+        "otherFinExp": "Boshqa moliyaviy",
+        "fxDiff": "Valyuta kursi farqi",
+        "groupTaxes": "Soliqlar",
+        "profitTax": "Foyda solig'i",
+        "netProfit": "Sof foyda",
+        "metaNetMargin": "Marja ~20.3%"
+      }
+    },
     "accounts": {
       "title": "Hisoblar va qoldiqlar",
       "addAcc": "Hisob qo'shish",
@@ -899,6 +1069,416 @@
       "badgeCurrent": "Joriy",
       "badgeSavings": "Jamg'arma",
       "badgeBusiness": "Biznes"
+    }
+  },
+  "regionAnalytics": {
+    "units": {
+      "bnSum": "mlrd so'm",
+      "bnShort": "mlrd",
+      "sum2025": "so'm · 2025",
+      "people": "kishi",
+      "pp": "f.p.",
+      "kmSq": "km²"
+    },
+    "brief": {
+      "grp": "YaIM",
+      "industry": "Sanoat",
+      "investments": "Investitsiyalar",
+      "unemployment": "Ishsizlik",
+      "population": "Aholi",
+      "resilience": "Barqarorlik",
+      "strong": "Yuqori"
+    },
+    "econ": {
+      "businessCoverage": "Biznes qamrovi",
+      "activePoints": "{n} ta faol nuqta",
+      "retailTrade": "Chakana savdo",
+      "services": "Xizmatlar"
+    },
+    "sector": {
+      "industry": "Sanoat",
+      "services": "Xizmatlar",
+      "construction": "Qurilish",
+      "agriculture": "Qishloq xo'jaligi"
+    },
+    "orgForm": {
+      "ip": "YaTT",
+      "ooo": "MChJ",
+      "farmer": "Fermer",
+      "other": "Boshqalar"
+    },
+    "ai": {
+      "smbClosing": "AI: kichik biznes ochilishidan ko'ra ko'proq yopilmoqda — qo'llab-quvvatlash dasturlari kerak.",
+      "infraGap": "AI: suv ta'minoti va kanalizatsiya me'yordan past — infratuzilmaga ustuvor investitsiya zarur.",
+      "swotRecommendation": "AI: kuchli tomonlar — to'qimachilik va logistika; asosiy diqqat — infratuzilmani modernizatsiya qilish va eksportni diversifikatsiya qilish."
+    },
+    "infra": {
+      "electricity": "Elektr energiyasi",
+      "water": "Suv ta'minoti",
+      "gas": "Gaz",
+      "sewage": "Kanalizatsiya",
+      "transport": "Transport",
+      "coverage": "Qamrov",
+      "critical": "Tanqidiy",
+      "stable": "Barqaror",
+      "belowNorm": "Me'yordan past",
+      "inOperation": "Ishlamoqda",
+      "matrix": {
+        "electricity": "Elektr energiyasi",
+        "drinkingWater": "Ichimlik suvi",
+        "gas": "Gaz ta'minoti",
+        "sewage": "Kanalizatsiya",
+        "roads": "Yo'llar",
+        "publicTransport": "Jamoat transporti",
+        "digital": "Raqamli aloqa"
+      },
+      "note": {
+        "elNoOutages": "Uzilishlar yo'q",
+        "waterModern": "Modernizatsiya talab qilinadi",
+        "gasWorking": "Tarmoq ishlamoqda",
+        "sewageNeeded": "Tozalash inshootlari kerak",
+        "roads49km": "49 km asfalt, 23 km shag'al",
+        "transportRenewed": "Park yangilangan",
+        "lte5g": "LTE bor, 5G rejada"
+      }
+    },
+    "problems": {
+      "waterRecon": "Suv ta'minotini rekonstruksiya qilish",
+      "sewageSystem": "Kanalizatsiya tizimi",
+      "roadNetwork": "Yo'l tarmog'i",
+      "energySystem": "Energetika tizimi",
+      "newSchools3": "Yangi maktablar (3 ta)",
+      "kindergartens30": "Bolalar bog'chalari (30 ta)",
+      "digital5g": "Raqamlashtirish · 5G",
+      "greenEnergy": "Yashil energetika"
+    },
+    "priority": {
+      "high": "Yuqori",
+      "medium": "O'rta",
+      "low": "Past"
+    },
+    "pop": {
+      "under18": "18 yoshgacha — 38%",
+      "area": "Maydon",
+      "density": "{n} kishi/km²",
+      "economicallyActive": "Iqtisodiy faol",
+      "since2021": "2021-yildan beri"
+    },
+    "migration": {
+      "warning": "Ishchi kuchining chet elga oqimi yuqori — saqlab qolish dasturi zarur."
+    },
+    "program": {
+      "title": "2026-yil bandlik dasturi",
+      "crafts": "Hunarmandchilik va mikrobiznes",
+      "subsidies": "Subsidiyalar va grantlar",
+      "employment": "To'g'ridan-to'g'ri ish bilan ta'minlash",
+      "exportCluster": "Eksport klasteri"
+    },
+    "mahalla": {
+      "mahallas": "Mahallalar",
+      "districtsCount": "{n} ta tuman",
+      "creditCover": "Kredit qamrovi",
+      "smbInRegion": "Viloyatdagi kichik biznes",
+      "newIp": "Yangi YaTTlar",
+      "quarterGrowth": "Chorak o'sishi",
+      "digitalization": "Raqamlashtirish",
+      "onlineBanking": "Onlayn-banking"
+    },
+    "bank": {
+      "smbCredits": "KBB kreditlari",
+      "newEntrepr": "Yangi tadbirkorlar",
+      "exporters": "Eksportchilar",
+      "employed": "Bandlar",
+      "selfEmployed": "O'z-o'zini band qilganlar",
+      "profEducation": "Kasb-hunar ta'limi"
+    },
+    "swot": {
+      "strengths": {
+        "textileCenter": "To'qimachilik sanoati markazi",
+        "industryGrowth": "Sanoat o'sishi · +{n}% YoY",
+        "investments2025": "2025 investitsiyalari: bazaga ×{n}",
+        "logistics": "Qulay transport logistikasi",
+        "workforce": "Katta mehnat resursi",
+        "employmentGrowth": "Bandlik o'sishi · +{n}%",
+        "exportTrend": "Ijobiy eksport tendensiyasi"
+      },
+      "weak": {
+        "water": "Suv ta'minoti me'yordan past",
+        "sewage": "Kanalizatsiya modernizatsiya talab qiladi",
+        "energyDeficit": "Energiya quvvatlari taqchilligi",
+        "oldEquipment": "KBB eskirgan jihozlari",
+        "land": "Bo'sh yer taqchilligi",
+        "informal": "Soya sektori ulushi yuqori",
+        "digitalSkills": "Raqamli ko'nikmalar past",
+        "exportNarrow": "Eksport tuzilmasi tor"
+      },
+      "opp": {
+        "tourism": "Turizmni rivojlantirish",
+        "smartTextile": "Smart Textile klasteri",
+        "logisticsHub": "Logistika markazi",
+        "itPark": "IT-park filiali",
+        "exportDiv": "Eksportni diversifikatsiya qilish",
+        "greenEnergy": "Yashil energetika"
+      },
+      "threats": {
+        "climate": "Iqlim xavflari",
+        "global": "Global konyunktura",
+        "rawPrices": "Xom ashyo narxlari",
+        "migration": "Migratsion oqim",
+        "shocks": "Tashqi zarbalar"
+      }
+    },
+    "radar": {
+      "economy": "Iqtisodiyot",
+      "infra": "Infratuzilma",
+      "employment": "Bandlik",
+      "demography": "Demografiya",
+      "investments": "Investitsiyalar"
+    },
+    "compare": {
+      "industryPC": "Sanoat aholi jon boshiga, ming so'm",
+      "servicesPC": "Xizmatlar aholi jon boshiga, ming so'm",
+      "tradePC": "Savdo aholi jon boshiga, ming so'm",
+      "investPC": "Investitsiyalar aholi jon boshiga, ming so'm",
+      "exportPC": "Eksport aholi jon boshiga, $"
+    },
+    "horizon": {
+      "0_6": "0–6 oy",
+      "6_12": "6–12 oy",
+      "12_18": "12–18 oy",
+      "18_24": "18–24 oy"
+    },
+    "plan": {
+      "water2026": "2026 suv ta'minoti rekonstruksiyasi",
+      "energySmb": "KBB uchun energiya samaradorligi",
+      "smartTextile": "Smart Textile klasteri",
+      "itParkBranch": "IT-park filiali"
+    },
+    "owner": {
+      "hokimNbu": "Hokimiyat + NBU",
+      "nbuCredit": "NBU Kredit",
+      "minDigital": "Raqamli rivojlanish vazirligi"
+    },
+    "kpi": {
+      "peakCut12": "Cho'qqi yuk −12%",
+      "exportPlus35": "Eksport +35%",
+      "jobs1200": "1 200 ish o'rni"
+    },
+    "summary": {
+      "conclusion": "Viloyat barqaror o'sish drayverlariga va muvozanatli iqtisodiy tuzilmaga ega. Ustuvorliklar — infratuzilma, eksportni diversifikatsiyalash va kadrlarni saqlab qolish."
+    }
+  },
+  "districtAnalytics": {
+    "kind": {
+      "city": "shahar",
+      "district": "tuman"
+    },
+    "kindGen": {
+      "city": "shaharning",
+      "district": "tumanning"
+    },
+    "kindAdj": {
+      "city": "shahar",
+      "district": "tuman"
+    },
+    "score": {
+      "grpGrowth": "YaIM o'sishi",
+      "infra": "Infratuzilma",
+      "employment": "Bandlik",
+      "investments": "Investitsiyalar"
+    },
+    "brief": {
+      "shareOfGrp": "YaIM ning {n}%",
+      "urban": "shahar",
+      "rural": "qishloq"
+    },
+    "econ": {
+      "agriShort": "Qishloq xo'j."
+    },
+    "sector": {
+      "trade": "Savdo"
+    },
+    "infra": {
+      "network": "Tarmoq ishlamoqda",
+      "norm": "Me'yorida",
+      "inNorm": "me'yorida",
+      "modernization": "modernizatsiya talab qiladi",
+      "working": "ishlamoqda",
+      "expanding": "kengaymoqda",
+      "note": {
+        "waterPct": "{n}% — {txt}",
+        "gasPct": "{n}% — {txt}",
+        "sewagePct": "{n}% qamrov, tozalash inshootlari kerak",
+        "roadsKm": "Tumanda {n} km yo'l",
+        "transport": "Park {n}% yangilangan",
+        "digital": "LTE qamrovi {n}%"
+      }
+    },
+    "ai": {
+      "industryHeavy": "AI: {kind} sanoatga tayanadi (YaIM ning {share}%) — barqarorlik va modernizatsiya dasturlari kerak.",
+      "agrarian": "AI: {kindGen} iqtisodiyoti agrar yo'naltirilgan (qishloq xo'j. {share}%) — qayta ishlash va kooperatsiya ustuvor.",
+      "waterCritical": "AI: suv ta'minoti tanqidiy ({n}%). Rekonstruksiya ≈ {mlrd} mlrd so'm talab qiladi.",
+      "infraBalanced": "AI: {kindGen} infratuzilmasi muvozanatli ({n}%) — raqamlashtirish va yashil yechimlarga e'tibor.",
+      "textileHub": "AI: {kind} — to'qimachilik markazi. Smart Textile klasteri ≈ {mlrd} mlrd so'm.",
+      "tourismHub": "AI: turistik salohiyat yuqori — mehmonxona sanoati ustuvor.",
+      "enclave": "AI: anklav holati — logistika koridorlari va chegara savdosiga e'tibor.",
+      "balancedSlow": "AI: {kindAdj} profil muvozanatli, o'sish o'rtacha — nuqtali rag'batlar kerak."
+    },
+    "pop": {
+      "cityRate": "+1.4% YoY",
+      "ruralRate": "+0.8% YoY",
+      "under18Approx": "18 yoshgacha ≈ 38%"
+    },
+    "mahalla": {
+      "urban": "shahar mahallalari",
+      "rural": "qishloq mahallalari",
+      "smbDistrict": "Tumandagi kichik biznes"
+    },
+    "fiveY": {
+      "industry": "Sanoat, mlrd so'm",
+      "export": "Eksport, ming $",
+      "import": "Import, ming $",
+      "tradeDeficit": "Savdo defitsiti, ming $",
+      "construction": "Qurilish, indeks",
+      "migration": "Tashqi migratsiya, kishi",
+      "enterprises": "Faoliyatdagi korxonalar",
+      "unemployment": "Ishsizlik, %",
+      "investments": "Investitsiyalar, mlrd so'm"
+    },
+    "invSrc": {
+      "foreign": "Xorijiy investitsiyalar",
+      "enterprises": "Korxonalar mablag'lari",
+      "govBudget": "Davlat byudjeti",
+      "population": "Aholi mablag'lari",
+      "restoration": "Rekonstruksiya va ta'mir"
+    },
+    "bench": {
+      "regionAvg": "Viloyat o'rtachasi",
+      "ferganaCenter": "Farg'ona markazi (Farg'ona sh.)"
+    },
+    "macro": {
+      "cityRate": "+1.4% YoY (shahar)",
+      "ruralRate": "+0.8% YoY (qishloq)",
+      "administrative": "Ma'muriy maydon",
+      "industryShort": "Sanoat",
+      "avgSalary": "O'rtacha ish haqi",
+      "thsSumPerMonth": "ming so'm/oy",
+      "tourism": "Turizm",
+      "visitorsPerYear": "tashrif/yil",
+      "objects": "{n} ta obyekt",
+      "grpPerCapita": "Aholi jon boshiga YaIM",
+      "thsSumPerPerson": "ming so'm/kishi",
+      "aboveProv": "o'rtachadan yuqori",
+      "belowProv": "o'rtachadan past"
+    },
+    "crit": {
+      "migrationCrisis": "Migratsion inqiroz",
+      "migrationDetail": "Cho'qqi oqim {peak} kishi/yil; jamlangan oqim ≈ {accum} (faol aholi {pct}%).",
+      "unitDeparturesPerYear": "ketish/yil",
+      "weakIndustry": "Sanoat bazasi zaif",
+      "singleSector": "Bitta sektorga bog'liqlik",
+      "weakIndustryDetail": "Sanoat ulushi YaIM ning atigi {share}% — uzoq muddatli o'sish uchun yuqori xavf.",
+      "singleSectorDetail": "Bitta sektorda {share}% to'planishi tizimli xavflar yaratadi.",
+      "unitGrpShare": "YaIM ulushi",
+      "infraGaps": "Infratuzilma uzilishlari",
+      "infraGapsDetail": "Suv {water}%, kanalizatsiya {sewage}%, yo'llar {roads}% — shoshilinch sarmoya kerak.",
+      "dormantBiz": "Uxlayotgan va soya biznes",
+      "dormantBizDetail": "{n} ta nofaol korxona; soya sektori ≈ {shadow}%.",
+      "unitShadow": "soya sektori",
+      "incomeGap": "Aholi jon boshiga daromaddagi tafovut",
+      "incomeGapDetail": "Aholi jon boshiga YaIM ≈ {n} ming so'm — viloyat darajasidan {cmp}.",
+      "closeTo": "yaqin",
+      "fartherFrom": "uzoq",
+      "unitGap": "viloyat o'rtachasiga",
+      "enclaveLogistics": "Anklav logistikasi",
+      "digitalLag": "Raqamli orqada qolish",
+      "enclaveLogisticsDetail": "Bitta transport koridori; ikkinchi yo'nalish va soddalashtirilgan bojxona rejimi kerak.",
+      "digitalLagDetail": "Raqamli aloqa {n}% — LTE kengaytirish va 5G ga tayyorgarlik kerak.",
+      "unitCorridors": "transport koridorlari",
+      "unitCoverage": "raqamli qamrov"
+    },
+    "strategic": {
+      "quickWins": "Tezkor yutuqlar",
+      "modernize": "Infratuzilmani modernizatsiya qilish",
+      "smbSubsidy": "KBB subsidiyalari",
+      "jobsAdded": "+{n} ish o'rni",
+      "energyEff": "Energiya samaradorligi",
+      "sectorBreakthrough": "Sektoral yorib o'tish",
+      "agroProcHub": "Agroqayta ishlash markazi",
+      "addedValue35": "Qo'sh. qiymat +35%",
+      "tourHub": "Turistik markaz",
+      "visitors": "{n}K tashrif/yil",
+      "cooperativeSmb": "Kooperativ KBB",
+      "logisticsWh": "Logistika omborlari",
+      "turnoverPlus40": "Aylanma +40%",
+      "itJobs": "{n} IT-ish o'rni",
+      "scaling": "Masshtablashtirish",
+      "exportHub": "Eksport markazi",
+      "exportUSD": "Eksport +{n} mln $",
+      "greenEnergy": "Yashil energetika",
+      "mwRen": "{n} MVt QQE",
+      "socialInfra": "Ijtimoiy infratuzilma",
+      "schoolsAdded": "+{n} ta maktab"
+    },
+    "owner": {
+      "uzEnergoNbu": "O'zenergo + NBU",
+      "minAgroNbu": "Qishloq xo'j. vazirligi + NBU",
+      "minTourism": "Turizm vazirligi",
+      "nbuHokim": "NBU + Hokimiyat",
+      "minTransport": "Transport vazirligi",
+      "nbuExportMfa": "NBU Eksport + TIV",
+      "uzEnergo": "O'zenergo",
+      "hokim": "Hokimiyat"
+    },
+    "swot": {
+      "strengths": {
+        "cityAgglom": "Shahar aglomeratsiyasi · {n} ming kishi",
+        "textileCluster": "To'qimachilik klasteri",
+        "tourismPotential": "Turistik salohiyat",
+        "industryBase": "Sanoat bazasi · YaIM {n}%",
+        "agroSector": "Kuchli agrar sektor · {n}%",
+        "grpGrowth": "YaIM o'sishi +{n}%",
+        "investInflow": "Investitsiya oqimi ×{n}",
+        "matureInfra": "Yetuk infratuzilma",
+        "linkedToValley": "Vodiy bilan bog'lanish"
+      },
+      "weak": {
+        "lowWater": "Past suv ta'minoti ({n}%)",
+        "sewageProblems": "Kanalizatsiya muammolari ({n}%)",
+        "engNetworkLow": "Zaif muhandislik tarmoqlari ({n}%)",
+        "weakIndustry": "Zaif sanoat",
+        "monoAgrarian": "Monoagrar tuzilma",
+        "enclave": "Anklav izolyatsiyasi",
+        "smbOldEquipment": "KBB eskirgan jihozlari"
+      },
+      "opp": {
+        "tourismHub": "Turistik markaz",
+        "agroExport": "Agromahsulot eksporti",
+        "logisticsCorridor": "Logistika koridori"
+      },
+      "threats": {
+        "enclaveGeo": "Anklav geosiyosati"
+      }
+    },
+    "plan": {
+      "baseline": "Asosiy rivojlanish dasturi",
+      "riskMap": "Xavflar xaritasi"
+    },
+    "summary": {
+      "conclusion": "{pop} aholiga ega {kind} (viloyatning {pct}%) {score} rivojlanish indeksini ko'rsatmoqda — {tier}. Ustuvorliklar — infratuzilma, diversifikatsiya va kadrlarni saqlab qolish."
+    },
+    "tier": {
+      "leader": "viloyat lideri",
+      "aboveAvg": "o'rtachadan yuqori",
+      "growthGroup": "o'sish guruhi",
+      "catchingUp": "yetib oluvchi"
+    },
+    "migration": {
+      "enclave": "Anklav hududi — migratsiya va logistika alohida e'tibor va soddalashtirilgan tartiblarni talab qiladi."
+    },
+    "problems": {
+      "newSchools": "Yangi maktablar",
+      "kindergartens": "Bolalar bog'chalari"
     }
   }
 }
