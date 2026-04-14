@@ -5,6 +5,8 @@
 // vue-i18n. Views call e.g. `computed(() => makeAccounts(t))` to get a reactive
 // list whose strings re-render when the locale switches.
 
+import i18n from '@/i18n'
+
 export const makeCompany = (t) => ({
   name: t('fincontrol.data.company.name'),
   inn: '302 874 566',
@@ -201,3 +203,21 @@ export const makePnlRows = (t) => [
   { label: t('fincontrol.data.pnl.profitTax'),           estimated: true, may: '−6 100 000', apr: '−5 600 000', delta: '+8.9%', deltaTone: 'red' },
   { type: 'result', tone: 'amber', label: t('fincontrol.data.pnl.netProfit'), meta: t('fincontrol.data.pnl.metaNetMargin'), estimated: true, may: '65 000 000', apr: '55 840 000', delta: '+16.4%', deltaTone: 'green' },
 ]
+
+// Legacy bare exports — resolved once at module load using the current locale.
+// Views that import these (rather than the make* factories) won't re-render on
+// locale switch; use the make* factories inside a computed() if you need that.
+const t = i18n.global.t
+export const company = makeCompany(t)
+export const accounts = makeAccounts(t)
+export const dashboardKpis = makeDashboardKpis(t)
+export const monthly = makeMonthly(t)
+export const expenseStructure = makeExpenseStructure(t)
+export const topCounterpartiesSuppliers = makeTopCounterpartiesSuppliers(t)
+export const aiSignals = makeAiSignals(t)
+export const transactions = makeTransactions(t)
+export const recurring = makeRecurring(t)
+export const counterparties = makeCounterparties(t)
+export const expenseCategories = makeExpenseCategories(t)
+export const incomeCategories = makeIncomeCategories(t)
+export const pnlRows = makePnlRows(t)
