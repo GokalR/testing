@@ -407,7 +407,7 @@ const onDownload = () => {
 </script>
 
 <template>
-  <div class="animate-rs-fade-in-up space-y-8">
+  <div class="animate-rs-fade-in-up space-y-8 rs-step5-root">
     <!-- Restart link -->
     <button
       type="button"
@@ -917,8 +917,8 @@ const onDownload = () => {
       </div>
     </section>
 
-    <!-- ═══ SECTION 3 — Geographic Heatmap (Margilan or Fergana) ═══ -->
-    <section v-if="isMargilan || isFergana" class="bg-white border border-rs-border rounded-[12px] overflow-hidden shadow-rs-card">
+    <!-- ═══ SECTION 3 — Geographic Heatmap (Margilan if matched, Fergana as default) ═══ -->
+    <section class="bg-white border border-rs-border rounded-[12px] overflow-hidden shadow-rs-card">
       <div
         class="px-8 py-6"
         style="background: rgba(215,181,109,0.04); border-bottom: 1px solid rgba(215,181,109,0.12);"
@@ -928,14 +928,14 @@ const onDownload = () => {
             <span class="inline-flex items-center justify-center w-9 h-9 rounded-full font-mono text-[15px] font-bold text-white shrink-0 bg-gold-500">3</span>
             <div>
               <h2 class="font-sans text-[20px] font-bold text-carbon">
-                {{ isFergana
-                  ? (lang === 'uz' ? 'Фарғона вилояти — имкониятлар харитаси' : 'Ферганская область — карта возможностей')
-                  : t.section3Title }}
+                {{ isMargilan
+                  ? t.section3Title
+                  : (lang === 'uz' ? 'Фарғона вилояти — имкониятлар харитаси' : 'Ферганская область — карта возможностей') }}
               </h2>
               <p class="font-sans text-[14px] font-normal text-gray-600 mt-1">
-                {{ isFergana
-                  ? (lang === 'uz' ? 'Ҳар бир туман учун балл, аҳоли, рақобат ва вердикт' : 'По каждому району — балл, население, конкуренция и вердикт')
-                  : t.section3Sub }}
+                {{ isMargilan
+                  ? t.section3Sub
+                  : (lang === 'uz' ? 'Ҳар бир туман учун балл, аҳоли, рақобат ва вердикт' : 'По каждому району — балл, население, конкуренция и вердикт') }}
               </p>
             </div>
           </div>
@@ -1258,3 +1258,29 @@ const onDownload = () => {
     </section>
   </div>
 </template>
+
+<style>
+/* Unscoped so bumps cascade into child Vue components on this page. */
+.rs-step5-root .text-\[10px\]  { font-size: 12px !important; }
+.rs-step5-root .text-\[11px\]  { font-size: 13px !important; font-weight: 600; }
+.rs-step5-root .text-\[12px\]  { font-size: 14px !important; font-weight: 500; }
+.rs-step5-root .text-\[13px\]  { font-size: 15px !important; font-weight: 500; }
+.rs-step5-root .text-\[14px\]  { font-size: 16px !important; }
+.rs-step5-root .text-\[15px\]  { font-size: 17px !important; }
+.rs-step5-root .text-\[16px\]  { font-size: 19px !important; }
+.rs-step5-root .text-\[17px\]  { font-size: 20px !important; }
+.rs-step5-root .text-\[18px\]  { font-size: 22px !important; }
+.rs-step5-root .text-\[20px\]  { font-size: 24px !important; }
+.rs-step5-root .text-\[22px\]  { font-size: 26px !important; }
+.rs-step5-root .text-\[24px\]  { font-size: 28px !important; }
+.rs-step5-root .text-\[28px\]  { font-size: 32px !important; }
+.rs-step5-root .text-\[30px\]  { font-size: 34px !important; }
+.rs-step5-root .text-\[34px\]  { font-size: 38px !important; }
+.rs-step5-root .text-\[36px\]  { font-size: 42px !important; }
+.rs-step5-root .text-\[42px\]  { font-size: 48px !important; }
+
+/* Bump weights one step up so text reads bolder everywhere. */
+.rs-step5-root .font-normal    { font-weight: 500 !important; }
+.rs-step5-root .font-medium    { font-weight: 600 !important; }
+.rs-step5-root .font-semibold  { font-weight: 700 !important; }
+</style>
