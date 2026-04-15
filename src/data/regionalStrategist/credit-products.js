@@ -205,23 +205,6 @@ export const CREDIT_PRODUCTS = [
     purposes: ['fixed'],
     purposeLabel: { ru: 'Покупка основных средств', uz: 'Асосий воситаларни сотиб олиш' },
   },
-  {
-    id: 'overdraft_standard',
-    name: { ru: 'Овердрафт (стандарт)', uz: 'Овердрафт (стандарт)' },
-    tier: 'standard',
-    entityTypes: ['LLC', 'IP'],
-    currency: 'UZS',
-    ratePct: 22,
-    rateLabel: { ru: '22%', uz: '22%' },
-    termMaxMonths: 12,
-    termLabel: { ru: 'до 1 года', uz: '1 йилгача' },
-    gracePeriodMonths: 10,
-    amountMax: null,
-    amountLabel: { ru: 'не ограничено', uz: 'чекланмаган' },
-    collateral: ['any'],
-    purposes: ['any'],
-    purposeLabel: { ru: 'Любые цели', uz: 'Ҳар қандай мақсад' },
-  },
 ]
 
 const COLL_LABELS = {

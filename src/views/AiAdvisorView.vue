@@ -17,20 +17,34 @@ const messages = ref([
   },
 ])
 
+const SUGGESTION_TO_ANSWER = {
+  'ai.suggestions.q1': 'ai.answers.q1',
+  'ai.suggestions.q2': 'ai.answers.q2',
+  'ai.suggestions.q3': 'ai.answers.q3',
+}
+
+function answerFor(text) {
+  for (const [qKey, aKey] of Object.entries(SUGGESTION_TO_ANSWER)) {
+    if (t(qKey).trim() === text.trim()) return t(aKey)
+  }
+  return null
+}
+
 async function send() {
   const text = input.value.trim()
   if (!text) return
   messages.value.push({ role: 'user', text })
   input.value = ''
   await nextTick()
+  messagesContainer.value?.scrollTo({ top: 1e9, behavior: 'smooth' })
+  const predefined = answerFor(text)
   setTimeout(() => {
     messages.value.push({
       role: 'assistant',
-      text: 'Tahlil tayyorlanmoqda... (demo javob)',
+      text: predefined || 'Tahlil tayyorlanmoqda... (demo javob)',
     })
     nextTick(() => messagesContainer.value?.scrollTo({ top: 1e9, behavior: 'smooth' }))
-  }, 400)
-  messagesContainer.value?.scrollTo({ top: 1e9, behavior: 'smooth' })
+  }, predefined ? 700 : 400)
 }
 
 const suggestions = ['ai.suggestions.q1', 'ai.suggestions.q2', 'ai.suggestions.q3']
@@ -86,7 +100,7 @@ function ask(key) {
             :class="m.role === 'user' ? 'justify-end' : 'justify-start'"
           >
             <div
-              class="max-w-[75%] px-4 py-3 rounded-xl text-sm leading-relaxed"
+              class="max-w-[75%] px-4 py-3 rounded-xl text-sm leading-relaxed whitespace-pre-line"
               :class="
                 m.role === 'user'
                   ? 'bg-primary text-on-primary rounded-tr-sm'

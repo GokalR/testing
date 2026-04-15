@@ -9,40 +9,40 @@ const props = defineProps({
 
 const L = {
   ru: {
-    title: 'AI-анализ (Claude)',
-    subtitle: 'Выводы на основе ваших ответов, города и финансов',
+    title: 'Детальный AI-разбор заявки',
+    subtitle: 'Интегрированный вывод: профиль, финансы из Excel и региональный контекст',
+    badge: 'Итоговый разбор',
     verdict: { good: 'Хороший потенциал', fair: 'Средний потенциал', weak: 'Требует доработки' },
     verdictHint: {
-      good: 'Заявка выглядит сильно — можно подавать на стандартные продукты НБУ.',
-      fair: 'Есть доработки — см. слабые места и шаги ниже.',
-      weak: 'Перед подачей — закройте ключевые пробелы из списка ниже.',
+      good: 'Заявка выглядит сильно — можно подавать на стандартные продукты НБУ без предварительной доработки.',
+      fair: 'Есть доработки — закройте слабые места ниже, прежде чем подавать заявку.',
+      weak: 'Перед подачей закройте ключевые пробелы — иначе заявка будет рассмотрена с повышенным риском.',
     },
     sections: {
-      summary: 'Резюме', strengths: 'Сильные стороны', weaknesses: 'Слабые места',
-      peer: 'Сравнение с отраслью', cityFit: 'Соответствие городу',
-      product: 'Рекомендуемый продукт', nextSteps: 'Следующие шаги', risks: 'Риски',
+      summary: 'Резюме по бизнесу', strengths: 'Сильные стороны', weaknesses: 'Слабые места',
+      peer: 'Сравнение с медианой по отрасли', cityFit: 'Соответствие локации',
+      product: 'Рекомендуемый продукт NBU', nextSteps: 'План действий на 30–90 дней', risks: 'Риски и их митигация',
     },
-    peerCols: { metric: 'Показатель', user: 'Вы', median: 'Медиана пиров', comment: 'Комментарий' },
-    modelLine: 'Модель',
-    tokensLine: 'Токены',
+    peerCols: { metric: 'Показатель', user: 'Ваш бизнес', median: 'Медиана отрасли', comment: 'Интерпретация' },
+    methodology: 'Методология: взвешенная оценка 5 факторов (профиль 25%, финансы 30%, локация 15%, идея 20%, готовность 10%). Данные: ваши ответы + загруженная финансовая отчётность + stat.uz по Фарғона вилояти.',
   },
   uz: {
-    title: 'AI-таҳлил (Claude)',
-    subtitle: 'Жавоблар, шаҳар ва молия асосидаги хулосалар',
+    title: 'Ариза бўйича батафсил AI-таҳлил',
+    subtitle: 'Профил, Excel молия ва минтақа контекстидан биргаликдаги хулоса',
+    badge: 'Якуний таҳлил',
     verdict: { good: 'Яхши потенциал', fair: 'Ўрта потенциал', weak: 'Такомиллаштириш керак' },
     verdictHint: {
-      good: 'Ариза кучли — НБУ стандарт маҳсулотларига тақдим этиш мумкин.',
-      fair: 'Такомиллаштириш керак — қуйидаги заиф жойларни кўринг.',
-      weak: 'Тақдим этишдан олдин қуйидаги бўшлиқларни ёпинг.',
+      good: 'Ариза кучли — НБУ стандарт маҳсулотларига тайёр.',
+      fair: 'Такомиллаштириш керак — қуйидаги заиф жойларни ёпинг.',
+      weak: 'Тақдим этишдан олдин асосий бўшлиқларни ёпинг — акс ҳолда юқори хатар билан кўрилади.',
     },
     sections: {
-      summary: 'Хулоса', strengths: 'Кучли томонлар', weaknesses: 'Заиф жойлар',
-      peer: 'Соҳа билан қиёслаш', cityFit: 'Шаҳарга мослик',
-      product: 'Тавсия этилган маҳсулот', nextSteps: 'Навбатдаги қадамлар', risks: 'Хатарлар',
+      summary: 'Бизнес бўйича хулоса', strengths: 'Кучли томонлар', weaknesses: 'Заиф жойлар',
+      peer: 'Соҳа медианаси билан қиёслаш', cityFit: 'Локацияга мослик',
+      product: 'Тавсия этилган NBU маҳсулоти', nextSteps: '30–90 кунлик ҳаракат режаси', risks: 'Хатарлар ва уларни юмшатиш',
     },
-    peerCols: { metric: 'Кўрсаткич', user: 'Сиз', median: 'Пир медианаси', comment: 'Изоҳ' },
-    modelLine: 'Модел',
-    tokensLine: 'Токенлар',
+    peerCols: { metric: 'Кўрсаткич', user: 'Сизнинг бизнес', median: 'Соҳа медианаси', comment: 'Изоҳ' },
+    methodology: 'Методология: 5 омил бўйича вазнли баҳо (профил 25%, молия 30%, локация 15%, ғоя 20%, тайёрлик 10%). Манба: жавоблар + юкланган ҳисобот + stat.uz.',
   },
 }
 const t = computed(() => L[props.lang] ?? L.ru)
@@ -80,10 +80,15 @@ const fmtNum = (n) => (n == null ? '—' : (Math.abs(n) < 10 ? n.toFixed(2) : Ma
             <p class="font-sans text-[13px] text-gray-600 mt-1">{{ t.subtitle }}</p>
           </div>
         </div>
-        <span v-if="out.verdict"
-              :class="['shrink-0 inline-flex text-[11px] font-bold uppercase tracking-[0.5px] rounded-[6px] py-1 px-2 border', verdictCls]">
-          {{ t.verdict[out.verdict] || out.verdict }}
-        </span>
+        <div class="shrink-0 flex items-center gap-2">
+          <span class="inline-flex text-[11px] font-bold uppercase tracking-[0.5px] text-gold-500 bg-gold-500/10 border border-gold-500/20 rounded-[6px] py-1 px-2">
+            {{ t.badge }}
+          </span>
+          <span v-if="out.verdict"
+                :class="['inline-flex text-[11px] font-bold uppercase tracking-[0.5px] rounded-[6px] py-1 px-2 border', verdictCls]">
+            {{ t.verdict[out.verdict] || out.verdict }}
+          </span>
+        </div>
       </div>
     </div>
 
@@ -189,9 +194,8 @@ const fmtNum = (n) => (n == null ? '—' : (Math.abs(n) < 10 ? n.toFixed(2) : Ma
         </ul>
       </div>
 
-      <div class="pt-3 border-t border-rs-border flex items-center justify-between text-[11px] text-steel-500 font-mono">
-        <span>{{ t.modelLine }}: {{ analysis.model }}</span>
-        <span>{{ t.tokensLine }}: {{ analysis.input_tokens }}→{{ analysis.output_tokens }}</span>
+      <div class="pt-3 border-t border-rs-border text-[11px] text-steel-500 leading-[1.55] italic">
+        {{ t.methodology }}
       </div>
     </div>
   </section>

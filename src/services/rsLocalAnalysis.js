@@ -308,7 +308,14 @@ function buildSummary(score, city, finance, userRatios, lang) {
  */
 export function generateLocalAnalysis({ profile, finance, cityId, uploads = [], lang = 'ru' }) {
   const city = cityId ? CITIES[cityId] ?? null : null
-  const score = computeScore(profile, finance, cityId)
+  const extracted = (() => {
+    for (const u of [...uploads].reverse()) {
+      const c = u?.parsed?.computed
+      if (c && (c.ratios || c.absolutes)) return { ratios: c.ratios || {}, absolutes: c.absolutes || {} }
+    }
+    return null
+  })()
+  const score = computeScore(profile, finance, cityId, extracted)
   const hasUploads = uploads.length > 0
   const userRatios = hasUploads ? deriveUserRatios(finance, finance.businessDirection) : null
 

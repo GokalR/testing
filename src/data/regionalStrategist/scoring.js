@@ -12,6 +12,37 @@
 
 import { CITIES } from './cities'
 
+// Sector-specific peer medians for financial ratios. Education services
+// (kindergartens, courses) sit at higher margins than manufacturing/retail;
+// scoring against the wrong bucket produces misleading "above/below median"
+// claims (e.g. a kindergarten's 12% net margin is healthy vs generic 8%
+// cross-sector median, but mid-pack vs the education bucket's 14%).
+export function guessSectorBucket(direction = '') {
+  const d = String(direction).toLowerCase()
+  if (/детск|богча|боғча|kindergarten|дошколь|мактабгача/.test(d)) return 'kindergarten'
+  if (/текстил|ткан|атлас|шёлк|тўқим|одежд|кийим/.test(d)) return 'textile'
+  if (/пищев|еда|ресторан|кафе|food|озиқ/.test(d)) return 'food'
+  if (/услуг|сервис|салон|туризм|education|образован|таълим|учебн|ўқув/.test(d)) return 'services'
+  if (/произв|продукц|ишлаб/.test(d)) return 'manufacturing'
+  if (/розниц|магазин|торгов|чакана|опт/.test(d)) return 'retail'
+  return 'general'
+}
+
+const SECTOR_MEDIANS = {
+  //              grossMargin netMargin  roa    roe   currentRatio debtToEquity
+  kindergarten:  { grossMargin: 0.45, netMargin: 0.14, roa: 0.06, roe: 0.16, currentRatio: 1.5, debtToEquity: 1.4 },
+  services:      { grossMargin: 0.52, netMargin: 0.15, roa: 0.08, roe: 0.18, currentRatio: 1.6, debtToEquity: 1.2 },
+  textile:       { grossMargin: 0.38, netMargin: 0.10, roa: 0.07, roe: 0.14, currentRatio: 1.5, debtToEquity: 1.5 },
+  food:          { grossMargin: 0.32, netMargin: 0.08, roa: 0.06, roe: 0.13, currentRatio: 1.4, debtToEquity: 1.6 },
+  manufacturing: { grossMargin: 0.30, netMargin: 0.07, roa: 0.06, roe: 0.13, currentRatio: 1.5, debtToEquity: 1.7 },
+  retail:        { grossMargin: 0.34, netMargin: 0.09, roa: 0.08, roe: 0.16, currentRatio: 1.3, debtToEquity: 1.8 },
+  general:       { grossMargin: 0.38, netMargin: 0.11, roa: 0.07, roe: 0.15, currentRatio: 1.6, debtToEquity: 1.2 },
+}
+
+export function peerMediansFor(direction) {
+  return SECTOR_MEDIANS[guessSectorBucket(direction)] || SECTOR_MEDIANS.general
+}
+
 // ── helpers ────────────────────────────────────────────────────────────────
 const n = (v) => {
   const x = Number(String(v ?? '').replace(/[^\d.-]/g, ''))
@@ -61,9 +92,58 @@ function factorExperience(profile) {
 }
 
 // ── фактор: финансовая устойчивость ────────────────────────────────────────
-function factorFinance(finance) {
+// When Excel-derived ratios are available (`financials`), we prefer them over
+// the self-reported monthlyIncome/monthlyExpenses bands: Excel is ground truth.
+function factorFinance(finance, financials = null) {
   const inputs = []
   let v = 30
+
+  // ─ Excel-first path: score off real ratios (net margin, current ratio, D/E, ROE).
+  if (financials && financials.ratios) {
+    const r = financials.ratios
+    const a = financials.absolutes || {}
+
+    if (r.netMargin != null) {
+      // 0% → 0 bonus, 15% → +25 bonus (capped)
+      const bonus = Math.round(ramp(r.netMargin, 0.15, 25))
+      v += bonus
+      inputs.push({ label: 'netMargin (Excel)', value: `${(r.netMargin * 100).toFixed(1)}%`, impact: +bonus })
+    }
+    if (r.currentRatio != null) {
+      if (r.currentRatio >= 1.5) { v += 15; inputs.push({ label: 'currentRatio (Excel)', value: r.currentRatio.toFixed(2), impact: +15 }) }
+      else if (r.currentRatio >= 1.0) { v += 8; inputs.push({ label: 'currentRatio (Excel)', value: r.currentRatio.toFixed(2), impact: +8 }) }
+      else { v -= 10; inputs.push({ label: 'currentRatio (Excel)', value: `${r.currentRatio.toFixed(2)} — низкая ликвидность`, impact: -10 }) }
+    }
+    if (r.debtToEquity != null) {
+      if (r.debtToEquity <= 1) { v += 10; inputs.push({ label: 'debtToEquity (Excel)', value: r.debtToEquity.toFixed(2), impact: +10 }) }
+      else if (r.debtToEquity <= 2) { v += 3; inputs.push({ label: 'debtToEquity (Excel)', value: r.debtToEquity.toFixed(2), impact: +3 }) }
+      else { v -= 12; inputs.push({ label: 'debtToEquity (Excel)', value: `${r.debtToEquity.toFixed(2)} — высокая нагрузка`, impact: -12 }) }
+    }
+    if (r.roe != null) {
+      const bonus = Math.round(ramp(r.roe, 0.25, 12))
+      v += bonus
+      inputs.push({ label: 'ROE (Excel)', value: `${(r.roe * 100).toFixed(1)}%`, impact: +bonus })
+    }
+    if (isYes(finance.hasCollateral)) {
+      v += 8
+      inputs.push({ label: 'hasCollateral', value: finance.collateralType || 'да', impact: +8 })
+    }
+    if (a.revenue != null) {
+      inputs.push({ label: 'revenue (Excel)', value: `${(a.revenue / 1_000_000_000).toFixed(2)} млрд сум`, impact: 0 })
+    }
+    return {
+      key: 'finance',
+      label: { ru: 'Финансовая устойчивость', uz: 'Молиявий барқарорлик' },
+      value: Math.max(0, Math.min(100, Math.round(v))),
+      inputs,
+      hint: {
+        ru: 'По данным Excel: чистая маржа, текущая ликвидность, D/E, ROE и наличие залога.',
+        uz: 'Excel бўйича: соф маржа, жорий ликвидлик, D/E, ROE ва гаров мавжудлиги.',
+      },
+    }
+  }
+
+  // ─ Legacy path: self-reported Step 2 bands.
 
   const income = n(finance.monthlyIncome)
   const expenses = n(finance.monthlyExpenses)
@@ -295,12 +375,12 @@ const WEIGHTS = {
   model: 0.14,
 }
 
-export function computeScore(profile = {}, finance = {}, cityId = null) {
+export function computeScore(profile = {}, finance = {}, cityId = null, financials = null) {
   const city = cityId ? CITIES[cityId] ?? null : null
 
   const factors = [
     factorExperience(profile),
-    factorFinance(finance),
+    factorFinance(finance, financials),
     factorMarket(finance, city),
     factorLocation(profile, city),
     factorCompetition(finance, city),

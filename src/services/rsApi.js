@@ -7,7 +7,11 @@
 
 const BASE = import.meta.env.VITE_API_URL?.replace(/\/$/, '') || ''
 
-const isConfigured = () => Boolean(BASE)
+// Once a network failure happens, stop trying to reach the backend for the
+// rest of this session — UI treats the app as unconfigured and uses local mode.
+let runtimeDisabled = false
+
+const isConfigured = () => Boolean(BASE) && !runtimeDisabled
 
 async function request(path, options = {}) {
   if (!isConfigured()) return { ok: false, reason: 'no-backend' }
@@ -23,7 +27,10 @@ async function request(path, options = {}) {
     const data = await res.json()
     return { ok: true, data }
   } catch (e) {
-    return { ok: false, error: String(e) }
+    // Network error (backend down, CORS, offline, etc.) — disable the backend
+    // path so later calls skip the failing fetch and run locally.
+    runtimeDisabled = true
+    return { ok: false, reason: 'no-backend', error: String(e) }
   }
 }
 

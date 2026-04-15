@@ -26,6 +26,12 @@ const routes = [
     meta: { titleKey: 'nav.tools' },
   },
   {
+    path: '/education',
+    name: 'education',
+    component: () => import('@/views/NbuEducationView.vue'),
+    meta: { titleKey: 'nav.education' },
+  },
+  {
     path: '/tools/fincontrol',
     name: 'fincontrol-onboarding',
     component: () => import('@/views/fincontrol/FinControlOnboardingView.vue'),

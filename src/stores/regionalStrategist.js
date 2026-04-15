@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { DEMO_SEEDS } from '@/data/regionalStrategist/demo-seeds'
 
 const emptyProfile = () => ({
   name: '',
@@ -104,6 +105,13 @@ export const useRegionalStrategistStore = defineStore('regionalStrategist', {
     },
     addUpload(upload) {
       this.uploads = [...this.uploads.filter((u) => u.kind !== upload.kind), upload]
+    },
+    seedDemo(key) {
+      const seed = DEMO_SEEDS[key]
+      if (!seed) return
+      this.path = 'existing'
+      this.profile = { ...emptyProfile(), ...seed.profile }
+      this.finance = { ...emptyFinance(), ...seed.finance }
     },
   },
 })

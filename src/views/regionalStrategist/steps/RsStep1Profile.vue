@@ -26,20 +26,35 @@ const entityCards = computed(() => [
   { id: 'Физическое лицо', icon: 'user', title: t.value.entityPhysTitle, desc: t.value.entityPhysDesc },
   { id: 'Юридическое лицо', icon: 'building-2', title: t.value.entityLegalTitle, desc: t.value.entityLegalDesc },
 ])
+
+const loadErkinDemo = () => {
+  store.seedDemo('erkinParvoz')
+}
 </script>
 
 <template>
   <div class="bg-white border border-rs-border rounded-[12px] shadow-rs-card py-8 md:py-10 px-6 md:px-12 animate-rs-fade-in-up">
-    <div>
-      <span class="inline-flex items-center text-[12px] font-semibold text-gold-500 bg-gold-500/[0.08] rounded-[6px] py-1 px-3">
-        {{ t.stepBadge }}
-      </span>
-      <h1 class="text-[24px] md:text-[28px] font-bold text-carbon mt-4">
-        {{ path === 'new' ? t.titleNew : t.titleExisting }}
-      </h1>
-      <p class="text-[14px] md:text-[15px] text-[#898989] leading-[1.5] mt-2">
-        {{ path === 'new' ? t.subNew : t.subExisting }}
-      </p>
+    <div class="flex items-start justify-between gap-4">
+      <div>
+        <span class="inline-flex items-center text-[12px] font-semibold text-gold-500 bg-gold-500/[0.08] rounded-[6px] py-1 px-3">
+          {{ t.stepBadge }}
+        </span>
+        <h1 class="text-[24px] md:text-[28px] font-bold text-carbon mt-4">
+          {{ path === 'new' ? t.titleNew : t.titleExisting }}
+        </h1>
+        <p class="text-[14px] md:text-[15px] text-[#898989] leading-[1.5] mt-2">
+          {{ path === 'new' ? t.subNew : t.subExisting }}
+        </p>
+      </div>
+      <button
+        type="button"
+        @click="loadErkinDemo"
+        class="shrink-0 inline-flex items-center gap-2 text-[12px] font-semibold text-navy-900 border border-gold-500/40 bg-gold-500/[0.06] hover:bg-gold-500/[0.14] rounded-[8px] py-2 px-3 transition-colors duration-200"
+        :title="lang === 'uz' ? 'ERKIN PARVOZ маълумотларини юклаш (демо)' : 'Загрузить демо-ответы (ERKIN PARVOZ, Фергана)'"
+      >
+        <RsIcon name="sparkles" :size="14" class="text-gold-500" />
+        {{ lang === 'uz' ? 'Демо: ERKIN PARVOZ' : 'Демо: ERKIN PARVOZ' }}
+      </button>
     </div>
 
     <!-- Personal -->

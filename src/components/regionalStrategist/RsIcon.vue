@@ -56,6 +56,10 @@ const ICON_PATHS = {
     '<path d="M22 10v6"/><path d="M6 12.5V16c3 3 9 3 12 0v-3.5"/><path d="m2 10 10-5 10 5-10 5z"/>',
   wrench:
     '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+  'file-spreadsheet':
+    '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M8 13h2"/><path d="M8 17h2"/><path d="M14 13h2"/><path d="M14 17h2"/>',
+  'file-question':
+    '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M10 11a2 2 0 1 1 3 1.7c-.6.3-1 1-1 1.8v.5"/><path d="M12 17h.01"/>',
 }
 
 const d = computed(() => ICON_PATHS[props.name] || '')

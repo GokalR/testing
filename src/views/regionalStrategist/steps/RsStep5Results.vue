@@ -7,23 +7,87 @@ import RsStatusTag from '@/components/regionalStrategist/RsStatusTag.vue'
 import RsInsightBox from '@/components/regionalStrategist/RsInsightBox.vue'
 import RsIcon from '@/components/regionalStrategist/RsIcon.vue'
 import RsMargilanHeatmap from '@/components/regionalStrategist/RsMargilanHeatmap.vue'
+import RsFerganaHeatmap from '@/components/regionalStrategist/RsFerganaHeatmap.vue'
 import RsInputSummary from '@/components/regionalStrategist/RsInputSummary.vue'
 import RsScoreBreakdown from '@/components/regionalStrategist/RsScoreBreakdown.vue'
 import RsClaudeAnalysis from '@/components/regionalStrategist/RsClaudeAnalysis.vue'
 import { STEP5_T } from './rs-step5-i18n'
 import { CITIES } from '@/data/regionalStrategist/cities'
 import { matchCreditProducts, collateralLabel } from '@/data/regionalStrategist/credit-products'
-import { computeScore } from '@/data/regionalStrategist/scoring'
+import { computeScore, peerMediansFor } from '@/data/regionalStrategist/scoring'
 import { rsApi } from '@/services/rsApi'
 import { generateLocalAnalysisAsync } from '@/services/rsLocalAnalysis'
 import { onMounted } from 'vue'
 
 const emit = defineEmits(['restart'])
 const { lang } = useRsLang()
-const t = computed(() => STEP5_T[lang.value])
 
 const store = useRegionalStrategistStore()
 const { profile, finance, submissionId, uploads, analysis, analysisStatus } = storeToRefs(store)
+
+// Fergana-city + kindergarten override for section subtitles and project copy.
+// Applied on top of STEP5_T[lang] when the user's direction + city match.
+// Keeps Margilan branch untouched.
+const FERGANA_KINDERGARTEN_OVERRIDE = {
+  ru: {
+    aiConclusionText:
+      'Бизнес имеет хороший потенциал для расширения. Сильные стороны — стабильная история (3–5 лет) и нулевая кредитная нагрузка при ROE 15,5%. Основной риск — текущая ликвидность 1,19 (ниже нормы 1,5). Расширение на 2 ясельные группы (2–3 года) закрывает рыночный пробел в маҳалле и увеличивает выручку на 35–45%.',
+    section2Sub: 'Частный детский сад — Фарғона шаҳар, Мирзо Улуғбек MFY',
+    section3Sub: 'Ферганская область · 15 районов + 4 города · 98 319 рождений в 2025 → базовый спрос на ДОУ',
+    locationInsightText:
+      'Мирзо Улуғбек MFY в Фарғона шаҳар — городская маҳалла в столице области (328 409 жителей). Рождаемость региона 98 319 в 2025 году (+0,2%) обеспечивает стабильный приток детей. Государственных ясель в радиусе 1 км — нет; ближайшие частные ДОУ работают с 3 лет. Ниша для групп 2–3 лет открыта.',
+    section4Title: 'Бизнес-план: расширение частного детского сада',
+    section4Sub: 'ERKIN PARVOZ NURI OLTIN · +2 ясельные группы · Фарғона шаҳар',
+    projectDescText:
+      'Расширение действующего частного детского сада ERKIN PARVOZ NURI OLTIN MCHJ (ИФУТ 85100, Мирзо Улуғбек MFY, г. Фергана) на 2 ясельные группы для детей 2–3 лет. Ремонт + мебель + оборудование = ~800 млн сум. Дополнительно 36–44 места × 400 тыс. сум/мес × 10 мес. ≈ +1,2–1,5 млрд сум/год выручки при марже 12–14%.',
+    coursesLabel: 'НОВЫЕ УСЛУГИ',
+    courses: [
+      'Ясельная группа (2–3 года)',
+      'Полный день 7:30–18:30',
+      'Питание 4-разовое',
+      'Музыкальные занятия',
+      'Физкультура + бассейн',
+      'Логопед (вводится)',
+      'Раннее развитие речи',
+      'Подготовка к мл. группе',
+    ],
+    startupTotal: '800 млн сум',
+    monthlyTotal: '95 млн/мес',
+    revenueForecastLabel: 'ПРОГНОЗ ВЫРУЧКИ (400 тыс. сум/мес за место, 2 новые группы)',
+    breakeven: 'Точка безубыточности: месяц 4–5 (при наполняемости 70%+)',
+    ctaSubtitle: 'Подайте заявку на «Развивайся» (до 1,5 млрд, 18%, 60 мес.) — оптимально под расширение с залогом недвижимости.',
+    MAHALLA_RANKING: null,
+  },
+  uz: {
+    aiConclusionText:
+      'Бизнес кенгайтириш учун яхши потенциалга эга. Кучли томонлар — барқарор тарих (3–5 йил) ва нол кредит юки, ROE 15,5%. Асосий хавф — жорий ликвидлик 1,19 (норма 1,5 дан паст). 2 та ясли гуруҳ (2–3 ёш) очиш маҳалладаги бозор бўшлигини тўлдиради ва тушумни 35–45% га оширади.',
+    section2Sub: 'Хусусий болалар боғчаси — Фарғона ш., Мирзо Улуғбек MFY',
+    section3Sub: 'Фарғона вилояти · 15 туман + 4 шаҳар · 2025 йилда 98 319 туғилиш → болалар боғчасига асосий талаб',
+    locationInsightText:
+      'Фарғона ш. Мирзо Улуғбек MFY — вилоят маркази шаҳарида жойлашган (328 409 аҳоли). 2025 йилдаги туғилиш 98 319 (+0,2%) барқарор болалар оқимини таъминлайди. 1 км радиусда давлат ясли йўқ; яқин хусусий боғчалар 3 ёшдан ишлайди. 2–3 ёшли гуруҳлар учун ниша очиқ.',
+    section4Title: 'Бизнес-режа: хусусий болалар боғчасини кенгайтириш',
+    section4Sub: 'ERKIN PARVOZ NURI OLTIN · +2 ясли гуруҳ · Фарғона ш.',
+    projectDescText:
+      'Амалдаги хусусий болалар боғчаси ERKIN PARVOZ NURI OLTIN MCHJ (ИФУТ 85100, Мирзо Улуғбек MFY, Фарғона ш.) ни 2 та ясли гуруҳ (2–3 ёш) билан кенгайтириш. Таъмир + мебел + жиҳоз = ~800 млн сўм. Қўшимча 36–44 ўрин × 400 минг сўм/ой × 10 ой ≈ +1,2–1,5 млрд сўм/йил тушум, маржа 12–14%.',
+    coursesLabel: 'ЯНГИ ХИЗМАТЛАР',
+    courses: [
+      'Ясли гуруҳ (2–3 ёш)',
+      'Тўлиқ кун 7:30–18:30',
+      '4 маҳал овқат',
+      'Мусиқа машғулотлари',
+      'Жисмоний тарбия + ҳовуз',
+      'Логопед (киритилади)',
+      'Эрта нутқ ривожланиши',
+      'Кичик гуруҳга тайёргарлик',
+    ],
+    startupTotal: '800 млн сўм',
+    monthlyTotal: '95 млн/ой',
+    revenueForecastLabel: 'ТУШУМ ПРОГНОЗИ (400 минг сўм/ой ҳар ўрин, 2 янги гуруҳ)',
+    breakeven: 'Фойдалилик нуқтаси: 4–5 ой (тўлдирилиш 70%+ да)',
+    ctaSubtitle: '«Развивайся» (1,5 млрд сўмгача, 18%, 60 ой) учун ариза беринг — кўчмас мулк гаровида кенгайтириш учун оптимал.',
+    MAHALLA_RANKING: null,
+  },
+}
 
 // Detect pilot city from the user's profile answers. Only Fergana + Margilan
 // have real data; everything else shows a "data not yet available" state.
@@ -36,6 +100,16 @@ const resolvedCityId = computed(() => {
 const isPilotCity = computed(() => resolvedCityId.value !== null)
 const selectedCity = computed(() => (resolvedCityId.value ? CITIES[resolvedCityId.value] : CITIES.fergana))
 const isMargilan = computed(() => resolvedCityId.value === 'margilan')
+const isFergana = computed(() => resolvedCityId.value === 'fergana')
+
+const isKindergarten = computed(() => /детск|богча|боғча|kindergarten|дошколь/i.test(finance.value.businessDirection || ''))
+const useFerganaKgOverride = computed(() => isFergana.value && isKindergarten.value)
+const t = computed(() => {
+  const base = STEP5_T[lang.value]
+  if (!useFerganaKgOverride.value) return base
+  const ov = FERGANA_KINDERGARTEN_OVERRIDE[lang.value] || {}
+  return { ...base, ...ov }
+})
 
 // Label the user's own region (what they picked), regardless of pilot status.
 const userPickedLabel = computed(() => {
@@ -92,6 +166,126 @@ const financialMetrics = computed(() => {
     { key: 'currentRatio', label: L === 'uz' ? 'Жорий ликвидлик'   : 'Текущ. ликвидность',  value: formatRatio(r.currentRatio), kind: 'ratio' },
     { key: 'debtToEquity', label: L === 'uz' ? 'Қарз/капитал'      : 'Долг/капитал',        value: formatRatio(r.debtToEquity), kind: 'ratio' },
   ].filter((m) => m.value !== '—')
+})
+
+/* ── Excel aggregates section helpers ────────────────────── */
+const uploadedFiles = computed(() => (uploads.value || []).filter((u) => u?.original_filename || u?.id))
+const hasExcelData = computed(() => uploadedFiles.value.length > 0 || !!extractedFinancials.value)
+
+const kindLabel = (kind) => {
+  const map = {
+    ru: { balance: 'Баланс', pnl: 'ОПиУ', cashflow: 'ДДС' },
+    uz: { balance: 'Баланс', pnl: 'ФЗҲ', cashflow: 'ПҲ' },
+  }
+  return map[lang.value]?.[kind] || kind || (lang.value === 'uz' ? 'Файл' : 'Файл')
+}
+
+const formatSize = (bytes) => {
+  if (!bytes) return ''
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`
+  return `${(bytes / 1024 / 1024).toFixed(1)} MB`
+}
+
+const absoluteHighlights = computed(() => {
+  const f = extractedFinancials.value
+  if (!f) return []
+  const a = f.absolutes || {}
+  const L = lang.value
+  const items = [
+    { key: 'revenue',     raw: a.revenue,     label: L === 'uz' ? 'Йиллик тушум'  : 'Годовая выручка', icon: 'trending-up',  color: '#0054A6', tint: '#EEF4FF',
+      hint: L === 'uz' ? 'ОПиУ: жами тушум' : 'ОПиУ: итого выручка' },
+    { key: 'netProfit',   raw: a.netProfit,   label: L === 'uz' ? 'Соф фойда'      : 'Чистая прибыль',  icon: 'sparkles',     color: '#10B981', tint: '#E6F7EE',
+      hint: L === 'uz' ? 'Солиқдан сўнг'    : 'После налогов' },
+    { key: 'totalAssets', raw: a.totalAssets, label: L === 'uz' ? 'Жами активлар'  : 'Итого активов',   icon: 'briefcase',    color: '#8B5CF6', tint: '#F3E8FF',
+      hint: L === 'uz' ? 'Баланс якуни'     : 'Итог баланса' },
+    { key: 'equity',      raw: a.equity,      label: L === 'uz' ? 'Ўз капитал'     : 'Собственный капитал', icon: 'shield',  color: '#F59E0B', tint: '#FEF3C7',
+      hint: L === 'uz' ? 'Пассив: III бўлим': 'Пассив: раздел III' },
+  ]
+  return items
+    .filter((m) => m.raw != null && !isNaN(m.raw))
+    .map((m) => ({ ...m, value: formatUzs(m.raw) }))
+})
+
+// Sector-aware peer medians: a kindergarten's 12% net margin should not be
+// compared to a retailer's 8% — use the bucket that matches businessDirection.
+const PEER_MEDIANS = computed(() => peerMediansFor(finance.value.businessDirection))
+
+const ratioBars = computed(() => {
+  const f = extractedFinancials.value
+  if (!f) return []
+  const r = f.ratios || {}
+  const L = lang.value
+  const defs = [
+    { key: 'grossMargin',  label: L === 'uz' ? 'Ялпи маржа'      : 'Валовая маржа',      max: 0.6,  pct: true,  higherBetter: true },
+    { key: 'netMargin',    label: L === 'uz' ? 'Соф маржа'       : 'Чистая маржа',       max: 0.25, pct: true,  higherBetter: true },
+    { key: 'roa',          label: 'ROA',                                                  max: 0.2,  pct: true,  higherBetter: true },
+    { key: 'roe',          label: 'ROE',                                                  max: 0.35, pct: true,  higherBetter: true },
+    { key: 'currentRatio', label: L === 'uz' ? 'Жорий ликвидлик' : 'Текущ. ликвидность', max: 3,    pct: false, higherBetter: true },
+    { key: 'debtToEquity', label: L === 'uz' ? 'Қарз/капитал'    : 'Долг/капитал',       max: 3,    pct: false, higherBetter: false },
+  ]
+  const clamp = (v, max) => Math.max(0, Math.min(100, (v / max) * 100))
+  const fmtV = (v, pct) => (pct ? formatPct(v) : formatRatio(v))
+  return defs
+    .map((d) => {
+      const user = r[d.key]
+      const peer = PEER_MEDIANS.value[d.key]
+      if (user == null || isNaN(user)) return null
+      const diff = d.higherBetter ? user - peer : peer - user
+      const ratio = diff / Math.max(Math.abs(peer), 0.01)
+      const verdictTone = ratio >= 0.1 ? 'good' : ratio >= -0.15 ? 'warn' : 'bad'
+      const verdictLabel = verdictTone === 'good'
+        ? (L === 'uz' ? 'яхши' : 'выше')
+        : verdictTone === 'warn' ? (L === 'uz' ? 'ўртача' : 'средне')
+        : (L === 'uz' ? 'паст' : 'ниже')
+      return {
+        key: d.key,
+        label: d.label,
+        userLabel: fmtV(user, d.pct),
+        peerLabel: fmtV(peer, d.pct),
+        userBar: clamp(user, d.max),
+        peerBar: clamp(peer, d.max),
+        verdictTone,
+        verdictLabel,
+      }
+    })
+    .filter(Boolean)
+})
+
+const excelInsight = computed(() => {
+  const f = extractedFinancials.value
+  if (!f) return null
+  const r = f.ratios || {}
+  const L = lang.value
+  const med = PEER_MEDIANS.value
+  const strong = []
+  const weak = []
+
+  // Use ±5% hysteresis so "на уровне" doesn't spuriously flip to "выше/ниже".
+  const cmp = (user, peer) => (user - peer) / (Math.abs(peer) || 1)
+
+  if (r.netMargin != null) {
+    const d = cmp(r.netMargin, med.netMargin)
+    if (d > 0.05) strong.push(L === 'uz' ? `соф маржа ${(r.netMargin*100).toFixed(1)}% — соҳа медианасидан (${(med.netMargin*100).toFixed(0)}%) юқори` : `чистая маржа ${(r.netMargin*100).toFixed(1)}% — выше медианы сектора (${(med.netMargin*100).toFixed(0)}%)`)
+    else if (d < -0.15) weak.push(L === 'uz' ? `соф маржа соҳа медианасидан паст (${(r.netMargin*100).toFixed(1)}% vs ${(med.netMargin*100).toFixed(0)}%)` : `чистая маржа ниже медианы сектора (${(r.netMargin*100).toFixed(1)}% vs ${(med.netMargin*100).toFixed(0)}%)`)
+    else strong.push(L === 'uz' ? `соф маржа соҳа медианасида (${(r.netMargin*100).toFixed(1)}%)` : `чистая маржа в пределах медианы сектора (${(r.netMargin*100).toFixed(1)}%)`)
+  }
+  if (r.currentRatio != null) {
+    if (r.currentRatio >= 1.5) strong.push(L === 'uz' ? 'ликвидлик соғлом (>1.5)' : 'ликвидность здоровая (>1.5)')
+    else if (r.currentRatio >= 1.0) weak.push(L === 'uz' ? `жорий ликвидлик чегарада (${r.currentRatio.toFixed(2)}) — қисқа муддатли мажбуриятлар чекланган` : `текущая ликвидность на границе (${r.currentRatio.toFixed(2)}) — ограниченный запас по краткосрочным обязательствам`)
+    else weak.push(L === 'uz' ? 'ликвидлик хавфли (<1.0)' : 'ликвидность в зоне риска (<1.0)')
+  }
+  if (r.debtToEquity != null) {
+    if (r.debtToEquity > 2) weak.push(L === 'uz' ? 'қарз юки юқори (D/E>2)' : 'высокая долговая нагрузка (D/E>2)')
+    else if (r.debtToEquity > med.debtToEquity) weak.push(L === 'uz' ? `D/E ${r.debtToEquity.toFixed(2)} — соҳа медианасидан (${med.debtToEquity.toFixed(1)}) юқори` : `D/E ${r.debtToEquity.toFixed(2)} — выше медианы сектора (${med.debtToEquity.toFixed(1)})`)
+  }
+  if (r.roe != null && r.roe > med.roe) strong.push(L === 'uz' ? `ROE ${(r.roe*100).toFixed(1)}% — капитал самарали ишлатилмоқда` : `ROE ${(r.roe*100).toFixed(1)}% — капитал работает эффективно`)
+  if (r.roa != null && r.roa < 0.03) weak.push(L === 'uz' ? 'активлар рентабеллиги паст (ROA<3%)' : 'рентабельность активов низкая (ROA<3%)')
+
+  if (!strong.length && !weak.length) return null
+  const good = strong.length ? (L === 'uz' ? `Кучли томонлар: ${strong.join('; ')}.` : `Сильные стороны: ${strong.join('; ')}.`) : ''
+  const bad = weak.length ? (L === 'uz' ? ` Эътибор берилиши керак: ${weak.join('; ')}.` : ` Требует внимания: ${weak.join('; ')}.`) : ''
+  return (good + bad).trim()
 })
 
 // On arrival at results: run real backend analysis if configured,
@@ -168,7 +362,7 @@ const formatProductCollateral = (p) =>
   p.collateral.map((c) => collateralLabel(c, lang.value)).join(' · ')
 
 /* ── Live score from user data ────────────────────── */
-const scoreResult = computed(() => computeScore(profile.value, finance.value, selectedCity.value.id))
+const scoreResult = computed(() => computeScore(profile.value, finance.value, selectedCity.value.id, extractedFinancials.value))
 const RADIUS = 54
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS
 const scoreOffset = computed(() => CIRCUMFERENCE - (scoreResult.value.total / 100) * CIRCUMFERENCE)
@@ -223,48 +417,243 @@ const onDownload = () => {
       {{ t.restartBtn }}
     </button>
 
-    <!-- ═══ 0 — YOUR INPUTS (transparency) ═══ -->
+    <!-- ═══ REGION / CITY SELECTION BANNER ═══ -->
+    <section
+      class="rounded-[14px] overflow-hidden border shadow-rs-card"
+      :class="isPilotCity
+        ? 'border-navy-200 bg-gradient-to-r from-navy-900 via-navy-800 to-navy-900'
+        : 'border-amber-200 bg-gradient-to-r from-amber-50 via-white to-amber-50'"
+    >
+      <div class="px-8 py-7 flex flex-wrap items-center justify-between gap-6">
+        <div class="flex items-center gap-5 min-w-0">
+          <span
+            class="inline-flex items-center justify-center w-14 h-14 rounded-[14px] shrink-0"
+            :class="isPilotCity ? 'bg-gold-500/20 text-gold-400' : 'bg-amber-100 text-amber-700'"
+          >
+            <RsIcon name="building-2" :size="26" />
+          </span>
+          <div class="min-w-0">
+            <div
+              class="font-mono text-[11px] font-bold uppercase tracking-[1.5px] mb-1"
+              :class="isPilotCity ? 'text-gold-400' : 'text-amber-700'"
+            >
+              {{ lang === 'uz' ? 'Сиз танлаган ҳудуд' : 'Выбранный вами регион' }}
+            </div>
+            <h3
+              class="font-sans text-[22px] font-bold leading-tight truncate"
+              :class="isPilotCity ? 'text-white' : 'text-carbon'"
+            >
+              <template v-if="profile.viloyat">{{ profile.viloyat }}</template>
+              <template v-else-if="isPilotCity">{{ selectedCity.name[lang] }}</template>
+              <template v-else>{{ lang === 'uz' ? 'Ҳудуд кўрсатилмаган' : 'Регион не указан' }}</template>
+            </h3>
+            <div
+              class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 font-sans text-[13px]"
+              :class="isPilotCity ? 'text-white/80' : 'text-gray-700'"
+            >
+              <span v-if="profile.hudud" class="inline-flex items-center gap-1.5">
+                <RsIcon name="landmark" :size="13" />
+                {{ profile.hudud }}
+              </span>
+              <span v-if="profile.hudud && profile.mahalla" :class="isPilotCity ? 'text-white/30' : 'text-gray-300'">·</span>
+              <span v-if="profile.mahalla" class="inline-flex items-center gap-1.5">
+                <RsIcon name="user" :size="13" />
+                {{ lang === 'uz' ? 'маҳалла' : 'махалля' }}: {{ profile.mahalla }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="shrink-0 flex items-center gap-3">
+          <span
+            v-if="isPilotCity && isCityDataReal"
+            class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.5px] rounded-full py-1.5 px-3 bg-emerald-500/15 text-emerald-300 border border-emerald-400/30"
+          >
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            {{ lang === 'uz' ? 'Тўлиқ маълумот' : 'Полные данные' }}
+          </span>
+          <span
+            v-else-if="isPilotCity"
+            class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.5px] rounded-full py-1.5 px-3 bg-gold-500/15 text-gold-300 border border-gold-400/30"
+          >
+            <span class="w-1.5 h-1.5 rounded-full bg-gold-400"></span>
+            {{ lang === 'uz' ? 'Пилот шаҳар' : 'Пилотный город' }}
+          </span>
+          <span
+            v-else
+            class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.5px] rounded-full py-1.5 px-3 bg-amber-100 text-amber-800 border border-amber-200"
+          >
+            <RsIcon name="alert-triangle" :size="12" />
+            {{ lang === 'uz' ? 'Маълумотлар чекланган' : 'Данные ограничены' }}
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ A — YOUR ANSWERS FROM STEP 1 + STEP 2 ═══ -->
     <section class="bg-white border border-rs-border rounded-[12px] overflow-hidden shadow-rs-card">
       <div class="px-8 py-6"
            style="background: rgba(215,181,109,0.04); border-bottom: 1px solid rgba(215,181,109,0.12);">
         <div class="flex items-center gap-4">
-          <span class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-gold-500 shrink-0">
-            <RsIcon name="file-check" :size="16" class="text-white" />
-          </span>
+          <span class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-gold-500 shrink-0 font-mono text-[15px] font-bold text-white">A</span>
           <div>
             <h2 class="font-sans text-[20px] font-bold text-carbon">
-              {{ lang === 'uz' ? 'Сиз киритган маълумотлар' : 'Ваши данные' }}
+              {{ lang === 'uz' ? 'Сиз тўлдирган маълумотлар' : 'Ваши ответы' }}
+              <span class="font-normal text-steel-500 text-[15px]">
+                · {{ lang === 'uz' ? '1- ва 2-қадам' : 'Шаг 1 и Шаг 2' }}
+              </span>
             </h2>
             <p class="font-sans text-[13px] text-gray-600 mt-1">
-              {{ lang === 'uz' ? 'Тавсия ва балл шу маълумотлар асосида ҳисобланган' : 'Рекомендация и балл рассчитаны по этим ответам' }}
+              {{ lang === 'uz'
+                ? 'Қуйидаги балл, SWOT ва тавсиялар сиз бёрган жавоблар асосида ҳисобланган'
+                : 'Балл, SWOT и рекомендации ниже рассчитаны на основании ваших ответов в анкете' }}
             </p>
           </div>
         </div>
       </div>
-      <div class="px-8 py-7 space-y-6">
+      <div class="px-8 py-7">
         <RsInputSummary :profile="profile" :finance="finance" :lang="lang" />
+      </div>
+    </section>
 
-        <!-- Financial metrics extracted from Excel (backend parse) -->
-        <div v-if="financialMetrics.length" class="border-t border-rs-border pt-6">
-          <div class="flex items-center justify-between gap-3 mb-4">
+    <!-- ═══ B — AGGREGATED EXCEL DATA (only when user uploaded financials) ═══ -->
+    <section class="bg-white border border-rs-border rounded-[12px] overflow-hidden shadow-rs-card">
+      <div class="px-8 py-6"
+           style="background: rgba(16,185,129,0.05); border-bottom: 1px solid rgba(16,185,129,0.15);">
+        <div class="flex items-center justify-between gap-4">
+          <div class="flex items-center gap-4">
+            <span class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-emerald-500 shrink-0 font-mono text-[15px] font-bold text-white">B</span>
             <div>
-              <div class="font-sans text-[13px] font-bold text-carbon">
-                {{ lang === 'uz' ? 'Молиявий кўрсаткичлар (Excel)' : 'Финансовые показатели (из Excel)' }}
-              </div>
-              <div class="font-sans text-[12px] text-steel-500 mt-[2px]">
-                {{ lang === 'uz' ? '1С / Документы.uz шакллари бўйича ҳисобланди' : 'Посчитано из стандартных форм 1С / Документы.uz' }}
-              </div>
+              <h2 class="font-sans text-[20px] font-bold text-carbon">
+                {{ lang === 'uz' ? 'Excel файлдан агрегат маълумотлар' : 'Агрегаты из вашего Excel' }}
+              </h2>
+              <p class="font-sans text-[13px] text-gray-600 mt-1">
+                {{ lang === 'uz'
+                  ? 'Стандарт 1С / Документы.uz шакллари бўйича автоматик ҳисобланди'
+                  : 'Автоматически посчитано по стандартным формам 1С / Документы.uz' }}
+              </p>
             </div>
-            <span class="text-[10px] font-bold uppercase tracking-[0.5px] text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-[6px] py-1 px-2">
-              {{ lang === 'uz' ? 'Excel’дан' : 'Из Excel' }}
-            </span>
           </div>
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div v-for="m in financialMetrics" :key="m.key"
-                 class="border border-rs-border rounded-[8px] py-3 px-4 bg-navy-900/[0.02]">
-              <div class="text-[10px] font-semibold uppercase tracking-[0.5px] text-steel-500">{{ m.label }}</div>
-              <div class="font-mono text-[16px] font-bold text-carbon mt-1">{{ m.value }}</div>
+          <span v-if="uploadedFiles.length"
+                class="shrink-0 inline-flex text-[11px] font-bold uppercase tracking-[0.5px] text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-[6px] py-1 px-2">
+            {{ uploadedFiles.length }} {{ lang === 'uz' ? 'файл' : 'файл(ов)' }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Empty state — user skipped Excel upload -->
+      <div v-if="!hasExcelData" class="px-8 py-10 flex items-start gap-5">
+        <span class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-amber-50 shrink-0">
+          <RsIcon name="file-question" :size="20" class="text-amber-600" />
+        </span>
+        <div class="max-w-[560px]">
+          <div class="font-sans text-[15px] font-semibold text-carbon">
+            {{ lang === 'uz' ? 'Excel файл юкланмаган' : 'Excel файл не загружен' }}
+          </div>
+          <p class="font-sans text-[13px] text-gray-600 mt-1 leading-[1.6]">
+            {{ lang === 'uz'
+              ? 'Молия кўрсаткичлари фақат Шаг 2 да қўлда киритилган даромад/харажатга асосланади. 1С ёки Документы.uz дан Баланс ва Фойда ва зарар ҳисоботини юкласангиз, таҳлил аниқроқ бўлади.'
+              : 'Финансовые показатели взяты только из введённых вручную на Шаге 2 сумм дохода и расходов. Загрузите Баланс и Отчёт о прибылях из 1С или Документы.uz — тогда анализ будет точнее.' }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Loaded state -->
+      <div v-else class="px-8 py-8 space-y-7">
+        <!-- Uploaded files list -->
+        <div v-if="uploadedFiles.length" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div v-for="u in uploadedFiles" :key="u.id || u.original_filename"
+               class="flex items-center gap-3 border border-rs-border rounded-[10px] py-3 px-4 bg-navy-900/[0.02]">
+            <span class="inline-flex items-center justify-center w-9 h-9 rounded-[8px] bg-emerald-50 shrink-0">
+              <RsIcon name="file-spreadsheet" :size="18" class="text-emerald-600" />
+            </span>
+            <div class="min-w-0 flex-1">
+              <div class="font-sans text-[13px] font-semibold text-carbon truncate">
+                {{ u.original_filename || (lang === 'uz' ? 'Файл' : 'Файл') }}
+              </div>
+              <div class="flex items-center gap-2 mt-[2px]">
+                <span class="text-[10px] font-bold uppercase tracking-[0.5px] rounded-[4px] py-[2px] px-[6px]"
+                      :class="u.kind === 'balance' ? 'bg-blue-50 text-blue-700' : u.kind === 'pnl' ? 'bg-purple-50 text-purple-700' : 'bg-slate-100 text-slate-600'">
+                  {{ kindLabel(u.kind) }}
+                </span>
+                <span v-if="u.size_bytes" class="text-[11px] text-steel-500 font-mono">
+                  {{ formatSize(u.size_bytes) }}
+                </span>
+              </div>
             </div>
+            <RsIcon name="check-circle" :size="18" class="text-emerald-500 shrink-0" />
+          </div>
+        </div>
+
+        <!-- Headline absolute numbers -->
+        <div v-if="absoluteHighlights.length"
+             class="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div v-for="m in absoluteHighlights" :key="m.key"
+               class="border border-rs-border rounded-[10px] p-4 bg-gradient-to-br from-white to-navy-900/[0.02]">
+            <div class="flex items-center justify-between">
+              <div class="text-[10px] font-semibold uppercase tracking-[0.5px] text-steel-500">{{ m.label }}</div>
+              <span class="inline-flex items-center justify-center w-6 h-6 rounded-[6px]"
+                    :style="{ background: m.tint }">
+                <RsIcon :name="m.icon" :size="12" :style="{ color: m.color }" />
+              </span>
+            </div>
+            <div class="font-mono text-[20px] font-bold text-carbon mt-2">{{ m.value }}</div>
+            <div class="font-sans text-[11px] text-steel-500 mt-1">{{ m.hint }}</div>
+          </div>
+        </div>
+
+        <!-- Ratio bars with peer comparison -->
+        <div v-if="ratioBars.length">
+          <div class="flex items-center justify-between gap-3 mb-3">
+            <div class="font-sans text-[12px] font-semibold uppercase tracking-[1px] text-steel-500">
+              {{ lang === 'uz' ? 'Коэффициентлар' : 'Финансовые коэффициенты' }}
+            </div>
+            <div class="flex items-center gap-4 text-[11px] text-steel-500">
+              <span class="inline-flex items-center gap-[6px]">
+                <span class="w-[10px] h-[10px] rounded-full bg-emerald-500"></span>
+                {{ lang === 'uz' ? 'Сиз' : 'Вы' }}
+              </span>
+              <span class="inline-flex items-center gap-[6px]">
+                <span class="w-[10px] h-[10px] rounded-full bg-steel-300"></span>
+                {{ lang === 'uz' ? 'Соҳа (медиана)' : 'Отрасль (медиана)' }}
+              </span>
+            </div>
+          </div>
+          <div class="border border-rs-border rounded-[10px] divide-y divide-rs-border">
+            <div v-for="r in ratioBars" :key="r.key" class="py-3 px-4">
+              <div class="flex items-center justify-between mb-2">
+                <div class="font-sans text-[13px] font-medium text-carbon">{{ r.label }}</div>
+                <div class="flex items-center gap-3 font-mono text-[12px]">
+                  <span class="font-bold text-carbon">{{ r.userLabel }}</span>
+                  <span class="text-steel-500">vs {{ r.peerLabel }}</span>
+                  <span :class="[
+                    'text-[11px] font-semibold uppercase tracking-[0.5px] rounded-[4px] py-[2px] px-[6px]',
+                    r.verdictTone === 'good' ? 'bg-emerald-50 text-emerald-700'
+                      : r.verdictTone === 'warn' ? 'bg-amber-50 text-amber-700'
+                      : 'bg-red-50 text-red-700',
+                  ]">{{ r.verdictLabel }}</span>
+                </div>
+              </div>
+              <div class="relative h-[8px] bg-slate-100 rounded-full overflow-hidden">
+                <div class="absolute inset-y-0 left-0 bg-emerald-500 rounded-full transition-all"
+                     :style="{ width: r.userBar + '%' }"></div>
+                <div class="absolute top-0 bottom-0 w-[2px] bg-steel-400"
+                     :style="{ left: r.peerBar + '%' }"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Insight -->
+        <div v-if="excelInsight"
+             class="rounded-[8px] py-4 px-5 flex gap-3 items-start"
+             style="border-left: 3px solid #10B981; background: rgba(16,185,129,0.06);">
+          <RsIcon name="sparkles" :size="16" class="text-emerald-600 mt-[2px] shrink-0" />
+          <div>
+            <div class="font-sans text-[13px] font-bold text-emerald-700 mb-1">
+              {{ lang === 'uz' ? 'Хулоса' : 'Вывод по финансам' }}
+            </div>
+            <div class="font-sans text-[14px] font-medium text-carbon leading-[1.6]">{{ excelInsight }}</div>
           </div>
         </div>
       </div>
@@ -308,6 +697,7 @@ const onDownload = () => {
             {{ selectedCity.populationK.toLocaleString('ru-RU') }}
             <span class="text-[13px] font-medium text-steel-500">{{ lang === 'uz' ? 'минг' : 'тыс.' }}</span>
           </div>
+          <div class="text-[11px] text-steel-500 mt-0.5">{{ lang === 'uz' ? 'шаҳар маркази' : 'жители города' }}</div>
         </div>
         <div>
           <div class="text-[11px] font-semibold uppercase tracking-[0.5px] text-steel-500">{{ lang === 'uz' ? 'Саноат' : 'Промышленность' }}</div>
@@ -315,6 +705,7 @@ const onDownload = () => {
             {{ Math.round(selectedCity.industryBlnUzs).toLocaleString('ru-RU') }}
             <span class="text-[13px] font-medium text-steel-500">{{ lang === 'uz' ? 'млрд сўм' : 'млрд сум' }}</span>
           </div>
+          <div class="text-[11px] text-steel-500 mt-0.5">2024 · +104.3%</div>
         </div>
         <div>
           <div class="text-[11px] font-semibold uppercase tracking-[0.5px] text-steel-500">
@@ -324,15 +715,42 @@ const onDownload = () => {
             {{ (selectedCity.exportsBlnUzs ?? selectedCity.investmentsBlnUzs).toLocaleString('ru-RU') }}
             <span class="text-[13px] font-medium text-steel-500">{{ lang === 'uz' ? 'млрд' : 'млрд' }}</span>
           </div>
+          <div class="text-[11px] text-steel-500 mt-0.5">{{ selectedCity.id === 'margilan' ? (lang === 'uz' ? '2023' : '2023') : (lang === 'uz' ? '2023 · +29.4%' : '2023 · +29.4%') }}</div>
         </div>
         <div>
           <div class="text-[11px] font-semibold uppercase tracking-[0.5px] text-steel-500">{{ lang === 'uz' ? 'Маҳаллалар' : 'Махаллей' }}</div>
           <div class="font-mono text-[20px] font-bold text-carbon mt-1">
             {{ selectedCity.mahallas.toLocaleString('ru-RU') }}
           </div>
+          <div class="text-[11px] text-steel-500 mt-0.5">{{ lang === 'uz' ? 'ўзини ўзи бошқариш' : 'самоуправления' }}</div>
         </div>
       </div>
-      <div class="px-8 pb-7">
+
+      <!-- Regional demographic + social context row -->
+      <div class="px-8 pb-2 grid grid-cols-2 md:grid-cols-4 gap-5 border-t border-rs-border/50 pt-5">
+        <div>
+          <div class="text-[11px] font-semibold uppercase tracking-[0.5px] text-steel-500">{{ lang === 'uz' ? 'Туғилиш (вилоят)' : 'Рождаемость (область)' }}</div>
+          <div class="font-mono text-[20px] font-bold text-carbon mt-1">98 319</div>
+          <div class="text-[11px] text-steel-500 mt-0.5">{{ lang === 'uz' ? '2025 · янги оилалар' : '2025 · новорождённые' }}</div>
+        </div>
+        <div>
+          <div class="text-[11px] font-semibold uppercase tracking-[0.5px] text-steel-500">{{ lang === 'uz' ? 'Никоҳлар (вилоят)' : 'Браки (область)' }}</div>
+          <div class="font-mono text-[20px] font-bold text-carbon mt-1">28 896</div>
+          <div class="text-[11px] text-steel-500 mt-0.5">{{ lang === 'uz' ? '2025' : '2025' }}</div>
+        </div>
+        <div>
+          <div class="text-[11px] font-semibold uppercase tracking-[0.5px] text-steel-500">{{ lang === 'uz' ? 'Шаҳар улуши' : 'Городское население' }}</div>
+          <div class="font-mono text-[20px] font-bold text-carbon mt-1">56.7<span class="text-[13px] font-medium text-steel-500">%</span></div>
+          <div class="text-[11px] text-steel-500 mt-0.5">{{ lang === 'uz' ? 'вилоят бўйича' : 'по области' }}</div>
+        </div>
+        <div>
+          <div class="text-[11px] font-semibold uppercase tracking-[0.5px] text-steel-500">{{ lang === 'uz' ? 'Туман ва шаҳарлар' : 'Районов и городов' }}</div>
+          <div class="font-mono text-[20px] font-bold text-carbon mt-1">15 + 4</div>
+          <div class="text-[11px] text-steel-500 mt-0.5">{{ lang === 'uz' ? 'маъмурий бирликлар' : 'административных единиц' }}</div>
+        </div>
+      </div>
+
+      <div class="px-8 pb-7 pt-5">
         <div class="text-[11px] font-semibold uppercase tracking-[0.5px] text-steel-500 mb-2">
           {{ lang === 'uz' ? 'Тавсия этилган соҳалар' : 'Рекомендуемые отрасли' }}
         </div>
@@ -342,6 +760,45 @@ const onDownload = () => {
             {{ lang === 'uz' ? sec.nameUz : sec.nameRu }}
             <span class="font-mono text-[12px] text-steel-500">{{ sec.blnUzs }} {{ lang === 'uz' ? 'млрд' : 'млрд' }}</span>
           </span>
+        </div>
+
+        <!-- Kindergarten-specific context block -->
+        <div v-if="useFerganaKgOverride"
+             class="mt-5 rounded-[10px] border border-emerald-200 bg-emerald-50/60 px-5 py-4">
+          <div class="flex items-start gap-3">
+            <span class="shrink-0 mt-[2px] inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-500 text-white text-[12px] font-bold">ДОУ</span>
+            <div class="min-w-0">
+              <div class="text-[13px] font-bold text-emerald-800 mb-1">
+                {{ lang === 'uz' ? 'Мактабгача таълим сегменти — шаҳар хусусиятлари' : 'Сегмент дошкольного образования — специфика города' }}
+              </div>
+              <ul class="space-y-[6px]">
+                <li class="flex items-start gap-2 text-[13px] text-carbon leading-[1.55]">
+                  <span class="w-[5px] h-[5px] rounded-full bg-emerald-500 mt-[8px] shrink-0" />
+                  {{ lang === 'uz'
+                    ? 'Фарғона шаҳарда давлат боғчаларида ўринлар танқислиги; хусусий сегмент йиллик ~10–12% ўсмоқда.'
+                    : 'В Фарғона шаҳар хронический дефицит мест в госсадах; частный сегмент растёт на ~10–12% в год.' }}
+                </li>
+                <li class="flex items-start gap-2 text-[13px] text-carbon leading-[1.55]">
+                  <span class="w-[5px] h-[5px] rounded-full bg-emerald-500 mt-[8px] shrink-0" />
+                  {{ lang === 'uz'
+                    ? 'Вилоят бўйича 2025 йил 98 319 туғилиш → келгуси 2–4 йилда ясли (2–3 ёш) талаби кескин ортади.'
+                    : 'По области 98 319 рождений в 2025 → спрос на ясли (2–3 года) в ближайшие 2–4 года резко растёт.' }}
+                </li>
+                <li class="flex items-start gap-2 text-[13px] text-carbon leading-[1.55]">
+                  <span class="w-[5px] h-[5px] rounded-full bg-emerald-500 mt-[8px] shrink-0" />
+                  {{ lang === 'uz'
+                    ? 'Ўртача тўлов 600 000 – 1 200 000 сўм/ой; ўрта синф оилалар учун маҳалла ичидаги боғча устувор.'
+                    : 'Средняя плата 600 000 – 1 200 000 сум/мес; для семей среднего класса приоритетен сад в своей маҳалле.' }}
+                </li>
+                <li class="flex items-start gap-2 text-[13px] text-carbon leading-[1.55]">
+                  <span class="w-[5px] h-[5px] rounded-full bg-emerald-500 mt-[8px] shrink-0" />
+                  {{ lang === 'uz'
+                    ? 'Давлат дастури «Илк қадам» — хусусий ДОУ учун имтиёз ва қисман молиялаштириш.'
+                    : 'Госпрограмма «Илк қадам» — льготы и частичное софинансирование для частных ДОУ.' }}
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -420,109 +877,7 @@ const onDownload = () => {
       </div>
     </section>
 
-    <!-- ═══ SECTION 2 — Credit Products (headline answer) ═══ -->
-    <section class="bg-white border border-rs-border rounded-[12px] overflow-hidden shadow-rs-card">
-      <div
-        class="px-8 py-6"
-        style="background: rgba(215,181,109,0.06); border-bottom: 1px solid rgba(215,181,109,0.15);"
-      >
-        <div class="flex items-center gap-4">
-          <span class="inline-flex items-center justify-center w-9 h-9 rounded-full font-mono text-[15px] font-bold text-white shrink-0 bg-gold-500">2</span>
-          <div>
-            <h2 class="font-sans text-[20px] font-bold text-carbon">{{ t.section5Title }}</h2>
-            <p class="font-sans text-[14px] font-normal text-gray-600 mt-1">{{ t.section5Sub }}</p>
-          </div>
-        </div>
-      </div>
-      <div class="px-8 py-8 space-y-6">
-        <!-- Primary product — live match -->
-        <div v-if="primaryMatch"
-          class="border border-rs-border rounded-[10px] overflow-hidden"
-          style="border-top: 3px solid #D7B56D;"
-        >
-          <div class="px-6 py-5 flex items-center justify-between">
-            <div>
-              <div class="font-sans text-[11px] font-semibold text-gold-500 uppercase tracking-[0.5px] mb-1">
-                {{ primaryMatch.product.tier === 'easy' ? (lang === 'uz' ? 'Енгил маҳсулот' : 'Облегчённый продукт') : (lang === 'uz' ? 'Стандарт маҳсулот' : 'Стандартный продукт') }}
-              </div>
-              <h3 class="font-sans text-[20px] font-bold text-carbon">
-                {{ primaryMatch.product.name[lang] }}
-              </h3>
-            </div>
-            <span class="font-sans text-[12px] font-bold text-emerald-600 bg-emerald-50 rounded-[6px] py-[6px] px-[14px] uppercase tracking-[0.5px]">
-              {{ t.recommendedBadge }}
-            </span>
-          </div>
-          <div class="px-6 pb-6">
-            <div class="divide-y divide-rs-border">
-              <div class="flex gap-6 py-3">
-                <div class="w-44 shrink-0 font-sans text-[11px] font-semibold uppercase tracking-[0.5px] text-steel-500 pt-[2px]">{{ t.rateLabel.replace(':','') }}</div>
-                <div class="font-sans text-[14px] font-medium text-carbon">{{ primaryMatch.product.rateLabel[lang] }}</div>
-              </div>
-              <div class="flex gap-6 py-3">
-                <div class="w-44 shrink-0 font-sans text-[11px] font-semibold uppercase tracking-[0.5px] text-steel-500 pt-[2px]">{{ t.amountLabel.replace(':','') }}</div>
-                <div class="font-sans text-[14px] font-medium text-carbon">{{ primaryMatch.product.amountLabel[lang] }}</div>
-              </div>
-              <div class="flex gap-6 py-3">
-                <div class="w-44 shrink-0 font-sans text-[11px] font-semibold uppercase tracking-[0.5px] text-steel-500 pt-[2px]">{{ t.termLabel.replace(':','') }}</div>
-                <div class="font-sans text-[14px] font-medium text-carbon">{{ primaryMatch.product.termLabel[lang] }}</div>
-              </div>
-              <div class="flex gap-6 py-3">
-                <div class="w-44 shrink-0 font-sans text-[11px] font-semibold uppercase tracking-[0.5px] text-steel-500 pt-[2px]">{{ t.collateralLabel.replace(':','') }}</div>
-                <div class="font-sans text-[14px] font-medium text-carbon">{{ formatProductCollateral(primaryMatch.product) }}</div>
-              </div>
-              <div class="flex gap-6 py-3">
-                <div class="w-44 shrink-0 font-sans text-[11px] font-semibold uppercase tracking-[0.5px] text-steel-500 pt-[2px]">{{ t.purposeLabel.replace(':','') }}</div>
-                <div class="font-sans text-[14px] font-medium text-carbon">{{ primaryMatch.product.purposeLabel[lang] }}</div>
-              </div>
-              <div v-if="primaryMatch.reasons.length" class="flex gap-6 py-3">
-                <div class="w-44 shrink-0 font-sans text-[11px] font-semibold uppercase tracking-[0.5px] text-steel-500 pt-[2px]">{{ t.matchReasons }}</div>
-                <ul class="space-y-1">
-                  <li v-for="r in primaryMatch.reasons" :key="r" class="flex items-start gap-2">
-                    <span class="w-[5px] h-[5px] rounded-full bg-emerald-500 mt-[7px] shrink-0" />
-                    <span class="font-sans text-[13px] text-carbon leading-[1.5]">{{ r }}</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Additional products -->
-        <div v-if="altMatches.length">
-          <div class="font-sans text-[12px] font-semibold uppercase tracking-[1px] text-steel-500 mb-4">
-            {{ t.altProductsLabel }}
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div
-              v-for="m in altMatches" :key="m.product.id"
-              class="border border-rs-border rounded-[10px] py-[14px] px-[18px]"
-            >
-              <div class="font-sans text-[15px] font-semibold text-carbon">{{ m.product.name[lang] }}</div>
-              <div class="font-sans text-[12px] font-normal text-gray-600 mt-[2px]">
-                {{ m.product.tier === 'easy' ? (lang === 'uz' ? 'Енгил' : 'Облегчённый') : (lang === 'uz' ? 'Стандарт' : 'Стандартный') }}
-              </div>
-              <div class="mt-3 space-y-1">
-                <div class="font-sans text-[12px] text-steel-500">
-                  <span class="font-semibold">{{ t.rateLabel }}</span> {{ m.product.rateLabel[lang] }}
-                </div>
-                <div class="font-sans text-[12px] text-steel-500">
-                  <span class="font-semibold">{{ t.amountLabel }}</span> {{ m.product.amountLabel[lang] }}
-                </div>
-                <div class="font-sans text-[12px] text-steel-500">
-                  <span class="font-semibold">{{ t.termLabel }}</span> {{ m.product.termLabel[lang] }}
-                </div>
-              </div>
-              <p class="font-sans text-[12px] font-normal text-gray-600 mt-2 leading-[1.4]">{{ m.product.purposeLabel[lang] }}</p>
-            </div>
-          </div>
-        </div>
-
-        <p class="font-sans text-[12px] text-steel-500 italic">{{ t.catalogNote }}</p>
-      </div>
-    </section>
-
-    <!-- ═══ SECTION 3 — SWOT ═══ -->
+    <!-- ═══ SECTION 2 — SWOT ═══ -->
     <section class="bg-white border border-rs-border rounded-[12px] overflow-hidden shadow-rs-card">
       <div
         class="px-8 py-6"
@@ -530,7 +885,7 @@ const onDownload = () => {
       >
         <div class="flex items-center justify-between gap-4">
           <div class="flex items-center gap-4">
-            <span class="inline-flex items-center justify-center w-9 h-9 rounded-full font-mono text-[15px] font-bold text-white shrink-0 bg-navy-900">3</span>
+            <span class="inline-flex items-center justify-center w-9 h-9 rounded-full font-mono text-[15px] font-bold text-white shrink-0 bg-navy-900">2</span>
             <div>
               <h2 class="font-sans text-[20px] font-bold text-carbon">{{ t.section2Title }}</h2>
               <p class="font-sans text-[14px] font-normal text-gray-600 mt-1">{{ t.section2Sub }}</p>
@@ -562,18 +917,26 @@ const onDownload = () => {
       </div>
     </section>
 
-    <!-- ═══ SECTION 4 — Mahalla Heatmap (Margilan pilot only) ═══ -->
-    <section v-if="isMargilan" class="bg-white border border-rs-border rounded-[12px] overflow-hidden shadow-rs-card">
+    <!-- ═══ SECTION 3 — Geographic Heatmap (Margilan or Fergana) ═══ -->
+    <section v-if="isMargilan || isFergana" class="bg-white border border-rs-border rounded-[12px] overflow-hidden shadow-rs-card">
       <div
         class="px-8 py-6"
         style="background: rgba(215,181,109,0.04); border-bottom: 1px solid rgba(215,181,109,0.12);"
       >
         <div class="flex items-center justify-between gap-4">
           <div class="flex items-center gap-4">
-            <span class="inline-flex items-center justify-center w-9 h-9 rounded-full font-mono text-[15px] font-bold text-white shrink-0 bg-gold-500">4</span>
+            <span class="inline-flex items-center justify-center w-9 h-9 rounded-full font-mono text-[15px] font-bold text-white shrink-0 bg-gold-500">3</span>
             <div>
-              <h2 class="font-sans text-[20px] font-bold text-carbon">{{ t.section3Title }}</h2>
-              <p class="font-sans text-[14px] font-normal text-gray-600 mt-1">{{ t.section3Sub }}</p>
+              <h2 class="font-sans text-[20px] font-bold text-carbon">
+                {{ isFergana
+                  ? (lang === 'uz' ? 'Фарғона вилояти — имкониятлар харитаси' : 'Ферганская область — карта возможностей')
+                  : t.section3Title }}
+              </h2>
+              <p class="font-sans text-[14px] font-normal text-gray-600 mt-1">
+                {{ isFergana
+                  ? (lang === 'uz' ? 'Ҳар бир туман учун балл, аҳоли, рақобат ва вердикт' : 'По каждому району — балл, население, конкуренция и вердикт')
+                  : t.section3Sub }}
+              </p>
             </div>
           </div>
           <span class="shrink-0 inline-flex text-[11px] font-bold uppercase tracking-[0.5px] text-gold-500 bg-gold-500/10 rounded-[6px] py-1 px-2">
@@ -582,10 +945,18 @@ const onDownload = () => {
         </div>
       </div>
       <div class="px-8 py-8 space-y-6">
-        <RsMargilanHeatmap :ranking="t.MAHALLA_RANKING" />
+        <RsMargilanHeatmap v-if="isMargilan" :ranking="t.MAHALLA_RANKING" />
+        <RsFerganaHeatmap v-else :direction="finance.businessDirection" />
 
-        <RsInsightBox variant="info" :title="t.locationInsightTitle">
+        <RsInsightBox v-if="isMargilan || useFerganaKgOverride" variant="info" :title="t.locationInsightTitle">
           {{ t.locationInsightText }}
+        </RsInsightBox>
+        <RsInsightBox v-else variant="info"
+          :title="lang === 'uz' ? 'Ферғона вилояти учун тавсия' : 'Что это значит для вашего бизнеса в Фергане'"
+        >
+          {{ lang === 'uz'
+            ? 'Фарғона шаҳри — вилоят маркази, 328 409 аҳоли, саноат маҳсулоти 8 587 млрд сўм (2024). Вилоят бўйича 2025 йилда 98 319 туғилиш, 28 896 никоҳ — истеъмол бозори барқарор ўсмоқда. Ўз бизнесингиз жойлашган туманни юқоридаги рейтингда кўринг.'
+            : 'Фарғона шаҳар — столица области с 328 409 жителей и промышленной продукцией 8 587 млрд сум (2024). За 2025 год в области 98 319 рождений и 28 896 браков — потребительский рынок стабильно растёт. Найдите ваш район в рейтинге выше — он учитывает население, плотность бизнеса и конкуренцию.' }}
         </RsInsightBox>
       </div>
     </section>
@@ -598,7 +969,7 @@ const onDownload = () => {
       >
         <div class="flex items-center justify-between gap-4">
           <div class="flex items-center gap-4">
-            <span class="inline-flex items-center justify-center w-9 h-9 rounded-full font-mono text-[15px] font-bold text-white shrink-0 bg-navy-900">5</span>
+            <span class="inline-flex items-center justify-center w-9 h-9 rounded-full font-mono text-[15px] font-bold text-white shrink-0 bg-navy-900">4</span>
             <div>
               <h2 class="font-sans text-[20px] font-bold text-carbon">{{ t.section4Title }}</h2>
               <p class="font-sans text-[14px] font-normal text-gray-600 mt-1">{{ t.section4Sub }}</p>
@@ -699,6 +1070,114 @@ const onDownload = () => {
           </div>
           <p class="font-sans text-[12px] text-steel-500 mt-2 italic">{{ t.breakeven }}</p>
         </div>
+      </div>
+    </section>
+
+    <!-- ═══ SECTION 5 — NBU Credit Products (climactic recommendation) ═══ -->
+    <section class="bg-white border border-rs-border rounded-[12px] overflow-hidden shadow-rs-card">
+      <div
+        class="px-8 py-6"
+        style="background: rgba(215,181,109,0.08); border-bottom: 1px solid rgba(215,181,109,0.2);"
+      >
+        <div class="flex items-center gap-4">
+          <span class="inline-flex items-center justify-center w-9 h-9 rounded-full font-mono text-[15px] font-bold text-white shrink-0 bg-gold-500">5</span>
+          <div>
+            <h2 class="font-sans text-[20px] font-bold text-carbon">
+              {{ lang === 'uz' ? 'Сизга тавсия қилинган NBU маҳсулотлари' : 'Рекомендуемые продукты NBU для вас' }}
+            </h2>
+            <p class="font-sans text-[14px] font-normal text-gray-600 mt-1">
+              {{ lang === 'uz'
+                ? 'Сиз киритган профил, молиявий ҳолат ва Excel маълумотлари асосида танланган'
+                : 'Подобрано по вашему профилю, финансам и данным из загруженных Excel-файлов' }}
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="px-8 py-8 space-y-6">
+        <!-- Primary product — live match -->
+        <div v-if="primaryMatch"
+          class="border border-rs-border rounded-[10px] overflow-hidden"
+          style="border-top: 3px solid #D7B56D;"
+        >
+          <div class="px-6 py-5 flex items-center justify-between">
+            <div>
+              <div class="font-sans text-[11px] font-semibold text-gold-500 uppercase tracking-[0.5px] mb-1">
+                {{ primaryMatch.product.tier === 'easy' ? (lang === 'uz' ? 'Енгил маҳсулот' : 'Облегчённый продукт') : (lang === 'uz' ? 'Стандарт маҳсулот' : 'Стандартный продукт') }}
+              </div>
+              <h3 class="font-sans text-[20px] font-bold text-carbon">
+                {{ primaryMatch.product.name[lang] }}
+              </h3>
+            </div>
+            <span class="font-sans text-[12px] font-bold text-emerald-600 bg-emerald-50 rounded-[6px] py-[6px] px-[14px] uppercase tracking-[0.5px]">
+              {{ t.recommendedBadge }}
+            </span>
+          </div>
+          <div class="px-6 pb-6">
+            <div class="divide-y divide-rs-border">
+              <div class="flex gap-6 py-3">
+                <div class="w-44 shrink-0 font-sans text-[11px] font-semibold uppercase tracking-[0.5px] text-steel-500 pt-[2px]">{{ t.rateLabel.replace(':','') }}</div>
+                <div class="font-sans text-[14px] font-medium text-carbon">{{ primaryMatch.product.rateLabel[lang] }}</div>
+              </div>
+              <div class="flex gap-6 py-3">
+                <div class="w-44 shrink-0 font-sans text-[11px] font-semibold uppercase tracking-[0.5px] text-steel-500 pt-[2px]">{{ t.amountLabel.replace(':','') }}</div>
+                <div class="font-sans text-[14px] font-medium text-carbon">{{ primaryMatch.product.amountLabel[lang] }}</div>
+              </div>
+              <div class="flex gap-6 py-3">
+                <div class="w-44 shrink-0 font-sans text-[11px] font-semibold uppercase tracking-[0.5px] text-steel-500 pt-[2px]">{{ t.termLabel.replace(':','') }}</div>
+                <div class="font-sans text-[14px] font-medium text-carbon">{{ primaryMatch.product.termLabel[lang] }}</div>
+              </div>
+              <div class="flex gap-6 py-3">
+                <div class="w-44 shrink-0 font-sans text-[11px] font-semibold uppercase tracking-[0.5px] text-steel-500 pt-[2px]">{{ t.collateralLabel.replace(':','') }}</div>
+                <div class="font-sans text-[14px] font-medium text-carbon">{{ formatProductCollateral(primaryMatch.product) }}</div>
+              </div>
+              <div class="flex gap-6 py-3">
+                <div class="w-44 shrink-0 font-sans text-[11px] font-semibold uppercase tracking-[0.5px] text-steel-500 pt-[2px]">{{ t.purposeLabel.replace(':','') }}</div>
+                <div class="font-sans text-[14px] font-medium text-carbon">{{ primaryMatch.product.purposeLabel[lang] }}</div>
+              </div>
+              <div v-if="primaryMatch.reasons.length" class="flex gap-6 py-3">
+                <div class="w-44 shrink-0 font-sans text-[11px] font-semibold uppercase tracking-[0.5px] text-steel-500 pt-[2px]">{{ t.matchReasons }}</div>
+                <ul class="space-y-1">
+                  <li v-for="r in primaryMatch.reasons" :key="r" class="flex items-start gap-2">
+                    <span class="w-[5px] h-[5px] rounded-full bg-emerald-500 mt-[7px] shrink-0" />
+                    <span class="font-sans text-[13px] text-carbon leading-[1.5]">{{ r }}</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Additional products -->
+        <div v-if="altMatches.length">
+          <div class="font-sans text-[12px] font-semibold uppercase tracking-[1px] text-steel-500 mb-4">
+            {{ t.altProductsLabel }}
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div
+              v-for="m in altMatches" :key="m.product.id"
+              class="border border-rs-border rounded-[10px] py-[14px] px-[18px]"
+            >
+              <div class="font-sans text-[15px] font-semibold text-carbon">{{ m.product.name[lang] }}</div>
+              <div class="font-sans text-[12px] font-normal text-gray-600 mt-[2px]">
+                {{ m.product.tier === 'easy' ? (lang === 'uz' ? 'Енгил' : 'Облегчённый') : (lang === 'uz' ? 'Стандарт' : 'Стандартный') }}
+              </div>
+              <div class="mt-3 space-y-1">
+                <div class="font-sans text-[12px] text-steel-500">
+                  <span class="font-semibold">{{ t.rateLabel }}</span> {{ m.product.rateLabel[lang] }}
+                </div>
+                <div class="font-sans text-[12px] text-steel-500">
+                  <span class="font-semibold">{{ t.amountLabel }}</span> {{ m.product.amountLabel[lang] }}
+                </div>
+                <div class="font-sans text-[12px] text-steel-500">
+                  <span class="font-semibold">{{ t.termLabel }}</span> {{ m.product.termLabel[lang] }}
+                </div>
+              </div>
+              <p class="font-sans text-[12px] font-normal text-gray-600 mt-2 leading-[1.4]">{{ m.product.purposeLabel[lang] }}</p>
+            </div>
+          </div>
+        </div>
+
+        <p class="font-sans text-[12px] text-steel-500 italic">{{ t.catalogNote }}</p>
       </div>
     </section>
 

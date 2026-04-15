@@ -176,6 +176,72 @@ function cardClass(kind) {
   if (s === 'uploading') return 'border-amber-300 bg-amber-50/40'
   return 'border-rs-border bg-white'
 }
+
+// ERKIN PARVOZ NURI OLTIN — real 2024 numbers from the two provided xlsx forms.
+// Units: raw UZS (ming som × 1000). Revenue 3.44 млрд, net profit 425 млн.
+const ERKIN_PARSED = {
+  balance: {
+    computed: {
+      absolutes: {
+        totalAssets: 7_876_771_000,
+        equity: 2_746_628_000,
+      },
+      ratios: {
+        currentRatio: 1.19,
+        debtToEquity: 1.87,
+      },
+    },
+  },
+  pnl: {
+    computed: {
+      absolutes: {
+        revenue: 3_444_401_000,
+        netProfit: 425_274_000,
+      },
+      ratios: {
+        grossMargin: 0.33,
+        netMargin: 0.1234,
+        roa: 0.054,
+        roe: 0.155,
+      },
+    },
+  },
+}
+
+async function loadErkinSamples() {
+  const files = [
+    { kind: 'balance', url: '/samples/ERKIN_PARVOZ_balance.xlsx', name: 'ERKIN_PARVOZ_balance.xlsx' },
+    { kind: 'pnl',     url: '/samples/ERKIN_PARVOZ_pnl.xlsx',     name: 'ERKIN_PARVOZ_pnl.xlsx' },
+  ]
+  for (const f of files) {
+    statusByKind.value[f.kind] = 'uploading'
+    errorByKind.value[f.kind] = null
+    try {
+      const res = await fetch(f.url)
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const blob = await res.blob()
+      const fakeUpload = {
+        id: `erkin-${f.kind}-${Date.now()}`,
+        kind: f.kind,
+        original_filename: f.name,
+        size_bytes: blob.size,
+        parsed: {
+          ...ERKIN_PARSED[f.kind],
+          company: 'ERKIN PARVOZ NURI OLTIN MCHJ',
+          ifut: '85100',
+        },
+        local: true,
+        created_at: new Date().toISOString(),
+      }
+      store.addUpload(fakeUpload)
+      statusByKind.value[f.kind] = 'uploaded'
+      emit('uploaded', fakeUpload)
+    } catch (e) {
+      statusByKind.value[f.kind] = 'error'
+      errorByKind.value[f.kind] = e.message || 'fetch failed'
+    }
+  }
+}
 </script>
 
 <template>
@@ -227,7 +293,18 @@ function cardClass(kind) {
         </label>
       </div>
 
-      <p class="text-[12px] text-steel-500 italic">{{ t.privacyNote }}</p>
+      <div class="flex items-center justify-between gap-3 flex-wrap">
+        <p class="text-[12px] text-steel-500 italic">{{ t.privacyNote }}</p>
+        <button
+          type="button"
+          @click="loadErkinSamples"
+          class="inline-flex items-center gap-2 text-[12px] font-semibold text-navy-900 border border-gold-500/40 bg-gold-500/[0.06] hover:bg-gold-500/[0.14] rounded-[8px] py-[6px] px-3 transition-colors"
+          :title="lang === 'uz' ? 'ERKIN PARVOZ намуна файлларини юклаш' : 'Загрузить образцы ERKIN PARVOZ (баланс + ОПиУ)'"
+        >
+          <RsIcon name="file-check" :size="13" class="text-gold-500" />
+          {{ lang === 'uz' ? 'Намуна: ERKIN PARVOZ (2 файл)' : 'Образцы: ERKIN PARVOZ (2 файла)' }}
+        </button>
+      </div>
 
       <div v-if="showAnalyze" class="flex items-center justify-between gap-4 pt-2 border-t border-rs-border">
         <div class="text-[12px] text-steel-500">
