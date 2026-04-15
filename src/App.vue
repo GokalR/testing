@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { RouterView, useRoute } from 'vue-router'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import FinControlLayout from '@/layouts/FinControlLayout.vue'
+import RegionalStrategistLayout from '@/layouts/RegionalStrategistLayout.vue'
 
 const route = useRoute()
 const layout = computed(() => route.meta?.layout || 'default')
@@ -16,6 +17,14 @@ const layout = computed(() => route.meta?.layout || 'default')
       </transition>
     </RouterView>
   </FinControlLayout>
+
+  <RegionalStrategistLayout v-else-if="layout === 'regionalStrategist'">
+    <RouterView v-slot="{ Component, route: r }">
+      <transition name="fade" mode="out-in">
+        <component :is="Component" :key="r.fullPath" />
+      </transition>
+    </RouterView>
+  </RegionalStrategistLayout>
 
   <RouterView v-else-if="layout === 'blank'" v-slot="{ Component, route: r }">
     <transition name="fade" mode="out-in">

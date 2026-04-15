@@ -85,6 +85,18 @@ const routes = [
     component: () => import('@/views/fincontrol/FinControlAiView.vue'),
     meta: { layout: 'fincontrol' },
   },
+  {
+    path: '/tools/regional-strategist',
+    name: 'regional-strategist',
+    component: () => import('@/views/regionalStrategist/RsHomeView.vue'),
+    meta: { layout: 'regionalStrategist', titleKey: 'nav.regionalStrategist' },
+  },
+  {
+    path: '/tools/regional-strategist/test',
+    name: 'regional-strategist-test',
+    component: () => import('@/views/regionalStrategist/RsBusinessTestView.vue'),
+    meta: { layout: 'regionalStrategist', titleKey: 'nav.regionalStrategist' },
+  },
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ]
 

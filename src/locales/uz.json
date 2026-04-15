@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "NBU Analytics — Farg'ona viloyati",
+    "title": "NBU Viloyatlar bo'yicha tahlil",
     "brand": "NBU AI",
     "brandSub": "Analitika platformasi",
     "year": "2024"
@@ -10,6 +10,7 @@
     "districts": "Tumanlar tahlili",
     "ai": "AI Maslahatchi",
     "tools": "Biznes AI vositalari",
+    "regionalStrategist": "Ҳудудий стратег",
     "support": "Yordam",
     "signOut": "Chiqish"
   },

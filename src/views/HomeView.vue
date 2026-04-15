@@ -15,6 +15,8 @@ const router = useRouter()
 
 const selected = ref(null) // null = whole country
 const sidebarMode = ref('population') // 'population' | 'specialization'
+const selectedYear = ref(2025)
+const availableYears = [2021, 2022, 2023, 2024, 2025]
 
 const selectedSpec = computed(() => {
   if (!selected.value) return null
@@ -201,6 +203,16 @@ const sortedRegions = computed(() =>
             <AppIcon name="restart_alt" />
             {{ t('home.map.reset') }}
           </button>
+          <div class="inline-flex items-center gap-1 bg-surface-container-lowest border border-outline-variant/40 rounded-lg px-2 py-1">
+            <AppIcon name="calendar_today" class="!text-[14px] text-on-surface-variant" />
+            <select
+              v-model="selectedYear"
+              class="bg-transparent text-xs font-bold text-on-surface focus:outline-none cursor-pointer pr-1"
+              aria-label="Year"
+            >
+              <option v-for="y in availableYears" :key="y" :value="y">{{ y }}</option>
+            </select>
+          </div>
           <button
             v-if="selected"
             type="button"

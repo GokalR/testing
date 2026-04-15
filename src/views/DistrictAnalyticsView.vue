@@ -309,7 +309,8 @@ const threatLevelClass = (level) => {
             <tr
               v-for="(d, i) in districts"
               :key="d.key"
-              class="cursor-pointer"
+              class="cursor-pointer da-kind-row"
+              :class="d.kind === 'city' ? 'is-city' : 'is-district'"
               @click="selectDistrict(d.key)"
             >
               <td class="da-mono text-slate-400 font-bold">{{ (i + 1).toString().padStart(2, '0') }}</td>

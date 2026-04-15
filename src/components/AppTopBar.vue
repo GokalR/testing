@@ -11,11 +11,6 @@ import LanguageSwitcher from './LanguageSwitcher.vue'
       <h1 class="text-xl font-bold tracking-tight text-blue-900">
         {{ $t('app.title') }}
       </h1>
-      <span
-        class="px-3 py-1 bg-secondary-container text-on-secondary-fixed text-xs font-bold rounded-full"
-      >
-        {{ $t('app.year') }}
-      </span>
     </div>
 
     <div class="flex items-center gap-6">
