@@ -17,6 +17,8 @@ const messages = ref([
   },
 ])
 
+const isThinking = ref(false)
+
 const SUGGESTION_TO_ANSWER = {
   'ai.suggestions.q1': 'ai.answers.q1',
   'ai.suggestions.q2': 'ai.answers.q2',
@@ -38,13 +40,18 @@ async function send() {
   await nextTick()
   messagesContainer.value?.scrollTo({ top: 1e9, behavior: 'smooth' })
   const predefined = answerFor(text)
+  isThinking.value = true
+  await nextTick()
+  messagesContainer.value?.scrollTo({ top: 1e9, behavior: 'smooth' })
+  const delay = 1200 + Math.floor(Math.random() * 1800)
   setTimeout(() => {
+    isThinking.value = false
     messages.value.push({
       role: 'assistant',
       text: predefined || 'Tahlil tayyorlanmoqda... (demo javob)',
     })
     nextTick(() => messagesContainer.value?.scrollTo({ top: 1e9, behavior: 'smooth' }))
-  }, predefined ? 700 : 400)
+  }, delay)
 }
 
 const suggestions = ['ai.suggestions.q1', 'ai.suggestions.q2', 'ai.suggestions.q3']
@@ -110,6 +117,14 @@ function ask(key) {
               {{ m.text }}
             </div>
           </div>
+
+          <div v-if="isThinking" class="flex justify-start">
+            <div class="bg-surface-container text-on-surface rounded-xl rounded-tl-sm px-4 py-3 flex items-center gap-1.5">
+              <span class="thinking-dot" style="animation-delay: 0ms" />
+              <span class="thinking-dot" style="animation-delay: 200ms" />
+              <span class="thinking-dot" style="animation-delay: 400ms" />
+            </div>
+          </div>
         </div>
         <form
           class="border-t border-outline-variant/20 p-4 flex items-center gap-3"
@@ -151,3 +166,18 @@ function ask(key) {
     </div>
   </section>
 </template>
+
+<style scoped>
+.thinking-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background-color: currentColor;
+  opacity: 0.4;
+  animation: thinking-bounce 1.2s infinite ease-in-out;
+}
+@keyframes thinking-bounce {
+  0%, 80%, 100% { transform: scale(0.7); opacity: 0.35; }
+  40%          { transform: scale(1);   opacity: 0.9;  }
+}
+</style>
