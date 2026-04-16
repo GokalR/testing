@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>P&L Отчёт — FinControl | NBU Institutional</title>
+<meta name="description" content="Управленческий P&L отчёт компании в FinControl, NBU Institutional Uzbekistan"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#003D7C;--accent:#0054A6;--green:#00A651;--red:#E0384B;
+  --amber:#F59E0B;--amber-dark:#B45309;--amber-bg:#FFFBEB;--amber-border:#FCD34D;
+  --slate:#64748B;--bg:#F7F9FB;--card:#fff;
+  --border:#DDE3EE;--muted:#6B7A99;--text:#1A2B4A;
+  --sidebar-w:256px;--header-h:64px;
+  --radius:14px;
+  --shadow:0 2px 16px rgba(0,61,124,.08),0 1px 3px rgba(0,61,124,.05);
+  --shadow-md:0 4px 28px rgba(0,61,124,.13),0 1px 4px rgba(0,61,124,.06);
+}
+html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+.app{display:flex;height:100vh;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar-w);flex-shrink:0;background:rgba(255,255,255,.85);backdrop-filter:blur(20px);border-right:1px solid rgba(221,227,238,.7);display:flex;flex-direction:column;height:100vh;overflow:hidden;position:relative;z-index:10}
+.sidebar::before{content:'';position:absolute;inset:0;background:linear-gradient(175deg,rgba(0,61,124,.03) 0%,transparent 60%);pointer-events:none}
+.sb-back{display:flex;align-items:center;gap:7px;padding:16px 20px 12px;font-size:12.5px;font-weight:600;color:var(--muted);text-decoration:none;cursor:pointer;transition:color .2s;border-bottom:1px solid var(--border)}
+.sb-back:hover{color:var(--navy)}
+.sb-brand{padding:18px 20px 14px;display:flex;align-items:center;gap:11px;border-bottom:1px solid var(--border)}
+.sb-brand-icon{width:38px;height:38px;flex-shrink:0;background:linear-gradient(135deg,#F59E0B,#F97316);border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(245,158,11,.3)}
+.sb-brand-text .name{font-family:'Manrope',sans-serif;font-weight:800;font-size:15px;color:var(--navy)}
+.sb-brand-text .sub{font-size:11px;color:var(--muted);font-weight:500;margin-top:1px}
+.sb-nav{flex:1;overflow-y:auto;padding:10px;scrollbar-width:none}
+.sb-nav::-webkit-scrollbar{display:none}
+.sb-nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;font-size:13.5px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .18s;position:relative;margin-bottom:1px;border:1.5px solid transparent}
+.sb-nav-item:hover{background:#F0F4FA;color:var(--text)}
+.sb-nav-item.active{background:linear-gradient(90deg,rgba(0,84,166,.1),rgba(0,84,166,.05));color:var(--accent);font-weight:600;border-color:rgba(0,84,166,.18)}
+.sb-nav-item.active::before{content:'';position:absolute;left:-10px;top:50%;transform:translateY(-50%);width:3px;height:20px;background:var(--accent);border-radius:0 3px 3px 0}
+.sb-nav-item .nav-icon{width:18px;height:18px;flex-shrink:0;opacity:.65}
+.sb-nav-item.active .nav-icon,.sb-nav-item.ai .nav-icon{opacity:1}
+.sb-divider{height:1px;background:var(--border);margin:8px 4px}
+.sb-nav-item.ai{background:linear-gradient(90deg,rgba(245,158,11,.1),rgba(245,158,11,.05));color:#B45309;font-weight:600;border-color:rgba(245,158,11,.25)}
+.sb-footer{padding:12px 10px;border-top:1px solid var(--border)}
+
+/* ── MAIN ── */
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column;min-width:0}
+.main::-webkit-scrollbar{width:5px}
+.main::-webkit-scrollbar-thumb{background:rgba(0,61,124,.15);border-radius:5px}
+
+/* ── HEADER ── */
+.header{height:var(--header-h);background:rgba(255,255,255,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;padding:0 26px;position:sticky;top:0;z-index:20;flex-shrink:0}
+.header-title{font-family:'Manrope',sans-serif;font-size:17px;font-weight:800;color:var(--navy);white-space:nowrap;margin-right:auto}
+.period-pills{display:flex;gap:4px}
+.period-pill{padding:5px 13px;border-radius:20px;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .18s;background:transparent;color:var(--muted);border:1.5px solid transparent}
+.period-pill.active{background:var(--navy);color:#fff;box-shadow:0 2px 8px rgba(0,61,124,.2)}
+.period-pill:not(.active):hover{background:#F0F4FA;color:var(--text)}
+.hdr-actions{display:flex;align-items:center;gap:7px}
+.hdr-btn{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:9px;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s;border:1.5px solid;white-space:nowrap}
+.hdr-btn-pdf{background:#fff;border-color:var(--navy);color:var(--navy)}
+.hdr-btn-pdf:hover{background:#EEF4FF;border-color:var(--accent);color:var(--accent)}
+.hdr-btn-xlsx{background:#fff;border-color:var(--green);color:var(--green)}
+.hdr-btn-xlsx:hover{background:#E6F7EE;color:#007A3D}
+.icon-btn{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:#F0F4FA;border:none;cursor:pointer;color:var(--muted);position:relative;transition:all .18s}
+.icon-btn:hover{background:#E8EDF6;color:var(--navy)}
+.notif-dot{position:absolute;top:7px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--red);border:1.5px solid #fff}
+.avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--accent));display:flex;align-items:center;justify-content:center;font-family:'Manrope',sans-serif;font-weight:700;font-size:13px;color:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(0,61,124,.25)}
+
+/* ── CONTENT ── */
+.content{padding:22px 26px 48px}
+
+/* ── AMBER BANNER ── */
+.amber-banner{display:flex;align-items:center;gap:12px;background:var(--amber-bg);border:1.5px solid var(--amber-border);border-radius:12px;padding:13px 16px;margin-bottom:20px;animation:fadeDown .4s ease both}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.amber-banner svg{flex-shrink:0}
+.amber-banner-text{flex:1;font-size:13px;font-weight:500;color:#78350F;line-height:1.5}
+.banner-close{width:28px;height:28px;border-radius:7px;border:none;background:rgba(245,158,11,.15);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--amber-dark);flex-shrink:0;transition:all .18s}
+.banner-close:hover{background:rgba(245,158,11,.28)}
+
+/* ── KPI STRIP ── */
+.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.kpi-card{background:var(--card);border-radius:var(--radius);padding:18px 20px 16px;box-shadow:var(--shadow);border:1px solid rgba(221,227,238,.7);position:relative;overflow:hidden;transition:box-shadow .2s,transform .2s}
+.kpi-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.kpi-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.kc-g::after{background:linear-gradient(90deg,#00A651,#4ADE80)}
+.kc-n::after{background:linear-gradient(90deg,#003D7C,#0054A6)}
+.kc-a::after{background:linear-gradient(90deg,#F59E0B,#FCD34D)}
+.kpi-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.kpi-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.kpi-badges{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;white-space:nowrap}
+.b-g{background:#E6F7EE;color:#00854A}
+.b-n{background:#EEF4FF;color:var(--accent)}
+.b-a{background:#FEF3C7;color:#92400E}
+.b-r{background:#FEE2E5;color:#C0273A}
+.kpi-label{font-size:12px;color:var(--muted);font-weight:500;margin-bottom:3px}
+.kpi-val{font-family:'Manrope',sans-serif;font-size:21px;font-weight:900;letter-spacing:-.5px;line-height:1;margin-bottom:4px}
+.kpi-val .u{font-size:12px;font-weight:600;color:var(--muted);margin-left:3px;letter-spacing:0}
+.kpi-sub{font-size:11.5px;color:var(--muted);font-weight:500}
+.kpi-spark{height:38px;margin-top:12px}
+/* tooltip */
+.tooltip-wrap{position:relative;display:inline-flex;align-items:center;cursor:help}
+.tooltip-wrap:hover .tooltip-box{opacity:1;visibility:visible;transform:translateY(0)}
+.tooltip-box{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%) translateY(4px);background:rgba(0,25,60,.92);color:#fff;font-size:11px;font-weight:500;padding:6px 10px;border-radius:8px;white-space:nowrap;pointer-events:none;opacity:0;visibility:hidden;transition:all .18s;z-index:99;line-height:1.5}
+.tooltip-box::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:rgba(0,25,60,.92)}
+
+/* ── MAIN GRID ── */
+.main-grid{display:grid;grid-template-columns:7fr 5fr;gap:16px;margin-bottom:18px}
+
+/* ── P&L TABLE ── */
+.widget{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(221,227,238,.7);overflow:hidden}
+.widget-header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px 14px;border-bottom:1px solid rgba(221,227,238,.5);gap:10px;flex-wrap:wrap}
+.widget-title{font-family:'Manrope',sans-serif;font-size:14.5px;font-weight:800;color:var(--navy)}
+.widget-sub{font-size:11.5px;color:var(--muted);margin-top:1px}
+
+.pl-table{width:100%;border-collapse:collapse}
+.pl-table th{text-align:right;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--muted);padding:0 16px 12px;border-bottom:1.5px solid var(--border)}
+.pl-table th:first-child{text-align:left;padding-left:0}
+.pl-table th:last-child{padding-right:0}
+
+/* section header row */
+.pl-table tr.section-hdr-row td{background:#F7F9FB;padding:8px 16px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);border-top:1.5px solid var(--border)}
+.pl-table tr.section-hdr-row td:first-child{padding-left:0;border-radius:6px 0 0 6px}
+.pl-table tr.section-hdr-row td:last-child{border-radius:0 6px 6px 0;padding-right:0}
+
+/* normal rows */
+.pl-table td{padding:10px 16px;font-size:13px;border-bottom:1px solid rgba(221,227,238,.5);vertical-align:middle;white-space:nowrap}
+.pl-table td:first-child{padding-left:0;font-weight:600;color:var(--text);width:45%}
+.pl-table td:last-child{padding-right:0}
+.pl-table tr:hover td{background:#F7FAFF;cursor:pointer}
+
+/* sub-rows (indented) */
+.pl-table tr.sub td:first-child{padding-left:18px;font-weight:400;color:var(--muted);font-size:12.5px}
+
+/* result rows */
+.pl-table tr.result-g td{background:linear-gradient(90deg,rgba(0,84,166,.07),rgba(0,84,166,.04));font-weight:700}
+.pl-table tr.result-g td:first-child{color:var(--navy);font-weight:800;font-family:'Manrope',sans-serif}
+.pl-table tr.result-a td{background:linear-gradient(90deg,rgba(245,158,11,.1),rgba(245,158,11,.05));border-left:3px solid var(--amber)}
+.pl-table tr.result-a td:first-child{color:var(--amber-dark);font-weight:800;font-family:'Manrope',sans-serif}
+.pl-table tr.result-b td{background:linear-gradient(90deg,rgba(0,61,124,.05),rgba(0,61,124,.02))}
+.pl-table tr.result-b td:first-child{color:var(--navy);font-weight:700;font-family:'Manrope',sans-serif}
+.pl-table tr:last-child td{border-bottom:none}
+
+.amt{font-family:'Manrope',sans-serif;font-size:13.5px;font-weight:700;text-align:right;color:var(--text)}
+.amt.neg{color:var(--red)}
+.amt.res{color:var(--navy);font-size:14px;font-weight:900}
+.amt.res-a{color:var(--amber-dark);font-size:14px;font-weight:900}
+.delta{font-size:12px;font-weight:700;text-align:right;padding:10px 0 10px 16px}
+.delta.up{color:var(--green)}
+.delta.dn{color:var(--red)}
+.delta.neutral{color:var(--muted)}
+.est-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;background:#FEF3C7;color:#92400E;vertical-align:middle;margin-left:5px}
+.cat-badge{font-size:10.5px;font-weight:600;padding:2px 7px;border-radius:10px;vertical-align:middle;margin-left:5px}
+.click-hint{font-size:10px;color:var(--muted);margin-left:4px;opacity:0;transition:opacity .18s}
+.pl-table tr:hover .click-hint{opacity:1}
+
+/* ── TREND CHART ── */
+.chart-wrap{height:260px;position:relative}
+.legend-row{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.leg{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--muted)}
+.leg-dot{width:10px;height:3px;border-radius:3px;flex-shrink:0}
+.leg-dot.dashed{background:repeating-linear-gradient(90deg,currentColor 0 4px,transparent 4px 7px)}
+
+/* ── SLIDE-IN PANEL ── */
+.overlay{position:fixed;inset:0;background:rgba(0,25,60,.28);backdrop-filter:blur(2px);z-index:40;transition:opacity .3s}
+.overlay.hidden{opacity:0;pointer-events:none}
+.slide-panel{position:fixed;top:0;right:0;bottom:0;width:396px;background:#fff;box-shadow:-8px 0 48px rgba(0,61,124,.18);z-index:50;display:flex;flex-direction:column;transform:translateX(0);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+.slide-panel.hidden{transform:translateX(100%)}
+.panel-hdr{padding:20px 22px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.panel-title{font-family:'Manrope',sans-serif;font-size:16px;font-weight:800;color:var(--navy);margin-bottom:2px;display:flex;align-items:center;gap:8px}
+.panel-sub{font-size:12px;color:var(--muted);font-weight:500}
+.panel-close{position:absolute;top:18px;right:18px;width:30px;height:30px;border-radius:8px;border:none;background:#F0F4FA;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all .18s}
+.panel-close:hover{background:#E8EDF6;color:var(--navy)}
+
+.ai-insight{margin:14px 22px;padding:13px 14px;background:linear-gradient(135deg,#FFFBEB,#FFF9E6);border:1.5px solid var(--amber-border);border-radius:11px;display:flex;gap:10px}
+.ai-insight-icon{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#F59E0B,#F97316);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ai-insight-text{font-size:12.5px;color:#78350F;line-height:1.55;font-weight:500}
+.ai-insight-text strong{font-weight:700}
+
+.panel-body{flex:1;overflow-y:auto;padding:0 22px 14px;scrollbar-width:thin}
+.panel-section-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:14px 0 10px}
+.panel-tx{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid rgba(221,227,238,.5)}
+.panel-tx:last-child{border-bottom:none}
+.panel-av{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Manrope',sans-serif;font-size:11.5px;font-weight:800;color:#fff}
+.panel-tx-info{flex:1;min-width:0}
+.panel-tx-name{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.panel-tx-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.panel-tx-amount{font-family:'Manrope',sans-serif;font-size:14px;font-weight:800;white-space:nowrap;text-align:right}
+.panel-tx-date{font-size:10.5px;color:var(--muted);text-align:right;margin-top:2px}
+.panel-footer{padding:14px 22px;border-top:1px solid var(--border);flex-shrink:0}
+.panel-total-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:10px 14px;background:#F7F9FB;border-radius:9px}
+.panel-total-lbl{font-size:12.5px;font-weight:600;color:var(--muted)}
+.panel-total-val{font-family:'Manrope',sans-serif;font-size:16px;font-weight:900;color:var(--red)}
+.panel-all-btn{width:100%;height:40px;background:var(--navy);color:#fff;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:600;cursor:pointer;transition:background .2s}
+.panel-all-btn:hover{background:var(--accent)}
+
+/* ── EXPORT CARD ── */
+.export-card{background:var(--card);border-radius:var(--radius);border:2px dashed var(--border);padding:24px 28px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.export-card-text{}
+.export-card-title{font-family:'Manrope',sans-serif;font-size:14px;font-weight:800;color:var(--navy);margin-bottom:4px}
+.export-card-sub{font-size:12.5px;color:var(--muted);font-weight:500}
+.export-btns{display:flex;gap:10px;flex-wrap:wrap}
+.exp-btn{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 20px;border-radius:10px;font-size:13.5px;font-weight:700;cursor:pointer;transition:all .2s;border:1.5px solid;white-space:nowrap}
+.exp-btn-pdf{background:#fff;border-color:var(--navy);color:var(--navy)}
+.exp-btn-pdf:hover{background:#EEF4FF;border-color:var(--accent);color:var(--accent);box-shadow:0 2px 12px rgba(0,61,124,.12)}
+.exp-btn-xlsx{background:#fff;border-color:var(--green);color:var(--green)}
+.exp-btn-xlsx:hover{background:#E6F7EE;color:#007A3D;box-shadow:0 2px 12px rgba(0,166,81,.12)}
+
+/* ── FADE-IN ANIMATION ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.content>*{animation:fadeUp .3s ease both}
+.content>*:nth-child(1){animation-delay:.03s}.content>*:nth-child(2){animation-delay:.06s}
+.content>*:nth-child(3){animation-delay:.1s}.content>*:nth-child(4){animation-delay:.13s}
+.content>*:nth-child(5){animation-delay:.16s}.content>*:nth-child(6){animation-delay:.19s}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <a class="sb-back" href="fincontrol-dashboard.html">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Главная
+  </a>
+  <div class="sb-brand">
+    <div class="sb-brand-icon">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2L13 8H19L14 12L16 18L10 14L4 18L6 12L1 8H7L10 2Z" fill="white" opacity=".9"/></svg>
+    </div>
+    <div class="sb-brand-text"><div class="name">FinControl</div><div class="sub">Бизнес-помощник</div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="6" height="6" rx="1.5" fill="currentColor"/><rect x="10" y="2" width="6" height="6" rx="1.5" fill="currentColor" opacity=".5"/><rect x="2" y="10" width="6" height="6" rx="1.5" fill="currentColor" opacity=".5"/><rect x="10" y="10" width="6" height="6" rx="1.5" fill="currentColor"/></svg>Обзор</div>
+    <div class="sb-nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none"><rect x="2" y="5" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M2 8h14" stroke="currentColor" stroke-width="1.5"/><circle cx="5.5" cy="11.5" r="1" fill="currentColor"/></svg>Счета и остатки</div>
+    <div class="sb-nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none"><path d="M2 13L6 9L9 11L13 6L16 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 6h3v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Движение денег</div>
+    <div class="sb-nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none"><path d="M3 15V10M6 15V7M9 15V9M12 15V5M15 15V3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Доходы и расходы</div>
+    <div class="sb-nav-item active"><svg class="nav-icon" viewBox="0 0 18 18" fill="none"><path d="M3 3h12v12H3zM7 7h4M7 10h4M7 13h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>P&amp;L отчёт</div>
+    <div class="sb-nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none"><circle cx="7" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/><circle cx="13" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M1 16c0-2.8 2.7-4 6-4M10 13c1.1-.6 2.4-1 3-1 3 0 4 1.5 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Контрагенты</div>
+    <div class="sb-nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none"><rect x="3" y="3" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M6 9h6M9 6v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Планирование</div>
+    <div class="sb-nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none"><path d="M9 3v9M6 9l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 13v1a1 1 0 001 1h10a1 1 0 001-1v-1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Импорт выписок</div>
+    <div class="sb-divider"></div>
+    <div class="sb-nav-item ai"><svg class="nav-icon" viewBox="0 0 18 18" fill="none" style="color:#F59E0B"><path d="M9 1l2 5h5l-4 3 2 5-5-3.5L4 14l2-5L2 6h5L9 1z" fill="currentColor" opacity=".9"/></svg>AI‑помощник</div>
+  </nav>
+  <div class="sb-footer">
+    <div class="sb-nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M9 6v4M9 12v.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Поддержка</div>
+    <div class="sb-nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="6.5" r="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M3 15c0-3.3 2.7-5 6-5s6 1.7 6 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Настройки</div>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+  <!-- HEADER -->
+  <header class="header">
+    <span class="header-title">P&amp;L Отчёт</span>
+    <div class="period-pills" role="group">
+      <button class="period-pill" onclick="selP(this)">Кв. 1</button>
+      <button class="period-pill active" onclick="selP(this)">Май 2026</button>
+      <button class="period-pill" onclick="selP(this)">Полгода</button>
+      <button class="period-pill" onclick="selP(this)">Год</button>
+    </div>
+    <div class="hdr-actions">
+      <button class="hdr-btn hdr-btn-pdf">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="2" y="1" width="9" height="11" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M4.5 5h4M4.5 7.5h4M4.5 10h2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        PDF
+      </button>
+      <button class="hdr-btn hdr-btn-xlsx">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="2" y="1" width="9" height="11" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M4 4.5L6.5 7 9 4.5M4 9.5L6.5 7 9 9.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Excel
+      </button>
+      <button class="icon-btn" aria-label="Поделиться">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="12" cy="3" r="1.8" stroke="currentColor" stroke-width="1.3"/><circle cx="3" cy="7.5" r="1.8" stroke="currentColor" stroke-width="1.3"/><circle cx="12" cy="12" r="1.8" stroke="currentColor" stroke-width="1.3"/><path d="M4.7 8.4L10.3 11M10.3 4L4.7 6.6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      </button>
+      <button class="icon-btn"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.5A4.5 4.5 0 003.5 6v3L2 11h12l-1.5-2V6A4.5 4.5 0 008 1.5z" stroke="currentColor" stroke-width="1.3"/><path d="M6.5 13a1.5 1.5 0 003 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg><span class="notif-dot"></span></button>
+      <div class="avatar">АБ</div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- AMBER BANNER -->
+    <div class="amber-banner" id="amber-banner">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="8" fill="#FEF3C7" stroke="#FCD34D" stroke-width="1.2"/><path d="M9 5.5v5M9 12v.5" stroke="#F59E0B" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <p class="amber-banner-text">Данные являются <strong>управленческой оценкой</strong> на основе банковских транзакций, а не официальной отчётностью. Строки с <span style="background:#FEF3C7;color:#92400E;padding:1px 6px;border-radius:8px;font-size:11px;font-weight:700">~ест</span> рассчитаны приблизительно.</p>
+      <button class="banner-close" onclick="document.getElementById('amber-banner').style.display='none'" aria-label="Закрыть">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2L2 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <!-- KPI STRIP -->
+    <div class="kpi-strip">
+
+      <div class="kpi-card kc-g">
+        <div class="kpi-top">
+          <div class="kpi-icon" style="background:#E6F7EE"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="6" width="14" height="11" rx="2" stroke="#00A651" stroke-width="1.5"/><path d="M7 6V4a2 2 0 014 0v2" stroke="#00A651" stroke-width="1.5" stroke-linecap="round"/><path d="M10 11v2" stroke="#00A651" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="10" r="1.2" fill="#00A651"/></svg></div>
+          <span class="badge b-g">▲ 8.2%</span>
+        </div>
+        <div class="kpi-label">Выручка</div>
+        <div class="kpi-val" style="color:var(--green)">320 000 000<span class="u">UZS</span></div>
+        <div class="kpi-sub">Апр: 295 700 000 UZS</div>
+        <div class="kpi-spark"><canvas id="ks1"></canvas></div>
+      </div>
+
+      <div class="kpi-card kc-n">
+        <div class="kpi-top">
+          <div class="kpi-icon" style="background:#EEF4FF"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 16V8l6-5 6 5v8" stroke="#0054A6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="7" y="11" width="2.5" height="5" rx="0.5" fill="#0054A6"/><rect x="10.5" y="9" width="2.5" height="7" rx="0.5" fill="#0054A6" opacity=".5"/></svg></div>
+          <div class="kpi-badges">
+            <span class="badge b-n">Маржа 38%</span>
+            <span class="badge b-g">▲ 15%</span>
+          </div>
+        </div>
+        <div class="kpi-label">Валовая прибыль</div>
+        <div class="kpi-val" style="color:var(--navy)">122 000 000<span class="u">UZS</span></div>
+        <div class="kpi-sub">Апр: 106 100 000 UZS</div>
+        <div class="kpi-spark"><canvas id="ks2"></canvas></div>
+      </div>
+
+      <div class="kpi-card kc-n">
+        <div class="kpi-top">
+          <div class="kpi-icon" style="background:#EEF4FF"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 14L7.5 9.5 10.5 12 15 7 17.5 9.5" stroke="#0054A6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="kpi-badges">
+            <span class="badge b-n">Маржа 24%</span>
+          </div>
+        </div>
+        <div class="kpi-label">Операц. прибыль</div>
+        <div class="kpi-val" style="color:var(--navy)">77 000 000<span class="u">UZS</span></div>
+        <div class="kpi-sub">Апр: 68 400 000 UZS</div>
+        <div class="kpi-spark"><canvas id="ks3"></canvas></div>
+      </div>
+
+      <div class="kpi-card kc-a">
+        <div class="kpi-top">
+          <div class="kpi-icon" style="background:#FEF3C7">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.5" stroke="#F59E0B" stroke-width="1.5"/><path d="M10 7v3l2.5 1.5" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <div class="kpi-badges">
+            <span class="badge b-a tooltip-wrap">~ ест
+              <span class="tooltip-box">Рассчитано на основе<br>управленческих данных.<br>Не является официальной<br>бухгалтерской отчётностью.</span>
+            </span>
+          </div>
+        </div>
+        <div class="kpi-label">Чистая прибыль</div>
+        <div class="kpi-val" style="color:var(--amber-dark)">~ 65 000 000<span class="u">UZS</span></div>
+        <div class="kpi-sub">Маржа ~20.3% · ест.</div>
+        <div class="kpi-spark"><canvas id="ks4"></canvas></div>
+      </div>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="main-grid">
+
+      <!-- P&L TABLE -->
+      <div class="widget">
+        <div class="widget-header">
+          <div>
+            <div class="widget-title">P&amp;L Отчёт · Май vs Апрель 2026</div>
+            <div class="widget-sub">Нажмите на строку для просмотра транзакций</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <span style="display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;color:var(--muted)">
+              <span style="width:8px;height:8px;border-radius:50%;background:var(--amber);display:inline-block"></span>~ест — оценочно
+            </span>
+          </div>
+        </div>
+        <div style="padding:0 22px 18px;overflow-x:auto">
+          <table class="pl-table" role="table" aria-label="P&L таблица">
+            <thead>
+              <tr>
+                <th style="text-align:left;padding-left:0">Статья</th>
+                <th>Май 2026</th>
+                <th>Апр 2026</th>
+                <th>Δ%</th>
+              </tr>
+            </thead>
+            <tbody id="pl-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TREND CHART -->
+      <div class="widget">
+        <div class="widget-header">
+          <div>
+            <div class="widget-title">Тренд прибыльности</div>
+            <div class="widget-sub">Дек 2025 — Май 2026</div>
+          </div>
+        </div>
+        <div style="padding:14px 22px 18px">
+          <div class="legend-row" style="margin-bottom:14px">
+            <div class="leg"><div class="leg-dot" style="background:#003D7C;height:3px;width:20px"></div>Выручка</div>
+            <div class="leg"><div class="leg-dot" style="background:#0054A6;height:3px;width:20px"></div>Вал. прибыль</div>
+            <div class="leg"><div class="leg-dot" style="background:#F59E0B;height:3px;width:20px;background:repeating-linear-gradient(90deg,#F59E0B 0 4px,transparent 4px 7px)"></div>Чистая прибыль</div>
+          </div>
+          <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPORT CARD -->
+    <div class="export-card">
+      <div class="export-card-text">
+        <div class="export-card-title">Экспорт отчёта</div>
+        <div class="export-card-sub">P&amp;L за Май 2026 · ООО «Глобал Трейд Групп» · Сформировано: 14.05.2026</div>
+      </div>
+      <div class="export-btns">
+        <button class="exp-btn exp-btn-pdf">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2.5" y="1" width="11" height="14" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M5 6h6M5 9h6M5 12h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          Экспорт в PDF
+        </button>
+        <button class="exp-btn exp-btn-xlsx">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2.5" y="1" width="11" height="14" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M5 5.5L8 8.5 11 5.5M5 11.5L8 8.5 11 11.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Экспорт в Excel
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+</div><!-- /app -->
+
+<!-- OVERLAY + SLIDE PANEL -->
+<div class="overlay" id="overlay" onclick="closePanel()"></div>
+<div class="slide-panel" id="slide-panel">
+  <div class="panel-hdr" style="position:relative">
+    <div class="panel-title">
+      <span style="width:28px;height:28px;border-radius:8px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">📣</span>
+      <span id="panel-title-text">Маркетинг детализация</span>
+    </div>
+    <div class="panel-sub" id="panel-sub-text">Май 2026 · 4 транзакции · −15 840 000 UZS</div>
+    <button class="panel-close" onclick="closePanel()"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 2l9 9M11 2L2 11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
+  </div>
+
+  <div class="ai-insight">
+    <div class="ai-insight-icon">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1l1.5 3.5H13l-3.5 2.5 1.5 4L7 8.8 3 11l1.5-4L1 4.5h4.5L7 1z" fill="white"/></svg>
+    </div>
+    <div class="ai-insight-text">
+      <strong>AI-инсайт:</strong> Расходы на маркетинг выросли на <strong>+22%</strong> vs апрель. Основной вклад — таргетированная реклама. При текущей выручке ROI по каналу составляет ~160%. Рекомендуем увеличить бюджет.
+    </div>
+  </div>
+
+  <div class="panel-body">
+    <div class="panel-section-lbl">Транзакции за май 2026</div>
+
+    <div class="panel-tx"><div class="panel-av" style="background:linear-gradient(135deg,#F59E0B,#F97316)">АД</div>
+      <div class="panel-tx-info"><div class="panel-tx-name">Ad Pro Agency</div><div class="panel-tx-sub">Таргет. реклама — апр</div></div>
+      <div><div class="panel-tx-amount" style="color:var(--red)">−8 400 000</div><div class="panel-tx-date">03 мая</div></div>
+    </div>
+
+    <div class="panel-tx"><div class="panel-av" style="background:linear-gradient(135deg,#8B5CF6,#EC4899)">ГЛ</div>
+      <div class="panel-tx-info"><div class="panel-tx-name">Google LLC</div><div class="panel-tx-sub">Google Ads — май</div></div>
+      <div><div class="panel-tx-amount" style="color:var(--red)">−3 240 000</div><div class="panel-tx-date">10 мая</div></div>
+    </div>
+
+    <div class="panel-tx"><div class="panel-av" style="background:linear-gradient(135deg,#0054A6,#22D3EE)">МД</div>
+      <div class="panel-tx-info"><div class="panel-tx-name">MediaClick UZ</div><div class="panel-tx-sub">SMM-продвижение</div></div>
+      <div><div class="panel-tx-amount" style="color:var(--red)">−2 400 000</div><div class="panel-tx-date">15 мая</div></div>
+    </div>
+
+    <div class="panel-tx"><div class="panel-av" style="background:linear-gradient(135deg,#00A651,#22D3EE)">ПЛ</div>
+      <div class="panel-tx-info"><div class="panel-tx-name">PrintLux</div><div class="panel-tx-sub">Полиграфия + стенды</div></div>
+      <div><div class="panel-tx-amount" style="color:var(--red)">−1 800 000</div><div class="panel-tx-date">22 мая</div></div>
+    </div>
+  </div>
+
+  <div class="panel-footer">
+    <div class="panel-total-row">
+      <span class="panel-total-lbl">Итого Маркетинг:</span>
+      <span class="panel-total-val">−15 840 000 UZS</span>
+    </div>
+    <button class="panel-all-btn">Все транзакции категории →</button>
+  </div>
+</div>
+
+<script>
+/* ── UTILS ── */
+function selP(el){el.closest('.period-pills').querySelectorAll('.period-pill').forEach(p=>p.classList.remove('active'));el.classList.add('active')}
+function fmt(n){return Math.abs(n).toLocaleString('ru-RU')}
+function fmtDelta(d){
+  if(d===null)return '<span class="delta neutral">—</span>';
+  const cls=d>=0?'up':'dn';
+  return `<span class="delta ${cls}">${d>=0?'+':''}${d.toFixed(1)}%</span>`;
+}
+
+/* ── P&L TABLE DATA ── */
+const plRows=[
+  {type:'section',label:'ДОХОДЫ'},
+  {type:'head',label:'Выручка',may:320000000,apr:295700000,delta:8.2},
+  {type:'sub',label:'Продажи товаров',may:256000000,apr:238800000,delta:7.2},
+  {type:'sub',label:'Гос. контракты',may:38400000,apr:35200000,delta:9.1},
+  {type:'sub',label:'Проценты и прочее',may:16000000,apr:14700000,delta:8.8,est:true},
+  {type:'sub',label:'Прочие доходы',may:9600000,apr:7000000,delta:37.1,est:true},
+
+  {type:'section',label:'СЕБЕСТОИМОСТЬ'},
+  {type:'sub',label:'Материалы и сырьё',may:-145000000,apr:-139000000,delta:4.3},
+  {type:'sub',label:'Прямые трудозатраты',may:-38000000,apr:-36400000,delta:4.4,est:true},
+  {type:'sub',label:'Производственные накладные',may:-12000000,apr:-11800000,delta:1.7,est:true},
+  {type:'sub',label:'Транспорт и логистика',may:-3000000,apr:-2400000,delta:25.0},
+
+  {type:'result-g',label:'Валовая прибыль',may:122000000,apr:106100000,delta:15.0,badge:'38% маржа'},
+
+  {type:'section',label:'ОПЕРАЦИОННЫЕ РАСХОДЫ'},
+  {type:'sub',label:'Фонд оплаты труда (косв.)',may:-19000000,apr:-18400000,delta:3.3},
+  {type:'sub',label:'Аренда офиса и склада',may:-3800000,apr:-3800000,delta:0},
+  {type:'sub',label:'Маркетинг и реклама',may:-15840000,apr:-12960000,delta:22.2,cat:'📣',overspend:true},
+  {type:'sub',label:'Амортизация',may:-4000000,apr:-3800000,delta:5.3,est:true},
+  {type:'sub',label:'Прочие операц. расходы',may:-2360000,apr:-2100000,delta:12.4,est:true},
+
+  {type:'result-b',label:'Операц. прибыль (EBIT)',may:77000000,apr:65040000,delta:18.4,badge:'24% маржа'},
+
+  {type:'section',label:'НИЖЕ ОПЕРАЦ. ЧЕРТЫ'},
+  {type:'sub',label:'Процентные расходы',may:-3500000,apr:-3200000,delta:9.4,est:true},
+  {type:'sub',label:'Прочие финансовые расходы',may:-1500000,apr:-1200000,delta:25.0,est:true},
+  {type:'sub',label:'Курсовая разница',may:-1400000,apr:800000,delta:null,est:true},
+
+  {type:'section',label:'НАЛОГИ'},
+  {type:'sub',label:'Налог на прибыль (15%)',may:-6100000,apr:-5600000,delta:8.9,est:true},
+
+  {type:'result-a',label:'Чистая прибыль',may:65000000,apr:55840000,delta:16.4,est:true,badge:'~20.3% маржа'},
+];
+
+function buildPL(){
+  const tbody=document.getElementById('pl-body');
+  tbody.innerHTML=plRows.map(r=>{
+    if(r.type==='section') return `<tr class="section-hdr-row"><td colspan="4">${r.label}</td></tr>`;
+    const isResult=r.type.startsWith('result');
+    const isNeg=r.may<0;
+    const mayFmt=`<span class="amt${isResult?' res':''}${r.type==='result-a'?' res-a':''}${isNeg?' neg':''}">${isNeg?'−':''}${fmt(r.may)}</span>`;
+    const aprFmt=`<span class="amt${isNeg?' neg':''}" style="color:var(--muted)">${isNeg?'−':''}${fmt(r.apr)}</span>`;
+    const clickable=!isResult&&r.type!=='head';
+    const labelCell=`
+      <td>
+        ${r.type==='sub'?'<span style="margin-left:16px"></span>':''}
+        ${r.label}
+        ${r.est?'<span class="est-badge">~ ест</span>':''}
+        ${r.overspend?'<span class="cat-badge" style="background:#FEE2E5;color:#C0273A">⚠ перерасход</span>':''}
+        ${r.cat?'<span style="margin-left:4px">'+r.cat+'</span>':''}
+        ${r.badge?'<span class="est-badge" style="background:#EEF4FF;color:var(--accent)">'+r.badge+'</span>':''}
+        ${clickable?'<span class="click-hint">→ детали</span>':''}
+      </td>`;
+    return `<tr class="${r.type==='sub'?'sub':''}${r.type==='result-g'?' result-g':''}${r.type==='result-a'?' result-a':''}${r.type==='result-b'?' result-b':''}"
+      ${clickable?`onclick="openPanel('${r.label}','${isNeg?'-':''}${fmt(r.may)} UZS')"`:''}>
+      ${labelCell}
+      <td style="text-align:right">${mayFmt}</td>
+      <td style="text-align:right">${aprFmt}</td>
+      <td>${r.delta===null?fmtDelta(null):fmtDelta(isNeg?-r.delta:r.delta)}</td>
+    </tr>`;
+  }).join('');
+}
+buildPL();
+
+/* ── KPI SPARKLINES ── */
+function mkSpark(id,data,clr){
+  const ctx=document.getElementById(id).getContext('2d');
+  const g=ctx.createLinearGradient(0,0,0,38);
+  g.addColorStop(0,clr.replace('1)','0.18)'));g.addColorStop(1,clr.replace('1)','0)'));
+  new Chart(ctx,{type:'line',data:{labels:data.map((_,i)=>i),datasets:[{data,borderColor:clr,backgroundColor:g,borderWidth:1.8,pointRadius:0,tension:.45,fill:true}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}}});
+}
+mkSpark('ks1',[265,278,270,295,308,320],'rgba(0,166,81,1)');
+mkSpark('ks2',[82,94,88,106,112,122],'rgba(0,84,166,1)');
+mkSpark('ks3',[51,60,56,65,70,77],'rgba(0,84,166,1)');
+mkSpark('ks4',[38,44,40,52,58,65],'rgba(245,158,11,1)');
+
+/* ── TREND CHART ── */
+const months=['Дек','Янв','Фев','Мар','Апр','Май'];
+const revenue=[265,278,270,295,308,320];
+const grossProfit=[95,102,96,108,106,122];
+const netProfit=[38,44,40,50,56,65];
+
+const tCtx=document.getElementById('trendChart').getContext('2d');
+const profitGrad=tCtx.createLinearGradient(0,0,0,260);
+profitGrad.addColorStop(0,'rgba(245,158,11,.18)');
+profitGrad.addColorStop(1,'rgba(245,158,11,0)');
+
+new Chart(tCtx,{
+  type:'line',
+  data:{
+    labels:months,
+    datasets:[
+      {
+        label:'Выручка',data:revenue,
+        borderColor:'#003D7C',borderWidth:3,
+        pointBackgroundColor:'#003D7C',pointBorderColor:'#fff',pointRadius:4,pointBorderWidth:2,
+        tension:.4,fill:false,order:3,
+      },
+      {
+        label:'Валовая прибыль',data:grossProfit,
+        borderColor:'#0054A6',borderWidth:2,
+        pointBackgroundColor:'#0054A6',pointBorderColor:'#fff',pointRadius:3,pointBorderWidth:2,
+        tension:.4,fill:false,order:2,
+      },
+      {
+        label:'Чистая прибыль',data:netProfit,
+        borderColor:'#F59E0B',borderWidth:2,borderDash:[6,4],
+        pointBackgroundColor:'#F59E0B',pointBorderColor:'#fff',pointRadius:4,pointBorderWidth:2,
+        tension:.4,backgroundColor:profitGrad,fill:true,order:1,
+      }
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    interaction:{mode:'index',intersect:false},
+    plugins:{
+      legend:{display:false},
+      tooltip:{
+        backgroundColor:'rgba(0,25,60,.92)',
+        titleFont:{family:'Manrope',weight:'700',size:12},
+        bodyFont:{family:'Inter',size:12},
+        padding:13,cornerRadius:10,
+        callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y}М UZS`}
+      }
+    },
+    scales:{
+      x:{grid:{display:false},ticks:{font:{family:'Inter',size:12},color:'#6B7A99'},border:{display:false}},
+      y:{
+        grid:{color:'rgba(221,227,238,.5)'},
+        ticks:{font:{family:'Inter',size:11},color:'#6B7A99',callback:v=>v+'М'},
+        border:{display:false},
+      }
+    }
+  }
+});
+
+/* ── PANEL ── */
+let panelOpen=true;
+function openPanel(label,amount){
+  document.getElementById('panel-title-text').textContent=label+' — детализация';
+  document.getElementById('panel-sub-text').textContent=`Май 2026 · ${amount}`;
+  document.getElementById('slide-panel').classList.remove('hidden');
+  document.getElementById('overlay').classList.remove('hidden');
+  panelOpen=true;
+}
+function closePanel(){
+  document.getElementById('slide-panel').classList.add('hidden');
+  document.getElementById('overlay').classList.add('hidden');
+  panelOpen=false;
+}
+</script>
+</body>
+</html>

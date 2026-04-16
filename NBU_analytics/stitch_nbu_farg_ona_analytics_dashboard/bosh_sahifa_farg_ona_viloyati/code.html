@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+
+<html lang="uz"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NBU Analytics — Farg'ona viloyati</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "on-primary-container": "#afcbff",
+                "primary-container": "#0054a6",
+                "on-surface": "#191c1e",
+                "on-tertiary-fixed-variant": "#005225",
+                "on-tertiary-fixed": "#00210b",
+                "surface-container-highest": "#e0e3e5",
+                "on-error-container": "#93000a",
+                "surface-container-low": "#f2f4f6",
+                "outline": "#727783",
+                "on-secondary-container": "#57657a",
+                "tertiary-fixed-dim": "#5adf82",
+                "error": "#ba1a1a",
+                "on-surface-variant": "#424751",
+                "surface-container-lowest": "#ffffff",
+                "secondary-container": "#d5e3fc",
+                "surface-dim": "#d8dadc",
+                "on-background": "#191c1e",
+                "surface-tint": "#185eb0",
+                "primary-fixed-dim": "#a9c7ff",
+                "on-primary-fixed-variant": "#00468c",
+                "on-error": "#ffffff",
+                "on-secondary-fixed": "#0d1c2e",
+                "inverse-primary": "#a9c7ff",
+                "surface-variant": "#e0e3e5",
+                "surface-container": "#eceef0",
+                "surface-bright": "#f7f9fb",
+                "tertiary": "#004920",
+                "on-tertiary-container": "#5fe386",
+                "surface": "#f7f9fb",
+                "inverse-surface": "#2d3133",
+                "on-primary": "#ffffff",
+                "tertiary-fixed": "#78fc9c",
+                "tertiary-container": "#00632e",
+                "error-container": "#ffdad6",
+                "inverse-on-surface": "#eff1f3",
+                "primary": "#003d7c",
+                "primary-fixed": "#d6e3ff",
+                "secondary-fixed": "#d5e3fc",
+                "background": "#f7f9fb",
+                "on-tertiary": "#ffffff",
+                "on-secondary": "#ffffff",
+                "surface-container-high": "#e6e8ea",
+                "on-primary-fixed": "#001b3d",
+                "on-secondary-fixed-variant": "#3a485b",
+                "secondary": "#515f74",
+                "outline-variant": "#c2c6d3",
+                "secondary-fixed-dim": "#b9c7df"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.125rem",
+                "lg": "0.25rem",
+                "xl": "0.5rem",
+                "full": "0.75rem"
+            },
+            "fontFamily": {
+                "headline": ["Manrope"],
+                "body": ["Inter"],
+                "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .display-lg { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .custom-glass { backdrop-filter: blur(20px); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-background text-on-surface selection:bg-primary-container selection:text-on-primary-container">
+<!-- Sidebar Navigation -->
+<aside class="h-screen w-64 fixed left-0 top-0 flex flex-col p-4 gap-2 bg-slate-50/70 dark:bg-slate-950/70 backdrop-blur-2xl z-[60]">
+<div class="mb-8 px-2 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">account_balance</span>
+</div>
+<div>
+<div class="text-lg font-black text-blue-900 dark:text-blue-400">NBU Institutional</div>
+<div class="text-[10px] font-semibold text-slate-500 uppercase tracking-widest">Sovereign Ledger</div>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 bg-white dark:bg-slate-900 text-blue-900 dark:text-white rounded-lg shadow-sm font-bold active:opacity-80 transition-opacity" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-semibold">Main Page</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-sm font-semibold">District Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="text-sm font-semibold">AI Advisor</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">precision_manufacturing</span>
+<span class="text-sm font-semibold">Business AI Tools</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-transparent pt-4 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">contact_support</span>
+<span class="text-sm font-semibold">Support</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="text-sm font-semibold">Sign Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 min-h-screen">
+<!-- TopAppBar -->
+<header class="sticky top-0 z-50 flex justify-between items-center w-full px-8 py-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-sm dark:shadow-none">
+<div class="flex items-center gap-4">
+<h1 class="text-xl font-bold tracking-tight text-blue-900 dark:text-white">NBU Analytics — Farg'ona viloyati</h1>
+<span class="px-3 py-1 bg-secondary-container text-on-secondary-fixed text-xs font-bold rounded-full">2024</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4">
+<a class="text-blue-900 dark:text-blue-400 font-bold border-b-2 border-blue-900 px-1 py-1" href="#">2024</a>
+</div>
+<div class="flex items-center gap-3">
+<button class="p-2 text-slate-500 hover:text-blue-800 transition-colors scale-95 duration-200 ease-in-out">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-slate-500 hover:text-blue-800 transition-colors scale-95 duration-200 ease-in-out">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-highest">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="professional portrait of a financial analyst in business attire with a neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTRxHNJeLfPyMyqlTB-col3MQ9u4tX1Dedw4ljMzQhl6w3b2t_wnl2yiuLHmgBVOARcY9c3eiWXPD1_PBGiOp_ywHOaoXxtOVwBv_T11T3qt_j7eR_6uHhRWqGIYsz_ec4MIJ98b6sBIc7QwPal7mkUZso1lrCmj0ctslEUJciSPlCKYYgw2fJOC7gzXlvCEw7vkxKT8_Kt9TPnfd_np_TBV5yNTfF7fLlzEfpYgCzeB4MqJs12wP--2DyMCZZac7mqBVT0uX6bd8"/>
+</div>
+</div>
+</div>
+</header>
+<section class="p-8 space-y-8">
+<!-- Key Performance Indicators (Bento Grid) -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<div class="bg-surface-container-lowest p-6 rounded-xl transition-all hover:translate-y-[-4px]">
+<div class="flex items-center justify-between mb-4">
+<span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">groups</span>
+<span class="text-tertiary font-bold text-xs">+1.2%</span>
+</div>
+<div class="display-lg text-4xl font-extrabold text-on-surface mb-1">3.9 mln</div>
+<div class="text-on-surface-variant text-sm font-semibold tracking-wide uppercase">Aholi soni</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl transition-all hover:translate-y-[-4px]">
+<div class="flex items-center justify-between mb-4">
+<span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">trending_up</span>
+<span class="text-tertiary font-bold text-xs">+8.7%</span>
+</div>
+<div class="display-lg text-4xl font-extrabold text-on-surface mb-1">8.7%</div>
+<div class="text-on-surface-variant text-sm font-semibold tracking-wide uppercase">YaIM O'sishi</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl transition-all hover:translate-y-[-4px]">
+<div class="flex items-center justify-between mb-4">
+<span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">payments</span>
+<span class="text-tertiary font-bold text-xs">Target</span>
+</div>
+<div class="display-lg text-4xl font-extrabold text-on-surface mb-1">$1.2 mlrd</div>
+<div class="text-on-surface-variant text-sm font-semibold tracking-wide uppercase">Eksport hajmi</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl transition-all hover:translate-y-[-4px]">
+<div class="flex items-center justify-between mb-4">
+<span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">location_city</span>
+<span class="text-on-surface-variant font-bold text-xs">Total</span>
+</div>
+<div class="display-lg text-4xl font-extrabold text-on-surface mb-1">1,248</div>
+<div class="text-on-surface-variant text-sm font-semibold tracking-wide uppercase">Mahallalar</div>
+</div>
+</div>
+<!-- Main Interactive Section -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Map Centerpiece -->
+<div class="lg:col-span-8 space-y-6">
+<div class="bg-surface-container-low rounded-xl overflow-hidden relative min-h-[600px] flex items-center justify-center p-8">
+<!-- Abstract Map Representation -->
+<div class="relative w-full h-full">
+<img alt="Fergana region map" class="w-full h-full object-contain mix-blend-multiply opacity-80 rounded-xl" data-alt="Stylized top-down geographic map of Fergana region with segmented districts in soft blue and grey tones" data-location="Fergana, Uzbekistan" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnvhQj9RL75jt8UOKmuxQ8cjQJrXhoCaLXT11sIsSe7moyeJfXxQeV5u8KaZ2-QnNVB32dhLJo4PhH_jfOZHzHcXdnRXjXR2ePYqMW-QTiCV_SfKciyuE2rDy8I_QoTWsnGfHcQBF7sTAEHVHza0AwUid5W3cKuQr_OgESv6dBvSUrtSgMNcVkppuNvkTkuqpSrZPjrSEx0l5SrTAomAA_9LCy2IGUNgzQ-st9gI6Dg5vEu1ve9G28lgd_xqnuXurnLoddUkgicH4"/>
+<!-- Hover Tooltip Simulator (Absolute positioning for demo) -->
+<div class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-4 rounded-lg shadow-xl border-l-4 border-primary z-10 w-64 transition-all">
+<div class="flex justify-between items-start mb-2">
+<span class="text-primary font-bold text-lg">Marg'ilon shahri</span>
+<span class="material-symbols-outlined text-primary">verified</span>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant">Aholi:</span>
+<span class="font-bold">245.2 ming</span>
+</div>
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant">Maydon:</span>
+<span class="font-bold">40.8 km²</span>
+</div>
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant">Mahalla:</span>
+<span class="font-bold">54 ta</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Active Highlight Banner -->
+<div class="absolute bottom-6 left-6 right-6 bg-primary text-white p-6 rounded-xl flex justify-between items-center bg-gradient-to-r from-primary to-primary-container shadow-lg">
+<div class="flex items-center gap-4">
+<div class="bg-white/20 p-3 rounded-lg backdrop-blur-sm">
+<span class="material-symbols-outlined text-white text-3xl">info</span>
+</div>
+<div>
+<h3 class="text-xl font-bold leading-none mb-1">Farg'ona shahri tanlandi</h3>
+<p class="text-blue-100 text-sm">Viloyatning ma'muriy, iqtisodiy va madaniy markazi.</p>
+</div>
+</div>
+<button class="bg-white text-primary px-5 py-2 rounded-lg font-bold text-sm transition-transform active:scale-95">Batafsil tahlil</button>
+</div>
+</div>
+</div>
+<!-- Right District Sidebar -->
+<div class="lg:col-span-4 bg-surface-container-lowest rounded-xl p-6 h-[600px] flex flex-col">
+<div class="flex items-center justify-between mb-6">
+<h2 class="text-lg font-bold text-on-surface">Tuman va shaharlar</h2>
+<span class="text-xs text-on-surface-variant bg-surface-container px-2 py-1 rounded">Aholi soni bo'yicha</span>
+</div>
+<div class="flex-1 overflow-y-auto pr-2 no-scrollbar space-y-2">
+<!-- District List Items -->
+<div class="group flex items-center justify-between p-3 rounded-lg hover:bg-surface-container transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary">
+<span class="text-sm font-semibold text-on-surface">Farg'ona shahri</span>
+<span class="text-xs font-bold text-primary bg-primary-fixed px-2 py-1 rounded">302.8 ming</span>
+</div>
+<div class="group flex items-center justify-between p-3 rounded-lg bg-surface-container-low hover:bg-surface-container transition-colors cursor-pointer border-l-2 border-primary">
+<span class="text-sm font-semibold text-on-surface">Marg'ilon shahri</span>
+<span class="text-xs font-bold text-primary bg-primary-fixed px-2 py-1 rounded">245.2 ming</span>
+</div>
+<div class="group flex items-center justify-between p-3 rounded-lg hover:bg-surface-container transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary">
+<span class="text-sm font-semibold text-on-surface">Qo'qon shahri</span>
+<span class="text-xs font-bold text-primary bg-primary-fixed px-2 py-1 rounded">259.7 ming</span>
+</div>
+<div class="group flex items-center justify-between p-3 rounded-lg hover:bg-surface-container transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary">
+<span class="text-sm font-semibold text-on-surface">Oltiariq tumani</span>
+<span class="text-xs font-bold text-primary bg-primary-fixed px-2 py-1 rounded">221.4 ming</span>
+</div>
+<div class="group flex items-center justify-between p-3 rounded-lg hover:bg-surface-container transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary">
+<span class="text-sm font-semibold text-on-surface">Rishton tumani</span>
+<span class="text-xs font-bold text-primary bg-primary-fixed px-2 py-1 rounded">210.6 ming</span>
+</div>
+<div class="group flex items-center justify-between p-3 rounded-lg hover:bg-surface-container transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary">
+<span class="text-sm font-semibold text-on-surface">O'zbekiston tumani</span>
+<span class="text-xs font-bold text-primary bg-primary-fixed px-2 py-1 rounded">205.1 ming</span>
+</div>
+<div class="group flex items-center justify-between p-3 rounded-lg hover:bg-surface-container transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary">
+<span class="text-sm font-semibold text-on-surface">Beshariq tumani</span>
+<span class="text-xs font-bold text-primary bg-primary-fixed px-2 py-1 rounded">198.2 ming</span>
+</div>
+<div class="group flex items-center justify-between p-3 rounded-lg hover:bg-surface-container transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary">
+<span class="text-sm font-semibold text-on-surface">Uchko'prik tumani</span>
+<span class="text-xs font-bold text-primary bg-primary-fixed px-2 py-1 rounded">189.5 ming</span>
+</div>
+<div class="group flex items-center justify-between p-3 rounded-lg hover:bg-surface-container transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary">
+<span class="text-sm font-semibold text-on-surface">Buvayda tumani</span>
+<span class="text-xs font-bold text-primary bg-primary-fixed px-2 py-1 rounded">182.3 ming</span>
+</div>
+<div class="group flex items-center justify-between p-3 rounded-lg hover:bg-surface-container transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary">
+<span class="text-sm font-semibold text-on-surface">Toshloq tumani</span>
+<span class="text-xs font-bold text-primary bg-primary-fixed px-2 py-1 rounded">178.4 ming</span>
+</div>
+<div class="group flex items-center justify-between p-3 rounded-lg hover:bg-surface-container transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary">
+<span class="text-sm font-semibold text-on-surface">Quvasoy shahri</span>
+<span class="text-xs font-bold text-primary bg-primary-fixed px-2 py-1 rounded">96.4 ming</span>
+</div>
+</div>
+<button class="mt-4 w-full py-3 border border-outline-variant border-opacity-20 rounded-lg text-sm font-bold text-on-surface hover:bg-surface-container-high transition-colors">Barchasini ko'rish</button>
+</div>
+</div>
+<!-- Horizontal Bar Charts Section -->
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+<!-- Iqtisodiy Card -->
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-sm space-y-6">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">finance</span>
+<h3 class="text-lg font-bold">Iqtisodiy ko'rsatkichlar</h3>
+</div>
+<div class="space-y-4">
+<div class="space-y-1">
+<div class="flex justify-between text-xs font-semibold mb-1">
+<span>Sanoat</span>
+<span>$420 mln</span>
+</div>
+<div class="h-3 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 85%"></div>
+</div>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-xs font-semibold mb-1">
+<span>Qishloq xo'jaligi</span>
+<span>$380 mln</span>
+</div>
+<div class="h-3 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 70%"></div>
+</div>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-xs font-semibold mb-1">
+<span>Xizmat ko'rsatish</span>
+<span>$220 mln</span>
+</div>
+<div class="h-3 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full opacity-60" style="width: 45%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Aholi Card -->
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-sm space-y-6">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">person_search</span>
+<h3 class="text-lg font-bold">Aholi va bandlik</h3>
+</div>
+<div class="space-y-4">
+<div class="space-y-1">
+<div class="flex justify-between text-xs font-semibold mb-1">
+<span>Ish bilan band</span>
+<span>2.1 mln</span>
+</div>
+<div class="h-3 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-tertiary rounded-full" style="width: 92%"></div>
+</div>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-xs font-semibold mb-1">
+<span>O'zini o'zi band qilgan</span>
+<span>850k</span>
+</div>
+<div class="h-3 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-tertiary-container rounded-full" style="width: 65%"></div>
+</div>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-xs font-semibold mb-1">
+<span>Kasbiy ta'limda</span>
+<span>120k</span>
+</div>
+<div class="h-3 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-tertiary rounded-full opacity-60" style="width: 30%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bank Card -->
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-sm space-y-6">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">storefront</span>
+<h3 class="text-lg font-bold">Bank va tadbirkorlik</h3>
+</div>
+<div class="space-y-4">
+<div class="space-y-1">
+<div class="flex justify-between text-xs font-semibold mb-1">
+<span>Berilgan kreditlar</span>
+<span>8.4 trln</span>
+</div>
+<div class="h-3 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 78%"></div>
+</div>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-xs font-semibold mb-1">
+<span>Yangi tadbirkorlar</span>
+<span>4.2 ming</span>
+</div>
+<div class="h-3 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 55%"></div>
+</div>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-xs font-semibold mb-1">
+<span>Eksportyor korxonalar</span>
+<span>850 ta</span>
+</div>
+<div class="h-3 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 40%"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Floating Action Button Contextual (Suppress on details/settings) -->
+<button class="fixed bottom-8 right-8 bg-primary text-white p-4 rounded-full shadow-2xl hover:scale-110 active:scale-95 transition-all z-50 flex items-center gap-2 group">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_chart</span>
+<span class="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 font-bold text-sm">Hisobot yaratish</span>
+</button>
+<footer class="p-8 border-t border-transparent bg-surface-container-low text-center">
+<p class="text-xs text-on-surface-variant font-medium">© 2024 O'zbekiston Milliy Banki. Barcha huquqlar himoyalangan. Institutsional tahlil tizimi.</p>
+</footer>
+</main>
+</body></html>
