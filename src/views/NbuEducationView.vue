@@ -1,157 +1,159 @@
 <script setup>
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import AppIcon from '@/components/AppIcon.vue'
 
+const { t } = useI18n()
 const activeTrack = ref('all')
 
-const tracks = [
-  { key: 'all', label: 'Все' },
-  { key: 'finance', label: 'Финансы' },
-  { key: 'business', label: 'Бизнес' },
-  { key: 'digital', label: 'Цифровые навыки' },
-  { key: 'ai', label: 'AI и аналитика' },
-]
+const tracks = computed(() => [
+  { key: 'all', label: t('education.trackAll') },
+  { key: 'finance', label: t('education.trackFinance') },
+  { key: 'business', label: t('education.trackBusiness') },
+  { key: 'digital', label: t('education.trackDigital') },
+  { key: 'ai', label: t('education.trackAi') },
+])
 
-const stats = [
-  { icon: 'menu_book', label: 'Курсов', value: '48', tone: 'blue' },
-  { icon: 'groups', label: 'Студентов', value: '12 400', tone: 'green' },
-  { icon: 'workspace_premium', label: 'Сертификатов', value: '3 250', tone: 'amber' },
-  { icon: 'school', label: 'Преподавателей', value: '26', tone: 'purple' },
-]
+const stats = computed(() => [
+  { icon: 'menu_book', label: t('education.statCourses'), value: '48', tone: 'blue' },
+  { icon: 'groups', label: t('education.statStudents'), value: '12 400', tone: 'green' },
+  { icon: 'workspace_premium', label: t('education.statCertificates'), value: '3 250', tone: 'amber' },
+  { icon: 'school', label: t('education.statInstructors'), value: '26', tone: 'purple' },
+])
 
-const courses = [
+const courses = computed(() => [
   {
     track: 'finance',
-    title: 'Основы корпоративных финансов',
-    level: 'Начальный',
-    duration: '6 недель',
+    title: t('education.courseCorpFinance'),
+    level: t('education.levelBeginner'),
+    duration: t('education.duration', { n: 6 }),
     lessons: 24,
     students: 1840,
     rating: 4.8,
     progress: 0,
     color: '#0054A6',
     emoji: '💼',
-    tag: 'Популярное',
+    tag: t('education.tagPopular'),
     tagTone: 'blue',
   },
   {
     track: 'finance',
-    title: 'Финансовый анализ МСБ',
-    level: 'Средний',
-    duration: '8 недель',
+    title: t('education.courseSmbAnalysis'),
+    level: t('education.levelIntermediate'),
+    duration: t('education.duration', { n: 8 }),
     lessons: 32,
     students: 920,
     rating: 4.7,
     progress: 35,
     color: '#00A651',
     emoji: '📊',
-    tag: 'В процессе',
+    tag: t('education.tagInProgress'),
     tagTone: 'green',
   },
   {
     track: 'business',
-    title: 'Запуск стартапа в Узбекистане',
-    level: 'Начальный',
-    duration: '4 недели',
+    title: t('education.courseStartup'),
+    level: t('education.levelBeginner'),
+    duration: t('education.duration', { n: 4 }),
     lessons: 18,
     students: 2750,
     rating: 4.9,
     progress: 0,
     color: '#F59E0B',
     emoji: '🚀',
-    tag: 'Новое',
+    tag: t('education.tagNew'),
     tagTone: 'amber',
   },
   {
     track: 'ai',
-    title: 'AI для бизнес-аналитиков',
-    level: 'Средний',
-    duration: '10 недель',
+    title: t('education.courseAiBusiness'),
+    level: t('education.levelIntermediate'),
+    duration: t('education.duration', { n: 10 }),
     lessons: 40,
     students: 680,
     rating: 4.9,
     progress: 72,
     color: '#8B5CF6',
     emoji: '🤖',
-    tag: 'В процессе',
+    tag: t('education.tagInProgress'),
     tagTone: 'purple',
   },
   {
     track: 'digital',
-    title: 'Цифровой маркетинг с нуля',
-    level: 'Начальный',
-    duration: '5 недель',
+    title: t('education.courseDigMarketing'),
+    level: t('education.levelBeginner'),
+    duration: t('education.duration', { n: 5 }),
     lessons: 22,
     students: 3120,
     rating: 4.6,
     progress: 100,
     color: '#E0384B',
     emoji: '📣',
-    tag: 'Завершено',
+    tag: t('education.tagCompleted'),
     tagTone: 'green',
   },
   {
     track: 'digital',
-    title: 'Работа с данными в Excel',
-    level: 'Начальный',
-    duration: '3 недели',
+    title: t('education.courseExcel'),
+    level: t('education.levelBeginner'),
+    duration: t('education.duration', { n: 3 }),
     lessons: 14,
     students: 4200,
     rating: 4.7,
     progress: 0,
     color: '#0891B2',
     emoji: '📈',
-    tag: 'Бестселлер',
+    tag: t('education.tagBestseller'),
     tagTone: 'teal',
   },
   {
     track: 'business',
-    title: 'Управление проектами',
-    level: 'Средний',
-    duration: '7 недель',
+    title: t('education.courseProjectMgmt'),
+    level: t('education.levelIntermediate'),
+    duration: t('education.duration', { n: 7 }),
     lessons: 28,
     students: 1540,
     rating: 4.8,
     progress: 15,
     color: '#0054A6',
     emoji: '🗂',
-    tag: 'В процессе',
+    tag: t('education.tagInProgress'),
     tagTone: 'blue',
   },
   {
     track: 'ai',
-    title: 'Введение в ML для финансов',
-    level: 'Продвинутый',
-    duration: '12 недель',
+    title: t('education.courseMlFinance'),
+    level: t('education.levelAdvanced'),
+    duration: t('education.duration', { n: 12 }),
     lessons: 48,
     students: 420,
     rating: 5.0,
     progress: 0,
     color: '#8B5CF6',
     emoji: '🧠',
-    tag: 'PRO',
+    tag: t('education.tagPro'),
     tagTone: 'purple',
   },
-]
+])
 
 const filteredCourses = computed(() => {
-  if (activeTrack.value === 'all') return courses
-  return courses.filter((c) => c.track === activeTrack.value)
+  if (activeTrack.value === 'all') return courses.value
+  return courses.value.filter((c) => c.track === activeTrack.value)
 })
 
-const learningPath = [
-  { step: 1, title: 'Финансовая грамотность', status: 'done', sub: '4 модуля · завершено' },
-  { step: 2, title: 'Анализ отчётности', status: 'done', sub: '6 модулей · завершено' },
-  { step: 3, title: 'Бизнес-планирование', status: 'active', sub: '5 модулей · 35% пройдено' },
-  { step: 4, title: 'Инвестиции и оценка', status: 'pending', sub: '8 модулей' },
-  { step: 5, title: 'Стратегическое управление', status: 'pending', sub: '10 модулей' },
-]
+const learningPath = computed(() => [
+  { step: 1, title: t('education.pathFinLiteracy'), status: 'done', sub: t('education.pathFinLiteracySub') },
+  { step: 2, title: t('education.pathReporting'), status: 'done', sub: t('education.pathReportingSub') },
+  { step: 3, title: t('education.pathBizPlan'), status: 'active', sub: t('education.pathBizPlanSub') },
+  { step: 4, title: t('education.pathInvest'), status: 'pending', sub: t('education.pathInvestSub') },
+  { step: 5, title: t('education.pathStrategy'), status: 'pending', sub: t('education.pathStrategySub') },
+])
 
-const upcoming = [
-  { date: '18 апр', time: '14:00', title: 'Вебинар: AI в банкинге', speaker: 'Акмал Рахимов', tone: 'purple' },
-  { date: '22 апр', time: '10:00', title: 'Мастер-класс по финплану', speaker: 'Дилором Хасанова', tone: 'blue' },
-  { date: '25 апр', time: '16:00', title: 'Разбор кейса: МСБ в Фергане', speaker: 'Бобур Юсупов', tone: 'green' },
-]
+const upcoming = computed(() => [
+  { date: t('education.event1Date'), time: '14:00', title: t('education.event1Title'), speaker: t('education.event1Speaker'), tone: 'purple' },
+  { date: t('education.event2Date'), time: '10:00', title: t('education.event2Title'), speaker: t('education.event2Speaker'), tone: 'blue' },
+  { date: t('education.event3Date'), time: '16:00', title: t('education.event3Title'), speaker: t('education.event3Speaker'), tone: 'green' },
+])
 </script>
 
 <template>
@@ -159,36 +161,35 @@ const upcoming = [
     <!-- Hero -->
     <section class="edu-hero">
       <div class="edu-hero-text">
-        <div class="edu-eyebrow">NBU Institutional / Education</div>
+        <div class="edu-eyebrow">{{ $t('education.eyebrow') }}</div>
         <h1 class="edu-title">
           NBU
           <span class="edu-title-grad">Education</span>
         </h1>
         <p class="edu-subtitle">
-          Образовательная платформа для предпринимателей, финансистов и аналитиков.
-          Развивайте навыки, которые нужны вашему бизнесу сегодня.
+          {{ $t('education.subtitle') }}
         </p>
         <div class="edu-hero-actions">
           <button class="edu-btn edu-btn-primary">
             <AppIcon name="play_arrow" />
-            <span>Начать обучение</span>
+            <span>{{ $t('education.startLearning') }}</span>
           </button>
           <button class="edu-btn edu-btn-ghost">
             <AppIcon name="explore" />
-            <span>Каталог курсов</span>
+            <span>{{ $t('education.courseCatalog') }}</span>
           </button>
         </div>
       </div>
       <div class="edu-hero-card">
         <div class="edu-hero-card-top">
-          <span class="edu-hero-pill">Программа месяца</span>
+          <span class="edu-hero-pill">{{ $t('education.monthProgram') }}</span>
           <AppIcon name="auto_awesome" />
         </div>
-        <div class="edu-hero-card-title">AI-аналитик для банка</div>
-        <div class="edu-hero-card-sub">12 недель · 48 уроков · сертификат NBU</div>
+        <div class="edu-hero-card-title">{{ $t('education.heroCardTitle') }}</div>
+        <div class="edu-hero-card-sub">{{ $t('education.heroCardSub') }}</div>
         <div class="edu-hero-card-progress">
           <div class="edu-progress-bar"><span style="width:72%"></span></div>
-          <div class="edu-progress-label">72% · 35 из 48 уроков</div>
+          <div class="edu-progress-label">{{ $t('education.heroProgress') }}</div>
         </div>
         <div class="edu-hero-card-bottom">
           <div class="edu-avatars">
@@ -197,7 +198,7 @@ const upcoming = [
             <span class="edu-avatar" style="background:#F59E0B">БЮ</span>
             <span class="edu-avatar edu-avatar-more">+12</span>
           </div>
-          <button class="edu-btn edu-btn-primary edu-btn-sm">Продолжить</button>
+          <button class="edu-btn edu-btn-primary edu-btn-sm">{{ $t('education.continue') }}</button>
         </div>
       </div>
     </section>
@@ -216,18 +217,18 @@ const upcoming = [
     <!-- Tracks -->
     <section class="edu-tracks">
       <div class="edu-section-title">
-        <h2>Направления</h2>
-        <span class="edu-muted">{{ filteredCourses.length }} курсов</span>
+        <h2>{{ $t('education.directions') }}</h2>
+        <span class="edu-muted">{{ $t('education.coursesCount', { n: filteredCourses.length }) }}</span>
       </div>
       <div class="edu-pills">
         <button
-          v-for="t in tracks"
-          :key="t.key"
+          v-for="tr in tracks"
+          :key="tr.key"
           class="edu-pill"
-          :class="{ 'is-active': activeTrack === t.key }"
-          @click="activeTrack = t.key"
+          :class="{ 'is-active': activeTrack === tr.key }"
+          @click="activeTrack = tr.key"
         >
-          {{ t.label }}
+          {{ tr.label }}
         </button>
       </div>
     </section>
@@ -247,16 +248,16 @@ const upcoming = [
           <div class="edu-course-meta">{{ c.level }} · {{ c.duration }}</div>
           <h3 class="edu-course-title">{{ c.title }}</h3>
           <div class="edu-course-info">
-            <span><AppIcon name="menu_book" /> {{ c.lessons }} уроков</span>
-            <span><AppIcon name="groups" /> {{ c.students.toLocaleString('ru-RU') }}</span>
+            <span><AppIcon name="menu_book" /> {{ $t('education.lessons', { n: c.lessons }) }}</span>
+            <span><AppIcon name="groups" /> {{ c.students.toLocaleString() }}</span>
             <span><AppIcon name="star" /> {{ c.rating }}</span>
           </div>
           <div v-if="c.progress > 0" class="edu-course-progress">
             <div class="edu-progress-bar"><span :style="{ width: c.progress + '%', background: c.color }"></span></div>
-            <div class="edu-progress-label">{{ c.progress }}% пройдено</div>
+            <div class="edu-progress-label">{{ c.progress }}% {{ $t('education.completed') }}</div>
           </div>
           <button class="edu-btn edu-btn-outline edu-btn-block">
-            {{ c.progress > 0 && c.progress < 100 ? 'Продолжить' : c.progress === 100 ? 'Сертификат' : 'Записаться' }}
+            {{ c.progress > 0 && c.progress < 100 ? $t('education.btnContinue') : c.progress === 100 ? $t('education.btnCertificate') : $t('education.btnEnroll') }}
           </button>
         </div>
       </article>
@@ -266,8 +267,8 @@ const upcoming = [
     <section class="edu-split">
       <div class="edu-card">
         <div class="edu-section-title">
-          <h2>Мой учебный трек</h2>
-          <span class="edu-muted">Финансовый аналитик</span>
+          <h2>{{ $t('education.myTrack') }}</h2>
+          <span class="edu-muted">{{ $t('education.financialAnalyst') }}</span>
         </div>
         <ol class="edu-path">
           <li
@@ -284,15 +285,15 @@ const upcoming = [
               <div class="edu-path-title">{{ p.title }}</div>
               <div class="edu-path-sub">{{ p.sub }}</div>
             </div>
-            <span v-if="p.status === 'active'" class="edu-badge tone-blue">Сейчас</span>
+            <span v-if="p.status === 'active'" class="edu-badge tone-blue">{{ $t('education.now') }}</span>
           </li>
         </ol>
       </div>
 
       <div class="edu-card">
         <div class="edu-section-title">
-          <h2>Ближайшие события</h2>
-          <a href="#" class="edu-link">Все →</a>
+          <h2>{{ $t('education.upcomingEvents') }}</h2>
+          <a href="#" class="edu-link">{{ $t('education.allEvents') }}</a>
         </div>
         <ul class="edu-events">
           <li v-for="e in upcoming" :key="e.title" class="edu-event" :class="`tone-${e.tone}`">

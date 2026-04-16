@@ -5,9 +5,11 @@ import FcHeader from '@/components/fincontrol/FcHeader.vue'
 import FcChart from '@/components/fincontrol/FcChart.vue'
 import FcSparkline from '@/components/fincontrol/FcSparkline.vue'
 import AppIcon from '@/components/AppIcon.vue'
-import { recurring } from '@/data/fincontrol'
+import { makeRecurring } from '@/data/fincontrol'
 
 const { t } = useI18n()
+
+const recurring = computed(() => makeRecurring(t))
 
 const tab = ref('outgoing')
 const granularity = ref('day')

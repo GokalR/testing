@@ -106,12 +106,13 @@ export const useRegionalStrategistStore = defineStore('regionalStrategist', {
     addUpload(upload) {
       this.uploads = [...this.uploads.filter((u) => u.kind !== upload.kind), upload]
     },
-    seedDemo(key) {
+    seedDemo(key, lang = 'ru') {
       const seed = DEMO_SEEDS[key]
       if (!seed) return
+      const variant = seed[lang] || seed.ru
       this.path = 'existing'
-      this.profile = { ...emptyProfile(), ...seed.profile }
-      this.finance = { ...emptyFinance(), ...seed.finance }
+      this.profile = { ...emptyProfile(), ...variant.profile }
+      this.finance = { ...emptyFinance(), ...variant.finance }
     },
   },
 })

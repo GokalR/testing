@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import FcHeader from '@/components/fincontrol/FcHeader.vue'
 import AppIcon from '@/components/AppIcon.vue'
@@ -7,28 +7,28 @@ import AppIcon from '@/components/AppIcon.vue'
 const { t } = useI18n()
 
 const selectedBank = ref('Hamkorbank')
-const fileName = ref('hamkorbank_апрель_2026.xlsx')
+const fileName = ref(t('fincontrol.import.defaultFileName'))
 const analyzing = ref(false)
 const showPreview = ref(true)
 const toast = ref(null)
 
-const previewRows = [
-  { date: '01 апр 2026', name: 'Asiatech Logistics', av: 'AT', avTone: 'blue', amount: '−45 200 000', tone: 'red', category: 'Закупки', confLabel: 'Высокая', conf: 94, confTone: 'green' },
-  { date: '03 апр 2026', name: 'ООО «Стройком»', av: 'ОС', avTone: 'green', amount: '+120 000 000', tone: 'green', category: 'Выручка', confLabel: 'Высокая', conf: 98, confTone: 'green' },
-  { date: '05 апр 2026', name: 'Налоговая инспекция', av: 'НФ', avTone: 'purple', amount: '−12 800 000', tone: 'red', category: 'Налоги', confLabel: 'Высокая', conf: 91, confTone: 'green' },
-  { date: '07 апр 2026', name: 'ТехноКарт Сервис', av: 'ТК', avTone: 'amber', amount: '−8 500 000', tone: 'red', category: 'Оборудование?', confLabel: 'Средняя', conf: 62, confTone: 'amber', rowBg: 'rgba(245,158,11,.06)' },
-  { date: '08 апр 2026', name: 'Asiatech Logistics', av: 'АТ', avTone: 'red', amount: '−45 200 000', tone: 'red', category: 'Закупки', duplicate: true, conf: 30, confTone: 'red', rowBg: 'rgba(224,56,75,.06)' },
-  { date: '10 апр 2026', name: 'НН-Маркет Ltd', av: 'НН', avTone: 'slate', amount: '−3 200 000', tone: 'red', category: 'Прочее?', confLabel: 'Средняя', conf: 54, confTone: 'amber', rowBg: 'rgba(245,158,11,.06)' },
-  { date: '12 апр 2026', name: 'Узбектелеком', av: 'УТ', avTone: 'blue', amount: '−1 850 000', tone: 'red', category: 'Связь', confLabel: 'Высокая', conf: 87, confTone: 'green' },
-]
+const previewRows = computed(() => [
+  { date: t('fincontrol.import.prevDate1'), name: 'Asiatech Logistics', av: 'AT', avTone: 'blue', amount: '−45 200 000', tone: 'red', category: t('fincontrol.import.catPurchases'), confLabel: t('fincontrol.import.confHigh'), conf: 94, confTone: 'green' },
+  { date: t('fincontrol.import.prevDate2'), name: t('fincontrol.import.prevName2'), av: 'ОС', avTone: 'green', amount: '+120 000 000', tone: 'green', category: t('fincontrol.import.catRevenue'), confLabel: t('fincontrol.import.confHigh'), conf: 98, confTone: 'green' },
+  { date: t('fincontrol.import.prevDate3'), name: t('fincontrol.import.prevName3'), av: 'НФ', avTone: 'purple', amount: '−12 800 000', tone: 'red', category: t('fincontrol.import.catTaxes'), confLabel: t('fincontrol.import.confHigh'), conf: 91, confTone: 'green' },
+  { date: t('fincontrol.import.prevDate4'), name: t('fincontrol.import.prevName4'), av: 'ТК', avTone: 'amber', amount: '−8 500 000', tone: 'red', category: t('fincontrol.import.catEquipmentQ'), confLabel: t('fincontrol.import.confMedium'), conf: 62, confTone: 'amber', rowBg: 'rgba(245,158,11,.06)' },
+  { date: t('fincontrol.import.prevDate5'), name: 'Asiatech Logistics', av: 'АТ', avTone: 'red', amount: '−45 200 000', tone: 'red', category: t('fincontrol.import.catPurchases'), duplicate: true, conf: 30, confTone: 'red', rowBg: 'rgba(224,56,75,.06)' },
+  { date: t('fincontrol.import.prevDate6'), name: t('fincontrol.import.prevName6'), av: 'НН', avTone: 'slate', amount: '−3 200 000', tone: 'red', category: t('fincontrol.import.catOtherQ'), confLabel: t('fincontrol.import.confMedium'), conf: 54, confTone: 'amber', rowBg: 'rgba(245,158,11,.06)' },
+  { date: t('fincontrol.import.prevDate7'), name: t('fincontrol.import.prevName7'), av: 'УТ', avTone: 'blue', amount: '−1 850 000', tone: 'red', category: t('fincontrol.import.catComms'), confLabel: t('fincontrol.import.confHigh'), conf: 87, confTone: 'green' },
+])
 
-const history = [
-  { date: '14 апр 2026, 10:32', bank: 'Hamkorbank', bankColor: '#F97316', period: '01 — 14 апр 2026', count: 47, status: 'Импортировано', statusTone: 'green', action: 'delete' },
-  { date: '14 апр 2026, 10:18', bank: 'NBU Institutional', bankColor: '#003D7C', period: '01 — 14 апр 2026', count: null, status: 'В обработке', statusTone: 'blue', action: 'cancel' },
-  { date: '01 апр 2026, 09:15', bank: 'Hamkorbank', bankColor: '#F97316', period: '01 — 31 мар 2026', count: 124, status: 'Импортировано', statusTone: 'green', action: 'delete' },
-  { date: '28 мар 2026, 16:44', bank: 'Ipoteka Bank', bankColor: '#0054A6', period: '01 — 28 мар 2026', count: null, status: 'Ошибка', statusTone: 'red', action: 'delete' },
-  { date: '01 мар 2026, 08:50', bank: 'NBU Institutional', bankColor: '#003D7C', period: '01 — 28 фев 2026', count: 209, status: 'Импортировано', statusTone: 'green', action: 'delete' },
-]
+const history = computed(() => [
+  { date: t('fincontrol.import.histDate1'), bank: 'Hamkorbank', bankColor: '#F97316', period: t('fincontrol.import.histPeriod1'), count: 47, status: t('fincontrol.import.statusImported'), statusTone: 'green', action: 'delete' },
+  { date: t('fincontrol.import.histDate2'), bank: 'NBU Institutional', bankColor: '#003D7C', period: t('fincontrol.import.histPeriod2'), count: null, status: t('fincontrol.import.statusProcessing'), statusTone: 'blue', action: 'cancel' },
+  { date: t('fincontrol.import.histDate3'), bank: 'Hamkorbank', bankColor: '#F97316', period: t('fincontrol.import.histPeriod3'), count: 124, status: t('fincontrol.import.statusImported'), statusTone: 'green', action: 'delete' },
+  { date: t('fincontrol.import.histDate4'), bank: 'Ipoteka Bank', bankColor: '#0054A6', period: t('fincontrol.import.histPeriod4'), count: null, status: t('fincontrol.import.statusError'), statusTone: 'red', action: 'delete' },
+  { date: t('fincontrol.import.histDate5'), bank: 'NBU Institutional', bankColor: '#003D7C', period: t('fincontrol.import.histPeriod5'), count: 209, status: t('fincontrol.import.statusImported'), statusTone: 'green', action: 'delete' },
+])
 
 function showToast(text, tone = 'green') {
   toast.value = { text, tone }
@@ -199,7 +199,7 @@ function removeFile() {
             </div>
             <div style="font-weight:700;color:#1A2B4A;font-size:15px;margin-bottom:4px">{{ t('fincontrol.import.dropTitle') }}</div>
             <div style="font-size:12px;color:#6B7A99;margin-bottom:14px">{{ t('fincontrol.import.dropSub') }}</div>
-            <button class="fc-cta-primary" style="padding:8px 18px" @click="fileName = 'hamkorbank_апрель_2026.xlsx'">{{ t('fincontrol.import.chooseFile') }}</button>
+            <button class="fc-cta-primary" style="padding:8px 18px" @click="fileName = t('fincontrol.import.defaultFileName')">{{ t('fincontrol.import.chooseFile') }}</button>
           </div>
           <div v-else>
             <div style="width:52px;height:52px;border-radius:13px;background:rgba(0,166,81,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 10px">

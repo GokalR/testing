@@ -46,7 +46,7 @@ const searchValue = ref('')
         class="fc-export-btn"
       >
         <AppIcon name="file_download" />
-        <span>Экспорт</span>
+        <span>{{ $t('fincontrol.dashboard.export') }}</span>
       </button>
       <template v-if="pdfExcel">
         <button type="button" class="fc-export-btn">

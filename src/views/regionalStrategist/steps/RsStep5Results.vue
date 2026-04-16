@@ -51,11 +51,45 @@ const FERGANA_KINDERGARTEN_OVERRIDE = {
       'Раннее развитие речи',
       'Подготовка к мл. группе',
     ],
+    studentsCol: 'Дети',
+    STARTUP_COSTS: [
+      ['Ремонт и подготовка 2 помещений', '250 млн'],
+      ['Мебель, кроватки, шкафчики', '150 млн'],
+      ['Игровое и развивающее оборудование', '120 млн'],
+      ['Кухонное оборудование (расширение)', '80 млн'],
+      ['Игрушки, учебные материалы', '50 млн'],
+      ['Сантехника, безопасность, пожарная сигнализация', '80 млн'],
+      ['Лицензии и маркетинг', '70 млн'],
+    ],
     startupTotal: '800 млн сум',
+    MONTHLY_COSTS: [
+      ['Зарплата (4 воспитателя + 2 нянечки)', '42 млн'],
+      ['Питание детей (4-разовое)', '20 млн'],
+      ['Коммунальные услуги', '10 млн'],
+      ['Повар + помощник', '12 млн'],
+      ['Учебные материалы, игрушки', '5 млн'],
+      ['Прочие (хозтовары, медикаменты)', '6 млн'],
+    ],
     monthlyTotal: '95 млн/мес',
+    REVENUE_FORECAST: [
+      { period: 'Месяц 1–3', students: 20, revenue: '8 млн', profit: '-14 млн', profitPositive: false },
+      { period: 'Месяц 4–6', students: 30, revenue: '12 млн', profit: '-2 млн', profitPositive: false },
+      { period: 'Месяц 7–9', students: 38, revenue: '15,2 млн', profit: '+4 млн', profitPositive: true },
+      { period: 'Месяц 10–12', students: 44, revenue: '17,6 млн', profit: '+8 млн', profitPositive: true },
+    ],
     revenueForecastLabel: 'ПРОГНОЗ ВЫРУЧКИ (400 тыс. сум/мес за место, 2 новые группы)',
     breakeven: 'Точка безубыточности: месяц 4–5 (при наполняемости 70%+)',
-    ctaSubtitle: 'Подайте заявку на «Развивайся» (до 1,5 млрд, 18%, 60 мес.) — оптимально под расширение с залогом недвижимости.',
+    ACTION_STEPS: [
+      { week: 'Неделя 1–2', title: 'Доработка бизнес-плана', desc: 'Финансовые прогнозы на 2 ясельные группы, расчёт себестоимости питания', status: 'warning' },
+      { week: 'Неделя 3–4', title: 'Подача заявки на кредит', desc: 'Подать на «Развивайся» (23%, до 3,5 млрд, 48 мес.) в отделение NBU Фергана', status: 'negative' },
+      { week: 'Месяц 2', title: 'Проектирование помещений', desc: 'Согласовать планировку 2 групповых комнат, спальни, санузлов с СЭС', status: 'neutral' },
+      { week: 'Месяц 2–3', title: 'Ремонт и оборудование', desc: 'Закупка кроваток, шкафчиков, игрового оборудования, кухонной техники', status: 'neutral' },
+      { week: 'Месяц 3', title: 'Набор персонала', desc: '4 воспитателя + 2 нянечки + повар; медосмотр, аттестация', status: 'neutral' },
+      { week: 'Месяц 3–4', title: 'Маркетинг и набор детей', desc: 'Объявления в маҳалле, соцсети, дни открытых дверей для родителей', status: 'neutral' },
+      { week: 'Месяц 4', title: 'Открытие 2 ясельных групп', desc: 'Приём первых 20 детей (2–3 года), запуск 4-разового питания', status: 'positive' },
+      { week: 'Месяц 7–8', title: 'Выход на окупаемость', desc: '38+ детей, выручка 15+ млн/мес, покрытие расходов расширения', status: 'positive' },
+    ],
+    ctaSubtitle: 'Подайте заявку на «Развивайся» (до 3,5 млрд, 23%, 48 мес.) — оптимально под расширение с залогом недвижимости.',
     MAHALLA_RANKING: null,
   },
   uz: {
@@ -80,11 +114,45 @@ const FERGANA_KINDERGARTEN_OVERRIDE = {
       'Эрта нутқ ривожланиши',
       'Кичик гуруҳга тайёргарлик',
     ],
+    studentsCol: 'Болалар',
+    STARTUP_COSTS: [
+      ['2 та хонани таъмирлаш ва тайёрлаш', '250 млн'],
+      ['Мебель, кроваткалар, шкафчалар', '150 млн'],
+      ['Ўйин ва ривожлантирувчи жиҳозлар', '120 млн'],
+      ['Ошхона жиҳозлари (кенгайтириш)', '80 млн'],
+      ['Ўйинчоқлар, ўқув материаллари', '50 млн'],
+      ['Сантехника, хавфсизлик, ёнғин сигнализацияси', '80 млн'],
+      ['Лицензиялар ва маркетинг', '70 млн'],
+    ],
     startupTotal: '800 млн сўм',
+    MONTHLY_COSTS: [
+      ['Иш ҳақи (4 тарбиячи + 2 энага)', '42 млн'],
+      ['Болалар овқати (4 маҳал)', '20 млн'],
+      ['Коммунал хизматлар', '10 млн'],
+      ['Ошпаз + ёрдамчи', '12 млн'],
+      ['Ўқув материаллари, ўйинчоқлар', '5 млн'],
+      ['Бошқа (хўжалик, дори-дармон)', '6 млн'],
+    ],
     monthlyTotal: '95 млн/ой',
+    REVENUE_FORECAST: [
+      { period: '1–3 ой', students: 20, revenue: '8 млн', profit: '-14 млн', profitPositive: false },
+      { period: '4–6 ой', students: 30, revenue: '12 млн', profit: '-2 млн', profitPositive: false },
+      { period: '7–9 ой', students: 38, revenue: '15,2 млн', profit: '+4 млн', profitPositive: true },
+      { period: '10–12 ой', students: 44, revenue: '17,6 млн', profit: '+8 млн', profitPositive: true },
+    ],
     revenueForecastLabel: 'ТУШУМ ПРОГНОЗИ (400 минг сўм/ой ҳар ўрин, 2 янги гуруҳ)',
     breakeven: 'Фойдалилик нуқтаси: 4–5 ой (тўлдирилиш 70%+ да)',
-    ctaSubtitle: '«Развивайся» (1,5 млрд сўмгача, 18%, 60 ой) учун ариза беринг — кўчмас мулк гаровида кенгайтириш учун оптимал.',
+    ACTION_STEPS: [
+      { week: '1–2 ҳафта', title: 'Бизнес-планни якунлаш', desc: '2 ясли гуруҳ учун молиявий прогнозлар, овқат таннархини ҳисоблаш', status: 'warning' },
+      { week: '3–4 ҳафта', title: 'Кредитга ариза бериш', desc: 'NBU Фарғона бўлимига «Развивайся» (23%, 3,5 млрдгача, 48 ой) учун ариза', status: 'negative' },
+      { week: '2 ой', title: 'Хоналарни лойиҳалаш', desc: '2 гуруҳ хонаси, ухлаш хонаси, санузеллар режасини СЭС билан келишиш', status: 'neutral' },
+      { week: '2–3 ой', title: 'Таъмир ва жиҳозлаш', desc: 'Кроваткалар, шкафчалар, ўйин жиҳозлари, ошхона техникаси сотиб олиш', status: 'neutral' },
+      { week: '3 ой', title: 'Ходимларни ёллаш', desc: '4 тарбиячи + 2 энага + ошпаз; тиббий кўрик, аттестация', status: 'neutral' },
+      { week: '3–4 ой', title: 'Маркетинг ва болалар йиғиш', desc: 'Маҳаллада эълонлар, ижтимоий тармоқлар, ота-оналар учун очиқ кунлар', status: 'neutral' },
+      { week: '4 ой', title: '2 ясли гуруҳни очиш', desc: 'Биринчи 20 бола (2–3 ёш) қабул қилиш, 4 маҳал овқатни бошлаш', status: 'positive' },
+      { week: '7–8 ой', title: 'Фойдалилик нуқтасига чиқиш', desc: '38+ бола, тушум 15+ млн/ой, кенгайтириш харажатларини қоплаш', status: 'positive' },
+    ],
+    ctaSubtitle: '«Развивайся» (3,5 млрд сўмгача, 23%, 48 ой) учун ариза беринг — кўчмас мулк гаровида кенгайтириш учун оптимал.',
     MAHALLA_RANKING: null,
   },
 }
@@ -257,18 +325,13 @@ const excelInsight = computed(() => {
   if (!f) return null
   const r = f.ratios || {}
   const L = lang.value
-  const med = PEER_MEDIANS.value
   const strong = []
   const weak = []
 
-  // Use ±5% hysteresis so "на уровне" doesn't spuriously flip to "выше/ниже".
-  const cmp = (user, peer) => (user - peer) / (Math.abs(peer) || 1)
-
   if (r.netMargin != null) {
-    const d = cmp(r.netMargin, med.netMargin)
-    if (d > 0.05) strong.push(L === 'uz' ? `соф маржа ${(r.netMargin*100).toFixed(1)}% — соҳа медианасидан (${(med.netMargin*100).toFixed(0)}%) юқори` : `чистая маржа ${(r.netMargin*100).toFixed(1)}% — выше медианы сектора (${(med.netMargin*100).toFixed(0)}%)`)
-    else if (d < -0.15) weak.push(L === 'uz' ? `соф маржа соҳа медианасидан паст (${(r.netMargin*100).toFixed(1)}% vs ${(med.netMargin*100).toFixed(0)}%)` : `чистая маржа ниже медианы сектора (${(r.netMargin*100).toFixed(1)}% vs ${(med.netMargin*100).toFixed(0)}%)`)
-    else strong.push(L === 'uz' ? `соф маржа соҳа медианасида (${(r.netMargin*100).toFixed(1)}%)` : `чистая маржа в пределах медианы сектора (${(r.netMargin*100).toFixed(1)}%)`)
+    if (r.netMargin >= 0.10) strong.push(L === 'uz' ? `соф маржа ${(r.netMargin*100).toFixed(1)}% — яхши даражада` : `чистая маржа ${(r.netMargin*100).toFixed(1)}% — хороший уровень`)
+    else if (r.netMargin >= 0.05) strong.push(L === 'uz' ? `соф маржа ${(r.netMargin*100).toFixed(1)}%` : `чистая маржа ${(r.netMargin*100).toFixed(1)}%`)
+    else weak.push(L === 'uz' ? `соф маржа паст (${(r.netMargin*100).toFixed(1)}%)` : `чистая маржа низкая (${(r.netMargin*100).toFixed(1)}%)`)
   }
   if (r.currentRatio != null) {
     if (r.currentRatio >= 1.5) strong.push(L === 'uz' ? 'ликвидлик соғлом (>1.5)' : 'ликвидность здоровая (>1.5)')
@@ -277,9 +340,9 @@ const excelInsight = computed(() => {
   }
   if (r.debtToEquity != null) {
     if (r.debtToEquity > 2) weak.push(L === 'uz' ? 'қарз юки юқори (D/E>2)' : 'высокая долговая нагрузка (D/E>2)')
-    else if (r.debtToEquity > med.debtToEquity) weak.push(L === 'uz' ? `D/E ${r.debtToEquity.toFixed(2)} — соҳа медианасидан (${med.debtToEquity.toFixed(1)}) юқори` : `D/E ${r.debtToEquity.toFixed(2)} — выше медианы сектора (${med.debtToEquity.toFixed(1)})`)
+    else if (r.debtToEquity > 1.5) weak.push(L === 'uz' ? `D/E ${r.debtToEquity.toFixed(2)} — юқори` : `D/E ${r.debtToEquity.toFixed(2)} — повышенный`)
   }
-  if (r.roe != null && r.roe > med.roe) strong.push(L === 'uz' ? `ROE ${(r.roe*100).toFixed(1)}% — капитал самарали ишлатилмоқда` : `ROE ${(r.roe*100).toFixed(1)}% — капитал работает эффективно`)
+  if (r.roe != null && r.roe > 0.12) strong.push(L === 'uz' ? `ROE ${(r.roe*100).toFixed(1)}% — капитал самарали ишлатилмоқда` : `ROE ${(r.roe*100).toFixed(1)}% — капитал работает эффективно`)
   if (r.roa != null && r.roa < 0.03) weak.push(L === 'uz' ? 'активлар рентабеллиги паст (ROA<3%)' : 'рентабельность активов низкая (ROA<3%)')
 
   if (!strong.length && !weak.length) return null
@@ -333,8 +396,29 @@ onMounted(async () => {
 })
 
 // Map finance inputs to matcher arguments.
+// Parse loan-amount option strings like '200–500 млн', '500 млн – 1 млрд', 'Более 1 млрд'
+// into a representative numeric value in sum.  Uses the midpoint of a range.
+function parseLoanAmount(raw) {
+  const s = String(raw || '').toLowerCase()
+  if (!s) return 0
+  const mult = s.includes('млрд') ? 1e9 : 1e6 // default to млн
+  // Extract all numbers from the string
+  const nums = s.match(/[\d.]+/g)?.map(Number).filter(Number.isFinite) || []
+  if (!nums.length) return 0
+  if (nums.length === 1) {
+    // "До 50 млн" → 50 млн; "Более 1 млрд" → 1 млрд; "50 млн гача" → 50 млн
+    return nums[0] * mult
+  }
+  // Range like "200–500 млн" or "500 млн – 1 млрд"
+  // If both млн and млрд present (e.g. '500 млн – 1 млрд'), parse individually
+  if (s.includes('млн') && s.includes('млрд')) {
+    return Math.round((nums[0] * 1e6 + nums[1] * 1e9) / 2)
+  }
+  return Math.round((nums[0] + nums[1]) / 2 * mult)
+}
+
 const matcherInputs = computed(() => {
-  const amt = Number(String(finance.value.loanAmount || '').replace(/[^\d]/g, '')) || 0
+  const amt = parseLoanAmount(finance.value.loanAmount)
   const collMap = {
     'Недвижимость': 'realEstate',
     'Автотранспорт': 'vehicle',
@@ -602,21 +686,11 @@ const onDownload = () => {
           </div>
         </div>
 
-        <!-- Ratio bars with peer comparison -->
+        <!-- Ratio bars (user's own ratios only) -->
         <div v-if="ratioBars.length">
           <div class="flex items-center justify-between gap-3 mb-3">
             <div class="font-sans text-[12px] font-semibold uppercase tracking-[1px] text-steel-500">
-              {{ lang === 'uz' ? 'Коэффициентлар' : 'Финансовые коэффициенты' }}
-            </div>
-            <div class="flex items-center gap-4 text-[11px] text-steel-500">
-              <span class="inline-flex items-center gap-[6px]">
-                <span class="w-[10px] h-[10px] rounded-full bg-emerald-500"></span>
-                {{ lang === 'uz' ? 'Сиз' : 'Вы' }}
-              </span>
-              <span class="inline-flex items-center gap-[6px]">
-                <span class="w-[10px] h-[10px] rounded-full bg-steel-300"></span>
-                {{ lang === 'uz' ? 'Соҳа (медиана)' : 'Отрасль (медиана)' }}
-              </span>
+              {{ lang === 'uz' ? 'Молиявий коэффициентлар' : 'Финансовые коэффициенты' }}
             </div>
           </div>
           <div class="border border-rs-border rounded-[10px] divide-y divide-rs-border">
@@ -625,20 +699,11 @@ const onDownload = () => {
                 <div class="font-sans text-[13px] font-medium text-carbon">{{ r.label }}</div>
                 <div class="flex items-center gap-3 font-mono text-[12px]">
                   <span class="font-bold text-carbon">{{ r.userLabel }}</span>
-                  <span class="text-steel-500">vs {{ r.peerLabel }}</span>
-                  <span :class="[
-                    'text-[11px] font-semibold uppercase tracking-[0.5px] rounded-[4px] py-[2px] px-[6px]',
-                    r.verdictTone === 'good' ? 'bg-emerald-50 text-emerald-700'
-                      : r.verdictTone === 'warn' ? 'bg-amber-50 text-amber-700'
-                      : 'bg-red-50 text-red-700',
-                  ]">{{ r.verdictLabel }}</span>
                 </div>
               </div>
               <div class="relative h-[8px] bg-slate-100 rounded-full overflow-hidden">
                 <div class="absolute inset-y-0 left-0 bg-emerald-500 rounded-full transition-all"
                      :style="{ width: r.userBar + '%' }"></div>
-                <div class="absolute top-0 bottom-0 w-[2px] bg-steel-400"
-                     :style="{ left: r.peerBar + '%' }"></div>
               </div>
             </div>
           </div>

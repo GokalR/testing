@@ -5,9 +5,11 @@ import FcHeader from '@/components/fincontrol/FcHeader.vue'
 import FcChart from '@/components/fincontrol/FcChart.vue'
 import FcSparkline from '@/components/fincontrol/FcSparkline.vue'
 import AppIcon from '@/components/AppIcon.vue'
-import { pnlRows } from '@/data/fincontrol'
+import { makePnlRows } from '@/data/fincontrol'
 
 const { t, tm } = useI18n()
+
+const pnlRows = computed(() => makePnlRows(t))
 
 const dismissDisclaimer = ref(false)
 

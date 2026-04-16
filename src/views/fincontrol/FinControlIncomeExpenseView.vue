@@ -5,9 +5,14 @@ import FcHeader from '@/components/fincontrol/FcHeader.vue'
 import FcChart from '@/components/fincontrol/FcChart.vue'
 import FcSparkline from '@/components/fincontrol/FcSparkline.vue'
 import AppIcon from '@/components/AppIcon.vue'
-import { transactions, expenseStructure, expenseCategories, incomeCategories } from '@/data/fincontrol'
+import { makeTransactions, makeExpenseStructure, makeExpenseCategories, makeIncomeCategories } from '@/data/fincontrol'
 
 const { t, tm } = useI18n()
+
+const transactions = computed(() => makeTransactions(t))
+const expenseStructure = computed(() => makeExpenseStructure(t))
+const expenseCategories = computed(() => makeExpenseCategories(t))
+const incomeCategories = computed(() => makeIncomeCategories(t))
 
 const compareMode = ref('both')
 const txTab = ref('all')
@@ -30,10 +35,10 @@ const compareOptions = {
 }
 
 const donutData = computed(() => ({
-  labels: expenseStructure.map((e) => e.label),
+  labels: expenseStructure.value.map((e) => e.label),
   datasets: [{
-    data: expenseStructure.map((e) => e.value),
-    backgroundColor: expenseStructure.map((e) => e.color),
+    data: expenseStructure.value.map((e) => e.value),
+    backgroundColor: expenseStructure.value.map((e) => e.color),
     borderWidth: 0,
   }],
 }))

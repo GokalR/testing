@@ -7,8 +7,9 @@ import { regionColors } from '@/data/regionColors'
 const props = defineProps({
   modelValue: { type: String, default: null },
   regions: { type: Array, required: true }, // [{key, population, ...}]
+  availableRegions: { type: Set, default: null },
 })
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'unavailable'])
 
 const { t } = useI18n()
 const open = ref(false)
@@ -18,6 +19,11 @@ function toggle() {
   open.value = !open.value
 }
 function pick(key) {
+  if (props.availableRegions && !props.availableRegions.has(key)) {
+    emit('unavailable', key)
+    open.value = false
+    return
+  }
   emit('update:modelValue', props.modelValue === key ? null : key)
   open.value = false
 }
@@ -79,7 +85,10 @@ onBeforeUnmount(() => {
             <button
               type="button"
               class="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-surface-container transition-colors text-left"
-              :class="modelValue === r.key ? 'bg-primary-fixed' : ''"
+              :class="[
+                modelValue === r.key ? 'bg-primary-fixed' : '',
+                availableRegions && !availableRegions.has(r.key) ? 'opacity-40' : '',
+              ]"
               role="option"
               :aria-selected="modelValue === r.key"
               @click="pick(r.key)"

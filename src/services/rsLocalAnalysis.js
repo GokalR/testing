@@ -166,10 +166,18 @@ function buildRecommendedProduct(finance, profile, lang) {
     return null
   })()
 
+  const purposeMap = {
+    'Оборотные средства': 'working',
+    'Основные средства': 'fixed',
+    'Покупка автотранспорта': 'vehicle',
+    'Покупка недвижимости': 'realEstate',
+  }
+  const purpose = purposeMap[finance.businessGoal] || 'any'
+
   const matches = matchCreditProducts({
     loanAmount: toNum(finance.loanAmount),
     collateral: collKey,
-    purpose: 'any',
+    purpose,
     entityType,
     firstTime,
     lang,
@@ -326,7 +334,10 @@ export function generateLocalAnalysis({ profile, finance, cityId, uploads = [], 
     weaknesses: buildWeaknessesFromFactors(score.factors, lang),
     peerComparison: buildPeerComparison(userRatios, lang),
     cityFit: buildCityFit(city, finance, lang),
-    recommendedProduct: buildRecommendedProduct(finance, profile, lang),
+    // Credit product recommendation is handled exclusively by Section 5
+    // (matchCreditProducts in RsStep5Results) to avoid showing two conflicting
+    // product cards.  Setting to null hides the card in RsClaudeAnalysis.
+    recommendedProduct: null,
     nextSteps: buildNextSteps(profile, finance, city, lang),
     risks: buildRisks(profile, finance, city, lang),
   }

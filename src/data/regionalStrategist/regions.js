@@ -70,7 +70,9 @@ export const REGIONS = {
   ],
 }
 
-export const VILOYAT_OPTIONS = Object.keys(REGIONS)
+export const VILOYAT_OPTIONS = ['Ферганская область']
+export const ALL_VILOYAT_OPTIONS = Object.keys(REGIONS)
+export const AVAILABLE_HUDUDS = new Set(['Фарғона шаҳар', 'Марғилон шаҳар'])
 
 export const BUSINESS_DIRECTIONS = [
   { ru: 'Аренда автомобилей (Rent a Car)',         uz: 'Автомобил ижараси (Rent a Car)' },

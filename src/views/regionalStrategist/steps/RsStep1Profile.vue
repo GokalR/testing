@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useRegionalStrategistStore } from '@/stores/regionalStrategist'
 import { useRsLang } from '@/composables/useRsLang'
-import { REGIONS, VILOYAT_OPTIONS } from '@/data/regionalStrategist/regions'
+import { REGIONS, VILOYAT_OPTIONS, AVAILABLE_HUDUDS } from '@/data/regionalStrategist/regions'
 import RsSectionLabel from '@/components/regionalStrategist/RsSectionLabel.vue'
 import RsTextField from '@/components/regionalStrategist/RsTextField.vue'
 import RsSelectField from '@/components/regionalStrategist/RsSelectField.vue'
@@ -16,7 +16,10 @@ const { profile, path } = storeToRefs(store)
 const { lang } = useRsLang()
 const t = computed(() => STEP1_T[lang.value])
 
-const hududOptions = computed(() => (profile.value.viloyat ? REGIONS[profile.value.viloyat] || [] : []))
+const hududOptions = computed(() => {
+  const all = profile.value.viloyat ? REGIONS[profile.value.viloyat] || [] : []
+  return all.filter((h) => AVAILABLE_HUDUDS.has(h))
+})
 
 const updateViloyat = (v) => {
   store.updateProfile({ viloyat: v, hudud: '', mahalla: '' })
@@ -28,7 +31,7 @@ const entityCards = computed(() => [
 ])
 
 const loadErkinDemo = () => {
-  store.seedDemo('erkinParvoz')
+  store.seedDemo('erkinParvoz', lang.value)
 }
 </script>
 

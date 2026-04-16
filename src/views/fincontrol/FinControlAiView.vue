@@ -3,10 +3,9 @@ import { ref, nextTick, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import FcChart from '@/components/fincontrol/FcChart.vue'
 import AppIcon from '@/components/AppIcon.vue'
+import { setLocale } from '@/i18n'
 
-const { t } = useI18n()
-
-const lang = ref('ru')
+const { t, locale } = useI18n()
 const inputText = ref('')
 const messages = ref([])
 const typing = ref(false)
@@ -119,8 +118,8 @@ function onKey(e) {
     </div>
 
     <div style="display:flex;background:#F0F4FA;border-radius:8px;padding:2px">
-      <button class="fc-period-pill" :class="{active:lang==='ru'}" @click="lang='ru'" style="font-size:11px;padding:4px 10px;border-radius:6px">RU</button>
-      <button class="fc-period-pill" :class="{active:lang==='uz'}" @click="lang='uz'" style="font-size:11px;padding:4px 10px;border-radius:6px">UZ</button>
+      <button class="fc-period-pill" :class="{active:locale==='ru'}" @click="setLocale('ru')" style="font-size:11px;padding:4px 10px;border-radius:6px">RU</button>
+      <button class="fc-period-pill" :class="{active:locale==='uz'}" @click="setLocale('uz')" style="font-size:11px;padding:4px 10px;border-radius:6px">UZ</button>
     </div>
     <button class="fc-primary-btn" @click="newDialog"><AppIcon name="add" /> {{ t('fincontrol.ai.newDialog') }}</button>
     <button class="fc-icon-btn"><AppIcon name="help" /></button>
@@ -176,7 +175,7 @@ function onKey(e) {
           <div style="font-family:'Manrope';font-weight:800;font-size:14px;color:#1A2B4A">{{ t('fincontrol.ai.subTitle') }}</div>
           <div style="font-size:11px;color:#6B7A99">{{ t('fincontrol.ai.subSub') }}</div>
         </div>
-        <span class="fc-badge blue">{{ lang.toUpperCase() }}</span>
+        <span class="fc-badge blue">{{ locale.toUpperCase() }}</span>
         <div class="flex items-center gap-1">
           <span style="width:8px;height:8px;border-radius:50%;background:#00A651;animation:ai-pulse 1.8s infinite"></span>
           <span style="font-size:11px;color:#6B7A99">{{ t('fincontrol.ai.online') }}</span>

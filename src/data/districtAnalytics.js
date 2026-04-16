@@ -10,10 +10,10 @@ import { districtByKey } from './districts'
 
 // Heuristic profile per district: sector mix, infra maturity, growth tilt.
 // industry/agri/services/trade sum to 100. growth is % grp/yr. infra is 0–1.
-// These are illustrative; replace with real stat.uz data when wired.
+// Fergana city & Margilan use REAL_DATA below; profiles kept for score computation.
 const PROFILE = {
   fargona_city:  { industry: 42, agri:  8, services: 32, trade: 18, growth: 9.8, infra: 0.92, tourism: 0.8, textile: 0.6, enclave: false },
-  margilon_city: { industry: 56, agri:  4, services: 22, trade: 18, growth: 9.1, infra: 0.86, tourism: 0.9, textile: 1.0, enclave: false },
+  margilon_city: { industry: 19.4, agri: 6.5, services: 23.8, trade: 38.2, growth: 9.1, infra: 0.86, tourism: 0.9, textile: 1.0, enclave: false },
   qoqon_city:    { industry: 40, agri:  6, services: 30, trade: 24, growth: 8.9, infra: 0.88, tourism: 0.8, textile: 0.5, enclave: false },
   quvasoy_city:  { industry: 64, agri:  6, services: 18, trade: 12, growth: 8.2, infra: 0.78, tourism: 0.3, textile: 0.2, enclave: false },
   oltiariq:      { industry: 28, agri: 48, services: 14, trade: 10, growth: 7.8, infra: 0.58, tourism: 0.2, textile: 0.3, enclave: false },
@@ -33,9 +33,140 @@ const PROFILE = {
   yozyovon:      { industry: 24, agri: 54, services: 12, trade: 10, growth: 6.9, infra: 0.52, tourism: 0.1, textile: 0.2, enclave: false },
 }
 
-// Benchmark district = Marg'ilon (base for template scales).
-const BENCH_POP = 245.2
-const BENCH_GRP = 3616 // mlrd UZS
+// ── Real data from NBU Data Office dashboards (farstat.uz / Margilan brief) ──
+// Sources: dashboard_fergan_city.html, DASHBOARD_margilan_city.html
+const REAL_DATA = {
+  fargona_city: {
+    populationK: 335.1,
+    area: 110,
+    industryBln: 8587,           // 2024 industrial output (bln soum)
+    investBln: 4077,             // 2023 investments in fixed capital
+    grpBln: 12678,               // estimated from per-capita comparison
+    servicesBln: 12317,          // derived: 36,753 per-capita × 335.1K
+    tradeBln: 6630,              // derived: 19,785 per-capita × 335.1K
+    constructionBln: 3310,       // derived: 9,878 per-capita × 335.1K
+    avgSalary: 5200,             // estimated, city center
+    unemployment: 4.2,           // estimated, lower for oblast center
+    unemploymentStart: 8.5,
+    mahallas: 82,
+    constructionGrowth: 142.2,   // 2024
+    tourism: { visitors: 200, objects: 28 },  // K visitors
+    perCapita: { industry: 38187, invest: 21491, services: 36753, trade: 19785, construction: 9878 },
+    // Fergana city vs region average benchmark
+    benchmark: { industry: 11186, invest: 4726, services: 11400, trade: 9380, construction: 5100 },
+    // 5-year history (2021–2025), estimated from region growth rates
+    fiveYear: {
+      industry:     [5900, 6200, 6700, 8587, 9016],
+      export:       [210, 280, 350, 420, 580],
+      import:       [920, 960, 1010, 1050, 980],
+      construction: [132.3, 105.5, 109.1, 142.2, 115.0],
+      migration:    [180, 310, 850, 2100, 620],
+      enterprises:  [6800, 7200, 7500, 7800, 8100],
+      unemployment: [8.5, 7.2, 6.0, 5.0, 4.2],
+      investments:  [2100, 2500, 3200, 4077, 4500],
+    },
+    sectors: [
+      { key: 'industry',     pct: 25.3 },
+      { key: 'services',     pct: 28.9 },
+      { key: 'trade',        pct: 24.5 },
+      { key: 'construction', pct: 12.3 },
+      { key: 'agri',         pct: 4.5 },
+      { key: 'other',        pct: 4.5 },
+    ],
+    investSources: [
+      { key: 'enterprises', pct: 38.0 },
+      { key: 'foreign',     pct: 22.0 },
+      { key: 'govBudget',   pct: 18.0 },
+      { key: 'bankCredits', pct: 14.0 },
+      { key: 'population',  pct: 8.0 },
+    ],
+    entities: { active: 8100, inactive: 1200, opened: 420, closed: 180, ie: 5400, ooo: 1800, farmer: 450, other: 450 },
+    population: {
+      workingAge: 180000,
+      abroad: 4200,
+      naturalIncrease: 6800,
+    },
+    infra: { water: 95, sewage: 72, gas: 98, roads: 82 },
+    topMahallas: ['Markaziy', 'Yangi hayot', 'Istiqlol', 'Bunyodkor', 'Do\'stlik'],
+  },
+  margilon_city: {
+    populationK: 261.9,          // 261,948
+    area: 52,
+    industryBln: 2459,           // 2025
+    investBln: 1281,             // 2025 (+83% vs 2024)
+    grpBln: 5725,                // GTP 2025
+    servicesBln: 3564,           // derived: 13,599 per-capita × 261.9K
+    tradeBln: 5722,              // derived: 21,846 per-capita × 261.9K
+    constructionBln: 1807,       // derived: 6,899 per-capita × 261.9K
+    avgSalary: 3974,             // exact from dashboard
+    unemployment: 5.8,           // exact
+    unemploymentStart: 9.5,
+    mahallas: 50,                // exact
+    households: 46580,
+    constructionGrowth: 118.8,
+    tourism: { visitors: 380, objects: 42 },  // K visitors, heritage objects
+    perCapita: { industry: 9461, invest: 4928, services: 13599, trade: 21846, construction: 6899 },
+    // Margilan vs Fergana city benchmark
+    benchmark: { industry: 38187, invest: 21491, services: 36753, trade: 19785, construction: 9878 },
+    // 5-year history (2021–2025), exact from dashboard
+    fiveYear: {
+      industry:     [1440, 1554, 1683, 2079, 2459],
+      export:       [149, 191, 260, 213, 450],
+      import:       [777, 790, 800, 817, 745],
+      construction: [121.9, 88.9, 110.2, 102.7, 118.8],
+      migration:    [253, 630, 1772, 6240, 1180],
+      enterprises:  [4928, 4200, 3500, 3100, 2787],
+      unemployment: [9.5, 9.0, 7.8, 6.5, 5.8],
+      investments:  [780, 910, 1574, 700, 1281],
+    },
+    // GTP sector structure (exact from dashboard)
+    sectors: [
+      { key: 'trade',        pct: 38.2 },
+      { key: 'services',     pct: 23.8 },
+      { key: 'industry',     pct: 19.4 },
+      { key: 'construction', pct: 12.1 },
+      { key: 'other',        pct: 6.5 },
+    ],
+    // Investment financing sources 2025 (exact)
+    investSources: [
+      { key: 'foreign',      pct: 44.3 },
+      { key: 'enterprises',  pct: 19.1 },
+      { key: 'govBudget',    pct: 16.0 },
+      { key: 'population',   pct: 13.9 },
+      { key: 'restoration',  pct: 6.7 },
+    ],
+    entities: { active: 2787, inactive: 3080, opened: 350, closed: 752, ie: 7143, ooo: 562, farmer: 84, other: 120 },
+    population: {
+      workingAge: 140164,        // exact
+      abroad: 15574,             // exact — citizens abroad
+      naturalIncrease: 4757,     // exact
+      pensioners: 28315,
+      migrationBalance: -687,
+    },
+    infra: { water: 99, sewage: 62, gas: 89, roads: 75 },  // water 98.8% → 99%
+    topMahallas: ['Kashkar', 'Pichoqchi', 'Turaqu\'rg\'on', 'Yuksalish', 'Go\'riavval'],
+    // Credit & social data
+    nplRate: 4.6,
+    socialRegistry: 2602,
+    socialRegistryPct: 4.2,
+    unregisteredSelfEmployed: 2682,
+    informalEconomy: 37,
+  },
+}
+
+// Sector key → color mapping
+const SECTOR_COLORS = {
+  industry: '#003D7C', agri: '#059669', services: '#0054A6', trade: '#2563EB',
+  construction: '#D97706', other: '#6B7280',
+}
+const INVEST_SRC_COLORS = {
+  foreign: '#003D7C', enterprises: '#059669', govBudget: '#D97706',
+  population: '#7C3AED', bankCredits: '#2563EB', restoration: '#6B7280',
+}
+
+// Benchmark district = Marg'ilon (base for template scales — used for non-real districts).
+const BENCH_POP = 261.9
+const BENCH_GRP = 5725 // mlrd UZS
 const identity = (k) => k
 
 function fmt(n, d = 0) {
@@ -56,20 +187,22 @@ export function buildDistrictAnalytics(districtKey, t = identity) {
   const d = districtByKey[districtKey]
   if (!d) return null
   const p = PROFILE[districtKey] || PROFILE.oltiariq
-  const popK = d.population // thousand
+  const rd = REAL_DATA[districtKey] // may be undefined for non-pilot districts
+  const popK = rd ? rd.populationK : d.population
   const popAbs = Math.round(popK * 1000)
   const scale = popK / BENCH_POP
 
-  const grpTotal = Math.round(BENCH_GRP * scale * (p.growth / 8.0))
-  const industryBln = Math.round(grpTotal * (p.industry / 100))
-  const agriBln = Math.round(grpTotal * (p.agri / 100))
-  const servicesBln = Math.round(grpTotal * (p.services / 100))
-  const tradeBln = Math.round(grpTotal * (p.trade / 100))
-  const investBln = Math.round(883 * scale * (p.growth / 8.0))
-  const unemployment = Math.max(3.0, 7.0 - p.growth * 0.25).toFixed(1)
-  const unemploymentStart = (parseFloat(unemployment) + 6.5).toFixed(1)
+  const grpTotal    = rd ? rd.grpBln          : Math.round(BENCH_GRP * scale * (p.growth / 8.0))
+  const industryBln = rd ? rd.industryBln     : Math.round(grpTotal * (p.industry / 100))
+  const servicesBln = rd ? rd.servicesBln     : Math.round(grpTotal * (p.services / 100))
+  const tradeBln    = rd ? rd.tradeBln        : Math.round(grpTotal * (p.trade / 100))
+  const investBln   = rd ? rd.investBln       : Math.round(883 * scale * (p.growth / 8.0))
+  const agriBln     = rd ? Math.round(grpTotal * (p.agri / 100)) : Math.round(grpTotal * (p.agri / 100))
+  const constructionBln = rd ? rd.constructionBln : Math.round(grpTotal * 0.12)
+  const unemployment     = rd ? rd.unemployment.toFixed(1) : Math.max(3.0, 7.0 - p.growth * 0.25).toFixed(1)
+  const unemploymentStart = rd ? rd.unemploymentStart.toFixed(1) : (parseFloat(unemployment) + 6.5).toFixed(1)
 
-  const mahallas = Math.max(18, Math.round(popK * 0.35))
+  const mahallas = rd ? rd.mahallas : Math.max(18, Math.round(popK * 0.35))
   const score = Math.min(9.4, 5.5 + p.growth * 0.25 + p.infra * 2.0).toFixed(1)
   const k = kindLabels(t, d.kind)
   const mlrdSum = t('regionAnalytics.units.bnSum')
@@ -112,19 +245,47 @@ export function buildDistrictAnalytics(districtKey, t = identity) {
         invest: Math.round(investBln * factor * (i === 4 ? 2.4 : 1)),
       }
     }),
-    sectors: [
-      { name: t('regionAnalytics.sector.industry'),     percent: p.industry.toFixed(1), color: '#003D7C' },
-      { name: t('districtAnalytics.econ.agriShort'),    percent: p.agri.toFixed(1),     color: '#059669' },
-      { name: t('regionAnalytics.sector.services'),     percent: p.services.toFixed(1), color: '#0054A6' },
-      { name: t('districtAnalytics.sector.trade'),      percent: p.trade.toFixed(1),    color: '#2563EB' },
-    ],
-    trade: {
+    sectors: rd
+      ? rd.sectors.map((s) => ({
+          name: t(s.key === 'industry' ? 'regionAnalytics.sector.industry'
+              : s.key === 'services'   ? 'regionAnalytics.sector.services'
+              : s.key === 'trade'      ? 'districtAnalytics.sector.trade'
+              : s.key === 'construction' ? 'regionAnalytics.sector.construction'
+              : s.key === 'agri'       ? 'districtAnalytics.econ.agriShort'
+              : 'districtAnalytics.sector.other'),
+          percent: s.pct.toFixed(1),
+          color: SECTOR_COLORS[s.key] || '#6B7280',
+        }))
+      : [
+          { name: t('regionAnalytics.sector.industry'),     percent: p.industry.toFixed(1), color: '#003D7C' },
+          { name: t('districtAnalytics.econ.agriShort'),    percent: p.agri.toFixed(1),     color: '#059669' },
+          { name: t('regionAnalytics.sector.services'),     percent: p.services.toFixed(1), color: '#0054A6' },
+          { name: t('districtAnalytics.sector.trade'),      percent: p.trade.toFixed(1),    color: '#2563EB' },
+        ],
+    trade: rd ? {
+      importMln: rd.fiveYear.import[4],
+      exportMln: rd.fiveYear.export[4],
+      deficitMln: rd.fiveYear.import[4] - rd.fiveYear.export[4],
+      exportGrowth: `+${Math.round(((rd.fiveYear.export[4] / rd.fiveYear.export[0]) - 1) * 100)}%`,
+    } : {
       importMln: Math.round(40 * scale),
       exportMln: Math.round(11.4 * scale * (p.growth / 8.0) * (1 + p.textile * 0.4)),
       deficitMln: Math.round(-28.6 * scale),
       exportGrowth: `+${Math.round(30 + p.growth * 5)}%`,
     },
-    entities: {
+    entities: rd ? {
+      active: rd.entities.active,
+      inactive: rd.entities.inactive,
+      opened: rd.entities.opened,
+      closed: rd.entities.closed,
+      activeShare: Math.round((rd.entities.active / (rd.entities.active + rd.entities.inactive)) * 100),
+      types: [
+        { code: t('regionAnalytics.orgForm.ip'),     count: rd.entities.ie,     share: Math.round(rd.entities.ie / (rd.entities.ie + rd.entities.ooo + rd.entities.farmer + rd.entities.other) * 100) },
+        { code: t('regionAnalytics.orgForm.ooo'),    count: rd.entities.ooo,    share: Math.round(rd.entities.ooo / (rd.entities.ie + rd.entities.ooo + rd.entities.farmer + rd.entities.other) * 100) },
+        { code: t('regionAnalytics.orgForm.farmer'), count: rd.entities.farmer, share: Math.round(rd.entities.farmer / (rd.entities.ie + rd.entities.ooo + rd.entities.farmer + rd.entities.other) * 100) },
+        { code: t('regionAnalytics.orgForm.other'),  count: rd.entities.other,  share: Math.round(rd.entities.other / (rd.entities.ie + rd.entities.ooo + rd.entities.farmer + rd.entities.other) * 100) },
+      ],
+    } : {
       active: Math.round(866 * scale),
       inactive: Math.round(336 * scale),
       opened: Math.round(141 * scale),
@@ -142,10 +303,10 @@ export function buildDistrictAnalytics(districtKey, t = identity) {
       : t('districtAnalytics.ai.agrarian',      { kindGen: k.gen, share: p.agri }),
   }
 
-  const water = Math.round(p.infra * 70 + 10)
-  const sewage = Math.round(p.infra * 60 + 5)
-  const roads = Math.round(p.infra * 60 + 20)
-  const gas = Math.min(100, Math.round(p.infra * 80 + 20))
+  const water  = rd ? rd.infra.water  : Math.round(p.infra * 70 + 10)
+  const sewage = rd ? rd.infra.sewage : Math.round(p.infra * 60 + 5)
+  const roads  = rd ? rd.infra.roads  : Math.round(p.infra * 60 + 20)
+  const gas    = rd ? rd.infra.gas    : Math.min(100, Math.round(p.infra * 80 + 20))
 
   const infra = {
     kpis: [
@@ -194,11 +355,12 @@ export function buildDistrictAnalytics(districtKey, t = identity) {
   }
 
   const empEmployed = Math.round(75 + p.infra * 20)
+  const workingAge = rd ? rd.population.workingAge : Math.round(29811 * scale)
   const population = {
     kpis: [
-      { label: t('regionAnalytics.brief.population'),       value: fmt(popAbs), delta: t(d.kind === 'city' ? 'districtAnalytics.pop.cityRate' : 'districtAnalytics.pop.ruralRate'), sub: t('districtAnalytics.pop.under18Approx'), tone: 'blue' },
-      { label: t('regionAnalytics.pop.area'),               value: `${d.area} ${t('regionAnalytics.units.kmSq')}`, delta: '—', sub: t('regionAnalytics.pop.density', { n: Math.round(popAbs / d.area).toLocaleString('ru-RU') }), tone: 'blue' },
-      { label: t('regionAnalytics.pop.economicallyActive'), value: fmt(Math.round(29811 * scale)), delta: `+${fmt(Math.round(5745 * scale))}`, sub: t('regionAnalytics.pop.since2021'), tone: 'green' },
+      { label: t('regionAnalytics.brief.population'),       value: fmt(popAbs), delta: t(d.kind === 'city' ? 'districtAnalytics.pop.cityRate' : 'districtAnalytics.pop.ruralRate'), sub: rd ? t('districtAnalytics.pop.density', { n: Math.round(popAbs / (rd.area || d.area)).toLocaleString('ru-RU') }) : t('districtAnalytics.pop.under18Approx'), tone: 'blue' },
+      { label: t('regionAnalytics.pop.area'),               value: `${rd ? rd.area : d.area} ${t('regionAnalytics.units.kmSq')}`, delta: '—', sub: t('regionAnalytics.pop.density', { n: Math.round(popAbs / (rd ? rd.area : d.area)).toLocaleString('ru-RU') }), tone: 'blue' },
+      { label: t('regionAnalytics.pop.economicallyActive'), value: fmt(workingAge), delta: rd ? `+${fmt(rd.population.naturalIncrease)}` : `+${fmt(Math.round(5745 * scale))}`, sub: rd ? t('districtAnalytics.pop.naturalIncrease') : t('regionAnalytics.pop.since2021'), tone: 'green' },
       { label: t('regionAnalytics.brief.unemployment'),     value: `${unemployment}%`, delta: `${unemploymentStart}% → ${unemployment}%`, sub: '2021 → 2025', tone: 'green' },
     ],
     laborTrend: [
@@ -222,10 +384,10 @@ export function buildDistrictAnalytics(districtKey, t = identity) {
       { year: 2025, value: parseFloat(unemployment) },
     ],
     migration: {
-      countAbroad: Math.round(6812 * scale * (1 + (1 - p.infra) * 0.6)),
-      growthPct: `+${Math.round(40 + (1 - p.infra) * 30)}%`,
-      shareOfWorkforce: `${(19.2 * (1 + (1 - p.infra) * 0.3)).toFixed(1)}%`,
-      totalEmployed: Math.round(29811 * scale),
+      countAbroad: rd ? rd.population.abroad : Math.round(6812 * scale * (1 + (1 - p.infra) * 0.6)),
+      growthPct: rd ? `+${Math.round(((rd.population.abroad / popAbs) * 100))}%` : `+${Math.round(40 + (1 - p.infra) * 30)}%`,
+      shareOfWorkforce: rd ? `${((rd.population.abroad / workingAge) * 100).toFixed(1)}%` : `${(19.2 * (1 + (1 - p.infra) * 0.3)).toFixed(1)}%`,
+      totalEmployed: workingAge,
       warning: p.enclave
         ? t('districtAnalytics.migration.enclave')
         : t('regionAnalytics.migration.warning'),
@@ -261,7 +423,11 @@ export function buildDistrictAnalytics(districtKey, t = identity) {
       { label: t('regionAnalytics.bank.selfEmployed'),   percent: Math.round(40 + p.agri * 0.5),              color: 'bg-tertiary opacity-60' },
       { label: t('regionAnalytics.bank.profEducation'),  percent: Math.round(25 + p.infra * 20),              color: 'bg-primary opacity-60' },
     ],
-    topMahallas: buildTopMahallas(d, p, scale),
+    topMahallas: rd ? rd.topMahallas.map((name, i) => ({
+      name,
+      loans: Math.max(4, Math.round((24 - i * 2) * scale)),
+      score: parseFloat((9.0 - i * 0.3).toFixed(1)),
+    })) : buildTopMahallas(d, p, scale),
     digitalAdoption: {
       payments: Math.round(60 + p.infra * 30),
       cards: Math.round(45 + p.infra * 30),
@@ -269,6 +435,66 @@ export function buildDistrictAnalytics(districtKey, t = identity) {
       lending: Math.round(25 + p.infra * 20),
     },
   }
+
+  // ---- Enrichments: 5-year time series (real for pilot cities, estimated for others) ----
+  // Moved before summary/opportunities because they reference perCapita and exportYears.
+  let industryYears, exportYears, importYears, deficitYears, constructionYears
+  let migrationYears, enterprisesYears, unemploymentYears, investmentYears
+
+  if (rd) {
+    industryYears     = rd.fiveYear.industry
+    exportYears       = rd.fiveYear.export
+    importYears       = rd.fiveYear.import
+    constructionYears = rd.fiveYear.construction
+    migrationYears    = rd.fiveYear.migration
+    enterprisesYears  = rd.fiveYear.enterprises
+    unemploymentYears = rd.fiveYear.unemployment
+    investmentYears   = rd.fiveYear.investments
+    deficitYears      = importYears.map((im, i) => im - exportYears[i])
+  } else {
+    industryYears = [0.58, 0.63, 0.68, 0.84, 1.0].map((f) => Math.round(industryBln * f))
+    const exportBaseline = Math.round(11.4 * scale * (p.growth / 8.0) * (1 + p.textile * 0.4))
+    exportYears = [0.33, 0.42, 0.58, 0.47, 1.0].map((f) => Math.round(exportBaseline * f * 39))
+    const importBaseline = Math.round(40 * scale * 18)
+    importYears = [1.04, 1.06, 1.07, 1.10, 1.0].map((f) => Math.round(importBaseline * f))
+    deficitYears = importYears.map((im, i) => im - exportYears[i])
+    constructionYears = [121.9, 88.9, 110.2, 102.7, 118.8]
+    const migrationBase = Math.round(253 * scale * (1 + (1 - p.infra) * 0.6))
+    migrationYears = [1.0, 2.49, 7.0, 24.6, 4.67].map((f) => Math.round(migrationBase * f))
+    enterprisesYears = [1.0, 0.85, 0.71, 0.63, 0.57].map((f) => Math.round(4928 * scale * f))
+    unemploymentYears = [
+      parseFloat(unemploymentStart),
+      parseFloat(unemploymentStart) - 2.0,
+      parseFloat(unemploymentStart) - 3.7,
+      parseFloat(unemploymentStart) - 5.2,
+      parseFloat(unemployment),
+    ].map((v) => parseFloat(v.toFixed(1)))
+    investmentYears = [0.61, 0.71, 1.23, 0.55, 1.0].map((f) => Math.round(investBln * f))
+  }
+
+  // Compute trend labels from actual 5Y data
+  const pctTrend = (arr) => {
+    const first = arr[0]; const last = arr[arr.length - 1]
+    if (!first) return '+0%'
+    const pct = ((last / first) - 1) * 100
+    return pct >= 0 ? `+${Math.round(pct)}%` : `${Math.round(pct)}%`
+  }
+  const industryTrend = pctTrend(industryYears)
+  const exportTrend = pctTrend(exportYears)
+  const importTrend = pctTrend(importYears)
+  const deficitFirst = deficitYears[0]; const deficitLast = deficitYears[deficitYears.length - 1]
+  const deficitTrend = deficitFirst > 0 ? pctTrend(deficitYears) : `${Math.round(((deficitLast / deficitFirst) - 1) * 100)}%`
+  const migFirst = migrationYears[0]; const migLast = migrationYears[migrationYears.length - 1]
+  const migTrend = migFirst > 0 ? `×${(migLast / migFirst).toFixed(1)}` : `+${migLast}`
+  const investTrend = pctTrend(investmentYears)
+  const enterpriseTrend = pctTrend(enterprisesYears)
+
+  // Per-capita values: use real data when available
+  const perCapitaIndustry  = rd ? rd.perCapita.industry     : Math.round((industryBln * 1e9) / popAbs / 1000)
+  const perCapitaInvest    = rd ? rd.perCapita.invest        : Math.round((investBln * 1e9) / popAbs / 1000)
+  const perCapitaServices  = rd ? rd.perCapita.services      : Math.round((servicesBln * 1e9) / popAbs / 1000)
+  const perCapitaTrade     = rd ? rd.perCapita.trade          : Math.round((tradeBln * 1e9) / popAbs / 1000)
+  const perCapitaConstr    = rd ? rd.perCapita.construction   : Math.round((grpTotal * 0.12 * 1e9) / popAbs / 1000)
 
   const opportunities = {
     swot: {
@@ -296,11 +522,11 @@ export function buildDistrictAnalytics(districtKey, t = identity) {
       { axis: t('regionAnalytics.radar.investments'), value: Math.min(9.2, 5.5 + p.growth * 0.3).toFixed(1),  provincial: 6.8 },
     ],
     comparison: [
-      { metric: t('regionAnalytics.compare.industryPC'), region: Math.round((industryBln * 1e9) / popAbs / 1000), provincial: 28914 },
-      { metric: t('regionAnalytics.compare.servicesPC'), region: Math.round((servicesBln * 1e9) / popAbs / 1000), provincial: 14120 },
-      { metric: t('regionAnalytics.compare.tradePC'),    region: Math.round((tradeBln    * 1e9) / popAbs / 1000), provincial: 9380 },
-      { metric: t('regionAnalytics.compare.investPC'),   region: Math.round((investBln   * 1e9) / popAbs / 1000), provincial: 9910 },
-      { metric: t('regionAnalytics.compare.exportPC'),   region: Math.round((11.4 * scale * (p.growth / 8.0) * 1e6) / popAbs), provincial: 28 },
+      { metric: t('regionAnalytics.compare.industryPC'), region: perCapitaIndustry, provincial: 11186 },
+      { metric: t('regionAnalytics.compare.servicesPC'), region: perCapitaServices, provincial: 11400 },
+      { metric: t('regionAnalytics.compare.tradePC'),    region: perCapitaTrade,    provincial: 9380 },
+      { metric: t('regionAnalytics.compare.investPC'),   region: perCapitaInvest,   provincial: 4726 },
+      { metric: t('regionAnalytics.compare.exportPC'),   region: Math.round((exportYears[4] * 1e9) / popAbs / 1000), provincial: 28 },
     ],
     plan: buildPlan(d, p, scale, water, t),
     conclusion: t('districtAnalytics.summary.conclusion', {
@@ -315,52 +541,31 @@ export function buildDistrictAnalytics(districtKey, t = identity) {
     }),
   }
 
-  // ---- Enrichments inspired by NBU Data Office reference dashboard ----
-  const industryYears = [0.58, 0.63, 0.68, 0.84, 1.0].map((f) => Math.round(industryBln * f))
-  const exportBaseline = Math.round(11.4 * scale * (p.growth / 8.0) * (1 + p.textile * 0.4))
-  const exportYears = [0.33, 0.42, 0.58, 0.47, 1.0].map((f) => Math.round(exportBaseline * f * 39))
-  const importBaseline = Math.round(40 * scale * 18)
-  const importYears = [1.04, 1.06, 1.07, 1.10, 1.0].map((f) => Math.round(importBaseline * f))
-  const deficitYears = importYears.map((im, i) => im - exportYears[i])
-  const constructionYears = [121.9, 88.9, 110.2, 102.7, 118.8]
-  const migrationBase = Math.round(253 * scale * (1 + (1 - p.infra) * 0.6))
-  const migrationYears = [1.0, 2.49, 7.0, 24.6, 4.67].map((f) => Math.round(migrationBase * f))
-  const enterprisesYears = [1.0, 0.85, 0.71, 0.63, 0.57].map((f) => Math.round(4928 * scale * f))
-  const unemploymentYears = [
-    parseFloat(unemploymentStart),
-    parseFloat(unemploymentStart) - 2.0,
-    parseFloat(unemploymentStart) - 3.7,
-    parseFloat(unemploymentStart) - 5.2,
-    parseFloat(unemployment),
-  ].map((v) => parseFloat(v.toFixed(1)))
-  const investmentYears = [0.61, 0.71, 1.23, 0.55, 1.0].map((f) => Math.round(investBln * f))
-
   economic.fiveYear = [
-    { label: t('districtAnalytics.fiveY.industry'),       values: industryYears,     trend: '+71%',  trendTone: 'green' },
-    { label: t('districtAnalytics.fiveY.export'),         values: exportYears,       trend: '+202%', trendTone: 'green' },
-    { label: t('districtAnalytics.fiveY.import'),         values: importYears,       trend: '−4.1%', trendTone: 'green' },
-    { label: t('districtAnalytics.fiveY.tradeDeficit'),   values: deficitYears,      trend: '−53%',  trendTone: 'green' },
-    { label: t('districtAnalytics.fiveY.construction'),   values: constructionYears, trend: '−2.5%', trendTone: 'red' },
-    { label: t('districtAnalytics.fiveY.migration'),      values: migrationYears,    trend: '×25 ↑', trendTone: 'red' },
-    { label: t('districtAnalytics.fiveY.enterprises'),    values: enterprisesYears,  trend: '−43%',  trendTone: 'red' },
+    { label: t('districtAnalytics.fiveY.industry'),       values: industryYears,     trend: industryTrend,   trendTone: 'green' },
+    { label: t('districtAnalytics.fiveY.export'),         values: exportYears,       trend: exportTrend,     trendTone: 'green' },
+    { label: t('districtAnalytics.fiveY.import'),         values: importYears,       trend: importTrend,     trendTone: importYears[4] <= importYears[0] ? 'green' : 'red' },
+    { label: t('districtAnalytics.fiveY.tradeDeficit'),   values: deficitYears,      trend: deficitTrend,    trendTone: deficitLast < deficitFirst ? 'green' : 'red' },
+    { label: t('districtAnalytics.fiveY.construction'),   values: constructionYears, trend: `${constructionYears[4] >= 100 ? '+' : ''}${(constructionYears[4] - constructionYears[0]).toFixed(1)}`, trendTone: constructionYears[4] >= constructionYears[0] ? 'green' : 'red' },
+    { label: t('districtAnalytics.fiveY.migration'),      values: migrationYears,    trend: migTrend,        trendTone: migLast > migFirst * 2 ? 'red' : 'green' },
+    { label: t('districtAnalytics.fiveY.enterprises'),    values: enterprisesYears,  trend: enterpriseTrend, trendTone: enterprisesYears[4] >= enterprisesYears[0] ? 'green' : 'red' },
     { label: t('districtAnalytics.fiveY.unemployment'),   values: unemploymentYears, trend: `−${(parseFloat(unemploymentStart) - parseFloat(unemployment)).toFixed(1)} ${ppPoints}`, trendTone: 'green' },
-    { label: t('districtAnalytics.fiveY.investments'),    values: investmentYears,   trend: '+83%',  trendTone: 'green' },
+    { label: t('districtAnalytics.fiveY.investments'),    values: investmentYears,   trend: investTrend,     trendTone: 'green' },
   ]
 
-  economic.investmentSources = [
-    { label: t('districtAnalytics.invSrc.foreign'),      percent: 44.3, color: '#003D7C' },
-    { label: t('districtAnalytics.invSrc.enterprises'),  percent: 19.1, color: '#059669' },
-    { label: t('districtAnalytics.invSrc.govBudget'),    percent: 16.0, color: '#D97706' },
-    { label: t('districtAnalytics.invSrc.population'),   percent: 13.9, color: '#7C3AED' },
-    { label: t('districtAnalytics.invSrc.restoration'),  percent:  6.7, color: '#6B7280' },
-  ]
-
-  const pc = (bln) => Math.round((bln * 1e9) / popAbs / 1000)
-  const perCapitaIndustry = pc(industryBln)
-  const perCapitaInvest = pc(investBln)
-  const perCapitaServices = pc(servicesBln)
-  const perCapitaTrade = pc(tradeBln)
-  const perCapitaConstr = pc(Math.round(grpTotal * 0.12))
+  economic.investmentSources = rd
+    ? rd.investSources.map((s) => ({
+        label: t(`districtAnalytics.invSrc.${s.key}`),
+        percent: s.pct,
+        color: INVEST_SRC_COLORS[s.key] || '#6B7280',
+      }))
+    : [
+        { label: t('districtAnalytics.invSrc.foreign'),      percent: 44.3, color: '#003D7C' },
+        { label: t('districtAnalytics.invSrc.enterprises'),  percent: 19.1, color: '#059669' },
+        { label: t('districtAnalytics.invSrc.govBudget'),    percent: 16.0, color: '#D97706' },
+        { label: t('districtAnalytics.invSrc.population'),   percent: 13.9, color: '#7C3AED' },
+        { label: t('districtAnalytics.invSrc.restoration'),  percent:  6.7, color: '#6B7280' },
+      ]
 
   economic.perCapita = {
     industry: perCapitaIndustry,
@@ -371,26 +576,34 @@ export function buildDistrictAnalytics(districtKey, t = identity) {
   }
 
   const benchIsCity = districtKey === 'fargona_city'
+  const bm = rd ? rd.benchmark : null
   economic.benchmark = {
     versus: benchIsCity ? t('districtAnalytics.bench.regionAvg') : t('districtAnalytics.bench.ferganaCenter'),
+    districtLabel: t(`districtsList.${districtKey}`),
+    benchmarkLabel: benchIsCity ? t('districtAnalytics.bench.regionAvg') : t('districtAnalytics.bench.ferganaCenter'),
     rows: [
-      { label: t('regionAnalytics.brief.industry'),     district: perCapitaIndustry, benchmark: benchIsCity ? 14820 : 38187 },
-      { label: t('regionAnalytics.brief.investments'), district: perCapitaInvest,   benchmark: benchIsCity ? 7120  : 21491 },
-      { label: t('regionAnalytics.econ.services'),      district: perCapitaServices, benchmark: benchIsCity ? 11400 : 36753 },
-      { label: t('districtAnalytics.sector.trade'),     district: perCapitaTrade,    benchmark: benchIsCity ? 9380  : 19785 },
-      { label: t('regionAnalytics.sector.construction'),district: perCapitaConstr,   benchmark: benchIsCity ?  5100 :  9878 },
+      { label: t('regionAnalytics.brief.industry'),      district: perCapitaIndustry, benchmark: bm ? bm.industry     : (benchIsCity ? 11186 : 38187) },
+      { label: t('regionAnalytics.brief.investments'),    district: perCapitaInvest,   benchmark: bm ? bm.invest       : (benchIsCity ? 4726  : 21491) },
+      { label: t('regionAnalytics.econ.services'),        district: perCapitaServices, benchmark: bm ? bm.services     : (benchIsCity ? 11400 : 36753) },
+      { label: t('districtAnalytics.sector.trade'),       district: perCapitaTrade,    benchmark: bm ? bm.trade        : (benchIsCity ? 9380  : 19785) },
+      { label: t('regionAnalytics.sector.construction'),  district: perCapitaConstr,   benchmark: bm ? bm.construction : (benchIsCity ? 5100  :  9878) },
     ],
   }
 
+  const realArea = rd ? rd.area : d.area
+  const realSalary = rd ? rd.avgSalary : Math.round(2100 + p.growth * 200 + p.infra * 900)
+  const tourVisitors = rd ? `${rd.tourism.visitors}K` : `${Math.round(80 + p.tourism * 300)}K`
+  const tourObjects = rd ? rd.tourism.objects : Math.max(4, Math.round(8 + p.tourism * 40))
+  const grpPC = Math.round((grpTotal * 1e9) / popAbs / 1000)
   economic.macroKpis = [
-    { label: t('regionAnalytics.brief.population'),       value: fmt(popAbs),               sub: `${Math.round(popAbs / d.area).toLocaleString('ru-RU')}/${t('regionAnalytics.units.kmSq')}`, delta: t(d.kind === 'city' ? 'districtAnalytics.macro.cityRate' : 'districtAnalytics.macro.ruralRate'), tone: 'green' },
-    { label: t('regionAnalytics.pop.area'),               value: `${d.area} ${t('regionAnalytics.units.kmSq')}`, sub: t('districtAnalytics.macro.administrative'), delta: '—', tone: 'blue' },
-    { label: t('districtAnalytics.macro.industryShort'),  value: fmt(industryBln),          sub: mlrdSum, delta: '+71% 5Y',  tone: 'green' },
-    { label: t('districtAnalytics.fiveY.export'),         value: fmt(exportYears[4]),       sub: mlrdSum, delta: '+202% 5Y', tone: 'green' },
-    { label: t('regionAnalytics.brief.investments'),      value: fmt(investBln),            sub: mlrdSum, delta: '+83% YoY', tone: 'green' },
-    { label: t('districtAnalytics.macro.avgSalary'),      value: fmt(Math.round(2100 + p.growth * 200 + p.infra * 900)), sub: t('districtAnalytics.macro.thsSumPerMonth'), delta: '+86% 5Y', tone: 'green' },
-    { label: t('districtAnalytics.macro.tourism'),        value: `${Math.round(80 + p.tourism * 300)}K`, sub: t('districtAnalytics.macro.visitorsPerYear'), delta: t('districtAnalytics.macro.objects', { n: Math.max(4, Math.round(8 + p.tourism * 40)) }), tone: 'blue' },
-    { label: t('districtAnalytics.macro.grpPerCapita'),   value: fmt(Math.round((grpTotal * 1e9) / popAbs / 1000)),       sub: t('districtAnalytics.macro.thsSumPerPerson'), delta: t(p.industry >= 40 ? 'districtAnalytics.macro.aboveProv' : 'districtAnalytics.macro.belowProv'), tone: p.industry >= 40 ? 'green' : 'amber' },
+    { label: t('regionAnalytics.brief.population'),       value: fmt(popAbs),               sub: `${Math.round(popAbs / realArea).toLocaleString('ru-RU')}/${t('regionAnalytics.units.kmSq')}`, delta: t(d.kind === 'city' ? 'districtAnalytics.macro.cityRate' : 'districtAnalytics.macro.ruralRate'), tone: 'green' },
+    { label: t('regionAnalytics.pop.area'),               value: `${realArea} ${t('regionAnalytics.units.kmSq')}`, sub: t('districtAnalytics.macro.administrative'), delta: '—', tone: 'blue' },
+    { label: t('districtAnalytics.macro.industryShort'),  value: fmt(industryBln),          sub: mlrdSum, delta: `${industryTrend} 5Y`,  tone: 'green' },
+    { label: t('districtAnalytics.fiveY.export'),         value: fmt(exportYears[4]),       sub: mlrdSum, delta: `${exportTrend} 5Y`, tone: 'green' },
+    { label: t('regionAnalytics.brief.investments'),      value: fmt(investBln),            sub: mlrdSum, delta: `${investTrend} 5Y`, tone: 'green' },
+    { label: t('districtAnalytics.macro.avgSalary'),      value: fmt(realSalary), sub: t('districtAnalytics.macro.thsSumPerMonth'), delta: '+86% 5Y', tone: 'green' },
+    { label: t('districtAnalytics.macro.tourism'),        value: tourVisitors, sub: t('districtAnalytics.macro.visitorsPerYear'), delta: t('districtAnalytics.macro.objects', { n: tourObjects }), tone: 'blue' },
+    { label: t('districtAnalytics.macro.grpPerCapita'),   value: fmt(grpPC),       sub: t('districtAnalytics.macro.thsSumPerPerson'), delta: t(grpPC > 15000 ? 'districtAnalytics.macro.aboveProv' : 'districtAnalytics.macro.belowProv'), tone: grpPC > 15000 ? 'green' : 'amber' },
   ]
 
   opportunities.criticalIssues = [
@@ -400,10 +613,10 @@ export function buildDistrictAnalytics(districtKey, t = identity) {
       title: t('districtAnalytics.crit.migrationCrisis'),
       detail: t('districtAnalytics.crit.migrationDetail', {
         peak: fmt(migrationYears[3]),
-        accum: fmt(Math.round(migrationBase * 32)),
-        pct: (((migrationBase * 32) / (popAbs * 0.52)) * 100).toFixed(0),
+        accum: rd ? fmt(rd.population.abroad) : fmt(Math.round(migrationYears.reduce((a, b) => a + b, 0))),
+        pct: rd ? ((rd.population.abroad / (popAbs * 0.52)) * 100).toFixed(0) : ((migrationYears.reduce((a, b) => a + b, 0) / (popAbs * 0.52)) * 100).toFixed(0),
       }),
-      kpi: { from: fmt(migrationYears[3]), to: fmt(Math.round(migrationBase * 2)), unit: t('districtAnalytics.crit.unitDeparturesPerYear') },
+      kpi: { from: fmt(migrationYears[3]), to: fmt(Math.round(migrationYears[0] * 2)), unit: t('districtAnalytics.crit.unitDeparturesPerYear') },
     },
     {
       code: 'I2',
@@ -499,8 +712,8 @@ export function buildDistrictAnalytics(districtKey, t = identity) {
 function buildTopMahallas(d, p, scale) {
   // Mahalla names are local Uzbek toponyms — leave unchanged across locales.
   const names = d.kind === 'city'
-    ? ['Марказий', 'Янги хаёт', 'Истиқлол', 'Бунёдкор', 'Дўстлик']
-    : ['Турон', 'Олтинтоп', 'Янгиобод', 'Ғалаба', 'Бустон']
+    ? ['Markaziy', 'Yangi hayot', 'Istiqlol', 'Bunyodkor', 'Do\'stlik']
+    : ['Turon', 'Oltintop', 'Yangiobod', 'G\'alaba', 'Bo\'ston']
   return names.map((name, i) => ({
     name,
     loans: Math.max(4, Math.round((24 - i * 2) * scale)),
@@ -581,10 +794,13 @@ function buildPlan(d, p, scale, water, t) {
 }
 
 // Fergana-region aggregate: for the overview panel (no district selected).
+// Uses real data from dashboards. Source: farstat.uz (2024–2026).
 export function buildFerganaOverview() {
   const keys = Object.keys(PROFILE)
   const totalPop = keys.reduce((s, k) => s + districtByKey[k].population, 0) // thousand
   const totalGrp = keys.reduce((s, k) => {
+    // Use real GRP for pilot cities, formula for others
+    if (REAL_DATA[k]) return s + REAL_DATA[k].grpBln
     const d = districtByKey[k]
     const p = PROFILE[k]
     return s + Math.round(BENCH_GRP * (d.population / BENCH_POP) * (p.growth / 8.0))

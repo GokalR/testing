@@ -5,15 +5,18 @@ import FcHeader from '@/components/fincontrol/FcHeader.vue'
 import FcChart from '@/components/fincontrol/FcChart.vue'
 import FcSparkline from '@/components/fincontrol/FcSparkline.vue'
 import AppIcon from '@/components/AppIcon.vue'
-import { accounts, transactions } from '@/data/fincontrol'
+import { makeAccounts, makeTransactions } from '@/data/fincontrol'
 
 const { t } = useI18n()
+
+const accounts = computed(() => makeAccounts(t))
+const transactions = computed(() => makeTransactions(t))
 
 const days = computed(() => Array.from({ length: 30 }, (_, i) => t('fincontrol.accounts.dayApr', { n: i + 1 })))
 
 const stackedData = computed(() => ({
   labels: days.value,
-  datasets: accounts.map((a) => ({
+  datasets: accounts.value.map((a) => ({
     label: a.bank,
     data: a.spark,
     backgroundColor: a.color + '33',
@@ -33,7 +36,7 @@ const stackedOptions = {
   },
 }
 
-const filters = ref(accounts.reduce((m, a) => ((m[a.key] = true), m), {}))
+const filters = ref({ nbu: true, hbk: true, cash: true })
 
 const pills = computed(() => [
   { key: 'week', label: t('fincontrol.common.week') },

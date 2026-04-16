@@ -27,7 +27,16 @@ watch(mapSelection, (v) => {
   if (v !== districtKey.value) selectDistrict(v)
 })
 
+const AVAILABLE_DISTRICTS = new Set(['fargona_city', 'margilon_city'])
+const unavailableToast = ref(null)
+
 function selectDistrict(key) {
+  if (key && !AVAILABLE_DISTRICTS.has(key)) {
+    mapSelection.value = null
+    unavailableToast.value = true
+    setTimeout(() => { unavailableToast.value = null }, 3000)
+    return
+  }
   const query = key ? { ...route.query, district: key } : { ...route.query }
   if (!key) delete query.district
   router.push({ path: route.path, query })
@@ -151,14 +160,15 @@ const radarPoints = computed(() => {
 })
 
 const threatLevelClass = (level) => {
-  if (level === 'высокий') return 'bg-red-600 text-white'
-  if (level === 'средний') return 'bg-amber-500 text-white'
+  if (level === t('regionAnalytics.priority.high')) return 'bg-red-600 text-white'
+  if (level === t('regionAnalytics.priority.medium')) return 'bg-amber-500 text-white'
   return 'bg-slate-400 text-white'
 }
 
 </script>
 
 <template>
+  <div>
   <section class="p-6 lg:p-8 space-y-8 da-root">
     <!-- Breadcrumb strip -->
     <div class="flex items-center gap-2 text-primary font-bold tracking-wide text-xs uppercase flex-wrap">
@@ -247,6 +257,7 @@ const threatLevelClass = (level) => {
                 <button
                   type="button"
                   class="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary-fixed transition-colors text-left"
+                  :class="{ 'opacity-40': !AVAILABLE_DISTRICTS.has(c.key) }"
                   @click="selectDistrict(c.key)"
                 >
                   <span class="w-2 h-2 rounded-full flex-shrink-0" style="background:#003D7C"></span>
@@ -268,6 +279,7 @@ const threatLevelClass = (level) => {
                 <button
                   type="button"
                   class="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary-fixed transition-colors text-left"
+                  :class="{ 'opacity-40': !AVAILABLE_DISTRICTS.has(d.key) }"
                   @click="selectDistrict(d.key)"
                 >
                   <span class="w-2 h-2 rounded-full flex-shrink-0" style="background:#7FB5E6"></span>
@@ -580,12 +592,12 @@ const threatLevelClass = (level) => {
           <div class="col-span-12 lg:col-span-7 da-card">
             <div class="flex items-start justify-between">
               <div>
-                <div class="da-card-title"><span class="dot" style="background:#0891B2"></span>Сравнение на душу населения</div>
-                <div class="da-card-sub">{{ title }} <span class="text-slate-400 font-normal">vs</span> {{ analytics.economic.benchmark.versus }} · тыс. сум/чел.</div>
+                <div class="da-card-title"><span class="dot" style="background:#0891B2"></span>{{ t('district.cards.perCapitaTitle') }}</div>
+                <div class="da-card-sub">{{ title }} <span class="text-slate-400 font-normal">{{ t('district.cards.vs') }}</span> {{ analytics.economic.benchmark.versus }} · {{ t('district.cards.perCapitaUnit') }}</div>
               </div>
               <div class="flex gap-3 text-[10px] font-bold uppercase tracking-wider">
-                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm" style="background:linear-gradient(90deg,#003D7C,#2563EB)"></span>Район</span>
-                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm" style="background:linear-gradient(90deg,#0891B2,#22D3EE)"></span>Эталон</span>
+                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm" style="background:linear-gradient(90deg,#003D7C,#2563EB)"></span>{{ analytics.economic.benchmark.districtLabel || t('district.cards.district') }}</span>
+                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm" style="background:linear-gradient(90deg,#0891B2,#22D3EE)"></span>{{ analytics.economic.benchmark.benchmarkLabel || t('district.cards.benchmark') }}</span>
               </div>
             </div>
             <div class="mt-4">
@@ -599,12 +611,12 @@ const threatLevelClass = (level) => {
                   </span>
                 </div>
                 <div class="da-bench-bar">
-                  <span class="da-bench-bar-label text-primary">Район</span>
+                  <span class="da-bench-bar-label text-primary">{{ analytics.economic.benchmark.districtLabel || t('district.cards.district') }}</span>
                   <div class="da-bench-bar-track"><div class="da-bench-bar-fill district" :style="{ width: `${Math.min(100, (row.district / Math.max(row.district, row.benchmark)) * 100)}%` }"></div></div>
                   <span class="da-bench-bar-value text-primary">{{ row.district.toLocaleString('ru-RU') }}</span>
                 </div>
                 <div class="da-bench-bar">
-                  <span class="da-bench-bar-label" style="color:#0891B2">Эталон</span>
+                  <span class="da-bench-bar-label" style="color:#0891B2">{{ analytics.economic.benchmark.benchmarkLabel || t('district.cards.benchmark') }}</span>
                   <div class="da-bench-bar-track"><div class="da-bench-bar-fill benchmark" :style="{ width: `${Math.min(100, (row.benchmark / Math.max(row.district, row.benchmark)) * 100)}%` }"></div></div>
                   <span class="da-bench-bar-value" style="color:#0891B2">{{ row.benchmark.toLocaleString('ru-RU') }}</span>
                 </div>
@@ -635,11 +647,11 @@ const threatLevelClass = (level) => {
         <div class="grid grid-cols-12 gap-6">
           <div class="col-span-12 lg:col-span-7 da-card" style="padding:0;overflow:hidden">
             <div style="padding:24px 24px 12px">
-              <div class="da-card-title"><span class="dot" style="background:#D97706"></span>Инфраструктурная матрица</div>
-              <div class="da-card-sub">Светофор по ключевым инженерным системам</div>
+              <div class="da-card-title"><span class="dot" style="background:#D97706"></span>{{ t('district.cards.infraMatrixTitle') }}</div>
+              <div class="da-card-sub">{{ t('district.cards.infraMatrixSub') }}</div>
             </div>
             <table class="da-table">
-              <thead><tr><th>Система</th><th>Статус</th><th>Комментарий</th></tr></thead>
+              <thead><tr><th>{{ t('district.cards.system') }}</th><th>{{ t('district.cards.status') }}</th><th>{{ t('district.cards.comment') }}</th></tr></thead>
               <tbody>
                 <tr v-for="m in analytics.infra.matrix" :key="m.name">
                   <td class="font-semibold">{{ m.name }}</td>
@@ -657,29 +669,29 @@ const threatLevelClass = (level) => {
 
           <div class="col-span-12 lg:col-span-5 space-y-5">
             <div class="da-card">
-              <div class="da-card-title"><span class="dot" style="background:#059669"></span>Бюджет развития</div>
-              <div class="da-card-sub">Инфраструктура 2026 г.</div>
+              <div class="da-card-title"><span class="dot" style="background:#059669"></span>{{ t('district.cards.devBudgetTitle') }}</div>
+              <div class="da-card-sub">{{ t('district.cards.devBudgetSub') }}</div>
               <div class="big-number mt-4 text-primary">{{ analytics.infra.budgetMlrd }}</div>
-              <div class="text-sm text-slate-500 mt-1">млрд сум</div>
+              <div class="text-sm text-slate-500 mt-1">{{ t('district.cards.bnSum') }}</div>
             </div>
             <div class="da-card">
-              <div class="da-card-title"><span class="dot" style="background:#0054A6"></span>Дорожная сеть</div>
-              <div class="da-card-sub">Всего {{ analytics.infra.roads.totalKm }} км</div>
+              <div class="da-card-title"><span class="dot" style="background:#0054A6"></span>{{ t('district.cards.roadsTitle') }}</div>
+              <div class="da-card-sub">{{ t('district.cards.roadsTotal') }} {{ analytics.infra.roads.totalKm }} {{ t('district.cards.km') }}</div>
               <div class="space-y-3 mt-4 text-sm">
                 <div>
-                  <div class="da-bar-row"><span>Асфальт</span><span class="da-mono font-bold">{{ analytics.infra.roads.asphaltKm }} км</span></div>
+                  <div class="da-bar-row"><span>{{ t('district.cards.asphalt') }}</span><span class="da-mono font-bold">{{ analytics.infra.roads.asphaltKm }} {{ t('district.cards.km') }}</span></div>
                   <div class="da-bar-outer mt-1.5"><div class="da-bar-inner" :style="{ width: `${(analytics.infra.roads.asphaltKm / analytics.infra.roads.totalKm) * 100}%`, background: 'linear-gradient(90deg,#059669,#10B981)' }"></div></div>
                 </div>
                 <div>
-                  <div class="da-bar-row"><span>Щебень</span><span class="da-mono font-bold">{{ analytics.infra.roads.gravelKm }} км</span></div>
+                  <div class="da-bar-row"><span>{{ t('district.cards.gravel') }}</span><span class="da-mono font-bold">{{ analytics.infra.roads.gravelKm }} {{ t('district.cards.km') }}</span></div>
                   <div class="da-bar-outer mt-1.5"><div class="da-bar-inner" :style="{ width: `${(analytics.infra.roads.gravelKm / analytics.infra.roads.totalKm) * 100}%`, background: 'linear-gradient(90deg,#FBBF24,#F59E0B)' }"></div></div>
                 </div>
                 <div>
-                  <div class="da-bar-row"><span>Ямочный ремонт</span><span class="da-mono font-bold">{{ analytics.infra.roads.patchedKm }} км</span></div>
+                  <div class="da-bar-row"><span>{{ t('district.cards.patched') }}</span><span class="da-mono font-bold">{{ analytics.infra.roads.patchedKm }} {{ t('district.cards.km') }}</span></div>
                   <div class="da-bar-outer mt-1.5"><div class="da-bar-inner" :style="{ width: `${(analytics.infra.roads.patchedKm / analytics.infra.roads.totalKm) * 100}%`, background: 'linear-gradient(90deg,#D97706,#B45309)' }"></div></div>
                 </div>
                 <div>
-                  <div class="da-bar-row"><span>Грунт</span><span class="da-mono font-bold">{{ analytics.infra.roads.earthKm }} км</span></div>
+                  <div class="da-bar-row"><span>{{ t('district.cards.earth') }}</span><span class="da-mono font-bold">{{ analytics.infra.roads.earthKm }} {{ t('district.cards.km') }}</span></div>
                   <div class="da-bar-outer mt-1.5"><div class="da-bar-inner" :style="{ width: `${(analytics.infra.roads.earthKm / analytics.infra.roads.totalKm) * 100}%`, background: 'linear-gradient(90deg,#DC2626,#991B1B)' }"></div></div>
                 </div>
               </div>
@@ -690,22 +702,22 @@ const threatLevelClass = (level) => {
         <div class="da-card">
           <div class="flex items-start justify-between flex-wrap gap-3">
             <div>
-              <div class="da-card-title"><span class="dot" style="background:#F59E0B"></span>Проблемы и предложения</div>
-              <div class="da-card-sub">План инфраструктурных проектов на 2026–2027 гг.</div>
+              <div class="da-card-title"><span class="dot" style="background:#F59E0B"></span>{{ t('district.cards.issuesTitle') }}</div>
+              <div class="da-card-sub">{{ t('district.cards.issuesSub') }}</div>
             </div>
             <div class="text-right">
-              <div class="sub-header-eyebrow">Общий бюджет</div>
-              <div class="medium-number text-primary">{{ analytics.infra.problems.reduce((s, p) => s + p.cost, 0).toFixed(1) }} <span class="text-sm text-slate-500 font-semibold">млрд сум</span></div>
+              <div class="sub-header-eyebrow">{{ t('district.cards.totalBudget') }}</div>
+              <div class="medium-number text-primary">{{ analytics.infra.problems.reduce((s, p) => s + p.cost, 0).toFixed(1) }} <span class="text-sm text-slate-500 font-semibold">{{ t('district.cards.bnSum') }}</span></div>
             </div>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-5">
             <div v-for="p in analytics.infra.problems" :key="p.code" class="border border-outline-variant/30 rounded-xl p-4 hover:shadow-md hover:border-primary/30 transition-all">
               <div class="flex items-center justify-between">
                 <span class="da-mono text-xs font-bold text-primary">{{ p.code }}</span>
-                <span class="da-chip" :class="p.priority === 'высокий' ? 'tone-red' : p.priority === 'средний' ? 'tone-amber' : 'tone-blue'">{{ p.priority }}</span>
+                <span class="da-chip" :class="p.priority === t('regionAnalytics.priority.high') ? 'tone-red' : p.priority === t('regionAnalytics.priority.medium') ? 'tone-amber' : 'tone-blue'">{{ p.priority }}</span>
               </div>
               <div class="font-bold text-base mt-2 leading-tight">{{ p.name }}</div>
-              <div class="text-sm text-slate-500 mt-2 da-mono">{{ p.cost }} <span class="text-xs">млрд сум</span></div>
+              <div class="text-sm text-slate-500 mt-2 da-mono">{{ p.cost }} <span class="text-xs">{{ t('district.cards.bnSum') }}</span></div>
             </div>
           </div>
         </div>
@@ -732,15 +744,15 @@ const threatLevelClass = (level) => {
 
         <div class="grid grid-cols-12 gap-6">
           <div class="col-span-12 lg:col-span-8 da-card">
-            <div class="da-card-title"><span class="dot"></span>Структура рынка труда, 2021–2025</div>
-            <div class="da-card-sub">Формальная и неформальная занятость, миграция</div>
+            <div class="da-card-title"><span class="dot"></span>{{ t('district.cards.laborMarketTitle') }}</div>
+            <div class="da-card-sub">{{ t('district.cards.laborMarketSub') }}</div>
             <div class="mt-5">
               <FcChart type="bar" :data="laborData" :options="laborOpts" :height="320" />
             </div>
           </div>
           <div class="col-span-12 lg:col-span-4 da-card">
-            <div class="da-card-title"><span class="dot" style="background:#DC2626"></span>Тренд безработицы</div>
-            <div class="da-card-sub">Снижение 2021 → 2025</div>
+            <div class="da-card-title"><span class="dot" style="background:#DC2626"></span>{{ t('district.cards.unemploymentTitle') }}</div>
+            <div class="da-card-sub">{{ t('district.cards.unemploymentSub') }}</div>
             <div class="mt-5">
               <FcChart type="line" :data="unemploymentData" :options="unemploymentOpts" :height="320" />
             </div>
@@ -749,19 +761,19 @@ const threatLevelClass = (level) => {
 
         <div class="grid grid-cols-12 gap-6">
           <div class="col-span-12 lg:col-span-7 da-card">
-            <div class="da-card-title"><span class="dot" style="background:#D97706"></span>Трудовая миграция</div>
-            <div class="da-card-sub">Работающие за рубежом</div>
+            <div class="da-card-title"><span class="dot" style="background:#D97706"></span>{{ t('district.cards.migrationTitle') }}</div>
+            <div class="da-card-sub">{{ t('district.cards.migrationSub') }}</div>
             <div class="grid grid-cols-3 gap-5 mt-5">
               <div class="border-r border-outline-variant/30 pr-4">
-                <div class="da-kpi-label mb-2">За рубежом</div>
+                <div class="da-kpi-label mb-2">{{ t('district.cards.abroad') }}</div>
                 <div class="medium-number text-amber-600">{{ analytics.population.migration.countAbroad.toLocaleString('ru-RU') }}</div>
               </div>
               <div class="border-r border-outline-variant/30 pr-4">
-                <div class="da-kpi-label mb-2">Рост 5 лет</div>
+                <div class="da-kpi-label mb-2">{{ t('district.cards.growth5y') }}</div>
                 <div class="medium-number text-red-600">{{ analytics.population.migration.growthPct }}</div>
               </div>
               <div>
-                <div class="da-kpi-label mb-2">Доля</div>
+                <div class="da-kpi-label mb-2">{{ t('district.cards.share2') }}</div>
                 <div class="medium-number text-primary">{{ analytics.population.migration.shareOfWorkforce }}</div>
               </div>
             </div>
@@ -774,7 +786,7 @@ const threatLevelClass = (level) => {
           <div class="col-span-12 lg:col-span-5 da-card">
             <div class="da-card-title"><span class="dot" style="background:#059669"></span>{{ analytics.population.program2026.title }}</div>
             <div class="da-card-sub">
-              Цель: <b class="text-primary">{{ analytics.population.program2026.goal.toLocaleString('ru-RU') }}</b> рабочих мест
+              {{ t('district.cards.goal') }}: <b class="text-primary">{{ analytics.population.program2026.goal.toLocaleString('ru-RU') }}</b> {{ t('district.cards.jobs') }}
             </div>
             <div class="mt-4 space-y-2.5">
               <div v-for="item in analytics.population.program2026.breakdown" :key="item.code" class="flex items-center justify-between text-sm border border-outline-variant/20 rounded-xl px-4 py-3 hover:border-primary/30 transition-colors">
@@ -801,8 +813,8 @@ const threatLevelClass = (level) => {
 
         <div class="grid grid-cols-12 gap-6">
           <div class="col-span-12 lg:col-span-7 da-card">
-            <div class="da-card-title"><span class="dot"></span>Банк и предпринимательство</div>
-            <div class="da-card-sub">Охват услуг NBU</div>
+            <div class="da-card-title"><span class="dot"></span>{{ t('district.cards.bankEntTitle') }}</div>
+            <div class="da-card-sub">{{ t('district.cards.bankEntSub') }}</div>
             <div class="mt-5 space-y-4">
               <div v-for="b in analytics.mahalla.bankMetrics" :key="b.label">
                 <div class="da-bar-row">
@@ -815,27 +827,27 @@ const threatLevelClass = (level) => {
           </div>
 
           <div class="col-span-12 lg:col-span-5 da-card">
-            <div class="da-card-title"><span class="dot" style="background:#2563EB"></span>Цифровизация</div>
-            <div class="da-card-sub">Проникновение цифровых услуг</div>
+            <div class="da-card-title"><span class="dot" style="background:#2563EB"></span>{{ t('district.cards.digitalTitle') }}</div>
+            <div class="da-card-sub">{{ t('district.cards.digitalSub') }}</div>
             <div class="grid grid-cols-2 gap-3 mt-5">
               <div class="border border-outline-variant/30 rounded-xl p-4">
                 <AppIcon name="credit_card" class="text-primary text-2xl mb-2" filled />
-                <div class="da-kpi-label">Платежи</div>
+                <div class="da-kpi-label">{{ t('district.cards.payments') }}</div>
                 <div class="medium-number text-primary">{{ analytics.mahalla.digitalAdoption.payments }}%</div>
               </div>
               <div class="border border-outline-variant/30 rounded-xl p-4">
                 <AppIcon name="credit_score" class="text-primary text-2xl mb-2" filled />
-                <div class="da-kpi-label">Карты</div>
+                <div class="da-kpi-label">{{ t('district.cards.cards') }}</div>
                 <div class="medium-number text-primary">{{ analytics.mahalla.digitalAdoption.cards }}%</div>
               </div>
               <div class="border border-outline-variant/30 rounded-xl p-4">
                 <AppIcon name="storefront" class="text-primary text-2xl mb-2" filled />
-                <div class="da-kpi-label">Мерчанты</div>
+                <div class="da-kpi-label">{{ t('district.cards.merchants') }}</div>
                 <div class="medium-number text-primary">{{ analytics.mahalla.digitalAdoption.merchants }}%</div>
               </div>
               <div class="border border-outline-variant/30 rounded-xl p-4">
                 <AppIcon name="savings" class="text-primary text-2xl mb-2" filled />
-                <div class="da-kpi-label">Онлайн-кредит</div>
+                <div class="da-kpi-label">{{ t('district.cards.onlineCredit') }}</div>
                 <div class="medium-number text-primary">{{ analytics.mahalla.digitalAdoption.lending }}%</div>
               </div>
             </div>
@@ -844,11 +856,11 @@ const threatLevelClass = (level) => {
 
         <div class="da-card" style="padding:0;overflow:hidden">
           <div style="padding:24px 24px 12px">
-            <div class="da-card-title"><span class="dot" style="background:#059669"></span>ТОП махалли по кредитованию</div>
-            <div class="da-card-sub">Рейтинг по оценке NBU</div>
+            <div class="da-card-title"><span class="dot" style="background:#059669"></span>{{ t('district.cards.topMahallasTitle') }}</div>
+            <div class="da-card-sub">{{ t('district.cards.topMahallasSub') }}</div>
           </div>
           <table class="da-table">
-            <thead><tr><th>#</th><th>Махалля</th><th class="text-right">Кредитов</th><th class="text-right">Оценка</th></tr></thead>
+            <thead><tr><th>#</th><th>{{ t('district.cards.mahalla') }}</th><th class="text-right">{{ t('district.cards.credits') }}</th><th class="text-right">{{ t('district.cards.score') }}</th></tr></thead>
             <tbody>
               <tr v-for="(m, i) in analytics.mahalla.topMahallas" :key="m.name">
                 <td class="da-mono text-slate-400 font-bold">{{ i + 1 }}</td>
@@ -866,8 +878,8 @@ const threatLevelClass = (level) => {
       <!-- #5 SWOT -->
       <div v-else-if="activeTab === 'opportunities'" class="space-y-6">
         <div class="da-card">
-          <div class="da-card-title"><span class="dot" style="background:#DC2626"></span>Критические проблемы и барьеры</div>
-          <div class="da-card-sub">Шесть ключевых узких мест, ограничивающих рост — с количественной метрикой «как есть → куда идём»</div>
+          <div class="da-card-title"><span class="dot" style="background:#DC2626"></span>{{ t('district.cards.criticalIssuesTitle') }}</div>
+          <div class="da-card-sub">{{ t('district.cards.criticalIssuesSub') }}</div>
           <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mt-5">
             <div v-for="iss in analytics.opportunities.criticalIssues" :key="iss.code" class="da-issue" :class="`sev-${iss.severity}`">
               <div class="flex items-start justify-between gap-3">
@@ -876,7 +888,7 @@ const threatLevelClass = (level) => {
                   <span class="da-issue-title">{{ iss.title }}</span>
                 </div>
                 <span class="da-chip" :class="iss.severity === 'high' ? 'tone-red' : iss.severity === 'medium' ? 'tone-amber' : 'tone-blue'">
-                  {{ iss.severity === 'high' ? 'Высокая' : iss.severity === 'medium' ? 'Средняя' : 'Умеренная' }}
+                  {{ iss.severity === 'high' ? t('district.cards.severityHigh') : iss.severity === 'medium' ? t('district.cards.severityMedium') : t('district.cards.severityLow') }}
                 </span>
               </div>
               <p class="da-issue-detail">{{ iss.detail }}</p>
@@ -893,7 +905,7 @@ const threatLevelClass = (level) => {
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div class="swot-card">
             <div class="swot-header" style="background:linear-gradient(135deg,#059669,#047857)">
-              <span>▲ Сильные стороны</span>
+              <span>{{ t('district.cards.swotStrengths') }}</span>
               <span class="da-mono opacity-70">S{{ analytics.opportunities.swot.strengths.length }}</span>
             </div>
             <ul class="swot-body" style="background:#F0FDF8">
@@ -905,7 +917,7 @@ const threatLevelClass = (level) => {
           </div>
           <div class="swot-card">
             <div class="swot-header" style="background:linear-gradient(135deg,#DC2626,#991B1B)">
-              <span>▼ Слабые стороны</span>
+              <span>{{ t('district.cards.swotWeaknesses') }}</span>
               <span class="da-mono opacity-70">W{{ analytics.opportunities.swot.weaknesses.length }}</span>
             </div>
             <ul class="swot-body" style="background:#FFF5F5">
@@ -917,7 +929,7 @@ const threatLevelClass = (level) => {
           </div>
           <div class="swot-card">
             <div class="swot-header" style="background:linear-gradient(135deg,#2563EB,#1D4ED8)">
-              <span>★ Возможности</span>
+              <span>{{ t('district.cards.swotOpportunities') }}</span>
               <span class="da-mono opacity-70">O{{ analytics.opportunities.swot.opportunities.length }}</span>
             </div>
             <ul class="swot-body" style="background:#EFF6FF">
@@ -929,7 +941,7 @@ const threatLevelClass = (level) => {
           </div>
           <div class="swot-card">
             <div class="swot-header" style="background:linear-gradient(135deg,#D97706,#B45309)">
-              <span>⚠ Угрозы</span>
+              <span>{{ t('district.cards.swotThreats') }}</span>
               <span class="da-mono opacity-70">T{{ analytics.opportunities.swot.threats.length }}</span>
             </div>
             <ul class="swot-body" style="background:#FFFBEB">
@@ -962,13 +974,13 @@ const threatLevelClass = (level) => {
                 <div class="sub-header-eyebrow text-primary">Executive Pass</div>
                 <h3 class="text-3xl font-black leading-tight mt-2" style="font-family:'Manrope',sans-serif;letter-spacing:-0.02em">{{ title }}</h3>
                 <p class="text-sm text-slate-500 mt-3 leading-relaxed max-w-sm">
-                  Интегральная оценка по пяти ключевым осям — сравнение с провинциальным средним.
+                  {{ t('district.cards.integralScoreDesc') }}
                 </p>
               </div>
               <div class="bg-gradient-to-br from-primary to-[#0054A6] text-white rounded-2xl text-center px-6 py-6 shadow-xl min-w-[140px]">
                 <div class="text-[10px] font-bold uppercase opacity-80 tracking-widest">Score</div>
                 <div class="text-5xl font-black mt-1" style="font-family:'Manrope',sans-serif;letter-spacing:-0.03em">{{ analytics.summary.score }}</div>
-                <div class="text-[10px] opacity-70 mt-0.5">из 10</div>
+                <div class="text-[10px] opacity-70 mt-0.5">{{ t('district.cards.outOf10') }}</div>
                 <div class="mt-3 h-1.5 bg-white/20 rounded-full overflow-hidden">
                   <div class="h-full bg-emerald-400" :style="{ width: `${parseFloat(analytics.summary.score) * 10}%` }"></div>
                 </div>
@@ -998,7 +1010,7 @@ const threatLevelClass = (level) => {
             </svg>
             <div class="flex-1 space-y-3">
               <div class="flex items-center gap-2 font-bold text-sm"><span class="w-4 h-4 bg-primary rounded-sm"></span> {{ title }}</div>
-              <div class="flex items-center gap-2 font-bold text-sm text-cyan-700"><span class="w-4 h-4 rounded-sm border-2 border-dashed border-cyan-600"></span> Средний по области</div>
+              <div class="flex items-center gap-2 font-bold text-sm text-cyan-700"><span class="w-4 h-4 rounded-sm border-2 border-dashed border-cyan-600"></span> {{ t('district.cards.regionAverage') }}</div>
               <p class="text-sm text-slate-600 mt-4 leading-relaxed">{{ analytics.summary.conclusion }}</p>
             </div>
           </div>
@@ -1006,11 +1018,11 @@ const threatLevelClass = (level) => {
 
         <div class="da-card" style="padding:0;overflow:hidden">
           <div style="padding:24px 24px 12px">
-            <div class="da-card-title"><span class="dot"></span>{{ title }} <span class="text-slate-400 font-normal">vs</span> Средний по области</div>
-            <div class="da-card-sub">На душу населения, тыс. сум</div>
+            <div class="da-card-title"><span class="dot"></span>{{ title }} <span class="text-slate-400 font-normal">{{ t('district.cards.vs') }}</span> {{ t('district.cards.regionAverage') }}</div>
+            <div class="da-card-sub">{{ t('district.cards.perCapitaThousand') }}</div>
           </div>
           <table class="da-table">
-            <thead><tr><th>Показатель</th><th class="text-right">Район</th><th class="text-right">Среднее</th><th class="text-right">Δ</th></tr></thead>
+            <thead><tr><th>{{ t('district.cards.indicator') }}</th><th class="text-right">{{ t('district.cards.district') }}</th><th class="text-right">{{ t('district.cards.mean') }}</th><th class="text-right">{{ t('district.cards.diff') }}</th></tr></thead>
             <tbody>
               <tr v-for="row in analytics.summary.comparison" :key="row.metric">
                 <td class="font-semibold">{{ row.metric }}</td>
@@ -1028,12 +1040,12 @@ const threatLevelClass = (level) => {
         </div>
 
         <div class="da-card">
-          <div class="da-card-title"><span class="dot" style="background:#2563EB"></span>Стратегические приоритеты 2026–2031</div>
-          <div class="da-card-sub">Три горизонта · 9 приоритетных проектов · бюджет, KPI и ответственный</div>
+          <div class="da-card-title"><span class="dot" style="background:#2563EB"></span>{{ t('district.cards.strategicTitle') }}</div>
+          <div class="da-card-sub">{{ t('district.cards.strategicSub') }}</div>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
             <div v-for="(hz, hi) in analytics.summary.strategicPriorities" :key="hz.horizon" class="da-horizon-col">
               <div class="da-horizon-head" :style="{ background: hz.color }">
-                <span class="text-[10px] font-bold tracking-widest opacity-80 uppercase">Горизонт {{ hi + 1 }}</span>
+                <span class="text-[10px] font-bold tracking-widest opacity-80 uppercase">{{ t('district.cards.horizon') }} {{ hi + 1 }}</span>
                 <span class="text-lg font-black da-mono">{{ hz.horizon }}</span>
                 <span class="text-xs font-semibold opacity-90">{{ hz.label }}</span>
               </div>
@@ -1044,7 +1056,7 @@ const threatLevelClass = (level) => {
                     <div class="flex-1">
                       <div class="da-horizon-title">{{ it.title }}</div>
                       <div class="flex items-center justify-between mt-2 gap-2">
-                        <span class="da-horizon-budget">{{ it.budget }} млрд</span>
+                        <span class="da-horizon-budget">{{ it.budget }} {{ t('district.cards.bn') }}</span>
                         <span class="da-horizon-kpi">{{ it.kpi }}</span>
                       </div>
                       <div class="da-horizon-owner">{{ it.owner }}</div>
@@ -1057,18 +1069,18 @@ const threatLevelClass = (level) => {
         </div>
 
         <div class="da-card">
-          <div class="da-card-title"><span class="dot" style="background:#059669"></span>План действий 2026–2028</div>
-          <div class="da-card-sub">Дорожная карта по приоритетам NBU</div>
+          <div class="da-card-title"><span class="dot" style="background:#059669"></span>{{ t('district.cards.actionPlanTitle') }}</div>
+          <div class="da-card-sub">{{ t('district.cards.actionPlanSub') }}</div>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-5">
             <div v-for="(p, i) in analytics.summary.plan" :key="p.title" class="relative border border-outline-variant/30 rounded-xl p-5 hover:shadow-md hover:border-primary/30 transition-all">
               <div class="absolute -top-3 left-5 bg-primary text-white px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase">
-                Шаг {{ i + 1 }}
+                {{ t('district.cards.step') }} {{ i + 1 }}
               </div>
               <div class="sub-header-eyebrow text-primary mt-2">{{ p.horizon }}</div>
               <div class="font-bold text-lg mt-2 leading-tight">{{ p.title }}</div>
               <div class="flex items-center justify-between mt-4 pt-3 border-t border-outline-variant/30">
                 <div>
-                  <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Бюджет</div>
+                  <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ t('district.cards.budget') }}</div>
                   <div class="text-lg font-black da-mono text-primary">{{ p.mlrd }}</div>
                 </div>
                 <div class="text-right">
@@ -1083,4 +1095,12 @@ const threatLevelClass = (level) => {
       </div>
     </template>
   </section>
+
+  <!-- Unavailable district toast -->
+  <div v-if="unavailableToast"
+    class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#1A2B4A] text-white px-5 py-3 rounded-xl shadow-lg text-sm font-semibold flex items-center gap-2">
+    <AppIcon name="info" class="!text-[18px]" />
+    {{ t('district.unavailable') }}
+  </div>
+  </div>
 </template>

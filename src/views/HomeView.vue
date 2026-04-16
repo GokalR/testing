@@ -167,8 +167,18 @@ function pctOfPop(percent, factor) {
   return v >= 1 ? `${v.toFixed(1)} mln` : `${(v * 1000).toFixed(0)}k`
 }
 
+const AVAILABLE_REGIONS = new Set(['fergana'])
+const unavailableToast = ref(null)
+
 function reset() {
   selected.value = null
+}
+function onRegionSelect(key) {
+  if (key && !AVAILABLE_REGIONS.has(key)) {
+    selected.value = null
+    unavailableToast.value = t('home.regionUnavailable')
+    setTimeout(() => { unavailableToast.value = null }, 3000)
+  }
 }
 function gotoAnalytics() {
   router.push({ name: 'districts', query: { region: selected.value || '' } })
@@ -183,6 +193,7 @@ const sortedRegions = computed(() =>
 </script>
 
 <template>
+  <div>
   <section class="p-6 lg:p-8 space-y-8">
     <!-- Map (top, full width) -->
     <div class="space-y-4">
@@ -223,13 +234,13 @@ const sortedRegions = computed(() =>
             {{ t('regionInfo.viewAnalytics') }}
           </button>
           <div class="lg:hidden">
-            <RegionDropdown v-model="selected" :regions="sortedRegions" />
+            <RegionDropdown v-model="selected" :regions="sortedRegions" :available-regions="AVAILABLE_REGIONS" @unavailable="onRegionSelect" />
           </div>
         </div>
       </header>
 
       <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_300px] gap-6 items-start">
-        <UzbekistanMap v-model="selected" />
+        <UzbekistanMap v-model="selected" @select="onRegionSelect" />
 
         <!-- Right column: summary (top) + region list (bottom) stacked -->
         <div class="hidden lg:flex flex-col gap-4 min-h-0">
@@ -305,8 +316,8 @@ const sortedRegions = computed(() =>
                 <button
                   type="button"
                   class="w-full flex items-center gap-2.5 px-3 py-2 hover:bg-surface-container transition-colors text-left"
-                  :class="selected === r.key ? 'bg-primary-fixed' : ''"
-                  @click="selected = selected === r.key ? null : r.key"
+                  :class="[selected === r.key ? 'bg-primary-fixed' : '', !AVAILABLE_REGIONS.has(r.key) ? 'opacity-40' : '']"
+                  @click="AVAILABLE_REGIONS.has(r.key) ? (selected = selected === r.key ? null : r.key) : onRegionSelect(r.key)"
                 >
                   <template v-if="sidebarMode === 'specialization'">
                     <span
@@ -417,6 +428,14 @@ const sortedRegions = computed(() =>
       </span>
     </button>
   </section>
+
+  <!-- Unavailable region toast -->
+  <div v-if="unavailableToast"
+    class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-on-surface text-surface px-5 py-3 rounded-xl shadow-lg text-sm font-semibold flex items-center gap-2">
+    <AppIcon name="info" class="!text-[18px]" />
+    {{ unavailableToast }}
+  </div>
+  </div>
 </template>
 
 <style scoped>

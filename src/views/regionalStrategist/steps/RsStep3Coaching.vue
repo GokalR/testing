@@ -44,7 +44,7 @@ const ITEMS_BY_SECTOR = {
       { type: 'warning', title: 'Ограниченная ликвидность', text: 'Коэффициент текущей ликвидности по Форме 1 = 1,19 (норма 1,5+). Это означает, что на каждый сум краткосрочных обязательств приходится 1,19 сума оборотных активов — небольшой запас. Кредит увеличит долг → ликвидность может упасть до 1,05.' },
       { type: 'warning', title: 'Сезонность набора', text: 'Набор в детский сад привязан к сентябрю: июнь–август — провал по cash-flow (40–50% отток семей на лето). Закладывайте резерв 2–3 месячных расхода или согласуйте с банком грейс-период на июль–август.' },
       { type: 'recommendation', title: 'Расширение на 2 группы (2–3 года)', text: 'Спрос на ясельные группы выше, чем на 3–6 лет: у маҳаллы нет государственного яслы, а у родителей декрет заканчивается в 2 года. Средняя наполняемость — 18–22 ребёнка на группу → +36–44 места = +1,2–1,5 млрд сум выручки в год.' },
-      { type: 'recommendation', title: 'Подходящий кредитный продукт NBU', text: '«Развивайся» (до 1,5 млрд сум, 18% годовых, срок до 60 мес., залог — недвижимость). Под расширение мощностей с залогом здания — оптимальный вариант. Альтернатива: «Кредит оборотный» под закупку мебели/оборудования новых групп.' },
+      { type: 'recommendation', title: 'Подходящий кредитный продукт NBU', text: '«Развивайся» (до 3,5 млрд сум, 23% годовых, срок до 48 мес., залог — недвижимость). Под расширение мощностей с залогом здания — оптимальный вариант. Альтернатива: «Кредит оборотный» под закупку мебели/оборудования новых групп.' },
     ],
     uz: [
       { type: 'strength', title: 'Демографик база', text: 'Фарғона вилоятида 2025 йилда 98 319 бола туғилган (50 683 ўғил, 47 636 қиз). Аҳолиси 4,22 млн, шаҳар улуши 56,7% — айнан ERKIN PARVOZ жойлашган шаҳар маҳаллаларида мактабгача ёшдаги болалар оқими барқарор.' },
@@ -54,7 +54,7 @@ const ITEMS_BY_SECTOR = {
       { type: 'warning', title: 'Ликвидлик чекланган', text: 'Форма 1 бўйича жорий ликвидлик = 1,19 (норма 1,5+). Ҳар бир сўм қисқа муддатли мажбуриятга 1,19 сўм айланма актив — захира кам. Кредит қарзни оширади → ликвидлик 1,05 гача тушиши мумкин.' },
       { type: 'warning', title: 'Мавсумийлик', text: 'Боғчага қабул сентябрга боғлиқ: июн–август — cash-flow бўшлиги (40–50% оилалар ёзга чиқади). 2–3 ойлик захара ёки банк билан июл–август грейс-муддатини келишиб олинг.' },
       { type: 'recommendation', title: '2 та янги гуруҳ (2–3 ёш)', text: 'Яслы гуруҳларига талаб 3–6 ёшдан юқори: маҳаллада давлат ясли йўқ, ота-оналар декрети 2 ёшда тугайди. Гуруҳдаги ўртача сон — 18–22 бола → +36–44 ўрин = +1,2–1,5 млрд сўм йиллик тушум.' },
-      { type: 'recommendation', title: 'Мос NBU кредит маҳсулоти', text: '«Развивайся» (1,5 млрд сўмгача, 18% йиллик, 60 ойгача, гаров — кўчмас мулк). Бино гаровида кенгайтириш учун оптимал. Муқобил: «Кредит оборотный» — янги гуруҳлар учун мебель/жиҳозлар харид қилиш.' },
+      { type: 'recommendation', title: 'Мос NBU кредит маҳсулоти', text: '«Развивайся» (3,5 млрд сўмгача, 23% йиллик, 48 ойгача, гаров — кўчмас мулк). Бино гаровида кенгайтириш учун оптимал. Муқобил: «Кредит оборотный» — янги гуруҳлар учун мебель/жиҳозлар харид қилиш.' },
     ],
   },
   services: {
@@ -85,16 +85,16 @@ const ITEMS_BY_SECTOR = {
 
 const TYPE_CONFIG = {
   ru: {
-    strength: { label: 'СИЛЬНАЯ СТОРОНА', borderClass: 'border-l-emerald-500', bgClass: 'bg-emerald-50', iconClass: 'text-emerald-600', labelClass: 'text-emerald-600' },
-    market: { label: 'РЫНОК', borderClass: 'border-l-blue-500', bgClass: 'bg-blue-50', iconClass: 'text-blue-600', labelClass: 'text-blue-600' },
-    warning: { label: 'ОБРАТИТЕ ВНИМАНИЕ', borderClass: 'border-l-amber-500', bgClass: 'bg-amber-50', iconClass: 'text-amber-600', labelClass: 'text-amber-600' },
-    recommendation: { label: 'РЕКОМЕНДАЦИЯ', borderClass: 'border-l-navy-900', bgClass: 'bg-navy-900/[0.04]', iconClass: 'text-navy-900', labelClass: 'text-navy-900' },
+    strength: { label: 'СИЛЬНАЯ СТОРОНА', borderClass: 'border-l-emerald-500', bgClass: 'bg-emerald-50/80', iconBgClass: 'bg-emerald-100', iconClass: 'text-emerald-600', labelClass: 'text-emerald-700' },
+    market: { label: 'РЫНОК', borderClass: 'border-l-blue-500', bgClass: 'bg-blue-50/80', iconBgClass: 'bg-blue-100', iconClass: 'text-blue-600', labelClass: 'text-blue-700' },
+    warning: { label: 'ОБРАТИТЕ ВНИМАНИЕ', borderClass: 'border-l-amber-500', bgClass: 'bg-amber-50/80', iconBgClass: 'bg-amber-100', iconClass: 'text-amber-600', labelClass: 'text-amber-700' },
+    recommendation: { label: 'РЕКОМЕНДАЦИЯ', borderClass: 'border-l-navy-900', bgClass: 'bg-navy-900/[0.05]', iconBgClass: 'bg-navy-900/10', iconClass: 'text-navy-900', labelClass: 'text-navy-900' },
   },
   uz: {
-    strength: { label: 'КУЧЛИ ТОМОН', borderClass: 'border-l-emerald-500', bgClass: 'bg-emerald-50', iconClass: 'text-emerald-600', labelClass: 'text-emerald-600' },
-    market: { label: 'БОЗОР', borderClass: 'border-l-blue-500', bgClass: 'bg-blue-50', iconClass: 'text-blue-600', labelClass: 'text-blue-600' },
-    warning: { label: 'ЭЪТИБОР БЕРИНГ', borderClass: 'border-l-amber-500', bgClass: 'bg-amber-50', iconClass: 'text-amber-600', labelClass: 'text-amber-600' },
-    recommendation: { label: 'ТАВСИЯ', borderClass: 'border-l-navy-900', bgClass: 'bg-navy-900/[0.04]', iconClass: 'text-navy-900', labelClass: 'text-navy-900' },
+    strength: { label: 'КУЧЛИ ТОМОН', borderClass: 'border-l-emerald-500', bgClass: 'bg-emerald-50/80', iconBgClass: 'bg-emerald-100', iconClass: 'text-emerald-600', labelClass: 'text-emerald-700' },
+    market: { label: 'БОЗОР', borderClass: 'border-l-blue-500', bgClass: 'bg-blue-50/80', iconBgClass: 'bg-blue-100', iconClass: 'text-blue-600', labelClass: 'text-blue-700' },
+    warning: { label: 'ЭЪТИБОР БЕРИНГ', borderClass: 'border-l-amber-500', bgClass: 'bg-amber-50/80', iconBgClass: 'bg-amber-100', iconClass: 'text-amber-600', labelClass: 'text-amber-700' },
+    recommendation: { label: 'ТАВСИЯ', borderClass: 'border-l-navy-900', bgClass: 'bg-navy-900/[0.05]', iconBgClass: 'bg-navy-900/10', iconClass: 'text-navy-900', labelClass: 'text-navy-900' },
   },
 }
 
@@ -138,30 +138,30 @@ const allVisible = computed(() => visibleCount.value >= items.value.length)
   <div class="bg-white border border-rs-border rounded-[12px] shadow-rs-card py-8 md:py-10 px-6 md:px-12 animate-rs-fade-in-up">
     <div>
       <span class="inline-flex items-center text-[12px] font-semibold text-gold-500 bg-gold-500/[0.08] rounded-[6px] py-1 px-3">{{ t.stepBadge }}</span>
-      <h1 class="text-[24px] md:text-[28px] font-bold text-carbon mt-4">{{ t.title }}</h1>
-      <p class="text-[14px] md:text-[15px] text-[#898989] leading-[1.5] mt-2">{{ t.sub }}</p>
+      <h1 class="text-[26px] md:text-[30px] font-bold text-carbon mt-4">{{ t.title }}</h1>
+      <p class="text-[15px] md:text-[16px] text-[#6b7280] leading-[1.6] mt-2">{{ t.sub }}</p>
     </div>
 
-    <div class="mt-8 space-y-4">
+    <div class="mt-8 space-y-5">
       <div
         v-for="(item, i) in items" :key="item.title"
         :class="[
-          'border-l-[3px] rounded-[10px] p-5 transition-all duration-500',
+          'border-l-[4px] rounded-[12px] p-6 transition-all duration-500',
           typeConfig[item.type].borderClass,
           typeConfig[item.type].bgClass,
           i < visibleCount ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3',
         ]"
       >
         <div class="flex items-start gap-4">
-          <div class="w-9 h-9 rounded-full flex items-center justify-center shrink-0 bg-white/70">
-            <RsIcon :name="TYPE_ICONS[item.type]" :size="18" :stroke-width="2" :class="typeConfig[item.type].iconClass" />
+          <div :class="['w-10 h-10 rounded-[10px] flex items-center justify-center shrink-0', typeConfig[item.type].iconBgClass]">
+            <RsIcon :name="TYPE_ICONS[item.type]" :size="20" :stroke-width="2" :class="typeConfig[item.type].iconClass" />
           </div>
           <div class="min-w-0">
-            <span :class="['text-[10px] font-bold uppercase tracking-[0.8px]', typeConfig[item.type].labelClass]">
+            <span :class="['text-[11px] font-extrabold uppercase tracking-[1px]', typeConfig[item.type].labelClass]">
               {{ typeConfig[item.type].label }}
             </span>
-            <h3 class="text-[15px] font-semibold text-carbon mt-1">{{ item.title }}</h3>
-            <p class="text-[14px] text-[#898989] leading-[1.6] mt-1">{{ item.text }}</p>
+            <h3 class="text-[17px] font-bold text-carbon mt-1.5 leading-snug">{{ item.title }}</h3>
+            <p class="text-[14.5px] text-[#505a6b] leading-[1.7] mt-1.5">{{ item.text }}</p>
           </div>
         </div>
       </div>
