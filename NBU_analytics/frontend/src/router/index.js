@@ -26,6 +26,24 @@ const routes = [
     meta: { titleKey: 'nav.tools' },
   },
   {
+    path: '/education',
+    name: 'education',
+    component: () => import('@/views/education/EduCoursesView.vue'),
+    meta: { layout: 'education', titleKey: 'nav.education' },
+  },
+  {
+    path: '/education/courses/:id',
+    name: 'edu-course-detail',
+    component: () => import('@/views/education/EduCourseDetailView.vue'),
+    meta: { layout: 'education', titleKey: 'nav.education' },
+  },
+  {
+    path: '/education/courses/:courseId/learn/:videoId',
+    name: 'edu-learn',
+    component: () => import('@/views/education/EduLearningView.vue'),
+    meta: { layout: 'education', titleKey: 'nav.education' },
+  },
+  {
     path: '/tools/fincontrol',
     name: 'fincontrol-onboarding',
     component: () => import('@/views/fincontrol/FinControlOnboardingView.vue'),
@@ -84,6 +102,18 @@ const routes = [
     name: 'fincontrol-ai',
     component: () => import('@/views/fincontrol/FinControlAiView.vue'),
     meta: { layout: 'fincontrol' },
+  },
+  {
+    path: '/tools/regional-strategist',
+    name: 'regional-strategist',
+    component: () => import('@/views/regionalStrategist/RsHomeView.vue'),
+    meta: { layout: 'regionalStrategist', titleKey: 'nav.regionalStrategist' },
+  },
+  {
+    path: '/tools/regional-strategist/test',
+    name: 'regional-strategist-test',
+    component: () => import('@/views/regionalStrategist/RsBusinessTestView.vue'),
+    meta: { layout: 'regionalStrategist', titleKey: 'nav.regionalStrategist' },
   },
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ]

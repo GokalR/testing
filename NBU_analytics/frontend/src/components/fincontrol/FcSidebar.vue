@@ -1,26 +1,29 @@
 <script setup>
+import { computed } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import AppIcon from '@/components/AppIcon.vue'
 
 const router = useRouter()
+const { t } = useI18n()
 
-const items = [
-  { to: '/tools/fincontrol/dashboard', icon: 'dashboard', label: 'Обзор' },
-  { to: '/tools/fincontrol/accounts', icon: 'account_balance_wallet', label: 'Счета и остатки' },
-  { to: '/tools/fincontrol/cashflow', icon: 'trending_up', label: 'Движение денег' },
-  { to: '/tools/fincontrol/income-expense', icon: 'bar_chart', label: 'Доходы и расходы' },
-  { to: '/tools/fincontrol/pnl', icon: 'description', label: 'P&L отчёт' },
-  { to: '/tools/fincontrol/counterparties', icon: 'group', label: 'Контрагенты' },
-  { to: '/tools/fincontrol/planning', icon: 'event_note', label: 'Планирование' },
-  { to: '/tools/fincontrol/import', icon: 'download', label: 'Импорт выписок' },
-]
+const items = computed(() => [
+  { to: '/tools/fincontrol/dashboard', icon: 'dashboard', label: t('fincontrol.dashboard.title') },
+  { to: '/tools/fincontrol/accounts', icon: 'account_balance_wallet', label: t('fincontrol.accounts.title') },
+  { to: '/tools/fincontrol/cashflow', icon: 'trending_up', label: t('fincontrol.cashflow.title') },
+  { to: '/tools/fincontrol/income-expense', icon: 'bar_chart', label: t('fincontrol.incomeExpense.title') },
+  { to: '/tools/fincontrol/pnl', icon: 'description', label: t('fincontrol.pnl.title') },
+  { to: '/tools/fincontrol/counterparties', icon: 'group', label: t('fincontrol.counterparties.title') },
+  { to: '/tools/fincontrol/planning', icon: 'event_note', label: t('fincontrol.planning.title') },
+  { to: '/tools/fincontrol/import', icon: 'download', label: t('fincontrol.import.title') },
+])
 </script>
 
 <template>
   <aside class="fc-sidebar">
     <button type="button" class="fc-sb-back" @click="router.push('/tools')">
       <AppIcon name="chevron_left" />
-      <span>Главная</span>
+      <span>{{ $t('fincontrol.sidebar.home') }}</span>
     </button>
 
     <div class="fc-sb-brand">
@@ -29,7 +32,7 @@ const items = [
       </div>
       <div>
         <div class="name">FinControl</div>
-        <div class="sub">Бизнес-помощник</div>
+        <div class="sub">{{ $t('fincontrol.sidebar.assistant') }}</div>
       </div>
     </div>
 
@@ -53,18 +56,18 @@ const items = [
         active-class="active"
       >
         <AppIcon class="nav-icon" name="auto_awesome" filled />
-        <span>AI-помощник</span>
+        <span>{{ $t('fincontrol.sidebar.aiHelper') }}</span>
       </RouterLink>
     </nav>
 
     <div class="fc-sb-footer">
       <button type="button" class="fc-sb-item">
         <AppIcon class="nav-icon" name="help" />
-        <span>Поддержка</span>
+        <span>{{ $t('fincontrol.sidebar.support') }}</span>
       </button>
       <button type="button" class="fc-sb-item">
         <AppIcon class="nav-icon" name="settings" />
-        <span>Настройки</span>
+        <span>{{ $t('fincontrol.sidebar.settings') }}</span>
       </button>
     </div>
   </aside>

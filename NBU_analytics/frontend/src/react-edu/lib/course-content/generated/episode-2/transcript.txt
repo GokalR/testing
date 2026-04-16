@@ -1,0 +1,219 @@
+В банке данные появляются каждую секунду.
+
+Helvetica Neue
+
+Но важный вопрос — где они живут?
+
+Helvetica Neue
+
+Не в одном файле.
+
+Helvetica Neue
+
+И не в одной системе.
+
+Helvetica Neue
+
+Данные рождаются в рабочих системах банка:
+
+Helvetica Neue
+
+в отделении,
+
+Helvetica Neue
+
+в мобильном приложении,
+
+Helvetica Neue
+
+в банкоматах,
+
+Helvetica Neue
+
+в контакт-центре.
+
+Helvetica Neue
+
+Эти системы нужны, чтобы проводить операции —
+
+Helvetica Neue
+
+а не анализировать их.
+
+Helvetica Neue
+
+Когда операций становится тысячи в день,
+
+Helvetica Neue
+
+банку нужно видеть картину целиком.
+
+Helvetica Neue
+
+Для этого данные собираются в одном месте —
+
+Helvetica Neue
+
+в хранилище данных, или Корпоративное хранилище данных.
+
+Helvetica Neue
+
+Туда попадает информация из разных систем,
+
+Helvetica Neue
+
+уже очищенная и приведённая к единому виду.
+
+Helvetica Neue
+
+Из хранилища строятся:
+
+Helvetica Neue
+
+отчёты для руководства,
+
+Helvetica Neue
+
+аналитика по отделениям,
+
+Helvetica Neue
+
+показатели качества сервиса,
+
+Helvetica Neue
+
+данные для контроля рисков.
+
+Helvetica Neue
+
+Важно:
+
+Helvetica Neue
+
+Корпоративное хранилище данных не управляет операциями,
+
+Helvetica Neue
+
+оно помогает понимать, как работает банк.
+
+Helvetica Neue
+
+Если данные в хранилище неточные,
+
+Helvetica Neue
+
+банк видит искаженную картину.
+
+Helvetica Neue
+
+А значит —
+
+Helvetica Neue
+
+неверные выводы,
+
+Helvetica Neue
+
+неправильные решения,
+
+Helvetica Neue
+
+лишняя нагрузка на сотрудников.
+
+Helvetica Neue
+
+Качество данных начинается там,
+
+Helvetica Neue
+
+где они создаются —
+
+Helvetica Neue
+
+в ежедневной работе.
+
+Helvetica Neue
+
+Хранилище данных —
+
+Helvetica Neue
+
+это единая точка правды о работе банка.
+
+Helvetica Neue
+
+Чем точнее исходные данные,
+
+Helvetica Neue
+
+тем надёжнее решения.
+
+Helvetica Neue
+
+В связи с этим
+
+Helvetica Neue
+
+Data Office планирует провести ряд рабочих встреч
+
+Helvetica Neue
+
+с подразделениями Банка.
+
+Helvetica Neue
+
+Цель этих встреч —
+
+Helvetica Neue
+
+сбор и уточнение требований
+
+Helvetica Neue
+
+к системам-источникам данных,
+
+Helvetica Neue
+
+определение состава данных,
+
+Helvetica Neue
+
+которые должны поступать
+
+Helvetica Neue
+
+в хранилище данных,
+
+Helvetica Neue
+
+а также требований к форматам
+
+Helvetica Neue
+
+и выявление недостающей информации.
+
+Helvetica Neue
+
+Полученные результаты
+
+Helvetica Neue
+
+будут использованы
+
+Helvetica Neue
+
+для повышения качества данных,
+
+Helvetica Neue
+
+улучшения аналитики
+
+Helvetica Neue
+
+и формирования единого подхода
+
+Helvetica Neue
+
+к работе с данными в Банке.
+
+Helvetica Neue

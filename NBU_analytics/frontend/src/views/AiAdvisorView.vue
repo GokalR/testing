@@ -17,20 +17,41 @@ const messages = ref([
   },
 ])
 
+const isThinking = ref(false)
+
+const SUGGESTION_TO_ANSWER = {
+  'ai.suggestions.q1': 'ai.answers.q1',
+  'ai.suggestions.q2': 'ai.answers.q2',
+  'ai.suggestions.q3': 'ai.answers.q3',
+}
+
+function answerFor(text) {
+  for (const [qKey, aKey] of Object.entries(SUGGESTION_TO_ANSWER)) {
+    if (t(qKey).trim() === text.trim()) return t(aKey)
+  }
+  return null
+}
+
 async function send() {
   const text = input.value.trim()
   if (!text) return
   messages.value.push({ role: 'user', text })
   input.value = ''
   await nextTick()
+  messagesContainer.value?.scrollTo({ top: 1e9, behavior: 'smooth' })
+  const predefined = answerFor(text)
+  isThinking.value = true
+  await nextTick()
+  messagesContainer.value?.scrollTo({ top: 1e9, behavior: 'smooth' })
+  const delay = 1200 + Math.floor(Math.random() * 1800)
   setTimeout(() => {
+    isThinking.value = false
     messages.value.push({
       role: 'assistant',
-      text: 'Tahlil tayyorlanmoqda... (demo javob)',
+      text: predefined || 'Tahlil tayyorlanmoqda... (demo javob)',
     })
     nextTick(() => messagesContainer.value?.scrollTo({ top: 1e9, behavior: 'smooth' }))
-  }, 400)
-  messagesContainer.value?.scrollTo({ top: 1e9, behavior: 'smooth' })
+  }, delay)
 }
 
 const suggestions = ['ai.suggestions.q1', 'ai.suggestions.q2', 'ai.suggestions.q3']
@@ -86,7 +107,7 @@ function ask(key) {
             :class="m.role === 'user' ? 'justify-end' : 'justify-start'"
           >
             <div
-              class="max-w-[75%] px-4 py-3 rounded-xl text-sm leading-relaxed"
+              class="max-w-[75%] px-4 py-3 rounded-xl text-sm leading-relaxed whitespace-pre-line"
               :class="
                 m.role === 'user'
                   ? 'bg-primary text-on-primary rounded-tr-sm'
@@ -94,6 +115,14 @@ function ask(key) {
               "
             >
               {{ m.text }}
+            </div>
+          </div>
+
+          <div v-if="isThinking" class="flex justify-start">
+            <div class="bg-surface-container text-on-surface rounded-xl rounded-tl-sm px-4 py-3 flex items-center gap-1.5">
+              <span class="thinking-dot" style="animation-delay: 0ms" />
+              <span class="thinking-dot" style="animation-delay: 200ms" />
+              <span class="thinking-dot" style="animation-delay: 400ms" />
             </div>
           </div>
         </div>
@@ -137,3 +166,18 @@ function ask(key) {
     </div>
   </section>
 </template>
+
+<style scoped>
+.thinking-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background-color: currentColor;
+  opacity: 0.4;
+  animation: thinking-bounce 1.2s infinite ease-in-out;
+}
+@keyframes thinking-bounce {
+  0%, 80%, 100% { transform: scale(0.7); opacity: 0.35; }
+  40%          { transform: scale(1);   opacity: 0.9;  }
+}
+</style>

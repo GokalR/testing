@@ -5,3 +5,13 @@ dist
 .vite
 .env
 .env.local
+__pycache__
+*.pyc
+venv/
+.venv/
+*.mp4
+*.mov
+*.HEIC
+*.rar
+*.zip
+.wrangler/

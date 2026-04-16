@@ -7,6 +7,7 @@ const navItems = [
   { to: '/districts', icon: 'analytics', labelKey: 'nav.districts' },
   { to: '/ai', icon: 'psychology', labelKey: 'nav.ai' },
   { to: '/tools', icon: 'precision_manufacturing', labelKey: 'nav.tools' },
+  { to: '/education', icon: 'school', labelKey: 'nav.education' },
 ]
 </script>
 
@@ -49,13 +50,6 @@ const navItems = [
       >
         <AppIcon name="contact_support" />
         <span class="text-sm font-semibold">{{ $t('nav.support') }}</span>
-      </a>
-      <a
-        href="#"
-        class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-100 transition-colors rounded-lg"
-      >
-        <AppIcon name="logout" />
-        <span class="text-sm font-semibold">{{ $t('nav.signOut') }}</span>
       </a>
     </div>
   </aside>

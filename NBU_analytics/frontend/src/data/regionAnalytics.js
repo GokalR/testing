@@ -1,11 +1,15 @@
 // Rich per-region analytics data, derived from the main.html dashboard by @analytics_per_region.
 // The template uses Marg'ilon (Ferghana) as the canonical shape. Per-region numbers scale
 // from the base region data so the dashboard is populated for every oblast.
+//
+// User-visible labels accept a `t` translator (vue-i18n) so they re-render on locale change.
+// Any caller without translation context can pass `(key) => key` as a fallback.
 
 import { regions, national } from './regions'
 
 const TEMPLATE_POPULATION = 661.0 // thousand — Marg'ilon benchmark
 const TEMPLATE_GRP = 3616 // mlrd UZS
+const identity = (k) => k
 
 function parsePopulation(str) {
   const n = parseFloat(String(str).replace(',', '.'))
@@ -24,7 +28,7 @@ function fmt(n, d = 0) {
   return n.toLocaleString('ru-RU', { minimumFractionDigits: d, maximumFractionDigits: d })
 }
 
-export function buildAnalytics(regionKey) {
+export function buildAnalytics(regionKey, t = identity) {
   const r = regionKey && regions[regionKey] ? regions[regionKey] : null
   const pop = r ? parsePopulation(r.population) : 36800 // thousand
   const popScale = pop / TEMPLATE_POPULATION
@@ -45,24 +49,29 @@ export function buildAnalytics(regionKey) {
   const unemployment = Math.max(3.2, 6.5 - grpGrowth * 0.2).toFixed(1)
   const unemploymentStart = (parseFloat(unemployment) + 6.5).toFixed(1)
 
+  const mlrdSum = t('regionAnalytics.units.bnSum')
+  const peopleUnit = t('regionAnalytics.units.people')
+  const sumUnit = t('regionAnalytics.units.sum2025')
+  const ppPoints = t('regionAnalytics.units.pp')
+
   const brief = {
     score: Math.min(9.4, 7.2 + grpGrowth * 0.12).toFixed(1),
     kpis: [
-      { label: 'ВРП', value: fmt(grpTotal), unit: 'млрд сум', delta: `+${grpGrowth.toFixed(1)}%`, tone: 'green' },
-      { label: 'Промышленность', value: fmt(industryBln), unit: 'млрд сум', delta: '+16.7%', tone: 'green' },
-      { label: 'Инвестиции', value: fmt(investBln), unit: 'млрд сум', delta: `×${(2.0 + grpGrowth * 0.12).toFixed(1)}`, tone: 'green' },
-      { label: 'Безработица', value: `${unemployment}%`, unit: '', delta: `−${(parseFloat(unemploymentStart) - parseFloat(unemployment)).toFixed(1)} п.п.`, tone: 'green' },
-      { label: 'Население', value: fmt(Math.round(pop * 1000)), unit: 'чел.', delta: '+6.1%', tone: 'blue' },
-      { label: 'Рейтинг устойчивости', value: Math.min(9.4, 7.2 + grpGrowth * 0.12).toFixed(1), unit: '/ 10', delta: 'сильный', tone: 'blue' },
+      { label: t('regionAnalytics.brief.grp'),            value: fmt(grpTotal),       unit: mlrdSum, delta: `+${grpGrowth.toFixed(1)}%`, tone: 'green' },
+      { label: t('regionAnalytics.brief.industry'),       value: fmt(industryBln),    unit: mlrdSum, delta: '+16.7%', tone: 'green' },
+      { label: t('regionAnalytics.brief.investments'),    value: fmt(investBln),      unit: mlrdSum, delta: `×${(2.0 + grpGrowth * 0.12).toFixed(1)}`, tone: 'green' },
+      { label: t('regionAnalytics.brief.unemployment'),   value: `${unemployment}%`,  unit: '',      delta: `−${(parseFloat(unemploymentStart) - parseFloat(unemployment)).toFixed(1)} ${ppPoints}`, tone: 'green' },
+      { label: t('regionAnalytics.brief.population'),     value: fmt(Math.round(pop * 1000)), unit: peopleUnit, delta: '+6.1%', tone: 'blue' },
+      { label: t('regionAnalytics.brief.resilience'),     value: Math.min(9.4, 7.2 + grpGrowth * 0.12).toFixed(1), unit: '/ 10', delta: t('regionAnalytics.brief.strong'), tone: 'blue' },
     ],
   }
 
   const economic = {
     kpis: [
-      { label: 'Охват бизнесом', value: `${Math.round(70 + bank.newBusiness * 0.2)}%`, sub: `${Math.round(mahallas * 0.65)} активных точек`, tone: 'green' },
-      { label: 'Промышленность', value: `${fmt(industryBln)} млрд`, sub: 'сум, 2025', tone: 'blue' },
-      { label: 'Розничная торговля', value: `${fmt(tradeBln)} млрд`, sub: 'сум, 2025', tone: 'blue' },
-      { label: 'Услуги', value: `${fmt(servicesBln)} млрд`, sub: 'сум, 2025', tone: 'blue' },
+      { label: t('regionAnalytics.econ.businessCoverage'), value: `${Math.round(70 + bank.newBusiness * 0.2)}%`, sub: t('regionAnalytics.econ.activePoints', { n: Math.round(mahallas * 0.65) }), tone: 'green' },
+      { label: t('regionAnalytics.brief.industry'),        value: `${fmt(industryBln)} ${t('regionAnalytics.units.bnShort')}`, sub: sumUnit, tone: 'blue' },
+      { label: t('regionAnalytics.econ.retailTrade'),      value: `${fmt(tradeBln)} ${t('regionAnalytics.units.bnShort')}`,    sub: sumUnit, tone: 'blue' },
+      { label: t('regionAnalytics.econ.services'),         value: `${fmt(servicesBln)} ${t('regionAnalytics.units.bnShort')}`, sub: sumUnit, tone: 'blue' },
     ],
     history: [2021, 2022, 2023, 2024, 2025].map((y, i) => {
       const factor = 0.55 + i * 0.12
@@ -74,10 +83,10 @@ export function buildAnalytics(regionKey) {
       }
     }),
     sectors: [
-      { name: 'Промышленность', percent: Math.min(55, 30 + bars.industry * 0.25).toFixed(1), color: '#003D7C' },
-      { name: 'Услуги', percent: Math.min(40, 18 + bars.services * 0.2).toFixed(1), color: '#0054A6' },
-      { name: 'Строительство', percent: '18.5', color: '#2563EB' },
-      { name: 'Сельское хозяйство', percent: Math.min(20, 4 + bars.agriculture * 0.12).toFixed(1), color: '#059669' },
+      { name: t('regionAnalytics.sector.industry'),    percent: Math.min(55, 30 + bars.industry * 0.25).toFixed(1), color: '#003D7C' },
+      { name: t('regionAnalytics.sector.services'),    percent: Math.min(40, 18 + bars.services * 0.2).toFixed(1),  color: '#0054A6' },
+      { name: t('regionAnalytics.sector.construction'),percent: '18.5', color: '#2563EB' },
+      { name: t('regionAnalytics.sector.agriculture'), percent: Math.min(20, 4 + bars.agriculture * 0.12).toFixed(1), color: '#059669' },
     ],
     trade: {
       importMln: Math.round(40 * popScale),
@@ -92,32 +101,31 @@ export function buildAnalytics(regionKey) {
       closed: Math.round(338 * popScale),
       activeShare: 72,
       types: [
-        { code: 'ИП', count: Math.round(817 * popScale), share: 60 },
-        { code: 'ООО', count: Math.round(264 * popScale), share: 22 },
-        { code: 'Фермер', count: Math.round(84 * popScale), share: 7 },
-        { code: 'Прочее', count: Math.round(37 * popScale), share: 3 },
+        { code: t('regionAnalytics.orgForm.ip'),     count: Math.round(817 * popScale), share: 60 },
+        { code: t('regionAnalytics.orgForm.ooo'),    count: Math.round(264 * popScale), share: 22 },
+        { code: t('regionAnalytics.orgForm.farmer'), count: Math.round(84 * popScale),  share: 7 },
+        { code: t('regionAnalytics.orgForm.other'),  count: Math.round(37 * popScale),  share: 3 },
       ],
     },
-    aiNote:
-      'Малые предприятия массово закрываются (закрытых больше, чем открытых). NBU рекомендует расширить льготные кредиты до 200 млн сум на предпринимателей в промышленном секторе для стабилизации базы.',
+    aiNote: t('regionAnalytics.ai.smbClosing'),
   }
 
   const infra = {
     kpis: [
-      { label: 'Электроэнергия', value: '100%', delta: 'покрытие', tone: 'green' },
-      { label: 'Водоснабжение', value: '30.6%', delta: 'критично', tone: 'red' },
-      { label: 'Газоснабжение', value: '89%', delta: 'стабильно', tone: 'green' },
-      { label: 'Канализация', value: '44.8%', delta: 'ниже нормы', tone: 'amber' },
-      { label: 'Транспорт', value: '80%', delta: 'в работе', tone: 'blue' },
+      { label: t('regionAnalytics.infra.electricity'), value: '100%',  delta: t('regionAnalytics.infra.coverage'),  tone: 'green' },
+      { label: t('regionAnalytics.infra.water'),       value: '30.6%', delta: t('regionAnalytics.infra.critical'),  tone: 'red' },
+      { label: t('regionAnalytics.infra.gas'),         value: '89%',   delta: t('regionAnalytics.infra.stable'),    tone: 'green' },
+      { label: t('regionAnalytics.infra.sewage'),      value: '44.8%', delta: t('regionAnalytics.infra.belowNorm'), tone: 'amber' },
+      { label: t('regionAnalytics.infra.transport'),   value: '80%',   delta: t('regionAnalytics.infra.inOperation'), tone: 'blue' },
     ],
     matrix: [
-      { name: 'Электричество', status: 'ok', note: '100% — без перебоев' },
-      { name: 'Питьевая вода', status: 'bad', note: '30.6% — модернизация' },
-      { name: 'Газ', status: 'ok', note: '89% — работает' },
-      { name: 'Канализация', status: 'warn', note: '44.8% — требуется' },
-      { name: 'Дороги', status: 'warn', note: '49 км асфальта' },
-      { name: 'Общественный транспорт', status: 'ok', note: '80% — обновлено' },
-      { name: 'Цифровая сеть', status: 'warn', note: 'LTE 72%, 5G — план' },
+      { name: t('regionAnalytics.infra.matrix.electricity'),  status: 'ok',   note: t('regionAnalytics.infra.note.elNoOutages') },
+      { name: t('regionAnalytics.infra.matrix.drinkingWater'), status: 'bad', note: t('regionAnalytics.infra.note.waterModern') },
+      { name: t('regionAnalytics.infra.matrix.gas'),          status: 'ok',   note: t('regionAnalytics.infra.note.gasWorking') },
+      { name: t('regionAnalytics.infra.matrix.sewage'),       status: 'warn', note: t('regionAnalytics.infra.note.sewageNeeded') },
+      { name: t('regionAnalytics.infra.matrix.roads'),        status: 'warn', note: t('regionAnalytics.infra.note.roads49km') },
+      { name: t('regionAnalytics.infra.matrix.publicTransport'), status: 'ok', note: t('regionAnalytics.infra.note.transportRenewed') },
+      { name: t('regionAnalytics.infra.matrix.digital'),      status: 'warn', note: t('regionAnalytics.infra.note.lte5g') },
     ],
     budgetMlrd: Math.round(46.3 * popScale * 10) / 10,
     roads: {
@@ -129,25 +137,24 @@ export function buildAnalytics(regionKey) {
     },
     education: { schools: 11, schoolsPlanned: 3, kindergartens: 19, kindergartensPlanned: 30 },
     problems: [
-      { code: 'M1', name: 'Реконструкция водопровода', cost: 12.8, priority: 'высокий' },
-      { code: 'M2', name: 'Система канализации', cost: 8.4, priority: 'высокий' },
-      { code: 'M3', name: 'Дорожная сеть', cost: 6.2, priority: 'средний' },
-      { code: 'M4', name: 'Энергосистема', cost: 3.0, priority: 'средний' },
-      { code: 'T1', name: 'Новые школы (3)', cost: 4.8, priority: 'высокий' },
-      { code: 'T2', name: 'Детские сады (30)', cost: 2.2, priority: 'средний' },
-      { code: 'T3', name: 'Цифровая сеть 5G', cost: 1.5, priority: 'низкий' },
-      { code: 'T4', name: 'Зелёная энергия', cost: 1.5, priority: 'низкий' },
+      { code: 'M1', name: t('regionAnalytics.problems.waterRecon'),    cost: 12.8, priority: t('regionAnalytics.priority.high') },
+      { code: 'M2', name: t('regionAnalytics.problems.sewageSystem'),  cost: 8.4,  priority: t('regionAnalytics.priority.high') },
+      { code: 'M3', name: t('regionAnalytics.problems.roadNetwork'),   cost: 6.2,  priority: t('regionAnalytics.priority.medium') },
+      { code: 'M4', name: t('regionAnalytics.problems.energySystem'),  cost: 3.0,  priority: t('regionAnalytics.priority.medium') },
+      { code: 'T1', name: t('regionAnalytics.problems.newSchools3'),   cost: 4.8,  priority: t('regionAnalytics.priority.high') },
+      { code: 'T2', name: t('regionAnalytics.problems.kindergartens30'), cost: 2.2, priority: t('regionAnalytics.priority.medium') },
+      { code: 'T3', name: t('regionAnalytics.problems.digital5g'),     cost: 1.5,  priority: t('regionAnalytics.priority.low') },
+      { code: 'T4', name: t('regionAnalytics.problems.greenEnergy'),   cost: 1.5,  priority: t('regionAnalytics.priority.low') },
     ],
-    aiNote:
-      'Критический разрыв: электросеть на 100%, но вода на 30,6%. Рекомендуем ГЧП-проект «Водоканал-2026» на 12,8 млрд сум — окупаемость 7 лет, прямое влияние на здоровье и промышленность.',
+    aiNote: t('regionAnalytics.ai.infraGap'),
   }
 
   const population = {
     kpis: [
-      { label: 'Население', value: fmt(Math.round(pop * 1000)), delta: '+6.1%', sub: '<18 лет: 33.4%', tone: 'blue' },
-      { label: 'Площадь', value: area, delta: '—', sub: `Плотность: ${Math.round((pop * 1000) / 20).toLocaleString('ru-RU')}/км²`, tone: 'blue' },
-      { label: 'Эконом. активные', value: fmt(Math.round(29811 * popScale)), delta: `+${fmt(Math.round(5745 * popScale))}`, sub: 'с 2021 г.', tone: 'green' },
-      { label: 'Безработица', value: `${unemployment}%`, delta: `${unemploymentStart}% → ${unemployment}%`, sub: '2021 → 2025', tone: 'green' },
+      { label: t('regionAnalytics.brief.population'),       value: fmt(Math.round(pop * 1000)), delta: '+6.1%', sub: t('regionAnalytics.pop.under18'), tone: 'blue' },
+      { label: t('regionAnalytics.pop.area'),               value: area, delta: '—', sub: t('regionAnalytics.pop.density', { n: Math.round((pop * 1000) / 20).toLocaleString('ru-RU') }), tone: 'blue' },
+      { label: t('regionAnalytics.pop.economicallyActive'), value: fmt(Math.round(29811 * popScale)), delta: `+${fmt(Math.round(5745 * popScale))}`, sub: t('regionAnalytics.pop.since2021'), tone: 'green' },
+      { label: t('regionAnalytics.brief.unemployment'),     value: `${unemployment}%`, delta: `${unemploymentStart}% → ${unemployment}%`, sub: '2021 → 2025', tone: 'green' },
     ],
     laborTrend: [
       { year: 2021, formal: 16137, informal: 3455, abroad: 4474, unemployed: 2784 },
@@ -174,34 +181,34 @@ export function buildAnalytics(regionKey) {
       growthPct: '+52%',
       shareOfWorkforce: '19.2%',
       totalEmployed: Math.round(29811 * popScale),
-      warning: 'Безработица падает, но миграция растёт в 1.5×: локальные зарплаты не удерживают кадры.',
+      warning: t('regionAnalytics.migration.warning'),
     },
     program2026: {
-      title: 'Программа занятости 2026',
+      title: t('regionAnalytics.program.title'),
       goal: Math.round(2500 * popScale),
       breakdown: [
-        { code: 'P1', label: 'Обучение ремеслам', count: Math.round(800 * popScale) },
-        { code: 'P2', label: 'Субсидии на старт', count: Math.round(620 * popScale) },
-        { code: 'P3', label: 'Трудоустройство в сфере', count: Math.round(580 * popScale) },
-        { code: 'P4', label: 'Экспортные кластеры', count: Math.round(500 * popScale) },
+        { code: 'P1', label: t('regionAnalytics.program.crafts'),       count: Math.round(800 * popScale) },
+        { code: 'P2', label: t('regionAnalytics.program.subsidies'),    count: Math.round(620 * popScale) },
+        { code: 'P3', label: t('regionAnalytics.program.employment'),   count: Math.round(580 * popScale) },
+        { code: 'P4', label: t('regionAnalytics.program.exportCluster'),count: Math.round(500 * popScale) },
       ],
     },
   }
 
   const mahalla = {
     kpis: [
-      { label: 'Махалли', value: mahallas.toLocaleString('ru-RU'), sub: `${districts} районов`, tone: 'blue' },
-      { label: 'Кредитный охват', value: `${bank.credits}%`, sub: 'МСБ в регионе', tone: 'green' },
-      { label: 'Новые ИП', value: `${bank.newBusiness}%`, sub: 'квартальный рост', tone: 'green' },
-      { label: 'Цифровизация', value: `${Math.round(bank.credits * 0.65)}%`, sub: 'онлайн-банкинг', tone: 'blue' },
+      { label: t('regionAnalytics.mahalla.mahallas'),     value: mahallas.toLocaleString('ru-RU'), sub: t('regionAnalytics.mahalla.districtsCount', { n: districts }), tone: 'blue' },
+      { label: t('regionAnalytics.mahalla.creditCover'),  value: `${bank.credits}%`, sub: t('regionAnalytics.mahalla.smbInRegion'), tone: 'green' },
+      { label: t('regionAnalytics.mahalla.newIp'),        value: `${bank.newBusiness}%`, sub: t('regionAnalytics.mahalla.quarterGrowth'), tone: 'green' },
+      { label: t('regionAnalytics.mahalla.digitalization'), value: `${Math.round(bank.credits * 0.65)}%`, sub: t('regionAnalytics.mahalla.onlineBanking'), tone: 'blue' },
     ],
     bankMetrics: [
-      { label: 'Выданные кредиты МСБ', percent: bank.credits, color: 'bg-primary' },
-      { label: 'Новые предприниматели', percent: bank.newBusiness, color: 'bg-primary-container' },
-      { label: 'Экспортёры', percent: bank.exporters, color: 'bg-secondary' },
-      { label: 'Трудоустроены', percent: empl.employed, color: 'bg-tertiary' },
-      { label: 'Самозанятые', percent: empl.selfEmployed, color: 'bg-tertiary opacity-60' },
-      { label: 'Проф. обучение', percent: empl.education, color: 'bg-primary opacity-60' },
+      { label: t('regionAnalytics.bank.smbCredits'),     percent: bank.credits, color: 'bg-primary' },
+      { label: t('regionAnalytics.bank.newEntrepr'),     percent: bank.newBusiness, color: 'bg-primary-container' },
+      { label: t('regionAnalytics.bank.exporters'),      percent: bank.exporters, color: 'bg-secondary' },
+      { label: t('regionAnalytics.bank.employed'),       percent: empl.employed, color: 'bg-tertiary' },
+      { label: t('regionAnalytics.bank.selfEmployed'),   percent: empl.selfEmployed, color: 'bg-tertiary opacity-60' },
+      { label: t('regionAnalytics.bank.profEducation'),  percent: empl.education, color: 'bg-primary opacity-60' },
     ],
     topMahallas: [
       { name: 'Олтиариқ', loans: Math.round(24 * popScale), score: 8.8 },
@@ -221,67 +228,66 @@ export function buildAnalytics(regionKey) {
   const opportunities = {
     swot: {
       strengths: [
-        'Исторический центр текстиля',
-        `Стабильный рост промышленности: +${Math.round(grpGrowth * 9)}%`,
-        `Инвестиции в 2025 г.: +${Math.round(grpGrowth * 20)}%`,
-        'Удобное логистическое положение',
-        'Квалифицированная рабочая сила',
-        `Устойчивый рост занятости: +${Math.round(grpGrowth * 3)}%`,
-        'Экспорт в тренде роста: +46.7%',
+        t('regionAnalytics.swot.strengths.textileCenter'),
+        t('regionAnalytics.swot.strengths.industryGrowth', { n: Math.round(grpGrowth * 9) }),
+        t('regionAnalytics.swot.strengths.investments2025', { n: Math.round(grpGrowth * 20) }),
+        t('regionAnalytics.swot.strengths.logistics'),
+        t('regionAnalytics.swot.strengths.workforce'),
+        t('regionAnalytics.swot.strengths.employmentGrowth', { n: Math.round(grpGrowth * 3) }),
+        t('regionAnalytics.swot.strengths.exportTrend'),
       ],
       weaknesses: [
-        'Низкое водоснабжение — 30.6%',
-        'Проблемы канализации — 44.8%',
-        'Дефицит энергии пиковых часов — 47%',
-        'Устаревшее промышленное оборудование',
-        'Ограниченные земельные ресурсы',
-        'Доля неформальной занятости',
-        'Низкие цифровые навыки',
-        'Узкая номенклатура экспорта',
+        t('regionAnalytics.swot.weak.water'),
+        t('regionAnalytics.swot.weak.sewage'),
+        t('regionAnalytics.swot.weak.energyDeficit'),
+        t('regionAnalytics.swot.weak.oldEquipment'),
+        t('regionAnalytics.swot.weak.land'),
+        t('regionAnalytics.swot.weak.informal'),
+        t('regionAnalytics.swot.weak.digitalSkills'),
+        t('regionAnalytics.swot.weak.exportNarrow'),
       ],
       opportunities: [
-        'Рост туристического потенциала',
-        'Создание smart-текстильного кластера',
-        'Расширение логистического хаба',
-        'Филиал IT-парка',
-        'Диверсификация экспорта',
-        'Проекты зелёной энергии',
+        t('regionAnalytics.swot.opp.tourism'),
+        t('regionAnalytics.swot.opp.smartTextile'),
+        t('regionAnalytics.swot.opp.logisticsHub'),
+        t('regionAnalytics.swot.opp.itPark'),
+        t('regionAnalytics.swot.opp.exportDiv'),
+        t('regionAnalytics.swot.opp.greenEnergy'),
       ],
       threats: [
-        { label: 'Изменение климата и дефицит воды', level: 'высокий' },
-        { label: 'Глобальная рыночная конкуренция', level: 'средний' },
-        { label: 'Рост цен на сырьё', level: 'средний' },
-        { label: 'Миграция квалифицированных кадров', level: 'высокий' },
-        { label: 'Внешние экономические шоки', level: 'средний' },
+        { label: t('regionAnalytics.swot.threats.climate'),   level: t('regionAnalytics.priority.high') },
+        { label: t('regionAnalytics.swot.threats.global'),    level: t('regionAnalytics.priority.medium') },
+        { label: t('regionAnalytics.swot.threats.rawPrices'), level: t('regionAnalytics.priority.medium') },
+        { label: t('regionAnalytics.swot.threats.migration'), level: t('regionAnalytics.priority.high') },
+        { label: t('regionAnalytics.swot.threats.shocks'),    level: t('regionAnalytics.priority.medium') },
       ],
     },
-    aiRecommendation:
-      'SWOT-анализ показывает критический разрыв между квалификацией кадров (Сила) и стабильностью энергии (Слабость). Приоритизируйте кредиты «Энергоэффективность» — это стабилизирует промышленную базу до расширения новых хабов.',
+    aiRecommendation: t('regionAnalytics.ai.swotRecommendation'),
   }
 
   const summary = {
     score: brief.score,
     radar: [
-      { axis: 'Экономика', value: Math.min(9.5, 6.5 + grpGrowth * 0.3).toFixed(1), provincial: 7.0 },
-      { axis: 'Инфраструктура', value: 6.5, provincial: 7.2 },
-      { axis: 'Занятость', value: Math.min(9.0, 6.0 + grpGrowth * 0.2).toFixed(1), provincial: 7.0 },
-      { axis: 'Демография', value: 7.0, provincial: 7.0 },
-      { axis: 'Инвестиции', value: Math.min(9.2, 6.2 + grpGrowth * 0.28).toFixed(1), provincial: 6.8 },
+      { axis: t('regionAnalytics.radar.economy'),       value: Math.min(9.5, 6.5 + grpGrowth * 0.3).toFixed(1), provincial: 7.0 },
+      { axis: t('regionAnalytics.radar.infra'),         value: 6.5, provincial: 7.2 },
+      { axis: t('regionAnalytics.radar.employment'),    value: Math.min(9.0, 6.0 + grpGrowth * 0.2).toFixed(1), provincial: 7.0 },
+      { axis: t('regionAnalytics.radar.demography'),    value: 7.0, provincial: 7.0 },
+      { axis: t('regionAnalytics.radar.investments'),   value: Math.min(9.2, 6.2 + grpGrowth * 0.28).toFixed(1), provincial: 6.8 },
     ],
     comparison: [
-      { metric: 'Промышленность (тыс. сум/душу)', region: Math.round(23847 * (bars.industry / 80)), provincial: 28914 },
-      { metric: 'Услуги (тыс. сум/душу)', region: Math.round(16218 * (bars.services / 60)), provincial: 14120 },
-      { metric: 'Торговля (тыс. сум/душу)', region: Math.round(10092 * (bars.services / 60)), provincial: 9380 },
-      { metric: 'Инвестиции (тыс. сум/душу)', region: Math.round(13344 * (grpGrowth / 8.0)), provincial: 9910 },
-      { metric: 'Экспорт ($/душу)', region: Math.round((expBil * 1000) * popScale / pop * 1000000), provincial: 28 },
+      { metric: t('regionAnalytics.compare.industryPC'),  region: Math.round(23847 * (bars.industry / 80)), provincial: 28914 },
+      { metric: t('regionAnalytics.compare.servicesPC'),  region: Math.round(16218 * (bars.services / 60)), provincial: 14120 },
+      { metric: t('regionAnalytics.compare.tradePC'),     region: Math.round(10092 * (bars.services / 60)), provincial: 9380 },
+      { metric: t('regionAnalytics.compare.investPC'),    region: Math.round(13344 * (grpGrowth / 8.0)), provincial: 9910 },
+      { metric: t('regionAnalytics.compare.exportPC'),    region: Math.round((expBil * 1000) * popScale / pop * 1000000), provincial: 28 },
     ],
     plan: [
-      { horizon: '0–6 месяцев', title: 'Водоканал-2026', mlrd: 12.8, owner: 'Хокимият + NBU', kpi: '30.6% → 55%' },
-      { horizon: '6–12 месяцев', title: 'Энергоэффективность МСБ', mlrd: 8.6, owner: 'NBU кредиты', kpi: 'Пик −12%' },
-      { horizon: '12–18 месяцев', title: 'Smart-текстильный кластер', mlrd: 24.0, owner: 'IFC + NBU', kpi: 'Экспорт +35%' },
-      { horizon: '18–24 месяцев', title: 'IT-парк филиал', mlrd: 6.4, owner: 'Минцифры', kpi: '1200 раб. мест' },
+      { horizon: t('regionAnalytics.horizon.0_6'),    title: t('regionAnalytics.plan.water2026'),  mlrd: 12.8, owner: t('regionAnalytics.owner.hokimNbu'),  kpi: '30.6% → 55%' },
+      { horizon: t('regionAnalytics.horizon.6_12'),   title: t('regionAnalytics.plan.energySmb'),  mlrd: 8.6,  owner: t('regionAnalytics.owner.nbuCredit'), kpi: t('regionAnalytics.kpi.peakCut12') },
+      { horizon: t('regionAnalytics.horizon.12_18'),  title: t('regionAnalytics.plan.smartTextile'), mlrd: 24.0, owner: 'IFC + NBU', kpi: t('regionAnalytics.kpi.exportPlus35') },
+      { horizon: t('regionAnalytics.horizon.18_24'),  title: t('regionAnalytics.plan.itParkBranch'), mlrd: 6.4,  owner: t('regionAnalytics.owner.minDigital'), kpi: t('regionAnalytics.kpi.jobs1200') },
     ],
-    conclusion: `Регион демонстрирует сильные экономические и инвестиционные показатели, опережая средний по области. Главный приоритет — ликвидация инфраструктурного разрыва (вода, энергия), что разблокирует промышленный рост 2026–2027 гг.`,
+    conclusion: t('regionAnalytics.summary.conclusion'),
   }
 
   return { brief, economic, infra, population, mahalla, opportunities, summary }

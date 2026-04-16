@@ -4,17 +4,19 @@ import { useI18n } from 'vue-i18n'
 import FcHeader from '@/components/fincontrol/FcHeader.vue'
 import FcChart from '@/components/fincontrol/FcChart.vue'
 import AppIcon from '@/components/AppIcon.vue'
-import { counterparties } from '@/data/fincontrol'
+import { makeCounterparties } from '@/data/fincontrol'
 
-const { t } = useI18n()
+const { t, tm } = useI18n()
+
+const counterparties = computed(() => makeCounterparties(t))
 
 const filter = ref('all')
 const showRiskBanner = ref(true)
 const showAddModal = ref(false)
 const detail = ref(null)
 
-const detailChartData = {
-  labels: ['Ноя', 'Дек', 'Янв', 'Фев', 'Мар', 'Апр'],
+const detailChartData = computed(() => ({
+  labels: tm('fincontrol.counterparties.detailMonths'),
   datasets: [{
     data: [4.8, 5.2, 6.1, 7.0, 8.4, 10.0],
     backgroundColor: 'rgba(0,166,81,.6)',
@@ -22,7 +24,7 @@ const detailChartData = {
     borderWidth: 1,
     borderRadius: 5,
   }],
-}
+}))
 const detailChartOptions = {
   plugins: { legend: { display: false } },
   scales: {
@@ -67,13 +69,13 @@ const filterTabs = computed(() => [
       </div>
       <div class="fc-kpi" style="border-top:3px solid #00A651">
         <div class="fc-kpi-label">{{ t('fincontrol.counterparties.topPayer') }}</div>
-        <div style="font-weight:700;font-size:15px;color:#1A2B4A">ИП Рашидов А.</div>
+        <div style="font-weight:700;font-size:15px;color:#1A2B4A">{{ t('fincontrol.data.cp.ipRashidov') }}</div>
         <div class="fc-kpi-value green" style="font-size:18px;margin-top:2px">35 600 000 <span style="font-size:11px;opacity:.55">UZS</span></div>
         <div class="fc-kpi-sub" style="color:#00A651">{{ t('fincontrol.counterparties.topPayerShare') }}</div>
       </div>
       <div class="fc-kpi" style="border-top:3px solid #F59E0B">
         <div class="fc-kpi-label">{{ t('fincontrol.counterparties.topReceiver') }}</div>
-        <div style="font-weight:700;font-size:15px;color:#1A2B4A">ООО АрендаГрупп</div>
+        <div style="font-weight:700;font-size:15px;color:#1A2B4A">{{ t('fincontrol.data.cp.arendaGroup') }}</div>
         <div class="fc-kpi-value amber" style="font-size:18px;margin-top:2px">12 800 000 <span style="font-size:11px;opacity:.55">UZS</span></div>
         <div class="fc-kpi-sub">{{ t('fincontrol.counterparties.receiverShare') }}</div>
       </div>
@@ -172,10 +174,10 @@ const filterTabs = computed(() => [
           <table class="fc-table" style="border-radius:8px;border:1px solid #DDE3EE">
             <tbody>
               <tr v-for="(tx, i) in [
-                { date: '14 апр', desc: 'Оплата по дог. №145-А', acc: 'NBU •4402', cat: 'Продажи', amt: '+14 200 000' },
-                { date: '02 апр', desc: 'Аванс апрель 2026', acc: 'NBU •4402', cat: 'Продажи', amt: '+10 000 000' },
-                { date: '18 мар', desc: 'Финальный расчёт мар', acc: 'HBK •1192', cat: 'Продажи', amt: '+7 400 000' },
-                { date: '04 мар', desc: 'Аванс март 2026', acc: 'NBU •4402', cat: 'Продажи', amt: '+4 000 000' },
+                { date: t('fincontrol.counterparties.panelTx1Date'), desc: t('fincontrol.counterparties.panelTx1Desc'), acc: 'NBU •4402', cat: t('fincontrol.counterparties.panelTxCatSales'), amt: '+14 200 000' },
+                { date: t('fincontrol.counterparties.panelTx2Date'), desc: t('fincontrol.counterparties.panelTx2Desc'), acc: 'NBU •4402', cat: t('fincontrol.counterparties.panelTxCatSales'), amt: '+10 000 000' },
+                { date: t('fincontrol.counterparties.panelTx3Date'), desc: t('fincontrol.counterparties.panelTx3Desc'), acc: 'HBK •1192', cat: t('fincontrol.counterparties.panelTxCatSales'), amt: '+7 400 000' },
+                { date: t('fincontrol.counterparties.panelTx4Date'), desc: t('fincontrol.counterparties.panelTx4Desc'), acc: 'NBU •4402', cat: t('fincontrol.counterparties.panelTxCatSales'), amt: '+4 000 000' },
               ]" :key="i">
                 <td style="font-size:11.5px;color:#6B7A99">{{ tx.date }}</td>
                 <td style="font-size:12px"><div>{{ tx.desc }}</div><div style="color:#6B7A99;font-size:10.5px">{{ tx.acc }} · {{ tx.cat }}</div></td>

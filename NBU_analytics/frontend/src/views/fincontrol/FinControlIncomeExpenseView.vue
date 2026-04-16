@@ -1,23 +1,31 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import FcHeader from '@/components/fincontrol/FcHeader.vue'
 import FcChart from '@/components/fincontrol/FcChart.vue'
 import FcSparkline from '@/components/fincontrol/FcSparkline.vue'
 import AppIcon from '@/components/AppIcon.vue'
-import { transactions, expenseStructure, expenseCategories, incomeCategories } from '@/data/fincontrol'
+import { makeTransactions, makeExpenseStructure, makeExpenseCategories, makeIncomeCategories } from '@/data/fincontrol'
+
+const { t, tm } = useI18n()
+
+const transactions = computed(() => makeTransactions(t))
+const expenseStructure = computed(() => makeExpenseStructure(t))
+const expenseCategories = computed(() => makeExpenseCategories(t))
+const incomeCategories = computed(() => makeIncomeCategories(t))
 
 const compareMode = ref('both')
 const txTab = ref('all')
 
-const compareData = {
-  labels: ['Неделя 1', 'Неделя 2', 'Неделя 3', 'Неделя 4'],
+const compareData = computed(() => ({
+  labels: tm('fincontrol.incomeExpense.weeks'),
   datasets: [
-    { label: 'Апрель доходы', data: [76, 84, 88, 72], backgroundColor: '#0054A6', stack: 'apr', borderRadius: 5, barThickness: 18 },
-    { label: 'Апрель расходы', data: [-46, -52, -54, -46], backgroundColor: '#003D7C', stack: 'apr', borderRadius: 5, barThickness: 18 },
-    { label: 'Март доходы', data: [68, 78, 80, 70], backgroundColor: '#CBD5E8', stack: 'mar', borderRadius: 5, barThickness: 18 },
-    { label: 'Март расходы', data: [-50, -56, -58, -40], backgroundColor: '#94A3B8', stack: 'mar', borderRadius: 5, barThickness: 18 },
+    { label: t('fincontrol.incomeExpense.dsAprIncome'), data: [76, 84, 88, 72], backgroundColor: '#0054A6', stack: 'apr', borderRadius: 5, barThickness: 18 },
+    { label: t('fincontrol.incomeExpense.dsAprExpense'), data: [-46, -52, -54, -46], backgroundColor: '#003D7C', stack: 'apr', borderRadius: 5, barThickness: 18 },
+    { label: t('fincontrol.incomeExpense.dsMarIncome'), data: [68, 78, 80, 70], backgroundColor: '#CBD5E8', stack: 'mar', borderRadius: 5, barThickness: 18 },
+    { label: t('fincontrol.incomeExpense.dsMarExpense'), data: [-50, -56, -58, -40], backgroundColor: '#94A3B8', stack: 'mar', borderRadius: 5, barThickness: 18 },
   ],
-}
+}))
 const compareOptions = {
   plugins: { legend: { display: false } },
   scales: {
@@ -26,56 +34,68 @@ const compareOptions = {
   },
 }
 
-const donutData = {
-  labels: expenseStructure.map((e) => e.label),
+const donutData = computed(() => ({
+  labels: expenseStructure.value.map((e) => e.label),
   datasets: [{
-    data: expenseStructure.map((e) => e.value),
-    backgroundColor: expenseStructure.map((e) => e.color),
+    data: expenseStructure.value.map((e) => e.value),
+    backgroundColor: expenseStructure.value.map((e) => e.color),
     borderWidth: 0,
   }],
-}
+}))
 const donutOptions = { cutout: '68%', plugins: { legend: { display: false } } }
+
+const pills = computed(() => [
+  { key: 'week', label: t('fincontrol.common.week') },
+  { key: 'month', label: t('fincontrol.common.month') },
+  { key: 'quarter', label: t('fincontrol.common.quarter') },
+  { key: 'year', label: t('fincontrol.common.year') },
+])
+const txTabs = computed(() => [
+  { k: 'all', l: t('fincontrol.incomeExpense.tabAll') },
+  { k: 'income', l: t('fincontrol.incomeExpense.tabIncome') },
+  { k: 'expense', l: t('fincontrol.incomeExpense.tabExpense') },
+])
 </script>
 
 <template>
   <FcHeader
-    title="Доходы и расходы"
-    :pills="[{key:'week',label:'Неделя'},{key:'month',label:'Месяц'},{key:'quarter',label:'Квартал'},{key:'year',label:'Год'}]"
+    :title="t('fincontrol.incomeExpense.title')"
+    :pills="pills"
     active-pill="month"
     :export-button="true"
   />
 
   <div class="fc-content">
     <div class="fc-page-title">
-      <div class="eyebrow">FinControl / Финансы</div>
-      <h1>Доходы и расходы</h1>
-      <p class="subtitle"><span class="fc-green-line"></span>Апрель 2026 · Анализ финансовых потоков</p>
+      <div class="eyebrow">{{ t('fincontrol.incomeExpense.eyebrow') }}</div>
+      <h1>{{ t('fincontrol.incomeExpense.pageTitle') }}</h1>
+      <p class="subtitle"><span class="fc-green-line"></span>{{ t('fincontrol.incomeExpense.subtitle') }}</p>
     </div>
 
     <!-- KPI strip -->
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px">
       <div class="fc-kpi" style="border-top:3px solid #00A651">
-        <div class="fc-kpi-label">Доходы</div>
+        <div class="fc-kpi-label">{{ t('fincontrol.incomeExpense.income') }}</div>
         <div class="fc-kpi-value green">320 000 000 <span style="font-size:12px;opacity:.55">UZS</span></div>
-        <div class="flex items-center gap-2" style="margin-top:4px"><span class="fc-badge green">▲ 8.2%</span><span class="fc-kpi-sub">vs пред. мес.: 295.7М</span></div>
+        <div class="flex items-center gap-2" style="margin-top:4px"><span class="fc-badge green">▲ 8.2%</span><span class="fc-kpi-sub">{{ t('fincontrol.incomeExpense.vsPrev1') }}</span></div>
         <FcSparkline :data="[28,30,32,30,33,35,32,36,38,40,38,40]" color="#00A651" :height="34" />
       </div>
       <div class="fc-kpi" style="border-top:3px solid #E0384B">
-        <div class="fc-kpi-label">Расходы</div>
+        <div class="fc-kpi-label">{{ t('fincontrol.incomeExpense.expense') }}</div>
         <div class="fc-kpi-value red">198 000 000 <span style="font-size:12px;opacity:.55">UZS</span></div>
-        <div class="flex items-center gap-2" style="margin-top:4px"><span class="fc-badge red">▼ 3.1%</span><span class="fc-kpi-sub">vs пред. мес.: 204.4М</span></div>
+        <div class="flex items-center gap-2" style="margin-top:4px"><span class="fc-badge red">▼ 3.1%</span><span class="fc-kpi-sub">{{ t('fincontrol.incomeExpense.vsPrev2') }}</span></div>
         <FcSparkline :data="[22,21,23,24,22,21,20,21,19,20,19,19.8]" color="#E0384B" :height="34" />
       </div>
       <div class="fc-kpi" style="border-top:3px solid #003D7C">
-        <div class="fc-kpi-label">Чистый результат</div>
+        <div class="fc-kpi-label">{{ t('fincontrol.incomeExpense.netResult') }}</div>
         <div class="fc-kpi-value navy">122 000 000 <span style="font-size:12px;opacity:.55">UZS</span></div>
-        <div class="flex items-center gap-2" style="margin-top:4px"><span class="fc-badge blue">▲ 15.0%</span><span class="fc-kpi-sub">vs пред. мес.: 106.1М</span></div>
+        <div class="flex items-center gap-2" style="margin-top:4px"><span class="fc-badge blue">▲ 15.0%</span><span class="fc-kpi-sub">{{ t('fincontrol.incomeExpense.vsPrev3') }}</span></div>
         <FcSparkline :data="[6,9,9,6,11,14,12,15,19,20,19,20.2]" color="#003D7C" :height="34" />
       </div>
       <div class="fc-kpi" style="border-top:3px solid #94A3B8">
-        <div class="fc-kpi-label">Средний расход / день</div>
+        <div class="fc-kpi-label">{{ t('fincontrol.incomeExpense.avgExpDay') }}</div>
         <div class="fc-kpi-value" style="color:#475569">6 387 000 <span style="font-size:12px;opacity:.55">UZS</span></div>
-        <div class="flex items-center gap-2" style="margin-top:4px"><span class="fc-badge slate">→ стабильно</span><span class="fc-kpi-sub">Апрель · 31 день</span></div>
+        <div class="flex items-center gap-2" style="margin-top:4px"><span class="fc-badge slate">{{ t('fincontrol.incomeExpense.stable') }}</span><span class="fc-kpi-sub">{{ t('fincontrol.incomeExpense.aprDays') }}</span></div>
         <FcSparkline :data="[6.4,6.3,6.5,6.4,6.4,6.3,6.4,6.5,6.4,6.4,6.3,6.4]" color="#94A3B8" :height="34" />
       </div>
     </div>
@@ -85,18 +105,18 @@ const donutOptions = { cutout: '68%', plugins: { legend: { display: false } } }
       <div class="fc-card">
         <div class="fc-card-header">
           <div>
-            <div class="fc-card-title">Этот месяц vs Прошлый месяц</div>
-            <div class="fc-card-sub">Апрель vs Март 2026 · по неделям</div>
+            <div class="fc-card-title">{{ t('fincontrol.incomeExpense.compareTitle') }}</div>
+            <div class="fc-card-sub">{{ t('fincontrol.incomeExpense.compareSub') }}</div>
           </div>
           <div style="display:flex;background:#F0F4FA;border-radius:8px;padding:2px">
-            <button class="fc-period-pill" :class="{active:compareMode==='both'}" @click="compareMode='both'" style="font-size:11px;padding:4px 10px;border-radius:6px">Оба</button>
-            <button class="fc-period-pill" :class="{active:compareMode==='income'}" @click="compareMode='income'" style="font-size:11px;padding:4px 10px;border-radius:6px">Доходы</button>
-            <button class="fc-period-pill" :class="{active:compareMode==='expense'}" @click="compareMode='expense'" style="font-size:11px;padding:4px 10px;border-radius:6px">Расходы</button>
+            <button class="fc-period-pill" :class="{active:compareMode==='both'}" @click="compareMode='both'" style="font-size:11px;padding:4px 10px;border-radius:6px">{{ t('fincontrol.incomeExpense.both') }}</button>
+            <button class="fc-period-pill" :class="{active:compareMode==='income'}" @click="compareMode='income'" style="font-size:11px;padding:4px 10px;border-radius:6px">{{ t('fincontrol.incomeExpense.income') }}</button>
+            <button class="fc-period-pill" :class="{active:compareMode==='expense'}" @click="compareMode='expense'" style="font-size:11px;padding:4px 10px;border-radius:6px">{{ t('fincontrol.incomeExpense.expense') }}</button>
           </div>
         </div>
         <div style="display:flex;gap:14px;margin-bottom:8px;font-size:12px;color:#6B7A99">
-          <span><span style="display:inline-block;width:10px;height:10px;background:#003D7C;border-radius:2px;margin-right:6px"></span>Апрель</span>
-          <span><span style="display:inline-block;width:10px;height:10px;background:#CBD5E8;border-radius:2px;margin-right:6px"></span>Март</span>
+          <span><span style="display:inline-block;width:10px;height:10px;background:#003D7C;border-radius:2px;margin-right:6px"></span>{{ t('fincontrol.incomeExpense.april') }}</span>
+          <span><span style="display:inline-block;width:10px;height:10px;background:#CBD5E8;border-radius:2px;margin-right:6px"></span>{{ t('fincontrol.incomeExpense.march') }}</span>
         </div>
         <FcChart type="bar" :data="compareData" :options="compareOptions" :height="280" />
       </div>
@@ -104,15 +124,15 @@ const donutOptions = { cutout: '68%', plugins: { legend: { display: false } } }
       <div class="fc-card">
         <div class="fc-card-header">
           <div>
-            <div class="fc-card-title">Структура расходов</div>
-            <div class="fc-card-sub">Апрель 2026 · 198 000 000 UZS</div>
+            <div class="fc-card-title">{{ t('fincontrol.incomeExpense.structureTitle') }}</div>
+            <div class="fc-card-sub">{{ t('fincontrol.incomeExpense.structureSub') }}</div>
           </div>
         </div>
         <div style="position:relative;height:200px;display:flex;align-items:center;justify-content:center">
           <FcChart type="doughnut" :data="donutData" :options="donutOptions" :height="200" />
           <div style="position:absolute;text-align:center;pointer-events:none">
-            <div class="fc-num" style="font-size:18px;color:#003D7C">Закупки</div>
-            <div style="font-size:12px;color:#6B7A99">34% · 67.3М</div>
+            <div class="fc-num" style="font-size:18px;color:#003D7C">{{ t('fincontrol.incomeExpense.purchases') }}</div>
+            <div style="font-size:12px;color:#6B7A99">{{ t('fincontrol.incomeExpense.purchasesShare') }}</div>
           </div>
         </div>
         <div style="display:flex;flex-direction:column;gap:5px;margin-top:14px">
@@ -128,8 +148,8 @@ const donutOptions = { cutout: '68%', plugins: { legend: { display: false } } }
 
     <!-- Expense categories -->
     <div class="flex items-center justify-between" style="margin-bottom:12px">
-      <h3 class="fc-card-title" style="font-size:16px">Категории расходов</h3>
-      <button class="fc-link">Управление →</button>
+      <h3 class="fc-card-title" style="font-size:16px">{{ t('fincontrol.incomeExpense.expCatTitle') }}</h3>
+      <button class="fc-link">{{ t('fincontrol.incomeExpense.manage') }}</button>
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:24px">
       <div v-for="c in expenseCategories" :key="c.name" class="fc-card" style="padding:16px;position:relative">
@@ -139,25 +159,25 @@ const donutOptions = { cutout: '68%', plugins: { legend: { display: false } } }
         </div>
         <div style="font-weight:700;color:#1A2B4A;font-size:14px;margin-bottom:4px">{{ c.name }}</div>
         <div class="fc-num" style="color:#003D7C;font-size:18px">{{ c.amount }} <span style="font-size:11px;opacity:.55">UZS</span></div>
-        <div style="font-size:11px;color:#6B7A99;margin:6px 0">{{ c.share }}% от расходов</div>
+        <div style="font-size:11px;color:#6B7A99;margin:6px 0">{{ c.share }}{{ t('fincontrol.incomeExpense.shareOfExp') }}</div>
         <div class="fc-bar"><div class="fc-bar-fill" :class="c.overspend ? 'red' : 'blue'" :style="{ width: c.bar + '%' }"></div></div>
         <div v-if="c.overspend" class="fc-banner red" style="margin-top:8px;padding:6px 10px;font-size:11.5px">
-          <AppIcon name="warning" /> Перерасход
+          <AppIcon name="warning" /> {{ t('fincontrol.incomeExpense.overspend') }}
         </div>
       </div>
     </div>
 
     <!-- Income categories -->
     <div class="flex items-center justify-between" style="margin-bottom:12px">
-      <h3 class="fc-card-title" style="font-size:16px">Категории доходов</h3>
-      <button class="fc-link">Подробнее →</button>
+      <h3 class="fc-card-title" style="font-size:16px">{{ t('fincontrol.incomeExpense.incCatTitle') }}</h3>
+      <button class="fc-link">{{ t('fincontrol.incomeExpense.more') }}</button>
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:24px">
       <div v-for="c in incomeCategories" :key="c.name" class="fc-card" style="padding:16px">
         <div style="font-size:24px;margin-bottom:8px">{{ c.emoji }}</div>
         <div style="font-weight:700;color:#1A2B4A;font-size:14px;margin-bottom:4px">{{ c.name }}</div>
         <div class="fc-num green" style="font-size:18px">{{ c.amount }} <span style="font-size:11px;opacity:.55;color:#6B7A99">UZS</span></div>
-        <div style="font-size:11px;color:#6B7A99;margin:6px 0">{{ c.share }}% от доходов</div>
+        <div style="font-size:11px;color:#6B7A99;margin:6px 0">{{ c.share }}{{ t('fincontrol.incomeExpense.shareOfInc') }}</div>
         <div class="fc-bar"><div class="fc-bar-fill green" :style="{ width: c.bar + '%' }"></div></div>
       </div>
     </div>
@@ -166,22 +186,22 @@ const donutOptions = { cutout: '68%', plugins: { legend: { display: false } } }
     <div class="fc-card" style="padding:0;overflow:hidden">
       <div class="fc-card-header" style="padding:18px 18px 14px">
         <div>
-          <div class="fc-card-title">Транзакции</div>
-          <div class="fc-card-sub">Апрель 2026</div>
+          <div class="fc-card-title">{{ t('fincontrol.incomeExpense.txTitle') }}</div>
+          <div class="fc-card-sub">{{ t('fincontrol.incomeExpense.txSub') }}</div>
         </div>
         <div class="flex items-center gap-2">
           <div style="display:flex;background:#F0F4FA;border-radius:8px;padding:2px">
-            <button v-for="t in [{k:'all',l:'Все'},{k:'income',l:'Доходы'},{k:'expense',l:'Расходы'}]" :key="t.k"
-              class="fc-period-pill" :class="{active:txTab===t.k}" @click="txTab=t.k" style="font-size:11px;padding:4px 10px;border-radius:6px">{{ t.l }}</button>
+            <button v-for="tt in txTabs" :key="tt.k"
+              class="fc-period-pill" :class="{active:txTab===tt.k}" @click="txTab=tt.k" style="font-size:11px;padding:4px 10px;border-radius:6px">{{ tt.l }}</button>
           </div>
-          <select class="fc-select" style="width:auto;height:34px;font-size:12px;padding:0 10px"><option>Все категории</option><option>Закупки</option><option>Зарплата</option><option>Налоги</option><option>Аренда</option><option>Маркетинг</option><option>Прочее</option></select>
-          <input class="fc-input" placeholder="Поиск…" style="height:34px;width:180px;font-size:12px" />
-          <span style="font-size:12px;color:#6B7A99">Показано 7 из 86</span>
+          <select class="fc-select" style="width:auto;height:34px;font-size:12px;padding:0 10px"><option>{{ t('fincontrol.incomeExpense.allCategories') }}</option><option>{{ t('fincontrol.incomeExpense.catPurchases') }}</option><option>{{ t('fincontrol.incomeExpense.catSalary') }}</option><option>{{ t('fincontrol.incomeExpense.catTaxes') }}</option><option>{{ t('fincontrol.incomeExpense.catRent') }}</option><option>{{ t('fincontrol.incomeExpense.catMarketing') }}</option><option>{{ t('fincontrol.incomeExpense.catOther') }}</option></select>
+          <input class="fc-input" :placeholder="t('fincontrol.incomeExpense.search')" style="height:34px;width:180px;font-size:12px" />
+          <span style="font-size:12px;color:#6B7A99">{{ t('fincontrol.incomeExpense.shown') }}</span>
         </div>
       </div>
       <table class="fc-table">
         <thead>
-          <tr><th>Дата</th><th>Контрагент</th><th>Категория</th><th>Назначение</th><th style="text-align:right">Доход</th><th style="text-align:right">Расход</th><th>Счёт</th></tr>
+          <tr><th>{{ t('fincontrol.incomeExpense.colDate') }}</th><th>{{ t('fincontrol.incomeExpense.colCounterparty') }}</th><th>{{ t('fincontrol.incomeExpense.colCategory') }}</th><th>{{ t('fincontrol.incomeExpense.colPurpose') }}</th><th style="text-align:right">{{ t('fincontrol.incomeExpense.colIncome') }}</th><th style="text-align:right">{{ t('fincontrol.incomeExpense.colExpense') }}</th><th>{{ t('fincontrol.incomeExpense.colAccount') }}</th></tr>
         </thead>
         <tbody>
           <tr v-for="(tx, i) in transactions.slice(0,7)" :key="i" class="clickable">

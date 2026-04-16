@@ -1,16 +1,22 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import FcHeader from '@/components/fincontrol/FcHeader.vue'
 import FcChart from '@/components/fincontrol/FcChart.vue'
 import FcSparkline from '@/components/fincontrol/FcSparkline.vue'
 import AppIcon from '@/components/AppIcon.vue'
-import { accounts, transactions } from '@/data/fincontrol'
+import { makeAccounts, makeTransactions } from '@/data/fincontrol'
 
-const days = Array.from({ length: 30 }, (_, i) => `${i + 1} апр`)
+const { t } = useI18n()
 
-const stackedData = {
-  labels: days,
-  datasets: accounts.map((a) => ({
+const accounts = computed(() => makeAccounts(t))
+const transactions = computed(() => makeTransactions(t))
+
+const days = computed(() => Array.from({ length: 30 }, (_, i) => t('fincontrol.accounts.dayApr', { n: i + 1 })))
+
+const stackedData = computed(() => ({
+  labels: days.value,
+  datasets: accounts.value.map((a) => ({
     label: a.bank,
     data: a.spark,
     backgroundColor: a.color + '33',
@@ -20,7 +26,7 @@ const stackedData = {
     pointRadius: 0,
     tension: 0.35,
   })),
-}
+}))
 const stackedOptions = {
   plugins: { legend: { display: false } },
   interaction: { mode: 'index', intersect: false },
@@ -30,39 +36,47 @@ const stackedOptions = {
   },
 }
 
-const filters = ref(accounts.reduce((m, a) => ((m[a.key] = true), m), {}))
+const filters = ref({ nbu: true, hbk: true, cash: true })
+
+const pills = computed(() => [
+  { key: 'week', label: t('fincontrol.common.week') },
+  { key: 'month', label: t('fincontrol.common.month') },
+  { key: 'quarter', label: t('fincontrol.common.quarter') },
+  { key: 'year', label: t('fincontrol.common.year') },
+])
+const primaryAction = computed(() => ({ label: t('fincontrol.accounts.addAcc'), icon: 'add' }))
 </script>
 
 <template>
   <FcHeader
-    title="Счета и остатки"
-    :pills="[{ key:'week', label:'Неделя'},{key:'month',label:'Месяц'},{key:'quarter',label:'Квартал'},{key:'year',label:'Год'}]"
+    :title="t('fincontrol.accounts.title')"
+    :pills="pills"
     active-pill="month"
-    :primary-action="{ label:'Добавить счёт', icon:'add' }"
+    :primary-action="primaryAction"
   />
 
   <div class="fc-content">
     <div class="fc-page-title">
-      <div class="eyebrow">FinControl / Счета</div>
-      <h1>Все счета компании</h1>
-      <p class="subtitle"><span class="fc-green-line"></span>Управление счетами и остатками</p>
+      <div class="eyebrow">{{ t('fincontrol.accounts.eyebrow') }}</div>
+      <h1>{{ t('fincontrol.accounts.pageTitle') }}</h1>
+      <p class="subtitle"><span class="fc-green-line"></span>{{ t('fincontrol.accounts.subtitle') }}</p>
     </div>
 
     <!-- Hero summary -->
     <div style="background:linear-gradient(135deg,#003D7C,#0054A6);color:white;border-radius:14px;padding:22px 24px;margin-bottom:18px;display:grid;grid-template-columns:2fr 1fr;gap:24px;align-items:center;box-shadow:0 8px 24px rgba(0,61,124,.25)">
       <div>
-        <div style="font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:1.3px;opacity:.7;margin-bottom:6px">Общий баланс · Все счета</div>
+        <div style="font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:1.3px;opacity:.7;margin-bottom:6px">{{ t('fincontrol.accounts.totalLabel') }}</div>
         <div class="fc-num" style="font-size:36px;color:white;line-height:1">842 500 000 <span style="font-size:18px;opacity:.7">UZS</span></div>
-        <div style="margin-top:8px;font-size:12.5px;color:#86EFAC;font-weight:700">↑ +12.4% vs прошлый месяц</div>
+        <div style="margin-top:8px;font-size:12.5px;color:#86EFAC;font-weight:700">{{ t('fincontrol.accounts.vsLastMonth') }}</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
-          <span class="fc-badge" style="background:rgba(255,255,255,.15);color:white">Счетов: 3</span>
-          <span class="fc-badge" style="background:rgba(255,255,255,.15);color:white">Обновлено: Сегодня, 15:30</span>
-          <span class="fc-badge" style="background:rgba(255,255,255,.15);color:white">Валюта: UZS</span>
-          <span class="fc-badge" style="background:rgba(0,166,81,.25);color:#86EFAC">CF за месяц: +122 000 000</span>
+          <span class="fc-badge" style="background:rgba(255,255,255,.15);color:white">{{ t('fincontrol.accounts.accountsCount') }}</span>
+          <span class="fc-badge" style="background:rgba(255,255,255,.15);color:white">{{ t('fincontrol.accounts.updated') }}</span>
+          <span class="fc-badge" style="background:rgba(255,255,255,.15);color:white">{{ t('fincontrol.accounts.currency') }}</span>
+          <span class="fc-badge" style="background:rgba(0,166,81,.25);color:#86EFAC">{{ t('fincontrol.accounts.cfMonth') }}</span>
         </div>
       </div>
       <div>
-        <div style="font-size:11px;opacity:.7;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Динамика за 30 дней</div>
+        <div style="font-size:11px;opacity:.7;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">{{ t('fincontrol.accounts.dynamic30') }}</div>
         <FcSparkline :data="accounts[0].spark" color="#86EFAC" :height="60" />
       </div>
     </div>
@@ -81,17 +95,17 @@ const filters = ref(accounts.reduce((m, a) => ((m[a.key] = true), m), {}))
         </div>
         <div class="fc-num" style="font-size:24px;color:#003D7C;margin-bottom:6px">{{ a.balance }} <span style="font-size:13px;opacity:.55">UZS</span></div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0;padding:10px;background:#F8FAFC;border-radius:9px">
-          <div><div style="font-size:10px;color:#6B7A99;text-transform:uppercase;letter-spacing:.5px">Мин</div><div class="fc-num" style="font-size:13px;color:#1A2B4A">{{ a.stats.min }}</div></div>
-          <div><div style="font-size:10px;color:#6B7A99;text-transform:uppercase;letter-spacing:.5px">Макс</div><div class="fc-num" style="font-size:13px;color:#1A2B4A">{{ a.stats.max }}</div></div>
-          <div><div style="font-size:10px;color:#6B7A99;text-transform:uppercase;letter-spacing:.5px">Среднее</div><div class="fc-num" style="font-size:13px;color:#1A2B4A">{{ a.stats.avg }}</div></div>
+          <div><div style="font-size:10px;color:#6B7A99;text-transform:uppercase;letter-spacing:.5px">{{ t('fincontrol.accounts.min') }}</div><div class="fc-num" style="font-size:13px;color:#1A2B4A">{{ a.stats.min }}</div></div>
+          <div><div style="font-size:10px;color:#6B7A99;text-transform:uppercase;letter-spacing:.5px">{{ t('fincontrol.accounts.max') }}</div><div class="fc-num" style="font-size:13px;color:#1A2B4A">{{ a.stats.max }}</div></div>
+          <div><div style="font-size:10px;color:#6B7A99;text-transform:uppercase;letter-spacing:.5px">{{ t('fincontrol.accounts.avg') }}</div><div class="fc-num" style="font-size:13px;color:#1A2B4A">{{ a.stats.avg }}</div></div>
         </div>
         <FcSparkline :data="a.spark" :color="a.color" :height="42" />
         <div style="margin:10px 0">
-          <div style="font-size:11px;color:#6B7A99;margin-bottom:4px">Доля от общего баланса</div>
+          <div style="font-size:11px;color:#6B7A99;margin-bottom:4px">{{ t('fincontrol.accounts.shareTotal') }}</div>
           <div class="fc-bar"><div class="fc-bar-fill blue" :style="{ width: a.share + '%', background: a.color }"></div></div>
         </div>
         <div class="flex items-center justify-between" style="margin-top:8px">
-          <button class="fc-link">Транзакции →</button>
+          <button class="fc-link">{{ t('fincontrol.accounts.txLink') }}</button>
           <span style="font-size:12px;font-weight:700" :style="{ color: a.trend.tone === 'up' ? '#00A651' : '#E0384B' }">
             {{ a.trend.tone === 'up' ? '↑' : '↓' }} {{ a.trend.value }}
           </span>
@@ -100,15 +114,15 @@ const filters = ref(accounts.reduce((m, a) => ((m[a.key] = true), m), {}))
     </div>
 
     <div style="text-align:center;margin-bottom:18px">
-      <button class="fc-link"><AppIcon name="add" /> Добавить счёт из другого банка</button>
+      <button class="fc-link"><AppIcon name="add" /> {{ t('fincontrol.accounts.addOther') }}</button>
     </div>
 
     <!-- Stacked area -->
     <div class="fc-card" style="margin-bottom:16px">
       <div class="fc-card-header">
         <div>
-          <div class="fc-card-title">Динамика остатков по счетам</div>
-          <div class="fc-card-sub">Апрель 2026 · 1–30 апреля</div>
+          <div class="fc-card-title">{{ t('fincontrol.accounts.balanceDynTitle') }}</div>
+          <div class="fc-card-sub">{{ t('fincontrol.accounts.balanceDynSub') }}</div>
         </div>
         <div style="display:flex;gap:14px">
           <label v-for="a in accounts" :key="a.key" class="flex items-center gap-2" style="font-size:12px;font-weight:600;color:#1A2B4A;cursor:pointer">
@@ -125,21 +139,21 @@ const filters = ref(accounts.reduce((m, a) => ((m[a.key] = true), m), {}))
     <div class="fc-card" style="padding:0;overflow:hidden">
       <div class="fc-card-header" style="padding:18px 18px 14px">
         <div>
-          <div class="fc-card-title">Транзакции по счетам</div>
-          <div class="fc-card-sub">Апрель 2026 · Все счета</div>
+          <div class="fc-card-title">{{ t('fincontrol.accounts.txTitle') }}</div>
+          <div class="fc-card-sub">{{ t('fincontrol.accounts.txSub') }}</div>
         </div>
         <div class="flex items-center gap-2">
-          <select class="fc-select" style="width:auto;height:34px;font-size:12px;padding:0 10px"><option>Все счета</option><option>NBU •4402</option><option>HBK •1192</option><option>Касса</option></select>
-          <select class="fc-select" style="width:auto;height:34px;font-size:12px;padding:0 10px"><option>Все операции</option><option>Приход</option><option>Расход</option></select>
-          <input class="fc-input" placeholder="Поиск по контрагенту…" style="height:34px;width:220px;font-size:12px" />
-          <span style="font-size:12px;color:#6B7A99">Показано 8 из 124</span>
+          <select class="fc-select" style="width:auto;height:34px;font-size:12px;padding:0 10px"><option>{{ t('fincontrol.accounts.filterAll') }}</option><option>NBU •4402</option><option>HBK •1192</option></select>
+          <select class="fc-select" style="width:auto;height:34px;font-size:12px;padding:0 10px"><option>{{ t('fincontrol.accounts.filterAllOps') }}</option><option>{{ t('fincontrol.accounts.income') }}</option><option>{{ t('fincontrol.accounts.expense') }}</option></select>
+          <input class="fc-input" :placeholder="t('fincontrol.accounts.search')" style="height:34px;width:220px;font-size:12px" />
+          <span style="font-size:12px;color:#6B7A99">{{ t('fincontrol.accounts.shown') }}</span>
         </div>
       </div>
       <table class="fc-table">
         <thead>
           <tr>
-            <th>Дата</th><th>Счёт</th><th>Контрагент</th><th>Назначение</th><th>Категория</th>
-            <th style="text-align:right">Приход</th><th style="text-align:right">Расход</th><th style="text-align:right">Остаток</th>
+            <th>{{ t('fincontrol.accounts.colDate') }}</th><th>{{ t('fincontrol.accounts.colAccount') }}</th><th>{{ t('fincontrol.accounts.colCounterparty') }}</th><th>{{ t('fincontrol.accounts.colPurpose') }}</th><th>{{ t('fincontrol.accounts.colCategory') }}</th>
+            <th style="text-align:right">{{ t('fincontrol.accounts.colIncome') }}</th><th style="text-align:right">{{ t('fincontrol.accounts.colExpense') }}</th><th style="text-align:right">{{ t('fincontrol.accounts.colBalance') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -156,7 +170,7 @@ const filters = ref(accounts.reduce((m, a) => ((m[a.key] = true), m), {}))
         </tbody>
       </table>
       <div style="display:flex;justify-content:space-between;padding:14px 18px;border-top:1px solid #DDE3EE">
-        <button class="fc-cta-ghost" style="padding:6px 12px;font-size:12px"><AppIcon name="expand_more" /> Загрузить ещё 20</button>
+        <button class="fc-cta-ghost" style="padding:6px 12px;font-size:12px"><AppIcon name="expand_more" /> {{ t('fincontrol.accounts.loadMore') }}</button>
         <div class="flex items-center gap-1">
           <button class="fc-period-pill active" style="padding:4px 10px">1</button>
           <button class="fc-period-pill" style="padding:4px 10px">2</button>

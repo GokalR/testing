@@ -1,35 +1,53 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import FcHeader from '@/components/fincontrol/FcHeader.vue'
 import FcChart from '@/components/fincontrol/FcChart.vue'
 import AppIcon from '@/components/AppIcon.vue'
 import {
-  dashboardKpis,
-  monthly,
-  expenseStructure,
-  topCounterpartiesSuppliers,
-  aiSignals,
-  transactions,
-  accounts,
+  makeDashboardKpis,
+  makeMonthly,
+  makeExpenseStructure,
+  makeTopCounterpartiesSuppliers,
+  makeAiSignals,
+  makeTransactions,
+  makeAccounts,
 } from '@/data/fincontrol'
+
+const { t } = useI18n()
 
 const activePeriod = ref('month')
 const cpTab = ref('suppliers')
 const chatInput = ref('')
 
-const incomeExpenseData = {
-  labels: monthly.labels,
+const dashboardKpis = computed(() => makeDashboardKpis(t))
+const monthly = computed(() => makeMonthly(t))
+const expenseStructure = computed(() => makeExpenseStructure(t))
+const topCounterpartiesSuppliers = computed(() => makeTopCounterpartiesSuppliers(t))
+const aiSignals = computed(() => makeAiSignals(t))
+const transactions = computed(() => makeTransactions(t))
+const accounts = computed(() => makeAccounts(t))
+
+const pills = computed(() => [
+  { key: 'week', label: t('fincontrol.common.week') },
+  { key: 'month', label: t('fincontrol.common.month') },
+  { key: 'quarter', label: t('fincontrol.common.quarter') },
+  { key: 'year', label: t('fincontrol.common.year') },
+])
+
+const incomeExpenseData = computed(() => ({
+  labels: monthly.value.labels,
   datasets: [
-    { type: 'bar', label: 'Доходы', data: monthly.income, backgroundColor: '#0054A6', borderRadius: 6, barThickness: 12 },
-    { type: 'bar', label: 'Расходы', data: monthly.expenses, backgroundColor: '#CBD5E8', borderRadius: 6, barThickness: 12 },
+    { type: 'bar', label: t('fincontrol.common.income'), data: monthly.value.income, backgroundColor: '#0054A6', borderRadius: 6, barThickness: 12 },
+    { type: 'bar', label: t('fincontrol.common.expense'), data: monthly.value.expenses, backgroundColor: '#CBD5E8', borderRadius: 6, barThickness: 12 },
     {
-      type: 'line', label: 'Чистый CF',
-      data: monthly.income.map((v, i) => v - monthly.expenses[i]),
+      type: 'line', label: t('fincontrol.common.netCf'),
+      data: monthly.value.income.map((v, i) => v - monthly.value.expenses[i]),
       borderColor: '#00A651', backgroundColor: 'rgba(0,166,81,.1)',
       borderWidth: 2.5, fill: true, tension: 0.4, pointRadius: 0, pointHoverRadius: 4,
     },
   ],
-}
+}))
 const incomeExpenseOptions = {
   plugins: { legend: { display: false } },
   scales: {
@@ -38,14 +56,14 @@ const incomeExpenseOptions = {
   },
 }
 
-const donutData = {
-  labels: expenseStructure.map((e) => e.label),
+const donutData = computed(() => ({
+  labels: expenseStructure.value.map((e) => e.label),
   datasets: [{
-    data: expenseStructure.map((e) => e.value),
-    backgroundColor: expenseStructure.map((e) => e.color),
+    data: expenseStructure.value.map((e) => e.value),
+    backgroundColor: expenseStructure.value.map((e) => e.color),
     borderWidth: 0,
   }],
-}
+}))
 const donutOptions = {
   cutout: '68%',
   plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => `${c.label}: ${c.parsed}%` } } },
@@ -54,9 +72,9 @@ const donutOptions = {
 
 <template>
   <FcHeader
-    title="Обзор"
-    search="Поиск транзакций, контрагентов…"
-    :pills="[{ key:'week', label:'Неделя'},{key:'month',label:'Месяц'},{key:'quarter',label:'Квартал'},{key:'year',label:'Год'}]"
+    :title="$t('fincontrol.dashboard.title')"
+    :search="$t('fincontrol.dashboard.search')"
+    :pills="pills"
     active-pill="month"
     :export-button="true"
     @period="activePeriod = $event"
@@ -65,10 +83,10 @@ const donutOptions = {
   <div class="fc-content">
     <div class="fc-page-title">
       <div class="eyebrow">NBU Institutional / FinControl</div>
-      <h1>Бизнес-помощник / <span style="background:linear-gradient(90deg,#003D7C,#0054A6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">FinControl</span></h1>
+      <h1>{{ $t('fincontrol.dashboard.pageTitle') }} / <span style="background:linear-gradient(90deg,#003D7C,#0054A6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">FinControl</span></h1>
       <p class="subtitle">
         <span class="fc-green-line"></span>
-        Финансовая аналитика за апрель 2026 • ООО «Глобал Трейд Групп»
+        {{ $t('fincontrol.dashboard.subtitle') }}
       </p>
     </div>
 
@@ -94,13 +112,13 @@ const donutOptions = {
       <div class="fc-card">
         <div class="fc-card-header">
           <div>
-            <div class="fc-card-title">Доходы и расходы</div>
-            <div class="fc-card-sub">12 месяцев • апр 2025 — апр 2026</div>
+            <div class="fc-card-title">{{ $t('fincontrol.dashboard.incExpTitle') }}</div>
+            <div class="fc-card-sub">{{ $t('fincontrol.dashboard.incExpSub') }}</div>
           </div>
           <div style="display:flex;gap:14px;font-size:12px;font-weight:600;color:#6B7A99">
-            <span><span style="display:inline-block;width:10px;height:10px;background:#0054A6;border-radius:2px;margin-right:6px"></span>Доходы</span>
-            <span><span style="display:inline-block;width:10px;height:10px;background:#CBD5E8;border-radius:2px;margin-right:6px"></span>Расходы</span>
-            <span><span style="display:inline-block;width:10px;height:10px;background:#00A651;border-radius:2px;margin-right:6px"></span>Чистый CF</span>
+            <span><span style="display:inline-block;width:10px;height:10px;background:#0054A6;border-radius:2px;margin-right:6px"></span>{{ $t('fincontrol.common.income') }}</span>
+            <span><span style="display:inline-block;width:10px;height:10px;background:#CBD5E8;border-radius:2px;margin-right:6px"></span>{{ $t('fincontrol.common.expense') }}</span>
+            <span><span style="display:inline-block;width:10px;height:10px;background:#00A651;border-radius:2px;margin-right:6px"></span>{{ $t('fincontrol.common.netCf') }}</span>
           </div>
         </div>
         <FcChart type="bar" :data="incomeExpenseData" :options="incomeExpenseOptions" :height="280" />
@@ -109,15 +127,15 @@ const donutOptions = {
       <div class="fc-card">
         <div class="fc-card-header">
           <div>
-            <div class="fc-card-title">Структура расходов</div>
-            <div class="fc-card-sub">Апрель 2026</div>
+            <div class="fc-card-title">{{ $t('fincontrol.dashboard.structureTitle') }}</div>
+            <div class="fc-card-sub">{{ $t('fincontrol.dashboard.structureSub') }}</div>
           </div>
         </div>
         <div style="position:relative;height:240px;display:flex;align-items:center;justify-content:center">
           <FcChart type="doughnut" :data="donutData" :options="donutOptions" :height="240" />
           <div style="position:absolute;text-align:center;pointer-events:none">
             <div class="fc-num" style="font-size:24px;color:#003D7C">198М</div>
-            <div style="font-size:11px;color:#6B7A99">UZS расходов</div>
+            <div style="font-size:11px;color:#6B7A99">{{ $t('fincontrol.dashboard.uzsExpenses') }}</div>
           </div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;margin-top:14px">
@@ -135,8 +153,8 @@ const donutOptions = {
       <!-- Accounts -->
       <div class="fc-card">
         <div class="fc-card-header">
-          <div class="fc-card-title">Счета и остатки</div>
-          <RouterLink to="/tools/fincontrol/accounts" class="fc-link">Все счета →</RouterLink>
+          <div class="fc-card-title">{{ $t('fincontrol.accounts.title') }}</div>
+          <RouterLink to="/tools/fincontrol/accounts" class="fc-link">{{ $t('fincontrol.dashboard.allAccounts') }}</RouterLink>
         </div>
         <div style="display:flex;flex-direction:column;gap:14px">
           <div v-for="a in accounts" :key="a.key">
@@ -149,7 +167,7 @@ const donutOptions = {
             </div>
             <div class="fc-bar"><div class="fc-bar-fill blue" :style="{ width: a.share + '%' }"></div></div>
             <div class="flex items-center justify-between" style="margin-top:4px;font-size:11px;color:#6B7A99">
-              <span>{{ a.share }}% от общего</span>
+              <span>{{ $t('fincontrol.dashboard.shareOfTotal', { n: a.share }) }}</span>
               <span :style="{ color: a.trend.tone === 'up' ? '#00A651' : '#E0384B', fontWeight:700 }">
                 {{ a.trend.tone === 'up' ? '↑' : '↓' }} {{ a.trend.value }}
               </span>
@@ -161,10 +179,10 @@ const donutOptions = {
       <!-- Top counterparties -->
       <div class="fc-card">
         <div class="fc-card-header">
-          <div class="fc-card-title">Топ контрагенты</div>
+          <div class="fc-card-title">{{ $t('fincontrol.dashboard.topCp') }}</div>
           <div style="display:flex;background:#F0F4FA;border-radius:8px;padding:2px">
-            <button class="fc-period-pill" :class="{active: cpTab==='suppliers'}" @click="cpTab='suppliers'" style="font-size:11px;padding:4px 10px;border-radius:6px">Поставщики</button>
-            <button class="fc-period-pill" :class="{active: cpTab==='buyers'}" @click="cpTab='buyers'" style="font-size:11px;padding:4px 10px;border-radius:6px">Покупатели</button>
+            <button class="fc-period-pill" :class="{active: cpTab==='suppliers'}" @click="cpTab='suppliers'" style="font-size:11px;padding:4px 10px;border-radius:6px">{{ $t('fincontrol.dashboard.suppliers') }}</button>
+            <button class="fc-period-pill" :class="{active: cpTab==='buyers'}" @click="cpTab='buyers'" style="font-size:11px;padding:4px 10px;border-radius:6px">{{ $t('fincontrol.dashboard.buyers') }}</button>
           </div>
         </div>
         <div style="display:flex;flex-direction:column;gap:10px">
@@ -183,7 +201,7 @@ const donutOptions = {
       <div class="fc-card">
         <div class="fc-card-header">
           <div class="fc-card-title flex items-center gap-2">
-            <AppIcon name="auto_awesome" filled style="color:#F59E0B" /> AI Сигналы
+            <AppIcon name="auto_awesome" filled style="color:#F59E0B" /> {{ $t('fincontrol.dashboard.aiSignals') }}
           </div>
         </div>
         <div style="display:flex;flex-direction:column;gap:10px">
@@ -204,21 +222,27 @@ const donutOptions = {
       <div class="fc-card" style="padding:0;overflow:hidden">
         <div class="fc-card-header" style="padding:18px 18px 0">
           <div>
-            <div class="fc-card-title">Последние транзакции</div>
-            <div class="fc-card-sub">Апрель 2026</div>
+            <div class="fc-card-title">{{ $t('fincontrol.dashboard.recentTx') }}</div>
+            <div class="fc-card-sub">{{ $t('fincontrol.dashboard.recentTxSub') }}</div>
           </div>
           <div class="flex items-center gap-3">
             <select class="fc-select" style="width:auto;height:32px;font-size:12px;padding:0 10px">
-              <option>Все</option>
-              <option>Входящие</option>
-              <option>Исходящие</option>
+              <option>{{ $t('fincontrol.dashboard.filterAll') }}</option>
+              <option>{{ $t('fincontrol.dashboard.filterIncoming') }}</option>
+              <option>{{ $t('fincontrol.dashboard.filterOutgoing') }}</option>
             </select>
-            <RouterLink to="/tools/fincontrol/income-expense" class="fc-link">Все транзакции →</RouterLink>
+            <RouterLink to="/tools/fincontrol/income-expense" class="fc-link">{{ $t('fincontrol.dashboard.allTx') }}</RouterLink>
           </div>
         </div>
         <table class="fc-table" style="margin-top:12px">
           <thead>
-            <tr><th>Дата</th><th>Контрагент</th><th>Категория</th><th style="text-align:right">Сумма</th><th>Счёт</th></tr>
+            <tr>
+              <th>{{ $t('fincontrol.dashboard.colDate') }}</th>
+              <th>{{ $t('fincontrol.dashboard.colCp') }}</th>
+              <th>{{ $t('fincontrol.dashboard.colCategory') }}</th>
+              <th style="text-align:right">{{ $t('fincontrol.dashboard.colAmount') }}</th>
+              <th>{{ $t('fincontrol.dashboard.colAccount') }}</th>
+            </tr>
           </thead>
           <tbody>
             <tr v-for="(tx, i) in transactions.slice(0,6)" :key="i" class="clickable">
@@ -242,30 +266,30 @@ const donutOptions = {
       <div class="fc-aichat">
         <div class="flex items-center justify-between">
           <div>
-            <div style="font-family:'Manrope';font-weight:800;font-size:15px">AI-помощник</div>
-            <div style="font-size:11px;opacity:.7">Анализ данных вашей компании</div>
+            <div style="font-family:'Manrope';font-weight:800;font-size:15px">{{ $t('fincontrol.dashboard.aiAssistant') }}</div>
+            <div style="font-size:11px;opacity:.7">{{ $t('fincontrol.dashboard.aiAssistantSub') }}</div>
           </div>
           <span class="fc-badge amber" style="background:rgba(245,158,11,.2);color:#F59E0B">FinControl AI</span>
         </div>
         <div class="fc-aichat-msg bot">
-          👋 Добрый день! Я проанализировал ваши финансы за апрель. Ваш баланс составляет <b>842,5 млн UZS</b>, чистый денежный поток положительный.
+          <span v-html="$t('fincontrol.dashboard.aiMsg1')"></span>
           <span class="time">09:12</span>
         </div>
         <div class="fc-aichat-msg bot">
-          ⚠️ Обнаружен рост расходов на логистику +47%. Рекомендую проверить контракт с УзПакТранс.
+          {{ $t('fincontrol.dashboard.aiMsg2') }}
           <span class="time">09:13</span>
         </div>
         <div class="fc-aichat-msg user">
-          Какой у нас прогноз по runway на следующий квартал?
+          {{ $t('fincontrol.dashboard.aiMsg3') }}
           <span class="time">09:18</span>
         </div>
         <div class="fc-aichat-msg bot">
-          📊 При текущей динамике расходов runway составит около <b>3.8 месяца</b> к июлю.
+          <span v-html="$t('fincontrol.dashboard.aiMsg4')"></span>
           <span class="time">09:18</span>
         </div>
-        <div style="font-size:11px;opacity:.6;font-style:italic">AI анализирует данные…</div>
+        <div style="font-size:11px;opacity:.6;font-style:italic">{{ $t('fincontrol.dashboard.aiTyping') }}</div>
         <div class="fc-aichat-input">
-          <input v-model="chatInput" type="text" placeholder="Спросите об аналитике…" />
+          <input v-model="chatInput" type="text" :placeholder="$t('fincontrol.dashboard.aiInput')" />
           <button type="button"><AppIcon name="send" /></button>
         </div>
       </div>

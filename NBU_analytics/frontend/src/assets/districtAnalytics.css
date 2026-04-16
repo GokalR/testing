@@ -306,6 +306,9 @@
 }
 .da-root .da-table tr:last-child td { border-bottom: none; }
 .da-root .da-table tr:hover td { background: rgba(236, 238, 240, 0.4); }
+.da-root .da-kind-row td:first-child { border-left: 3px solid transparent; padding-left: 17px; }
+.da-root .da-kind-row.is-city td:first-child { border-left-color: #0054A6; }
+.da-root .da-kind-row.is-district td:first-child { border-left-color: #059669; }
 
 /* ========== SWOT ========== */
 .da-root .swot-card {
