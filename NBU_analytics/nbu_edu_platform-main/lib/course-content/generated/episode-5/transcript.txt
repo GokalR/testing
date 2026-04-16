@@ -1,0 +1,159 @@
+[calm] Каждый день мы работаем с данными.
+
+Helvetica Neue
+
+Заполняем анкеты, обновляем информацию, смотрим отчёты.
+
+Helvetica Neue
+
+[short pause] И редко задумываемся о том, что такое качество данных…
+
+Helvetica Neue
+
+[lowered voice] пока не происходит ошибка.
+
+Helvetica Neue
+
+[neutral] Вот простая ситуация.
+
+Helvetica Neue
+
+Банк поздравляет клиента с днём рождения… [short pause] через три дня.
+
+Helvetica Neue
+
+Дата указана верно.
+
+Helvetica Neue
+
+Но использовалась старая выгрузка.
+
+Helvetica Neue
+
+[serious] Это несвоевременность данных.
+
+Helvetica Neue
+
+[neutral] Другая ситуация.
+
+Helvetica Neue
+
+Сотрудник звонит клиенту —
+
+Helvetica Neue
+
+трубку берёт другой человек.
+
+Helvetica Neue
+
+Номер устарел.
+
+Helvetica Neue
+
+Или ошибка в одной цифре.
+
+Helvetica Neue
+
+Или у клиента несколько профилей.
+
+Helvetica Neue
+
+[serious] Это неточность и дубликаты.
+
+Helvetica Neue
+
+[neutral] Ещё пример.
+
+Helvetica Neue
+
+Клиент оплатил кредит,
+
+Helvetica Neue
+
+но система продолжает показывать долг.
+
+Helvetica Neue
+
+Платёж прошёл,
+
+Helvetica Neue
+
+но статус обновился не во всех системах.
+
+Helvetica Neue
+
+[serious] Это несогласованность данных.
+
+Helvetica Neue
+
+[neutral] А теперь внутренняя ситуация.
+
+Helvetica Neue
+
+На совещании — два отчёта.
+
+Helvetica Neue
+
+И в них разные цифры.
+
+Helvetica Neue
+
+Разные источники.
+
+Helvetica Neue
+
+Разные правила расчёта.
+
+Helvetica Neue
+
+[thoughtful] Нет единой версии правды.
+
+Helvetica Neue
+
+[firm] Качество данных — это не абстракция.
+
+Helvetica Neue
+
+И не задача только IT.
+
+Helvetica Neue
+
+Это причина, почему клиент злится,
+
+Helvetica Neue
+
+сотрудник тратит время,
+
+Helvetica Neue
+
+а решения принимаются на неполной информации.
+
+Helvetica Neue
+
+[emphasized] Хорошие данные мы не замечаем.
+
+Helvetica Neue
+
+[short pause] Но плохие — замечаем всегда.
+
+Helvetica Neue
+
+Одна ошибка в цифре.
+
+Helvetica Neue
+
+Одно незаполненное поле.
+
+Helvetica Neue
+
+Один дубликат.
+
+Helvetica Neue
+
+[sighs] И замедляется весь процесс.
+
+Helvetica Neue
+
+[strong] Качество данных — это ответственность каждого из нас.
+
+Helvetica Neue

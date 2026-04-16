@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Доходы и расходы — FinControl | NBU Institutional</title>
+<meta name="description" content="Анализ доходов и расходов компании в FinControl, NBU Institutional Uzbekistan"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#003D7C;--accent:#0054A6;--green:#00A651;--red:#E0384B;
+  --amber:#F59E0B;--slate:#64748B;--bg:#F7F9FB;--card:#fff;
+  --border:#DDE3EE;--muted:#6B7A99;--text:#1A2B4A;
+  --sidebar-w:256px;--header-h:64px;
+  --radius:14px;--radius-sm:10px;
+  --shadow:0 2px 16px rgba(0,61,124,.08),0 1px 3px rgba(0,61,124,.05);
+  --shadow-md:0 4px 28px rgba(0,61,124,.13),0 1px 4px rgba(0,61,124,.06);
+}
+html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+.app{display:flex;height:100vh;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar-w);flex-shrink:0;background:rgba(255,255,255,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-right:1px solid rgba(221,227,238,.7);display:flex;flex-direction:column;height:100vh;overflow:hidden;position:relative;z-index:10}
+.sidebar::before{content:'';position:absolute;inset:0;background:linear-gradient(175deg,rgba(0,61,124,.03) 0%,transparent 60%);pointer-events:none}
+.sb-back{display:flex;align-items:center;gap:7px;padding:16px 20px 12px;font-size:12.5px;font-weight:600;color:var(--muted);text-decoration:none;cursor:pointer;transition:color .2s;border-bottom:1px solid var(--border)}
+.sb-back:hover{color:var(--navy)}
+.sb-brand{padding:18px 20px 14px;display:flex;align-items:center;gap:11px;border-bottom:1px solid var(--border)}
+.sb-brand-icon{width:38px;height:38px;flex-shrink:0;background:linear-gradient(135deg,#F59E0B,#F97316);border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(245,158,11,.3)}
+.sb-brand-text .name{font-family:'Manrope',sans-serif;font-weight:800;font-size:15px;color:var(--navy)}
+.sb-brand-text .sub{font-size:11px;color:var(--muted);font-weight:500;margin-top:1px}
+.sb-nav{flex:1;overflow-y:auto;padding:10px;scrollbar-width:none}
+.sb-nav::-webkit-scrollbar{display:none}
+.sb-nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;font-size:13.5px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .18s;position:relative;margin-bottom:1px;border:1.5px solid transparent}
+.sb-nav-item:hover{background:#F0F4FA;color:var(--text)}
+.sb-nav-item.active{background:linear-gradient(90deg,rgba(0,84,166,.1),rgba(0,84,166,.05));color:var(--accent);font-weight:600;border-color:rgba(0,84,166,.18)}
+.sb-nav-item.active::before{content:'';position:absolute;left:-10px;top:50%;transform:translateY(-50%);width:3px;height:20px;background:var(--accent);border-radius:0 3px 3px 0}
+.sb-nav-item .nav-icon{width:18px;height:18px;flex-shrink:0;opacity:.65}
+.sb-nav-item.active .nav-icon,.sb-nav-item.ai .nav-icon{opacity:1}
+.sb-divider{height:1px;background:var(--border);margin:8px 4px}
+.sb-nav-item.ai{background:linear-gradient(90deg,rgba(245,158,11,.1),rgba(245,158,11,.05));color:#B45309;font-weight:600;border-color:rgba(245,158,11,.25)}
+.sb-footer{padding:12px 10px;border-top:1px solid var(--border)}
+
+/* ── MAIN ── */
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column;min-width:0}
+.main::-webkit-scrollbar{width:5px}
+.main::-webkit-scrollbar-thumb{background:rgba(0,61,124,.15);border-radius:5px}
+
+/* ── HEADER ── */
+.header{height:var(--header-h);background:rgba(255,255,255,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;padding:0 26px;position:sticky;top:0;z-index:20;flex-shrink:0}
+.header-title{font-family:'Manrope',sans-serif;font-size:17px;font-weight:800;color:var(--navy);white-space:nowrap;margin-right:auto}
+.period-pills{display:flex;gap:4px}
+.period-pill{padding:5px 13px;border-radius:20px;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .18s;background:transparent;color:var(--muted);border:1.5px solid transparent}
+.period-pill.active{background:var(--navy);color:#fff;box-shadow:0 2px 8px rgba(0,61,124,.2)}
+.period-pill:not(.active):hover{background:#F0F4FA;color:var(--text)}
+.header-actions{display:flex;gap:8px;align-items:center}
+.export-btn{display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 16px;background:#fff;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-weight:600;color:var(--text);cursor:pointer;transition:all .2s;white-space:nowrap}
+.export-btn:hover{border-color:var(--accent);color:var(--accent);background:#EEF4FF}
+.icon-btn{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:#F0F4FA;border:none;cursor:pointer;color:var(--muted);position:relative;transition:all .18s}
+.icon-btn:hover{background:#E8EDF6;color:var(--navy)}
+.notif-dot{position:absolute;top:7px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--red);border:1.5px solid #fff}
+.avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--accent));display:flex;align-items:center;justify-content:center;font-family:'Manrope',sans-serif;font-weight:700;font-size:13px;color:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(0,61,124,.25)}
+
+/* ── CONTENT ── */
+.content{padding:24px 26px 48px;flex:1}
+
+/* ── SECTION HEADER ── */
+.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.section-title{font-family:'Manrope',sans-serif;font-size:15px;font-weight:800;color:var(--navy)}
+.section-action{font-size:12.5px;font-weight:600;color:var(--accent);cursor:pointer;transition:color .18s}
+.section-action:hover{color:var(--navy)}
+
+/* ── KPI STRIP ── */
+.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.kpi-card{background:var(--card);border-radius:var(--radius);padding:18px 20px 16px;box-shadow:var(--shadow);border:1px solid rgba(221,227,238,.7);position:relative;overflow:hidden;transition:box-shadow .2s,transform .2s}
+.kpi-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.kpi-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.kpi-green::after{background:linear-gradient(90deg,#00A651,#4ADE80)}
+.kpi-red::after{background:linear-gradient(90deg,#E0384B,#F87171)}
+.kpi-navy::after{background:linear-gradient(90deg,#003D7C,#0054A6)}
+.kpi-gray::after{background:linear-gradient(90deg,#64748B,#94A3B8)}
+.kpi-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:11px}
+.kpi-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.kpi-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px}
+.b-up{background:#E6F7EE;color:#00854A}
+.b-dn{background:#FEE2E5;color:#C0273A}
+.b-bl{background:#EEF4FF;color:var(--accent)}
+.b-sl{background:#F1F5F9;color:var(--slate)}
+.kpi-label{font-size:12px;color:var(--muted);font-weight:500;margin-bottom:4px}
+.kpi-value{font-family:'Manrope',sans-serif;font-size:22px;font-weight:900;letter-spacing:-.6px;line-height:1;margin-bottom:4px}
+.kpi-value .u{font-size:12px;font-weight:600;color:var(--muted);margin-left:3px;letter-spacing:0}
+.kpi-sub{font-size:11.5px;color:var(--muted);font-weight:500}
+.kpi-sparkline{height:40px;margin-top:12px}
+
+/* ── MAIN GRID ── */
+.main-grid{display:grid;grid-template-columns:7fr 5fr;gap:16px;margin-bottom:20px}
+
+/* ── WIDGET ── */
+.widget{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(221,227,238,.7);overflow:hidden}
+.widget-header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px 14px;border-bottom:1px solid rgba(221,227,238,.5);flex-wrap:wrap;gap:10px}
+.widget-title{font-family:'Manrope',sans-serif;font-size:14.5px;font-weight:800;color:var(--navy)}
+.widget-sub{font-size:11.5px;color:var(--muted);margin-top:1px}
+.widget-body{padding:18px 22px}
+
+/* Tab toggle */
+.toggle-btns{display:flex;gap:3px;background:#F0F4FA;border-radius:8px;padding:3px}
+.toggle-btn{padding:5px 13px;border-radius:6px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .18s;white-space:nowrap}
+.toggle-btn.active{background:#fff;color:var(--navy);box-shadow:0 1px 4px rgba(0,61,124,.1)}
+
+.legend-row{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--muted)}
+.leg-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+
+.bar-chart-wrap{height:260px;position:relative}
+
+/* ── DONUT ── */
+.donut-wrap{position:relative;width:180px;height:180px;flex-shrink:0}
+.donut-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none}
+.donut-center-val{font-family:'Manrope',sans-serif;font-size:16px;font-weight:900;color:var(--navy);line-height:1.1}
+.donut-center-lbl{font-size:10px;color:var(--muted);font-weight:500;margin-top:3px}
+.donut-legend{flex:1;display:flex;flex-direction:column;gap:7px;min-width:0}
+.dl-row{display:flex;align-items:center;gap:7px;padding:5px 8px;border-radius:8px;cursor:pointer;transition:background .15s}
+.dl-row:hover,.dl-row.sel{background:#F0F4FA}
+.dl-row.sel{background:#EEF4FF}
+.dl-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.dl-name{font-size:12.5px;font-weight:600;color:var(--text);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dl-pct{font-size:11.5px;font-weight:700;color:var(--muted);flex-shrink:0}
+.dl-uzs{font-size:11px;font-weight:600;color:var(--muted);flex-shrink:0;white-space:nowrap}
+
+/* ── EXPENSE CATEGORY CARDS ── */
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.cat-card{background:var(--card);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);border:1px solid rgba(221,227,238,.7);position:relative;overflow:hidden;transition:all .2s;cursor:default}
+.cat-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.cat-card.overspend{border-left:3px solid var(--red)}
+.cat-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:11px}
+.cat-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.trend-badge{display:inline-flex;align-items:center;gap:2px;font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px}
+.trend-up{background:#FEE2E5;color:var(--red)}
+.trend-dn{background:#E6F7EE;color:var(--green)}
+.trend-flat{background:#F0F4FA;color:var(--muted)}
+.cat-name{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:4px;text-transform:uppercase;letter-spacing:.6px}
+.cat-amount{font-family:'Manrope',sans-serif;font-size:20px;font-weight:900;color:var(--text);letter-spacing:-.5px;margin-bottom:2px}
+.cat-amount .u{font-size:11px;font-weight:600;color:var(--muted)}
+.cat-pct{font-size:12px;color:var(--muted);font-weight:500;margin-bottom:10px}
+.cat-bar{height:5px;background:#E8EDF6;border-radius:5px;overflow:hidden}
+.cat-bar-fill{height:100%;border-radius:5px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+.overspend-badge{position:absolute;top:12px;right:12px;font-size:10px;font-weight:700;background:#FEE2E5;color:#C0273A;padding:2px 7px;border-radius:20px;letter-spacing:.2px}
+
+/* ── INCOME CARDS ── */
+.income-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.income-card{background:var(--card);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);border:1px solid rgba(221,227,238,.7);transition:all .2s}
+.income-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.income-card-top{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.income-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.income-name{font-size:12.5px;font-weight:700;color:var(--text)}
+.income-amount{font-family:'Manrope',sans-serif;font-size:20px;font-weight:900;color:var(--green);letter-spacing:-.5px;margin-bottom:2px}
+.income-amount .u{font-size:11px;font-weight:600;color:var(--muted)}
+.income-pct{font-size:12px;color:var(--muted);font-weight:500;margin-bottom:10px;display:flex;align-items:center;gap:5px}
+.income-bar{height:5px;background:#E8EDF6;border-radius:5px;overflow:hidden}
+.income-bar-fill{height:100%;background:linear-gradient(90deg,#00A651,#4ADE80);border-radius:5px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+
+/* ── TRANS TABLE ── */
+.table-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.filter-tabs{display:flex;gap:2px;background:#F0F4FA;border-radius:8px;padding:3px}
+.filter-tab{padding:5px 14px;border-radius:6px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .18s;white-space:nowrap}
+.filter-tab.active{background:#fff;color:var(--navy);box-shadow:0 1px 4px rgba(0,61,124,.1)}
+.sel-input{height:36px;padding:0 30px 0 12px;border:1.5px solid var(--border);border-radius:9px;font-family:'Inter',sans-serif;font-size:13px;color:var(--text);background:#fff;outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7A99' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;transition:border-color .2s}
+.sel-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,84,166,.1)}
+.search-wrap{position:relative;flex-shrink:0}
+.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--muted)}
+.search-input{height:36px;padding:0 12px 0 34px;border:1.5px solid var(--border);border-radius:9px;font-family:'Inter',sans-serif;font-size:13px;color:var(--text);background:#fff;outline:none;transition:all .2s;width:200px}
+.search-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,84,166,.1)}
+.tb-spacer{flex:1}
+.row-count{font-size:12.5px;color:var(--muted);font-weight:500;white-space:nowrap}
+
+.tx-table{width:100%;border-collapse:collapse}
+.tx-table thead th{text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--muted);padding:0 14px 11px;border-bottom:1.5px solid var(--border)}
+.tx-table thead th:last-child{text-align:right;padding-right:0}
+.tx-table thead th:first-child{padding-left:0}
+.tx-table tbody tr{transition:background .14s}
+.tx-table tbody tr:nth-child(even){background:#FAFBFD}
+.tx-table tbody tr:hover{background:#EEF4FF}
+.tx-table td{padding:11px 14px;font-size:13px;border-bottom:1px solid rgba(221,227,238,.5);vertical-align:middle}
+.tx-table td:first-child{padding-left:0}
+.tx-table td:last-child{text-align:right;padding-right:0}
+.tx-table tr:last-child td{border-bottom:none}
+.tx-date{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap}
+.tx-time{font-size:11px;color:var(--muted);margin-top:1px}
+.tx-cp{display:flex;align-items:center;gap:8px}
+.tx-av{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Manrope',sans-serif;font-size:10.5px;font-weight:800;color:#fff}
+.tx-name{font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}
+.tx-cat{font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:12px;white-space:nowrap}
+.tx-amount{font-family:'Manrope',sans-serif;font-size:14px;font-weight:800;white-space:nowrap}
+.in{color:var(--green)}
+.out{color:var(--red)}
+.tx-acc{font-size:12px;font-weight:500;color:var(--muted);white-space:nowrap}
+
+.table-foot{display:flex;align-items:center;justify-content:space-between;padding-top:16px}
+.pagination{display:flex;gap:4px}
+.pg-btn{width:32px;height:32px;border-radius:8px;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;justify-content:center;transition:all .18s}
+.pg-btn:hover{border-color:var(--accent);color:var(--accent);background:#EEF4FF}
+.pg-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.load-more{display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 18px;background:#fff;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-weight:600;color:var(--text);cursor:pointer;transition:all .18s}
+.load-more:hover{border-color:var(--accent);color:var(--accent);background:#EEF4FF}
+
+/* filter-active highlight for donut click */
+.active-filter-bar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#EEF4FF;border:1.5px solid rgba(0,84,166,.2);border-radius:9px;font-size:12.5px;font-weight:600;color:var(--accent);margin-bottom:12px;display:none}
+.clear-filter{cursor:pointer;color:var(--muted);transition:color .18s;margin-left:auto}
+.clear-filter:hover{color:var(--red)}
+
+/* ── FADE-IN ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.content>*{animation:fadeUp .32s ease both}
+.content>*:nth-child(1){animation-delay:.03s}.content>*:nth-child(2){animation-delay:.07s}
+.content>*:nth-child(3){animation-delay:.11s}.content>*:nth-child(4){animation-delay:.15s}
+.content>*:nth-child(5){animation-delay:.18s}.content>*:nth-child(6){animation-delay:.21s}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <a class="sb-back" href="fincontrol-dashboard.html">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Главная
+  </a>
+  <div class="sb-brand">
+    <div class="sb-brand-icon">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2L13 8H19L14 12L16 18L10 14L4 18L6 12L1 8H7L10 2Z" fill="white" opacity=".9"/></svg>
+    </div>
+    <div class="sb-brand-text"><div class="name">FinControl</div><div class="sub">Бизнес-помощник</div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="6" height="6" rx="1.5" fill="currentColor"/><rect x="10" y="2" width="6" height="6" rx="1.5" fill="currentColor" opacity=".5"/><rect x="2" y="10" width="6" height="6" rx="1.5" fill="currentColor" opacity=".5"/><rect x="10" y="10" width="6" height="6" rx="1.5" fill="currentColor"/></svg>Обзор</div>
+    <div class="sb-nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none"><rect x="2" y="5" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M2 8h14" stroke="currentColor" stroke-width="1.5"/><circle cx="5.5" cy="11.5" r="1" fill="currentColor"/></svg>Счета и остатки</div>
+    <div class="sb-nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none"><path d="M2 13L6 9L9 11L13 6L16 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 6h3v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Движение денег</div>
+    <div class="sb-nav-item active"><svg class="nav-icon" viewBox="0 0 18 18" fill="none"><path d="M3 15V10M6 15V7M9 15V9M12 15V5M15 15V3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Доходы и расходы</div>
+    <div class="sb-nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none"><path d="M3 3h12v12H3zM7 7h4M7 10h4M7 13h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>P&amp;L отчёт</div>
+    <div class="sb-nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none"><circle cx="7" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/><circle cx="13" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M1 16c0-2.8 2.7-4 6-4M10 13c1.1-.6 2.4-1 3-1 3 0 4 1.5 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Контрагенты</div>
+    <div class="sb-nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none"><rect x="3" y="3" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M6 9h6M9 6v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Планирование</div>
+    <div class="sb-nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none"><path d="M9 3v9M6 9l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 13v1a1 1 0 001 1h10a1 1 0 001-1v-1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Импорт выписок</div>
+    <div class="sb-divider"></div>
+    <div class="sb-nav-item ai"><svg class="nav-icon" viewBox="0 0 18 18" fill="none" style="color:#F59E0B"><path d="M9 1l2 5h5l-4 3 2 5-5-3.5L4 14l2-5L2 6h5L9 1z" fill="currentColor" opacity=".9"/></svg>AI‑помощник</div>
+  </nav>
+  <div class="sb-footer">
+    <div class="sb-nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M9 6v4M9 12v.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Поддержка</div>
+    <div class="sb-nav-item"><svg class="nav-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="6.5" r="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M3 15c0-3.3 2.7-5 6-5s6 1.7 6 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Настройки</div>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+  <header class="header">
+    <span class="header-title">Доходы и расходы</span>
+    <div class="period-pills" role="group">
+      <button class="period-pill" onclick="selPeriod(this)">Неделя</button>
+      <button class="period-pill active" onclick="selPeriod(this)">Месяц</button>
+      <button class="period-pill" onclick="selPeriod(this)">Квартал</button>
+      <button class="period-pill" onclick="selPeriod(this)">Год</button>
+    </div>
+    <div class="header-actions">
+      <button class="export-btn"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M4 7l2.5 2.5L9 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M1.5 10v1.5a.5.5 0 00.5.5h10a.5.5 0 00.5-.5V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Экспорт</button>
+      <button class="icon-btn"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.5A4.5 4.5 0 003.5 6v3L2 11h12l-1.5-2V6A4.5 4.5 0 008 1.5z" stroke="currentColor" stroke-width="1.3"/><path d="M6.5 13a1.5 1.5 0 003 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg><span class="notif-dot"></span></button>
+      <div class="avatar">АБ</div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- KPI STRIP -->
+    <div class="kpi-strip">
+      <div class="kpi-card kpi-green">
+        <div class="kpi-top">
+          <div class="kpi-icon" style="background:#E6F7EE"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 16V4M4 10l6-6 6 6" stroke="#00A651" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="kpi-badge b-up">▲ 8.2%</span>
+        </div>
+        <div class="kpi-label">Доходы</div>
+        <div class="kpi-value" style="color:var(--green)">320 000 000<span class="u">UZS</span></div>
+        <div class="kpi-sub">vs прошлый месяц: 295.7М</div>
+        <div class="kpi-sparkline"><canvas id="ks1"></canvas></div>
+      </div>
+      <div class="kpi-card kpi-red">
+        <div class="kpi-top">
+          <div class="kpi-icon" style="background:#FEE2E5"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10l6 6 6-6" stroke="#E0384B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="kpi-badge b-dn">▼ 3.1%</span>
+        </div>
+        <div class="kpi-label">Расходы</div>
+        <div class="kpi-value" style="color:var(--red)">198 000 000<span class="u">UZS</span></div>
+        <div class="kpi-sub">vs прошлый месяц: 204.4М</div>
+        <div class="kpi-sparkline"><canvas id="ks2"></canvas></div>
+      </div>
+      <div class="kpi-card kpi-navy">
+        <div class="kpi-top">
+          <div class="kpi-icon" style="background:#EEF4FF"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 14L7 10 10 12 14 7 17 9" stroke="#0054A6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="kpi-badge b-bl">▲ 15.0%</span>
+        </div>
+        <div class="kpi-label">Чистый результат</div>
+        <div class="kpi-value" style="color:var(--navy)">122 000 000<span class="u">UZS</span></div>
+        <div class="kpi-sub">vs прошлый месяц: 106.1М</div>
+        <div class="kpi-sparkline"><canvas id="ks3"></canvas></div>
+      </div>
+      <div class="kpi-card kpi-gray">
+        <div class="kpi-top">
+          <div class="kpi-icon" style="background:#F1F5F9"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#64748B" stroke-width="1.5"/><path d="M10 6v4l2.5 2" stroke="#64748B" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+          <span class="kpi-badge b-sl">→ стабильно</span>
+        </div>
+        <div class="kpi-label">Средний расход / день</div>
+        <div class="kpi-value" style="color:var(--slate)">6 387 000<span class="u">UZS</span></div>
+        <div class="kpi-sub">Апрель 2026 · 31 день</div>
+        <div class="kpi-sparkline"><canvas id="ks4"></canvas></div>
+      </div>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="main-grid">
+
+      <!-- GROUPED BAR CHART -->
+      <div class="widget">
+        <div class="widget-header">
+          <div>
+            <div class="widget-title">Этот месяц vs Прошлый месяц</div>
+            <div class="widget-sub">Апрель vs Март 2026 · по неделям</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <div class="legend-row">
+              <div class="leg-item"><div class="leg-dot" style="background:#003D7C"></div>Апрель</div>
+              <div class="leg-item"><div class="leg-dot" style="background:#CBD5E8"></div>Март</div>
+            </div>
+            <div class="toggle-btns" role="group">
+              <div class="toggle-btn active" onclick="switchView(this,'both')">Оба</div>
+              <div class="toggle-btn" onclick="switchView(this,'income')">Доходы</div>
+              <div class="toggle-btn" onclick="switchView(this,'expense')">Расходы</div>
+            </div>
+          </div>
+        </div>
+        <div class="widget-body">
+          <div class="bar-chart-wrap"><canvas id="compareChart"></canvas></div>
+        </div>
+      </div>
+
+      <!-- DONUT CHART -->
+      <div class="widget">
+        <div class="widget-header">
+          <div>
+            <div class="widget-title">Структура расходов</div>
+            <div class="widget-sub">Апрель 2026 · 198 000 000 UZS</div>
+          </div>
+          <span class="section-action" onclick="clearDonutFilter()">Сбросить</span>
+        </div>
+        <div class="widget-body">
+          <div style="display:flex;align-items:center;gap:18px">
+            <div class="donut-wrap">
+              <canvas id="donutChart"></canvas>
+              <div class="donut-center">
+                <div class="donut-center-val" id="donut-val">Закупки</div>
+                <div class="donut-center-lbl" id="donut-lbl">34% · 67.3М</div>
+              </div>
+            </div>
+            <div class="donut-legend" id="donut-legend"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPENSE CATEGORIES -->
+    <div class="section-hdr"><span class="section-title">Категории расходов</span><span class="section-action">Управление →</span></div>
+    <div class="cat-grid" id="exp-cats">
+      <!-- built by JS -->
+    </div>
+
+    <!-- INCOME CATEGORIES -->
+    <div class="section-hdr"><span class="section-title">Категории доходов</span><span class="section-action">Подробнее →</span></div>
+    <div class="income-row" id="inc-cats">
+      <!-- built by JS -->
+    </div>
+
+    <!-- TRANSACTIONS TABLE -->
+    <div class="widget">
+      <div class="widget-header">
+        <div>
+          <div class="widget-title">Транзакции</div>
+          <div class="widget-sub">Апрель 2026</div>
+        </div>
+        <div class="table-toolbar">
+          <div class="filter-tabs" role="tablist" id="tx-tabs">
+            <div class="filter-tab active" onclick="filterTx(this,'all')">Все</div>
+            <div class="filter-tab" onclick="filterTx(this,'income')">Доходы</div>
+            <div class="filter-tab" onclick="filterTx(this,'expense')">Расходы</div>
+          </div>
+          <select class="sel-input" id="cat-filter" onchange="applyCatFilter(this.value)" aria-label="Категория">
+            <option value="">Все категории</option>
+            <option>Закупки</option><option>Зарплата</option><option>Налоги</option>
+            <option>Аренда</option><option>Маркетинг</option><option>Прочее</option>
+            <option>Продажи</option><option>Гос. контракты</option>
+          </select>
+          <div class="search-wrap">
+            <span class="search-icon"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="5.5" cy="5.5" r="4" stroke="currentColor" stroke-width="1.4"/><path d="M9 9L12 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+            <input class="search-input" type="search" placeholder="Поиск…" oninput="searchTx(this.value)" aria-label="Поиск транзакций"/>
+          </div>
+          <span class="tb-spacer"></span>
+          <span class="row-count" id="tx-count">Показано 7 из 86</span>
+        </div>
+      </div>
+      <div class="widget-body" style="padding:0 22px">
+        <div class="active-filter-bar" id="active-filter-bar">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="#0054A6" stroke-width="1.2"/><path d="M4.5 6.5l1.5 1.5 2.5-2.5" stroke="#0054A6" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span id="active-filter-text">Фильтр: Закупки</span>
+          <button class="clear-filter" onclick="clearDonutFilter()" aria-label="Сбросить фильтр">✕</button>
+        </div>
+        <table class="tx-table" role="table" aria-label="Транзакции">
+          <thead>
+            <tr>
+              <th style="padding-left:0">Дата</th>
+              <th>Контрагент</th>
+              <th>Категория</th>
+              <th>Назначение</th>
+              <th style="text-align:right">Доход</th>
+              <th style="text-align:right">Расход</th>
+              <th style="text-align:right;padding-right:0">Счёт</th>
+            </tr>
+          </thead>
+          <tbody id="tx-body"></tbody>
+        </table>
+        <div class="table-foot">
+          <button class="load-more"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 2v9M3.5 8l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Ещё 20 транзакций</button>
+          <div class="pagination">
+            <div class="pg-btn active">1</div>
+            <div class="pg-btn">2</div>
+            <div class="pg-btn">3</div>
+            <div class="pg-btn" style="letter-spacing:1px;font-size:11px">···</div>
+            <div class="pg-btn"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M3 2l4 3.5L3 9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+</div>
+
+<script>
+/* ── UTILS ── */
+function selPeriod(el){el.closest('.period-pills').querySelectorAll('.period-pill').forEach(p=>p.classList.remove('active'));el.classList.add('active')}
+function fmt(n){return n.toLocaleString('ru-RU')}
+
+/* ── KPI SPARKLINES ── */
+function mkSpark(id,data,clr){
+  const ctx=document.getElementById(id).getContext('2d');
+  const g=ctx.createLinearGradient(0,0,0,40);
+  g.addColorStop(0,clr.replace('1)','0.15)'));g.addColorStop(1,clr.replace('1)','0)'));
+  new Chart(ctx,{type:'line',data:{labels:data.map((_,i)=>i),datasets:[{data,borderColor:clr,backgroundColor:g,borderWidth:1.8,pointRadius:0,tension:.45,fill:true}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}}});
+}
+mkSpark('ks1',[265,278,270,295,308,290,315,298,316,304,318,320],'rgba(0,166,81,1)');
+mkSpark('ks2',[210,208,215,204,200,198,205,202,194,205,190,198],'rgba(224,56,75,1)');
+mkSpark('ks3',[55,70,55,91,108,92,110,96,122,99,128,122],'rgba(0,84,166,1)');
+mkSpark('ks4',[6.1,6.4,6.2,6.5,6.8,6.3,6.9,6.4,6.2,6.6,6.1,6.4],'rgba(100,116,139,1)');
+
+/* ── COMPARE BAR CHART ── */
+const wkLabels=['Неделя 1','Неделя 2','Неделя 3','Неделя 4'];
+const incomeApr=[76,84,88,72];const incomeAprNeg=incomeApr.map(v=>-v);
+const expApr=[46,52,54,46];const expAprNeg=expApr.map(v=>-v);
+const incomeMar=[68,78,80,70];const incomeMarNeg=incomeMar.map(v=>-v);
+const expMar=[50,56,58,40];const expMarNeg=expMar.map(v=>-v);
+
+let compareChart;
+function buildCompare(view){
+  const ctx=document.getElementById('compareChart').getContext('2d');
+  if(compareChart)compareChart.destroy();
+  const datasets=[];
+  if(view==='both'||view==='income'){
+    datasets.push({label:'Доходы Апрель',data:incomeApr,backgroundColor:'rgba(0,61,124,0.85)',borderRadius:{topLeft:5,topRight:5},borderSkipped:false,barPercentage:.38,categoryPercentage:.7,stack:'apr',order:2});
+    datasets.push({label:'Доходы Март',data:incomeMar,backgroundColor:'rgba(200,213,232,0.85)',borderRadius:{topLeft:5,topRight:5},borderSkipped:false,barPercentage:.38,categoryPercentage:.7,stack:'mar',order:2});
+  }
+  if(view==='both'||view==='expense'){
+    datasets.push({label:'Расходы Апрель',data:expAprNeg,backgroundColor:'rgba(224,56,75,0.75)',borderRadius:{bottomLeft:5,bottomRight:5},borderSkipped:false,barPercentage:.38,categoryPercentage:.7,stack:'apr',order:2});
+    datasets.push({label:'Расходы Март',data:expMarNeg,backgroundColor:'rgba(248,180,180,0.75)',borderRadius:{bottomLeft:5,bottomRight:5},borderSkipped:false,barPercentage:.38,categoryPercentage:.7,stack:'mar',order:2});
+  }
+  compareChart=new Chart(ctx,{
+    type:'bar',
+    data:{labels:wkLabels,datasets},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:'rgba(0,25,60,.92)',
+          titleFont:{family:'Manrope',weight:'700',size:12},
+          bodyFont:{family:'Inter',size:12},
+          padding:13,cornerRadius:10,
+          callbacks:{label:c=>`${c.dataset.label}: ${Math.abs(c.parsed.y)}М UZS`}
+        }
+      },
+      scales:{
+        x:{grid:{display:false},ticks:{font:{family:'Inter',size:12},color:'#6B7A99'},border:{display:false}},
+        y:{
+          grid:{color:'rgba(221,227,238,.5)'},
+          ticks:{font:{family:'Inter',size:11},color:'#6B7A99',callback:v=>Math.abs(v)+'М'},
+          border:{display:false},
+          afterDataLimits:ax=>{const max=Math.max(Math.abs(ax.max),Math.abs(ax.min))*1.12;ax.max=max;ax.min=-max;}
+        }
+      }
+    }
+  });
+}
+buildCompare('both');
+function switchView(el,view){el.closest('.toggle-btns').querySelectorAll('.toggle-btn').forEach(t=>t.classList.remove('active'));el.classList.add('active');buildCompare(view)}
+
+/* ── DONUT ── */
+const donutData=[
+  {name:'Закупки',pct:34,uzs:67320000,clr:'#003D7C'},
+  {name:'Зарплата',pct:28,uzs:55440000,clr:'#0054A6'},
+  {name:'Налоги',pct:14,uzs:27720000,clr:'#64748B'},
+  {name:'Аренда',pct:12,uzs:23760000,clr:'#94A3B8'},
+  {name:'Маркетинг',pct:8,uzs:15840000,clr:'#F59E0B'},
+  {name:'Прочее',pct:4,uzs:7920000,clr:'#CBD5E8'},
+];
+let donutChart, activeSeg=null;
+
+function buildDonutLegend(){
+  const el=document.getElementById('donut-legend');
+  el.innerHTML=donutData.map((d,i)=>`
+    <div class="dl-row${activeSeg===i?' sel':''}" onclick="donutClick(${i})" id="dl-${i}">
+      <div class="dl-dot" style="background:${d.clr}"></div>
+      <span class="dl-name">${d.name}</span>
+      <span class="dl-pct">${d.pct}%</span>
+      <span class="dl-uzs">${(d.uzs/1e6).toFixed(1)}М</span>
+    </div>
+  `).join('');
+}
+
+function buildDonut(){
+  const ctx=document.getElementById('donutChart').getContext('2d');
+  if(donutChart)donutChart.destroy();
+  donutChart=new Chart(ctx,{
+    type:'doughnut',
+    data:{
+      labels:donutData.map(d=>d.name),
+      datasets:[{
+        data:donutData.map(d=>d.pct),
+        backgroundColor:donutData.map(d=>d.clr),
+        hoverOffset:8,borderWidth:3,borderColor:'#fff',hoverBorderColor:'#fff',
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,cutout:'68%',
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:'rgba(0,25,60,.92)',
+          titleFont:{family:'Manrope',weight:'700',size:12},
+          bodyFont:{family:'Inter',size:12},
+          padding:11,cornerRadius:10,
+          callbacks:{label:c=>`${donutData[c.dataIndex].pct}% · ${(donutData[c.dataIndex].uzs/1e6).toFixed(1)}М UZS`}
+        }
+      },
+      onClick:(e,el)=>{if(el.length)donutClick(el[0].index);}
+    }
+  });
+  donutChart.canvas.style.cursor='pointer';
+}
+buildDonut();
+buildDonutLegend();
+
+function donutClick(i){
+  activeSeg=(activeSeg===i)?null:i;
+  const d=donutData[i];
+  document.getElementById('donut-val').textContent=activeSeg!==null?d.name:'Закупки';
+  document.getElementById('donut-lbl').textContent=activeSeg!==null?`${d.pct}% · ${(d.uzs/1e6).toFixed(1)}М`:'34% · 67.3М';
+  buildDonutLegend();
+  // filter table
+  if(activeSeg!==null){
+    document.getElementById('cat-filter').value=d.name;
+    document.getElementById('active-filter-bar').style.display='flex';
+    document.getElementById('active-filter-text').textContent='Фильтр: '+d.name;
+    applyCatFilter(d.name);
+  } else { clearDonutFilter(); }
+}
+function clearDonutFilter(){
+  activeSeg=null;
+  document.getElementById('donut-val').textContent='Закупки';
+  document.getElementById('donut-lbl').textContent='34% · 67.3М';
+  document.getElementById('active-filter-bar').style.display='none';
+  document.getElementById('cat-filter').value='';
+  buildDonutLegend();
+  renderTx(allTx);
+}
+
+/* ── EXPENSE CATEGORY CARDS ── */
+const expCats=[
+  {name:'Закупки',icon:'🛒',iconBg:'#EEF4FF',iconClr:'#0054A6',amount:67320000,pct:34,tw:82,trend:'↑',trendCls:'trend-up',trendLbl:'+4.1%'},
+  {name:'Зарплата',icon:'👥',iconBg:'#E6F7EE',iconClr:'#00A651',amount:55440000,pct:28,tw:68,trend:'→',trendCls:'trend-flat',trendLbl:'0.0%'},
+  {name:'Налоги',icon:'🏛',iconBg:'#FEE2E5',iconClr:'#E0384B',amount:27720000,pct:14,tw:35,trend:'↓',trendCls:'trend-dn',trendLbl:'−2.3%'},
+  {name:'Аренда',icon:'🏢',iconBg:'#F1F5F9',iconClr:'#64748B',amount:23760000,pct:12,tw:29,trend:'→',trendCls:'trend-flat',trendLbl:'0.0%'},
+  {name:'Маркетинг',icon:'📣',iconBg:'#FEF3C7',iconClr:'#F59E0B',amount:15840000,pct:8,tw:20,trend:'↑',trendCls:'trend-up',trendLbl:'+22%',overspend:true},
+  {name:'Прочее',icon:'📦',iconBg:'#F8FAFC',iconClr:'#94A3B8',amount:7920000,pct:4,tw:10,trend:'↓',trendCls:'trend-dn',trendLbl:'−8.4%'},
+];
+document.getElementById('exp-cats').innerHTML=expCats.map(c=>`
+  <div class="cat-card${c.overspend?' overspend':''}">
+    ${c.overspend?'<span class="overspend-badge">⚠ Перерасход</span>':''}
+    <div class="cat-card-top">
+      <div class="cat-icon" style="background:${c.iconBg};font-size:18px">${c.icon}</div>
+      <span class="trend-badge ${c.trendCls}">${c.trend} ${c.trendLbl}</span>
+    </div>
+    <div class="cat-name">${c.name}</div>
+    <div class="cat-amount">${fmt(c.amount)}<span class="u"> UZS</span></div>
+    <div class="cat-pct">${c.pct}% от расходов</div>
+    <div class="cat-bar"><div class="cat-bar-fill" style="width:${c.tw}%;background:${c.overspend?'linear-gradient(90deg,#E0384B,#F87171)':c.iconClr==='#0054A6'?'linear-gradient(90deg,#003D7C,#0054A6)':c.iconClr==='#00A651'?'linear-gradient(90deg,#00A651,#4ADE80)':'linear-gradient(90deg,'+c.iconClr+','+c.iconClr+'88)'}"></div></div>
+  </div>
+`).join('');
+
+/* ── INCOME CATEGORY CARDS ── */
+const incCats=[
+  {name:'Продажи',icon:'💼',bg:'#E6F7EE',amount:256000000,pct:80,tw:80},
+  {name:'Гос. контракты',icon:'🏛',bg:'#EEF4FF',amount:38400000,pct:12,tw:12},
+  {name:'Проценты',icon:'📈',bg:'#FEF3C7',amount:16000000,pct:5,tw:5},
+  {name:'Прочие',icon:'📦',bg:'#F1F5F9',amount:9600000,pct:3,tw:3},
+];
+document.getElementById('inc-cats').innerHTML=incCats.map(c=>`
+  <div class="income-card">
+    <div class="income-card-top">
+      <div class="income-icon" style="background:${c.bg};font-size:17px">${c.icon}</div>
+      <div class="income-name">${c.name}</div>
+    </div>
+    <div class="income-amount">${fmt(c.amount)}<span class="u"> UZS</span></div>
+    <div class="income-pct">${c.pct}% от доходов</div>
+    <div class="income-bar"><div class="income-bar-fill" style="width:${c.tw}%"></div></div>
+  </div>
+`).join('');
+
+/* ── TRANSACTIONS ── */
+const allTx=[
+  {date:'14 апр',time:'15:22',cp:'АгроПрайм',av:'АП',avClr:'linear-gradient(135deg,#00A651,#22D3EE)',cat:'Продажи',catBg:'#E6F7EE',catClr:'#007A3D',purpose:'Оплата по дог. №145-А',income:85000000,expense:0,acc:'NBU •4402',type:'income'},
+  {date:'13 апр',time:'11:08',cp:'Silk Trade LLC',av:'СТ',avClr:'linear-gradient(135deg,#003D7C,#3B82F6)',cat:'Закупки',catBg:'#EEF4FF',catClr:'#0054A6',purpose:'Закуп товара партия №38',income:0,expense:52400000,acc:'NBU •4402',type:'expense'},
+  {date:'12 апр',time:'09:45',cp:'ГНК Узбекистан',av:'ГНК',avClr:'linear-gradient(135deg,#8B5CF6,#EC4899)',cat:'Налоги',catBg:'#FEE2E5',catClr:'#C0273A',purpose:'НДС за март 2026',income:0,expense:27720000,acc:'HBK •1192',type:'expense'},
+  {date:'11 апр',time:'14:30',cp:'Ad Pro Agency',av:'АД',avClr:'linear-gradient(135deg,#F59E0B,#FCD34D)',cat:'Маркетинг',catBg:'#FEF3C7',catClr:'#92400E',purpose:'Рекламная кампания апр',income:0,expense:8400000,acc:'NBU •4402',type:'expense'},
+  {date:'10 апр',time:'16:55',cp:'ООО «Сармат»',av:'СА',avClr:'linear-gradient(135deg,#0054A6,#22D3EE)',cat:'Продажи',catBg:'#E6F7EE',catClr:'#007A3D',purpose:'Оплата инв. №2026-084',income:63500000,expense:0,acc:'NBU •4402',type:'income'},
+  {date:'09 апр',time:'10:00',cp:'Выплата зарплат',av:'ЗП',avClr:'linear-gradient(135deg,#E0384B,#F97316)',cat:'Зарплата',catBg:'#F3F0FF',catClr:'#6D28D9',purpose:'З/П сотрудникам апр',income:0,expense:55440000,acc:'NBU •4402',type:'expense'},
+  {date:'08 апр',time:'13:20',cp:'МегаСнаб',av:'МС',avClr:'linear-gradient(135deg,#00A651,#4ADE80)',cat:'Гос. контракты',catBg:'#EEF4FF',catClr:'#0054A6',purpose:'Гос. контракт №2026-08',income:38400000,expense:0,acc:'HBK •1192',type:'income'},
+];
+
+let txView='all', txCat='', txSearch='';
+
+function renderTx(rows){
+  const body=document.getElementById('tx-body');
+  body.innerHTML=rows.map(r=>`
+    <tr>
+      <td style="padding-left:0"><div class="tx-date">${r.date}</div><div class="tx-time">${r.time}</div></td>
+      <td><div class="tx-cp"><div class="tx-av" style="background:${r.avClr}">${r.av}</div><span class="tx-name">${r.cp}</span></div></td>
+      <td><span class="tx-cat" style="background:${r.catBg};color:${r.catClr}">${r.cat}</span></td>
+      <td style="color:var(--muted);font-size:12.5px;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.purpose}</td>
+      <td style="text-align:right">${r.income?'<span class="tx-amount in">+'+fmt(r.income)+'</span>':'—'}</td>
+      <td style="text-align:right">${r.expense?'<span class="tx-amount out">−'+fmt(r.expense)+'</span>':'—'}</td>
+      <td style="text-align:right;padding-right:0"><span class="tx-acc">${r.acc}</span></td>
+    </tr>
+  `).join('');
+  document.getElementById('tx-count').textContent=`Показано ${rows.length} из 86`;
+}
+
+function applyFilters(){
+  let r=allTx;
+  if(txView==='income') r=r.filter(t=>t.type==='income');
+  if(txView==='expense') r=r.filter(t=>t.type==='expense');
+  if(txCat) r=r.filter(t=>t.cat===txCat);
+  if(txSearch) r=r.filter(t=>t.cp.toLowerCase().includes(txSearch)||t.purpose.toLowerCase().includes(txSearch));
+  renderTx(r);
+}
+function filterTx(el,v){el.closest('#tx-tabs').querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');txView=v;applyFilters()}
+function applyCatFilter(v){txCat=v;applyFilters()}
+function searchTx(v){txSearch=v.toLowerCase();applyFilters()}
+
+renderTx(allTx);
+</script>
+</body>
+</html>

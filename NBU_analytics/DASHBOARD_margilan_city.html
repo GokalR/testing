@@ -1,0 +1,2084 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Маргилан - Аналитическая сводка для Президента</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..900&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+  :root {
+    --bg: #FFFFFF;
+    --bg2: #F8F9FB;
+    --bg3: #EEF0F4;
+    --surface: rgba(0,0,0,0.018);
+    --border: rgba(0,0,0,0.07);
+    --border2: rgba(0,0,0,0.13);
+    --text: #1A1A2E;
+    --text2: #3D3D5C;
+    --text3: #8B8BA3;
+    --accent: #2563EB;
+    --red: #DC2626;
+    --red-soft: #FEF2F2;
+    --green: #059669;
+    --green-soft: #ECFDF5;
+    --amber: #D97706;
+    --amber-soft: #FFFBEB;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Inter', -apple-system, sans-serif;
+    --serif: 'DM Serif Display', Georgia, serif;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { font-size: 14px; }
+
+  @page { size: 1480px 850px; margin: 0; }
+  @media print {
+    .page { page-break-after: always; }
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  body {
+    font-family: var(--sans);
+    background: #ECEEF2;
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.45;
+    font-weight: 520;
+  }
+
+  .page {
+    width: 1480px;
+    height: 850px;
+    margin: 10px auto;
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 24px rgba(0,0,0,0.07);
+    border-radius: 6px;
+  }
+
+  .hdr {
+    padding: 14px 40px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 1.5px solid #E5E7EB;
+  }
+  .hdr-title {
+    font-family: var(--serif);
+    font-size: 30px;
+    color: var(--text);
+    letter-spacing: -0.5px;
+  }
+  .hdr-sub {
+    font-size: 13px;
+    color: var(--text2);
+    margin-top: 3px;
+    font-weight: 520;
+    letter-spacing: 0.2px;
+  }
+  .hdr-right { display:flex; align-items:center; gap:16px; }
+  .hdr-page { font-family:var(--mono); font-size:12px; color:var(--accent); font-weight:600; }
+  .hdr-brand {
+    display:flex; align-items:center; gap:8px;
+    background: linear-gradient(135deg, #1E3A5F, #2563EB);
+    padding: 5px 14px; border-radius: 6px;
+    font-size: 10px; font-weight: 700; color: #fff;
+    letter-spacing: 0.5px; text-transform: uppercase;
+  }
+
+  .grid {
+    display: grid;
+    gap: 7px;
+    padding: 10px 22px 8px;
+  }
+  .g1 { grid-template-columns: repeat(6,1fr); }
+  .g2 { grid-template-columns: repeat(12,1fr); }
+
+  .c {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 12px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  }
+  .c-t {
+    font-size: 10.5px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--text3); margin-bottom: 6px;
+    display:flex; align-items:center; gap:7px;
+  }
+  .c-t .dot { width:6px; height:6px; border-radius:50%; }
+  .s2 { grid-column: span 2; }
+  .s3 { grid-column: span 3; }
+  .s4 { grid-column: span 4; }
+  .s5 { grid-column: span 5; }
+  .s6 { grid-column: span 6; }
+  .s7 { grid-column: span 7; }
+  .s8 { grid-column: span 8; }
+  .s9 { grid-column: span 9; }
+  .s12 { grid-column: span 12; }
+
+  /* KPI */
+  .kpi {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 8px 12px 6px;
+    overflow: hidden; position: relative;
+  }
+  .kpi::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:2.5px;
+    background: var(--accent);
+  }
+  .kpi-l { font-size:10.5px; font-weight:700; letter-spacing:0.5px; color:var(--text3); text-transform:uppercase; }
+  .kpi-v { font-family:var(--mono); font-size:26px; font-weight:700; color:var(--text); margin:4px 0 2px; line-height:1; letter-spacing:-0.5px; font-feature-settings:'tnum'; }
+  .kpi-s { font-size:11px; color:var(--text3); font-weight:520; }
+  .kpi-tag {
+    display:inline-flex; align-items:center; font-size:10.5px; font-weight:600;
+    padding:2px 7px; border-radius:4px; margin-top:4px; gap:3px;
+  }
+  .kpi-tag.up { color:var(--green); background:var(--green-soft); }
+  .kpi-tag.down { color:var(--red); background:var(--red-soft); }
+
+  /* Section divider */
+  .sec {
+    grid-column: span 6; font-size:11.5px; font-weight:600;
+    color:var(--text3); letter-spacing:1.5px; text-transform:uppercase;
+    padding:0; display:flex; align-items:center; gap:12px;
+  }
+  .sec::after { content:''; flex:1; height:1px; background:var(--border); }
+  .sec12 { grid-column:span 12; }
+
+  /* Tables */
+  table { width:100%; border-collapse:collapse; font-size:11.5px; }
+  th { text-align:left; font-size:9.5px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:var(--text3); padding:5px 8px; border-bottom:1px solid var(--border2); }
+  th.r, td.r { text-align:right; }
+  th.c, td.c { text-align:center; }
+  td { padding:4.5px 8px; border-bottom:1px solid #F1F3F5; color:var(--text2); font-weight:520; }
+  td b { color:var(--text); font-weight:600; }
+  tr:last-child td { border-bottom:none; }
+  .tr-hl { background:#F8FAFC; }
+  .tr-hl td { color:var(--text); font-weight:600; }
+
+  /* Bars */
+  .bar { display:flex; align-items:center; gap:8px; margin:3px 0; }
+  .bar-l { font-size:11px; width:100px; color:var(--text2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex-shrink:0; font-weight:600; }
+  .bar-t { flex:1; height:16px; background:#F1F3F5; border-radius:4px; overflow:hidden; }
+  .bar-f { height:100%; border-radius:4px; min-width:2px; }
+  .bar-v { font-family:var(--mono); font-size:11px; font-weight:600; width:52px; text-align:right; color:var(--text2); flex-shrink:0; }
+  .bf-blue { background: linear-gradient(90deg, #2563EB, #60A5FA); }
+  .bf-red { background: linear-gradient(90deg, #DC2626, #F87171); }
+  .bf-green { background: linear-gradient(90deg, #059669, #34D399); }
+  .bf-amber { background: linear-gradient(90deg, #D97706, #FBBF24); }
+  .bf-purple { background: linear-gradient(90deg, #7C3AED, #A78BFA); }
+  .bf-gray { background: linear-gradient(90deg, #6B7280, #9CA3AF); }
+
+  /* Alerts */
+  .al { border-radius:6px; padding:6px 10px; font-size:11px; display:flex; gap:7px; line-height:1.4; font-weight:520; }
+  .al.al-r { background:#FFF1F2; border-left:2.5px solid #E11D48; color:#9F1239; }
+  .al.al-a { background:var(--amber-soft); border-left:2px solid var(--amber); color:#92400E; }
+  .al.al-g { background:var(--green-soft); border-left:2px solid var(--green); color:#065F46; }
+
+  /* Tags */
+  .tag { display:inline-block; padding:2px 7px; border-radius:3px; font-size:9px; font-weight:700; letter-spacing:0.7px; }
+  .tag-r { background:var(--red-soft); color:var(--red); }
+  .tag-g { background:var(--green-soft); color:var(--green); }
+  .tag-b { background:#EFF6FF; color:var(--accent); }
+  .tag-a { background:var(--amber-soft); color:var(--amber); }
+
+  .wm { position:absolute; bottom:6px; right:22px; font-size:9px; color:var(--text3); opacity:0.5; }
+
+  /* ============= SVG CHARTS ============= */
+  .chart-wrap { position: relative; }
+  .chart-title {
+    font-size:10px; font-weight:600; text-transform:uppercase;
+    letter-spacing:0.8px; color:var(--text3); margin-bottom:8px;
+  }
+  .lc-label { font-family: var(--mono); font-size: 9px; font-weight: 600; fill: var(--text3); }
+  .lc-val { font-family: var(--mono); font-size: 10px; font-weight: 600; }
+  .lc-grid { stroke: #F1F3F5; stroke-width: 1; }
+  .lc-axis { stroke: #E5E7EB; stroke-width: 1; }
+
+  /* Rec cards */
+  .rec {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 10px; padding: 11px 14px 10px;
+    border-left: 3px solid var(--accent);
+    position: relative;
+    transition: box-shadow 0.15s;
+  }
+  .rec:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .rec.rec-red { border-left-color: var(--red); }
+  .rec.rec-green { border-left-color: var(--green); }
+  .rec.rec-amber { border-left-color: var(--amber); }
+  .rec-n {
+    font-family:var(--mono); font-size:11px; font-weight:700;
+    color:#fff; background:var(--accent); border-radius:4px;
+    width:24px; height:24px; display:inline-flex; align-items:center; justify-content:center;
+    float:right; margin-top:-2px; margin-right:-2px;
+  }
+  .rec.rec-red .rec-n { background:var(--red); }
+  .rec.rec-green .rec-n { background:var(--green); }
+  .rec.rec-amber .rec-n { background:var(--amber); }
+  .rec-h { font-size:12.5px; font-weight:600; color:var(--text); margin-bottom:4px; }
+  .rec-b { font-size:10.5px; color:var(--text2); line-height:1.5; font-weight:500; }
+  .rec-k {
+    margin-top:6px; padding-top:6px; border-top:1px solid var(--border);
+    display:flex; align-items:center; gap:6px; font-size:11px;
+  }
+  .rec-k span { font-family:var(--mono); font-weight:600; }
+  .rec-k .from { color:var(--red); }
+  .rec-k .to { color:var(--green); }
+  .rec-k .arr { color:var(--text3); }
+  .rec-k .lbl { color:var(--text3); font-weight:500; }
+
+  /* Priority group label */
+  .prio-group {
+    grid-column: span 12; display:flex; align-items:center; gap:8px;
+    font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase;
+    color:var(--text3); padding:2px 0 0;
+  }
+  .prio-group .pg-icon {
+    width:20px; height:20px; border-radius:5px; display:inline-flex;
+    align-items:center; justify-content:center; font-size:11px; color:#fff;
+  }
+
+  /* Stat pair */
+  .sp { display:flex; gap:8px; margin-bottom:6px; }
+  .sp-box { flex:1; border-radius:8px; padding:7px; text-align:center; }
+  .sp-l { font-size:9px; font-weight:600; letter-spacing:0.8px; text-transform:uppercase; }
+  .sp-v { font-family:var(--mono); font-size:20px; font-weight:600; line-height:1.2; }
+  .sp-s { font-size:10px; font-weight:520; }
+
+  /* Vertical bar chart (compact) */
+  .vchart { display:flex; align-items:flex-end; gap:4px; height:110px; padding:0 2px; }
+  .vcol { flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; }
+  .vbar { width:100%; border-radius:3px 3px 0 0; min-height:2px; }
+  .vlbl { font-size:8px; color:var(--text3); font-weight:600; }
+  .vval { font-family:var(--mono); font-size:9px; font-weight:600; color:var(--text2); }
+
+  /* Comparison table */
+  .cmp-row { display:flex; align-items:center; gap:0; margin:1px 0; }
+  .cmp-label { font-size:8px; font-weight:600; color:var(--text3); width:100%; margin-bottom:0; letter-spacing:0.3px; }
+  .cmp-val { font-family:var(--mono); font-size:9px; font-weight:700; width:55px; text-align:right; flex-shrink:0; }
+  .cmp-bar-wrap { flex:1; height:10px; background:#F1F3F5; border-radius:3px; overflow:hidden; }
+
+  /* Title page */
+  .title-page {
+    width: 1480px;
+    height: 850px;
+    margin: 10px auto;
+    background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 40%, #2563EB 100%);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 24px rgba(0,0,0,0.07);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #fff;
+  }
+  .title-page::before {
+    content:'';
+    position:absolute;
+    top:0;left:0;right:0;bottom:0;
+    background: radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.05) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, rgba(37,99,235,0.15) 0%, transparent 50%);
+  }
+  .title-page > * { position: relative; z-index: 1; }
+  .tp-logo {
+    display: block;
+    max-height: 110px;
+    max-width: 90px;
+    width: auto;
+    height: auto;
+    margin: 0 auto 36px;
+    object-fit: contain;
+  }
+  .tp-title {
+    font-family: var(--serif);
+    font-size: 52px;
+    letter-spacing: -1px;
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+  .tp-subtitle {
+    font-size: 22px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.75);
+    margin-bottom: 48px;
+    letter-spacing: 0.3px;
+  }
+  .tp-divider {
+    width: 120px;
+    height: 2px;
+    background: rgba(255,255,255,0.25);
+    margin: 0 auto 48px;
+  }
+  .tp-prepared {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 8px;
+  }
+  .tp-org {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.9);
+  }
+  .tp-date {
+    font-size: 13px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 12px;
+    font-family: var(--mono);
+    letter-spacing: 1px;
+  }
+  .tp-sources {
+    font-size: 12px;
+    color: rgba(255,255,255,0.35);
+    margin-top: 6px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- ТИТУЛЬНАЯ СТРАНИЦА                                            -->
+<!-- ============================================================ -->
+<div class="title-page" id="p0">
+  <img class="tp-logo" src="NBU_logo.png" alt="NBU">
+  <div class="tp-sources" style="margin-bottom:8px">Ферганская область, Республика Узбекистан</div>
+  <div class="tp-title">Маргилан</div>
+  <div class="tp-subtitle">Комплексный анализ и стратегия развития 2026–2031</div>
+  <div class="tp-divider"></div>
+  <div class="tp-prepared">Подготовлено</div>
+  <div class="tp-org">Национальный банк Узбекистана - Data Office</div>
+  <div class="tp-date">Март 2026</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- СТРАНИЦА 1: ТЕКУЩАЯ СИТУАЦИЯ (МАКРО)                         -->
+<!-- ============================================================ -->
+<div class="page" id="p1">
+  <div class="hdr">
+    <div>
+      <div class="hdr-title">Маргилан - Текущая ситуация</div>
+      <div class="hdr-sub">Ферганская область &nbsp;&bull;&nbsp; Данные 2021–2025</div>
+    </div>
+    <div class="hdr-right">
+      <div class="hdr-brand">NBU Data Office</div>
+      <div class="hdr-page">01 / 09</div>
+    </div>
+  </div>
+
+  <div class="grid g2">
+
+    <!-- KPI ROW – all 8 in one flex row -->
+    <div style="grid-column:span 12;display:flex;gap:5px">
+      <div class="kpi" style="flex:1;padding:6px 7px 4px">
+        <div class="kpi-l" style="font-size:8px">Население</div>
+        <div class="kpi-v" style="font-size:28px;margin:1px 0 1px">261&#8239;948</div>
+        <div class="kpi-s" style="font-size:8px">54% молодёжь</div>
+        <div class="kpi-tag up" style="font-size:7.5px;padding:1px 4px">&#9650; +9,6%</div>
+      </div>
+      <div class="kpi" style="flex:1;padding:6px 7px 4px">
+        <div class="kpi-l" style="font-size:8px">Площадь</div>
+        <div class="kpi-v" style="font-size:28px;margin:1px 0 1px">52 км²</div>
+        <div class="kpi-s" style="font-size:8px">5&#8239;035/км²</div>
+        <div class="kpi-tag down" style="font-size:7.5px;padding:1px 4px">&#9660; ×8 к обл.</div>
+      </div>
+      <div class="kpi" style="flex:1;padding:6px 7px 4px">
+        <div class="kpi-l" style="font-size:8px">Промышленность</div>
+        <div class="kpi-v" style="font-size:28px;margin:1px 0 1px">2&#8239;459</div>
+        <div class="kpi-s" style="font-size:8px">млрд (4,9% обл.)</div>
+        <div class="kpi-tag up" style="font-size:7.5px;padding:1px 4px">&#9650; +71%</div>
+      </div>
+      <div class="kpi" style="flex:1;padding:6px 7px 4px">
+        <div class="kpi-l" style="font-size:8px">Экспорт</div>
+        <div class="kpi-v" style="font-size:28px;margin:1px 0 1px">450</div>
+        <div class="kpi-s" style="font-size:8px">млрд (рекорд)</div>
+        <div class="kpi-tag up" style="font-size:7.5px;padding:1px 4px">&#9650; +202%</div>
+      </div>
+      <div class="kpi" style="flex:1;padding:6px 7px 4px">
+        <div class="kpi-l" style="font-size:8px">Ср. зарплата</div>
+        <div class="kpi-v" style="font-size:28px;margin:1px 0 1px">3&#8239;974</div>
+        <div class="kpi-s" style="font-size:8px">тыс. сум/мес</div>
+        <div class="kpi-tag up" style="font-size:7.5px;padding:1px 4px">&#9650; +86%</div>
+      </div>
+      <div class="kpi" style="flex:1;padding:6px 7px 4px">
+        <div class="kpi-l" style="font-size:8px">Туризм</div>
+        <div class="kpi-v" style="font-size:28px;margin:1px 0 1px">380К</div>
+        <div class="kpi-s" style="font-size:8px">туристов/год</div>
+        <div class="kpi-tag up" style="font-size:7.5px;padding:1px 4px">&#9650; 42 объекта</div>
+      </div>
+      <div class="kpi" style="flex:1;padding:6px 7px 4px">
+        <div class="kpi-l" style="font-size:8px">Махаллей</div>
+        <div class="kpi-v" style="font-size:28px;margin:1px 0 1px">50</div>
+        <div class="kpi-s" style="font-size:8px">46&#8239;580 дом-в</div>
+        <div class="kpi-tag down" style="font-size:7.5px;padding:1px 4px">&#9660; 32× разр.</div>
+      </div>
+      <div class="kpi" style="flex:1;padding:6px 7px 4px">
+        <div class="kpi-l" style="font-size:8px">На душу</div>
+        <div class="kpi-v" style="font-size:28px;margin:1px 0 1px">9&#8239;461</div>
+        <div class="kpi-s" style="font-size:8px">×4 от Ферганы</div>
+        <div class="kpi-tag down" style="font-size:7.5px;padding:1px 4px">&#9660; 24,8%</div>
+      </div>
+    </div>
+
+    <!-- SECTION: ЭКОНОМИКА -->
+    <div class="sec sec12">Экономическая динамика 2021–2025</div>
+
+    <!-- Экономические показатели -->
+    <div class="c s7" style="padding:4px 8px">
+      <div class="c-t" style="margin-bottom:3px">Ключевые показатели за 5 лет</div>
+      <table>
+        <tr><th>Показатель</th><th class="r">2021</th><th class="r">2022</th><th class="r">2023</th><th class="r">2024</th><th class="r">2025</th><th class="r">Тренд</th></tr>
+        <tr><td>Промышленность (млрд сум)</td><td class="r">1&#8239;440</td><td class="r">1&#8239;554</td><td class="r">1&#8239;683</td><td class="r">2&#8239;079</td><td class="r"><b>2&#8239;459</b></td><td class="r" style="color:var(--green)">+71%</td></tr>
+        <tr><td>Экспорт (млрд сум)</td><td class="r">149</td><td class="r">191</td><td class="r">260</td><td class="r" style="color:var(--red)">213</td><td class="r"><b>450</b></td><td class="r" style="color:var(--green)">+202%</td></tr>
+        <tr><td>Импорт (млрд сум)</td><td class="r">777</td><td class="r" style="color:var(--text3)"><i>~790</i></td><td class="r" style="color:var(--text3)"><i>~800</i></td><td class="r">817</td><td class="r"><b>745</b></td><td class="r" style="color:var(--green)">-4,1%</td></tr>
+        <tr><td>Торговый дефицит (млрд сум)</td><td class="r" style="color:var(--red)">-628</td><td class="r" style="color:var(--text3)"><i>~-599</i></td><td class="r" style="color:var(--text3)"><i>~-540</i></td><td class="r">-604</td><td class="r" style="color:var(--green)"><b>-295</b></td><td class="r" style="color:var(--green)">-53,0%</td></tr>
+        <tr><td>Строительство (рост %)</td><td class="r">121,9</td><td class="r" style="color:var(--red)">88,9</td><td class="r">110,2</td><td class="r">102,7</td><td class="r"><b>118,8</b></td><td class="r" style="color:var(--red)">-2,5%</td></tr>
+        <tr><td>Миграция (выезд/год)</td><td class="r">253</td><td class="r">630</td><td class="r">1&#8239;772</td><td class="r" style="color:var(--red)"><b>6&#8239;240</b></td><td class="r">1&#8239;180</td><td class="r" style="color:var(--red)">&#215;25↑</td></tr>
+        <tr><td>Предприятия (кол-во)</td><td class="r">4&#8239;928</td><td class="r" style="color:var(--text3)"><i>~4&#8239;200</i></td><td class="r" style="color:var(--text3)"><i>~3&#8239;500</i></td><td class="r">3&#8239;100</td><td class="r" style="color:var(--red)"><b>2&#8239;787</b></td><td class="r" style="color:var(--red)">-43%</td></tr>
+        <tr><td>ЯТТ субъектов</td><td class="r" style="color:var(--text3)"><i>~6&#8239;500</i></td><td class="r" style="color:var(--text3)"><i>~6&#8239;700</i></td><td class="r" style="color:var(--text3)"><i>~6&#8239;900</i></td><td class="r">7&#8239;050</td><td class="r"><b>7&#8239;143</b></td><td class="r" style="color:var(--green)">+10%</td></tr>
+        <tr><td>Безработица (%)</td><td class="r" style="color:var(--text3)"><i>~9,5</i></td><td class="r" style="color:var(--red)">9,0</td><td class="r">7,8</td><td class="r">6,5</td><td class="r" style="color:var(--green)"><b>5,8</b></td><td class="r" style="color:var(--green)">-3,7пп</td></tr>
+        <tr><td>Инвестиции (млрд сум)</td><td class="r" style="color:var(--text3)"><i>~780</i></td><td class="r">910</td><td class="r">1&#8239;574</td><td class="r" style="color:var(--red)">700</td><td class="r"><b>1&#8239;281</b></td><td class="r" style="color:var(--green)">+83%</td></tr>
+      </table>
+    </div>
+
+    <!-- Промышленность, экспорт и инвестиции график -->
+    <div class="c s5">
+      <div class="chart-title" style="margin-bottom:20px">Промышленность, экспорт и инвестиции (млрд сум)</div>
+      <svg width="100%" viewBox="0 0 380 130" style="display:block;margin-top:10px">
+        <line x1="45" y1="15" x2="45" y2="100" class="lc-axis"/>
+        <line x1="45" y1="100" x2="365" y2="100" class="lc-axis"/>
+        <line x1="45" y1="72" x2="365" y2="72" class="lc-grid"/>
+        <line x1="45" y1="44" x2="365" y2="44" class="lc-grid"/>
+        <text x="40" y="104" text-anchor="end" class="lc-label">0</text>
+        <text x="40" y="76" text-anchor="end" class="lc-label">1500</text>
+        <text x="40" y="48" text-anchor="end" class="lc-label">3000</text>
+        <text x="90" y="118" text-anchor="middle" class="lc-label">2022</text>
+        <text x="170" y="118" text-anchor="middle" class="lc-label">2023</text>
+        <text x="250" y="118" text-anchor="middle" class="lc-label">2024</text>
+        <text x="330" y="118" text-anchor="middle" class="lc-label">2025</text>
+        <!-- Промышленность -->
+        <polyline points="90,71 170,68 250,61 330,53" fill="none" stroke="#2563EB" stroke-width="2.5" stroke-linejoin="round"/>
+        <circle cx="90" cy="71" r="3" fill="#2563EB"/><circle cx="170" cy="68" r="3" fill="#2563EB"/>
+        <circle cx="250" cy="61" r="3" fill="#2563EB"/><circle cx="330" cy="53" r="3" fill="#2563EB"/>
+        <text x="90" y="66" text-anchor="middle" class="lc-val" fill="#2563EB">1&#8239;554</text>
+        <text x="170" y="63" text-anchor="middle" class="lc-val" fill="#2563EB">1&#8239;683</text>
+        <text x="250" y="56" text-anchor="middle" class="lc-val" fill="#2563EB">2&#8239;079</text>
+        <text x="330" y="48" text-anchor="middle" class="lc-val" fill="#2563EB">2&#8239;459</text>
+        <!-- Инвестиции -->
+        <polyline points="90,74 170,55 250,80 330,64" fill="none" stroke="#D97706" stroke-width="2" stroke-linejoin="round" stroke-dasharray="3,3"/>
+        <circle cx="90" cy="74" r="2.5" fill="#D97706"/><circle cx="170" cy="55" r="2.5" fill="#D97706"/>
+        <circle cx="250" cy="80" r="2.5" fill="#D97706" stroke="#DC2626" stroke-width="1.5"/><circle cx="330" cy="64" r="2.5" fill="#D97706"/>
+        <text x="100" y="72" text-anchor="start" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#D97706">910</text>
+        <text x="180" y="53" text-anchor="start" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#D97706">1&#8239;574</text>
+        <text x="260" y="78" text-anchor="start" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#DC2626">700</text>
+        <text x="335" y="60" text-anchor="start" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#D97706">1&#8239;281</text>
+        <!-- Экспорт -->
+        <polyline points="90,87 170,83 250,86 330,70" fill="none" stroke="#059669" stroke-width="2" stroke-linejoin="round" stroke-dasharray="5,3"/>
+        <circle cx="90" cy="87" r="2.5" fill="#059669"/><circle cx="170" cy="83" r="2.5" fill="#059669"/>
+        <circle cx="250" cy="86" r="2.5" fill="#059669" stroke="#DC2626" stroke-width="1.5"/><circle cx="330" cy="70" r="2.5" fill="#059669"/>
+        <text x="90" y="95" text-anchor="middle" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#059669">191</text>
+        <text x="170" y="80" text-anchor="middle" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#059669">260</text>
+        <text x="250" y="94" text-anchor="middle" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#DC2626">213</text>
+        <text x="330" y="75" text-anchor="middle" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#059669">450</text>
+        <!-- Легенда -->
+        <line x1="55" y1="8" x2="70" y2="8" stroke="#2563EB" stroke-width="2.5"/>
+        <text x="73" y="11" class="lc-label" fill="#2563EB">Промышл.</text>
+        <line x1="140" y1="8" x2="155" y2="8" stroke="#D97706" stroke-width="2" stroke-dasharray="3,3"/>
+        <text x="158" y="11" class="lc-label" fill="#D97706">Инвестиции</text>
+        <line x1="225" y1="8" x2="240" y2="8" stroke="#059669" stroke-width="2" stroke-dasharray="5,3"/>
+        <text x="243" y="11" class="lc-label" fill="#059669">Экспорт</text>
+      </svg>
+      <div style="margin-top:4px;padding:4px 8px;background:linear-gradient(135deg,#EFF6FF,#F0FDF4);border-radius:5px;font-size:10px;color:var(--text2);line-height:1.5;border:1px solid rgba(37,99,235,0.1)">
+        <b style="color:var(--accent)">Вывод:</b> промышленность стабильно растёт (+71% за 4 года), экспорт восстановился после спада 2024 (рекорд 450 млрд). Инвестиции нестабильны – провал в 2024 (700 млрд), но восстановление до 1 281 (+83%). Ключевой вызов – стабилизация инвестиционного потока.
+      </div>
+    </div>
+
+    <!-- Сравнение двух городов - компактный -->
+    <div class="c s5" style="padding-top:4px;padding-bottom:4px">
+      <div class="c-t" style="margin-bottom:3px">Маргилан vs Фергана (на душу, тыс. сум)</div>
+      <div style="display:flex;gap:14px;margin-bottom:4px;font-size:8px;font-weight:700">
+        <span style="color:var(--accent)">&#9632; Маргилан (262 тыс.)</span>
+        <span style="color:#0891B2">&#9632; Фергана (332 тыс.)</span>
+      </div>
+      <!-- Промышленность -->
+      <div class="cmp-label">ПРОМЫШЛЕННОСТЬ <span style="color:var(--red);font-family:var(--mono);font-weight:700">&#215;4,0</span></div>
+      <div class="cmp-row"><div class="cmp-bar-wrap"><div class="bar-f bf-blue" style="width:24.8%;height:100%"></div></div><div class="cmp-val" style="color:var(--accent)">9&#8239;461</div></div>
+      <div class="cmp-row"><div class="cmp-bar-wrap"><div class="bar-f" style="width:100%;height:100%;background:linear-gradient(90deg,#0891B2,#22D3EE)"></div></div><div class="cmp-val" style="color:#0891B2"><b>38&#8239;187</b></div></div>
+      <!-- Инвестиции -->
+      <div class="cmp-label">ИНВЕСТИЦИИ <span style="color:var(--red);font-family:var(--mono);font-weight:700">&#215;4,4</span></div>
+      <div class="cmp-row"><div class="cmp-bar-wrap"><div class="bar-f bf-blue" style="width:22.9%;height:100%"></div></div><div class="cmp-val" style="color:var(--accent)">4&#8239;928</div></div>
+      <div class="cmp-row"><div class="cmp-bar-wrap"><div class="bar-f" style="width:100%;height:100%;background:linear-gradient(90deg,#0891B2,#22D3EE)"></div></div><div class="cmp-val" style="color:#0891B2"><b>21&#8239;491</b></div></div>
+      <!-- Услуги -->
+      <div class="cmp-label">УСЛУГИ <span style="color:var(--red);font-family:var(--mono);font-weight:700">&#215;2,7</span></div>
+      <div class="cmp-row"><div class="cmp-bar-wrap"><div class="bar-f bf-blue" style="width:37.0%;height:100%"></div></div><div class="cmp-val" style="color:var(--accent)">13&#8239;599</div></div>
+      <div class="cmp-row"><div class="cmp-bar-wrap"><div class="bar-f" style="width:100%;height:100%;background:linear-gradient(90deg,#0891B2,#22D3EE)"></div></div><div class="cmp-val" style="color:#0891B2"><b>36&#8239;753</b></div></div>
+      <!-- Розница -->
+      <div class="cmp-label">РОЗНИЦА <span style="color:var(--green);font-family:var(--mono);font-weight:700">&#215;1,1 &#9650;</span></div>
+      <div class="cmp-row"><div class="cmp-bar-wrap"><div class="bar-f bf-blue" style="width:100%;height:100%"></div></div><div class="cmp-val" style="color:var(--accent)"><b>21&#8239;846</b></div></div>
+      <div class="cmp-row"><div class="cmp-bar-wrap"><div class="bar-f" style="width:90.6%;height:100%;background:linear-gradient(90deg,#0891B2,#22D3EE)"></div></div><div class="cmp-val" style="color:#0891B2">19&#8239;785</div></div>
+      <!-- Строительство -->
+      <div class="cmp-label">СТРОИТЕЛЬСТВО <span style="color:var(--red);font-family:var(--mono);font-weight:700">&#215;1,4</span></div>
+      <div class="cmp-row"><div class="cmp-bar-wrap"><div class="bar-f bf-blue" style="width:69.8%;height:100%"></div></div><div class="cmp-val" style="color:var(--accent)">6&#8239;899</div></div>
+      <div class="cmp-row"><div class="cmp-bar-wrap"><div class="bar-f" style="width:100%;height:100%;background:linear-gradient(90deg,#0891B2,#22D3EE)"></div></div><div class="cmp-val" style="color:#0891B2"><b>9&#8239;878</b></div></div>
+      <div class="al al-r" style="margin-top:4px;font-size:10px"><span style="font-size:11px">&#9888;</span><div><b>Ключевой разрыв:</b> Фергана – 25,3% пром. области (якоря), Маргилан – 4,9% (97% МСБ)</div></div>
+    </div>
+
+    <!-- Инвестиции по источникам + демография -->
+    <div class="c s4">
+      <div class="c-t">Инвестиции 2025</div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="font-family:var(--mono);font-size:34px;font-weight:700;color:var(--text);line-height:1">1&#8239;281</div>
+        <div style="font-size:12px;color:var(--text3);font-weight:600">млрд сум<br><span style="color:var(--green);font-size:13px;font-weight:700">+83% к 2024</span></div>
+      </div>
+      <div style="font-size:9px;font-weight:600;color:var(--text3);letter-spacing:0.5px;margin-bottom:5px">СТРУКТУРА ПО ИСТОЧНИКАМ</div>
+      <div class="bar" style="margin:5px 0"><div class="bar-l" style="width:90px;font-size:10.5px">Иностранные</div><div class="bar-t" style="height:18px"><div class="bar-f bf-blue" style="width:44.3%"></div></div><div class="bar-v" style="font-size:10.5px">44,3%</div></div>
+      <div class="bar" style="margin:5px 0"><div class="bar-l" style="width:90px;font-size:10.5px">Ср-ва предпр.</div><div class="bar-t" style="height:18px"><div class="bar-f bf-green" style="width:19.1%"></div></div><div class="bar-v" style="font-size:10.5px">19,1%</div></div>
+      <div class="bar" style="margin:5px 0"><div class="bar-l" style="width:90px;font-size:10.5px">Госбюджет</div><div class="bar-t" style="height:18px"><div class="bar-f bf-amber" style="width:16.0%"></div></div><div class="bar-v" style="font-size:10.5px">16,0%</div></div>
+      <div class="bar" style="margin:5px 0"><div class="bar-l" style="width:90px;font-size:10.5px">Ср-ва населения</div><div class="bar-t" style="height:18px"><div class="bar-f bf-purple" style="width:13.9%"></div></div><div class="bar-v" style="font-size:10.5px">13,9%</div></div>
+      <div class="bar" style="margin:5px 0"><div class="bar-l" style="width:90px;font-size:10.5px">Фонд реставр.</div><div class="bar-t" style="height:18px"><div class="bar-f bf-gray" style="width:6.0%"></div></div><div class="bar-v" style="font-size:10.5px">6,0%</div></div>
+      <div style="margin-top:8px;padding-top:6px;border-top:1px solid var(--border)">
+        <div style="font-size:9px;font-weight:600;color:var(--text3);letter-spacing:0.5px;margin-bottom:4px">ДЕМОГРАФИЯ</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 8px;font-size:11px;color:var(--text2);line-height:1.7">
+          <div><b>Прирост:</b> +4&#8239;757/год</div>
+          <div><b>Трудоспособных:</b> 140&#8239;164</div>
+          <div><b>Миграц. сальдо:</b> <span style="color:var(--red)">-687</span></div>
+          <div><b>Пенсионеров:</b> 28&#8239;315</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Структура экономики – donut chart -->
+    <div class="c s3">
+      <div class="c-t">Структура экономики</div>
+      <div style="display:flex;align-items:center;justify-content:center;margin:2px 0">
+        <svg width="130" height="130" viewBox="0 0 160 160">
+          <!-- Donut chart: Розница 38.2%, Пром. 19.4%, Услуги 23.8%, Строит. 12.1%, Прочее 6.5% -->
+          <!-- Background circle -->
+          <circle cx="80" cy="80" r="58" fill="none" stroke="#F1F3F5" stroke-width="22"/>
+          <!-- Розница: 38.2% = 137.5° start at -90° -->
+          <circle cx="80" cy="80" r="58" fill="none" stroke="#D97706" stroke-width="22" stroke-dasharray="139.2 225.2" stroke-dashoffset="91.1" transform="rotate(-90 80 80)"/>
+          <!-- Промышленность: 19.4% = 70.7 -->
+          <circle cx="80" cy="80" r="58" fill="none" stroke="#2563EB" stroke-width="22" stroke-dasharray="70.7 293.7" stroke-dashoffset="-48.1" transform="rotate(-90 80 80)"/>
+          <!-- Услуги: 23.8% = 86.8 -->
+          <circle cx="80" cy="80" r="58" fill="none" stroke="#059669" stroke-width="22" stroke-dasharray="86.8 277.6" stroke-dashoffset="-118.8" transform="rotate(-90 80 80)"/>
+          <!-- Строительство: 12.1% = 44.1 -->
+          <circle cx="80" cy="80" r="58" fill="none" stroke="#8B5CF6" stroke-width="22" stroke-dasharray="44.1 320.3" stroke-dashoffset="-205.6" transform="rotate(-90 80 80)"/>
+          <!-- Прочее: 6.5% = 23.7 -->
+          <circle cx="80" cy="80" r="58" fill="none" stroke="#94A3B8" stroke-width="22" stroke-dasharray="23.7 340.7" stroke-dashoffset="-249.7" transform="rotate(-90 80 80)"/>
+          <!-- Center text -->
+          <text x="80" y="74" text-anchor="middle" style="font-family:var(--mono);font-size:16px;font-weight:700;fill:var(--text)">5 725</text>
+          <text x="80" y="90" text-anchor="middle" style="font-size:9px;fill:var(--text3);font-weight:600">млрд ВТП</text>
+        </svg>
+      </div>
+      <div style="font-size:10px;color:var(--text2);line-height:1.7">
+        <div style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:2px;background:#D97706;display:inline-block;flex-shrink:0"></span><b>Розница/Опт</b> – 38,2% <span style="color:var(--amber);font-weight:600">№1</span></div>
+        <div style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:2px;background:#059669;display:inline-block;flex-shrink:0"></span><b>Услуги</b> – 23,8% <span style="color:var(--green);font-weight:600">+107%</span></div>
+        <div style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:2px;background:#2563EB;display:inline-block;flex-shrink:0"></span><b>Промышл.</b> – 19,4% <span style="color:var(--red);font-weight:600">слабо</span></div>
+        <div style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:2px;background:#8B5CF6;display:inline-block;flex-shrink:0"></span><b>Строит.</b> – 12,1%</div>
+        <div style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:2px;background:#94A3B8;display:inline-block;flex-shrink:0"></span><b>Прочее</b> – 6,5%</div>
+      </div>
+      <div class="al al-a" style="margin-top:6px;font-size:9px;padding:4px 6px"><span style="font-size:10px">&#9888;</span><div><b>Перекос:</b> торговля > промышленность в 2× – город «перепродаёт», а не производит</div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- СТРАНИЦА 2: ПРОБЛЕМЫ, НЕДОСТАТКИ И ПОТЕНЦИАЛ                  -->
+<!-- ============================================================ -->
+<div class="page" id="p2">
+  <div class="hdr">
+    <div>
+      <div class="hdr-title">Проблемы, недостатки и потенциал</div>
+      <div class="hdr-sub">Критический анализ &nbsp;&bull;&nbsp; 6 ключевых вызовов &nbsp;&bull;&nbsp; 4 точки роста</div>
+    </div>
+    <div class="hdr-right">
+      <div class="hdr-brand">NBU Data Office</div>
+      <div class="hdr-page">02 / 09</div>
+    </div>
+  </div>
+
+  <div class="grid g2">
+
+    <!-- SECTION -->
+    <div class="sec sec12">Критические проблемы</div>
+
+    <!-- Миграция -->
+    <div class="c s4">
+      <div class="c-t">1. Миграционный кризис - 15&#8239;574 за рубежом</div>
+      <div style="display:flex;gap:16px">
+        <div style="flex:1;position:relative">
+          <svg style="position:absolute;top:10px;left:8px;right:8px;bottom:22px;width:calc(100% - 16px);height:calc(100% - 32px);z-index:2;pointer-events:none" viewBox="0 0 100 80" preserveAspectRatio="none">
+            <polyline points="10,14 30,28 50,40 70,52 90,58" fill="none" stroke="#059669" stroke-width="1.5" stroke-dasharray="3,2" stroke-linejoin="round"/>
+            <circle cx="10" cy="14" r="2" fill="#059669"/><circle cx="30" cy="28" r="2" fill="#059669"/><circle cx="50" cy="40" r="2" fill="#059669"/><circle cx="70" cy="52" r="2" fill="#059669"/><circle cx="90" cy="58" r="2" fill="#059669"/>
+            <text x="10" y="10" text-anchor="middle" style="font-size:6px;fill:#059669;font-weight:700;font-family:var(--mono)">9,5</text>
+            <text x="30" y="24" text-anchor="middle" style="font-size:6px;fill:#059669;font-weight:700;font-family:var(--mono)">9,0</text>
+            <text x="50" y="36" text-anchor="middle" style="font-size:6px;fill:#059669;font-weight:700;font-family:var(--mono)">7,8</text>
+            <text x="70" y="48" text-anchor="middle" style="font-size:6px;fill:#059669;font-weight:700;font-family:var(--mono)">6,5</text>
+            <text x="90" y="54" text-anchor="middle" style="font-size:6px;fill:#059669;font-weight:700;font-family:var(--mono)">5,8%</text>
+          </svg>
+          <div class="vchart" style="height:100px">
+            <div class="vcol"><div class="vval">253</div><div class="vbar" style="height:4px;background:#D97706"></div><div class="vlbl">21</div></div>
+            <div class="vcol"><div class="vval">630</div><div class="vbar" style="height:10px;background:#D97706"></div><div class="vlbl">22</div></div>
+            <div class="vcol"><div class="vval">1,8K</div><div class="vbar" style="height:28px;background:var(--red)"></div><div class="vlbl">23</div></div>
+            <div class="vcol"><div class="vval" style="color:var(--red);font-weight:700">6,2K</div><div class="vbar" style="height:75px;background:linear-gradient(180deg,#EF4444,#B91C1C)"></div><div class="vlbl" style="color:var(--red)">24</div></div>
+            <div class="vcol"><div class="vval">1,2K</div><div class="vbar" style="height:17px;background:var(--red);opacity:0.6"></div><div class="vlbl">25</div></div>
+          </div>
+          <div style="text-align:right;font-size:7px;color:#059669;font-weight:600;margin-top:1px">── безработица %</div>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:11px;color:var(--text2);line-height:1.65">
+            <div><b>76%</b> уехали ради заработка</div>
+            <div><b>61%</b> - в Россию</div>
+            <div><b>~7,7 млн сум/мес</b> - медиана за рубежом</div>
+            <div><b>3,97 млн сум/мес</b> - средняя в городе</div>
+            <div style="color:var(--green);font-weight:600;margin-top:3px">70% хотят вернуться (10&#8239;904 чел.)</div>
+          </div>
+        </div>
+      </div>
+      <div class="al al-r" style="margin-top:4px;font-size:10px;padding:5px 8px"><span style="font-size:11px">&#9888;</span><div>Безработица 5,8% → Низкие зарплаты → <b>Миграция ×3,5</b> (2024) → экспорт <b>-22%</b>, инвестиции <b>-16%</b>. Дефицит кадров → снижение производства</div></div>
+    </div>
+
+    <!-- Предприятия и промышленность -->
+    <div class="c s4">
+      <div class="c-t">2. Слабая промышленная база</div>
+      <div style="display:flex;gap:16px">
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+            <div style="font-family:var(--mono);font-size:36px;font-weight:700;color:var(--text);line-height:1">97<span style="font-size:16px;color:var(--text3)">%</span></div>
+            <div style="flex:1">
+              <div style="font-size:12px;font-weight:600;color:var(--text2)">малый бизнес</div>
+              <div style="display:flex;height:14px;border-radius:4px;overflow:hidden;margin-top:3px">
+                <div style="width:97%;background:linear-gradient(90deg,#2563EB,#60A5FA)"></div>
+                <div style="width:3%;background:linear-gradient(90deg,#DC2626,#F87171)"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:9px;margin-top:2px">
+                <span style="color:var(--accent);font-weight:600">МСБ: 2&#8239;386 млрд</span>
+                <span style="color:var(--red);font-weight:600">Крупные: 73 млрд</span>
+              </div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--text2);line-height:1.6;padding:4px 0;border-top:1px solid #F1F3F5">
+            <div><b>Предприятия: -43%</b> за 3 года (4&#8239;928 &#8594; 2&#8239;787)</div>
+            <div><b>Доля области:</b> всего 4,9% (vs 25,3% у г. Фергана)</div>
+            <div><b>Якорный работодатель:</b> <span style="color:var(--red)">отсутствует</span></div>
+          </div>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:0.5px;margin-bottom:4px">562 АКТИВНЫХ ПО ОТРАСЛЯМ</div>
+          <div class="bar"><div class="bar-l" style="width:80px;font-size:10px">Пищевая</div><div class="bar-t" style="height:15px"><div class="bar-f bf-amber" style="width:65%"></div></div><div class="bar-v" style="font-size:10px">471</div></div>
+          <div class="bar"><div class="bar-l" style="width:80px;font-size:10px">Текстиль</div><div class="bar-t" style="height:15px"><div class="bar-f bf-blue" style="width:54%"></div></div><div class="bar-v" style="font-size:10px">394</div></div>
+          <div class="bar"><div class="bar-l" style="width:80px;font-size:10px">Обувь</div><div class="bar-t" style="height:15px"><div class="bar-f bf-purple" style="width:35%"></div></div><div class="bar-v" style="font-size:10px">257</div></div>
+          <div class="bar"><div class="bar-l" style="width:80px;font-size:10px">Стройматер.</div><div class="bar-t" style="height:15px"><div class="bar-f bf-green" style="width:14%"></div></div><div class="bar-v" style="font-size:10px">104</div></div>
+          <div class="bar"><div class="bar-l" style="width:80px;font-size:10px">Мебель</div><div class="bar-t" style="height:15px"><div class="bar-f bf-gray" style="width:6%"></div></div><div class="bar-v" style="font-size:10px">44</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Социальная уязвимость + Бедность -->
+    <div class="c s4">
+      <div class="c-t" style="color:var(--red)"><span class="dot" style="background:var(--red)"></span> 3. Социальная уязвимость и бедность</div>
+      <div style="display:flex;gap:12px">
+        <div style="flex:1">
+          <div style="text-align:center;margin-bottom:4px">
+            <div style="font-family:var(--mono);font-size:28px;font-weight:700;color:var(--red)">2&#8239;602</div>
+            <div style="font-size:9px;color:var(--text3);font-weight:600">СЕМЕЙ НА УЧЁТЕ (4,2%)</div>
+          </div>
+          <div class="sp" style="margin-bottom:4px">
+            <div class="sp-box" style="background:#FFF7ED;padding:4px">
+              <div class="sp-l" style="color:#EA580C;font-size:8px">Группа риска</div>
+              <div class="sp-v" style="color:#991B1B;font-size:15px">2&#8239;116</div>
+              <div class="sp-s" style="color:#EA580C;font-size:8px">81,3%</div>
+            </div>
+            <div class="sp-box" style="background:#FFF1F2;padding:4px">
+              <div class="sp-l" style="color:#E11D48;font-size:8px">Крайняя нужда</div>
+              <div class="sp-v" style="color:#BE123C;font-size:15px">486</div>
+              <div class="sp-s" style="color:#E11D48;font-size:8px">18,7%</div>
+            </div>
+          </div>
+          <div style="font-size:10px;color:var(--text2);line-height:1.5">
+            <div><b>89,5%</b> глав семей – женщины, ср. возраст 35,7</div>
+            <div><span style="color:var(--red);font-weight:600">37,5% без какого-либо дохода</span></div>
+            <div><b>~11&#8239;000 чел.</b> охвачено (~4,2% населения)</div>
+          </div>
+        </div>
+        <div style="flex:0 0 150px;background:var(--red-soft);border-radius:8px;padding:8px;border:1px solid rgba(220,38,38,0.15)">
+          <div style="font-size:8px;font-weight:700;color:var(--red);letter-spacing:0.5px;margin-bottom:4px;text-align:center">УРОВЕНЬ БЕДНОСТИ</div>
+          <div style="text-align:center;margin-bottom:6px">
+            <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--red)">4,2%</div>
+            <div style="font-size:8px;color:var(--text3)">домохозяйств</div>
+          </div>
+          <div style="font-size:9px;color:var(--text2);line-height:1.6">
+            <div style="display:flex;justify-content:space-between"><span>2024:</span><span style="font-weight:600;color:var(--red)">2&#8239;602</span></div>
+            <div style="display:flex;justify-content:space-between"><span>2025п:</span><span style="font-weight:600;color:var(--amber)">1&#8239;548</span></div>
+            <div style="display:flex;justify-content:space-between"><span>2026ц:</span><span style="font-weight:600;color:var(--green)">651</span></div>
+          </div>
+          <div style="margin-top:4px;font-size:8px;color:var(--green);font-weight:600;text-align:center">Цель: 1,1% к 2026</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION -->
+    <div class="sec sec12">Дополнительные недостатки</div>
+
+    <!-- Предпринимательство -->
+    <div class="c s4" style="display:flex;flex-direction:column">
+      <div class="c-t">4. «Спящий» бизнес и теневая экономика</div>
+      <div style="display:flex;gap:14px;margin-top:6px">
+        <div style="flex:1">
+          <div style="text-align:center;padding:4px 0">
+            <div style="font-family:var(--mono);font-size:24px;font-weight:700;color:var(--text)">7&#8239;143</div>
+            <div style="font-size:9px;color:var(--text3);font-weight:600">ВСЕГО ЯТТ СУБЪЕКТОВ</div>
+          </div>
+          <div style="display:flex;height:16px;border-radius:4px;overflow:hidden;margin:4px 0">
+            <div style="width:46.4%;background:linear-gradient(90deg,#059669,#34D399)"></div>
+            <div style="width:43.1%;background:linear-gradient(90deg,#D97706,#FBBF24)"></div>
+            <div style="width:10.5%;background:linear-gradient(90deg,#DC2626,#F87171)"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:8px">
+            <span style="color:var(--green);font-weight:600">Активные 3&#8239;327 (46,4%)</span>
+            <span style="color:var(--amber);font-weight:600">Приост. 3&#8239;080 (43,1%)</span>
+            <span style="color:var(--red);font-weight:600">Ликв. 752 (10,5%)</span>
+          </div>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:10.5px;color:var(--text2);line-height:1.55">
+            <div><b>3&#8239;080 приостановлены</b> – причины:</div>
+            <div style="font-size:9.5px;padding-left:8px;color:var(--text3)">&#8226; Низкая рентабельность розницы<br>&#8226; Миграция владельцев<br>&#8226; Отсутствие доступа к кредитам</div>
+            <div style="margin-top:3px"><b>49,5%</b> всех ИП – только розничная торговля</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:6px;padding-top:5px;border-top:1px solid var(--border)">
+        <div style="font-size:9px;font-weight:700;color:var(--red);letter-spacing:0.5px;margin-bottom:3px">ТЕНЕВАЯ ЭКОНОМИКА</div>
+        <div style="display:flex;gap:10px">
+          <div style="flex:1;background:var(--red-soft);border-radius:6px;padding:5px;text-align:center">
+            <div style="font-family:var(--mono);font-size:15px;font-weight:700;color:var(--red)">2&#8239;682</div>
+            <div style="font-size:8px;color:var(--text3);font-weight:600">самозанятых без регистр.</div>
+          </div>
+          <div style="flex:1;background:var(--amber-soft);border-radius:6px;padding:5px;text-align:center">
+            <div style="font-family:var(--mono);font-size:15px;font-weight:700;color:var(--amber)">~37%</div>
+            <div style="font-size:8px;color:var(--text3);font-weight:600">неформальная активность</div>
+          </div>
+          <div style="flex:1;background:#EFF6FF;border-radius:6px;padding:5px;text-align:center">
+            <div style="font-family:var(--mono);font-size:15px;font-weight:700;color:var(--accent)">4&#8239;252</div>
+            <div style="font-size:8px;color:var(--text3);font-weight:600">цель формализации</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Кредитные риски -->
+    <div class="c s4" style="padding:5px 10px">
+      <div class="c-t" style="margin-bottom:3px">5. Кредитные риски и банковское кредитование</div>
+      <div style="display:flex;gap:10px">
+        <div style="flex:1">
+          <div style="text-align:center;padding:1px 0">
+            <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--red)">4,6%</div>
+            <div style="font-size:8px;color:var(--text3);font-weight:600">NPL-RATE (1&#8239;352 кредита)</div>
+          </div>
+          <table style="font-size:9px;margin-top:2px">
+            <tr><th style="padding:3px 6px">Организация</th><th class="r" style="padding:3px 6px">NPL</th><th class="r" style="padding:3px 6px">Долг</th></tr>
+            <tr><td style="padding:3px 6px"><b>МФО 10886</b></td><td class="r" style="padding:3px 6px;color:var(--red)"><b>41%</b></td><td class="r" style="padding:3px 6px"><b>43,8 млрд</b></td></tr>
+            <tr><td style="padding:3px 6px">АГРО БАНК</td><td class="r" style="padding:3px 6px;color:var(--red)">33%</td><td class="r" style="padding:3px 6px">6,7 млрд</td></tr>
+            <tr><td style="padding:3px 6px">ХАЛК БАНКИ</td><td class="r" style="padding:3px 6px">15%</td><td class="r" style="padding:3px 6px">1,2 млрд</td></tr>
+            <tr><td style="padding:3px 6px">HAMKORBANK</td><td class="r" style="padding:3px 6px">10%</td><td class="r" style="padding:3px 6px">4,9 млрд</td></tr>
+          </table>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:8px;font-weight:700;color:var(--accent);letter-spacing:0.5px;margin-bottom:2px">НОВЫЕ КРЕДИТЫ – ПЛАН 2026</div>
+          <div style="display:flex;gap:5px;margin-bottom:3px">
+            <div style="flex:1;background:#EFF6FF;border-radius:5px;padding:3px;text-align:center">
+              <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent)">1&#8239;500</div>
+              <div style="font-size:7px;color:var(--text3);font-weight:600">млрд план (×5,6)</div>
+            </div>
+            <div style="flex:1;background:var(--green-soft);border-radius:5px;padding:3px;text-align:center">
+              <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--green)">3&#8239;614</div>
+              <div style="font-size:7px;color:var(--text3);font-weight:600">рабочих мест</div>
+            </div>
+          </div>
+          <div class="al al-r" style="margin-bottom:2px;font-size:9px;padding:4px 8px"><span style="font-size:10px">&#9888;</span><div><b>77% просрочки</b> – одна МФО</div></div>
+          <div class="al al-a" style="font-size:9px;padding:4px 8px"><span style="font-size:10px">&#9888;</span><div><b>Маҳалла банкирлари:</b> неформальное кредитование – масштаб не оценён</div></div>
+        </div>
+      </div>
+      <div style="margin-top:3px;padding-top:3px;border-top:1px solid var(--border)">
+        <div style="font-size:8px;font-weight:700;color:var(--text3);letter-spacing:0.5px;margin-bottom:1px">РОЛЬ БАНКОВ В КРЕДИТОВАНИИ</div>
+        <div style="display:flex;gap:4px;font-size:8.5px;color:var(--text2)">
+          <div style="flex:1;padding:2px 5px;background:var(--bg2);border-radius:4px"><b>Коммерч.:</b> 1&#8239;344 млрд</div>
+          <div style="flex:1;padding:2px 5px;background:var(--bg2);border-radius:4px"><b>Маҳалла:</b> 20,8 млрд</div>
+          <div style="flex:1;padding:2px 5px;background:var(--bg2);border-radius:4px"><b>1-й шаг:</b> 90,0 млрд</div>
+          <div style="flex:1;padding:2px 5px;background:var(--bg2);border-radius:4px"><b>Оилавий:</b> 21,8 млрд</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Инфраструктура -->
+    <div class="c s4">
+      <div class="c-t">6. Инфраструктурные разрывы</div>
+      <div style="font-size:11.5px;color:var(--text2);line-height:1.9">
+        <div style="padding:3px 0;border-bottom:1px solid #F1F3F5"><b>Плотность:</b> <span style="color:var(--red);font-weight:600">5&#8239;035/км²</span> <span style="color:var(--text3)">(&#215;8 к области)</span></div>
+        <div style="padding:3px 0;border-bottom:1px solid #F1F3F5"><b>Здоровье:</b> <span style="color:var(--red);font-weight:600">137&#8239;203 / 100К</span> <span style="color:var(--text3)"> - худшая заболеваемость в обл.</span></div>
+        <div style="padding:3px 0;border-bottom:1px solid #F1F3F5"><b>Газификация:</b> <span style="color:var(--red);font-weight:600">0 км</span> <span style="color:var(--text3)">новых сетей за 2025 г.</span></div>
+        <div style="padding:3px 0;border-bottom:1px solid #F1F3F5"><b>Детсады:</b> дефицит <span style="color:var(--red);font-weight:600">600 мест</span></div>
+        <div style="padding:3px 0;border-bottom:1px solid #F1F3F5"><b>Больницы:</b> 8 (11,6% от г. Фергана при 78% населения)</div>
+        <div style="padding:3px 0"><b>Махалли:</b> разрыв доходов <span style="color:var(--red);font-weight:600">в 32 раза</span></div>
+      </div>
+    </div>
+
+    <!-- SECTION: ПОТЕНЦИАЛ -->
+    <div class="sec sec12">Потенциал и точки роста</div>
+
+    <!-- Драйверы роста -->
+    <div class="c s4" style="border-left:3px solid var(--green)">
+      <div class="c-t" style="color:var(--green)"><span class="dot" style="background:var(--green)"></span> Драйверы роста</div>
+      <div style="font-size:11px;color:var(--text2);line-height:1.65">
+        <div style="padding:3px 0;border-bottom:1px solid #F1F3F5"><b>Промышленность:</b> 140 проектов, <span style="font-family:var(--mono);font-weight:700;color:var(--green)">899,8 млрд</span>, 3&#8239;423 мест</div>
+        <div style="padding:3px 0;border-bottom:1px solid #F1F3F5"><b>Услуги/туризм:</b> 287 проектов, <span style="font-family:var(--mono);font-weight:700;color:var(--green)">1&#8239;219,4 млрд</span></div>
+        <div style="padding:3px 0;border-bottom:1px solid #F1F3F5"><b>FDI:</b> <span style="font-family:var(--mono);font-weight:700;color:var(--accent)">3 738 млрд</span> – 16 якорных проектов (Китай 95%)</div>
+        <div style="padding:3px 0"><b>Экспорт:</b> <span style="font-family:var(--mono);font-weight:700;color:var(--accent)">821 млрд</span> – трикотаж, фрукты, шёлк</div>
+      </div>
+      <div style="margin-top:6px;background:var(--green-soft);border-radius:6px;padding:6px 10px;font-size:10px;color:#065F46">
+        <b>Вывод:</b> нет якорей → низкие з/п → миграция → замкнутый цикл. Стратегия: трансформация от торгового к промышленно-туристическому центру.
+      </div>
+    </div>
+
+    <!-- Источники финансирования -->
+    <div class="c s4" style="border-left:3px solid var(--accent)">
+      <div class="c-t" style="color:var(--accent)"><span class="dot" style="background:var(--accent)"></span> Источники финансирования</div>
+      <div class="bar" style="margin:4px 0"><div class="bar-l" style="width:90px;font-size:10px">Предприятия</div><div class="bar-t" style="height:16px"><div class="bar-f bf-blue" style="width:55%"></div></div><div class="bar-v" style="font-size:10px;font-weight:700">2&#8239;825 млрд</div></div>
+      <div class="bar" style="margin:4px 0"><div class="bar-l" style="width:90px;font-size:10px">Иностранные</div><div class="bar-t" style="height:16px"><div class="bar-f bf-green" style="width:38%"></div></div><div class="bar-v" style="font-size:10px;font-weight:700">3 738 млрд</div></div>
+      <div class="bar" style="margin:4px 0"><div class="bar-l" style="width:90px;font-size:10px">Банк. кредиты</div><div class="bar-t" style="height:16px"><div class="bar-f bf-purple" style="width:30%"></div></div><div class="bar-v" style="font-size:10px;font-weight:700">1&#8239;500 млрд</div></div>
+      <div class="bar" style="margin:4px 0"><div class="bar-l" style="width:90px;font-size:10px">Госбюджет</div><div class="bar-t" style="height:16px"><div class="bar-f bf-amber" style="width:20%"></div></div><div class="bar-v" style="font-size:10px;font-weight:700">~1&#8239;000 млрд</div></div>
+      <div style="margin-top:6px;text-align:center;background:var(--bg2);border-radius:6px;padding:5px">
+        <div style="font-size:9px;color:var(--text3);font-weight:600">ИТОГО ПОРТФЕЛЬ</div>
+        <div style="font-family:var(--mono);font-size:20px;font-weight:700;color:var(--accent)">9,7 трлн сум</div>
+      </div>
+    </div>
+
+    <!-- Инвестиционный pipeline -->
+    <div class="c s4" style="border-left:3px solid var(--amber)">
+      <div class="c-t" style="color:var(--amber)"><span class="dot" style="background:var(--amber)"></span> Инвестиционный pipeline 2026</div>
+      <div style="display:flex;gap:8px;margin-bottom:8px">
+        <div style="flex:1;background:#EFF6FF;border-radius:6px;padding:6px;text-align:center">
+          <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--accent)">468</div>
+          <div style="font-size:8px;color:var(--text3);font-weight:600">проектов</div>
+        </div>
+        <div style="flex:1;background:var(--green-soft);border-radius:6px;padding:6px;text-align:center">
+          <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--green)">22&#8239;205</div>
+          <div style="font-size:8px;color:var(--text3);font-weight:600">рабочих мест</div>
+        </div>
+      </div>
+      <div style="font-size:10px;color:var(--text2);line-height:1.6">
+        <div style="padding:3px 0;border-bottom:1px solid #F1F3F5"><b>Промышленность:</b> 140 проектов → 3&#8239;423 мест</div>
+        <div style="padding:3px 0;border-bottom:1px solid #F1F3F5"><b>Сервис/торговля:</b> 287 проектов → 14&#8239;168 мест</div>
+        <div style="padding:3px 0;border-bottom:1px solid #F1F3F5"><b>Инфраструктура:</b> 32 проекта → 4&#8239;614 мест</div>
+        <div style="padding:3px 0"><b>IT/образование:</b> 9 проектов → 650 специалистов</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- СТРАНИЦА 3: SWOT-АНАЛИЗ                                       -->
+<!-- ============================================================ -->
+<div class="page" id="p3" style="display:flex;flex-direction:column">
+  <div class="hdr" style="flex-shrink:0">
+    <div>
+      <div class="hdr-title">SWOT-анализ</div>
+      <div class="hdr-sub">Стратегический срез &nbsp;&bull;&nbsp; Внутренние и внешние факторы &nbsp;&bull;&nbsp; Сильные и слабые стороны &nbsp;&bull;&nbsp; Возможности и угрозы</div>
+    </div>
+    <div class="hdr-right">
+      <div class="hdr-brand">NBU Data Office</div>
+      <div class="hdr-page">03 / 09</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:2px;flex:1;min-height:0;padding:2px 18px 4px">
+
+    <!-- STRENGTHS -->
+    <div style="background:linear-gradient(135deg,#F0FDF4 0%,#DCFCE7 100%);border-radius:8px;padding:7px 12px;display:flex;flex-direction:column;overflow:hidden">
+      <div style="font-size:15.5px;font-weight:700;color:var(--green);margin-bottom:3px;letter-spacing:0.3px"><span class="dot" style="background:var(--green)"></span> СИЛЬНЫЕ СТОРОНЫ (STRENGTHS)</div>
+      <table style="font-size:14px;width:100%;flex:1;line-height:1.3">
+        <tr><th style="width:26px;padding:2px 3px">#</th><th style="padding:2px 3px">Фактор</th><th class="r" style="width:150px;padding:2px 3px">Показатель</th></tr>
+        <tr><td style="padding:2px 3px"><b>S1</b></td><td style="padding:2px 3px">Торговая столица области – №1 по рознице и опту на душу населения</td><td class="r" style="padding:2px 3px"><b>13,5%</b> розницы обл.</td></tr>
+        <tr><td style="padding:2px 3px"><b>S2</b></td><td style="padding:2px 3px">Рекордный экспорт – рост +202% за 4 года, дефицит ×2 ↓</td><td class="r" style="padding:2px 3px"><b>450 млрд</b> сум</td></tr>
+        <tr><td style="padding:2px 3px"><b>S3</b></td><td style="padding:2px 3px">Молодое население – 54% моложе 30 лет, прирост +4 757/год</td><td class="r" style="padding:2px 3px"><b>141 500</b> молодёжь</td></tr>
+        <tr><td style="padding:2px 3px"><b>S4</b></td><td style="padding:2px 3px">Сектор общепита вырос +107% – бурное развитие услуг</td><td class="r" style="padding:2px 3px"><b>×2,1</b> за 3 года</td></tr>
+        <tr><td style="padding:2px 3px"><b>S5</b></td><td style="padding:2px 3px">Инвестиционный рост: +83% в 2025, иностранных 44,3%</td><td class="r" style="padding:2px 3px"><b>1 281 млрд</b></td></tr>
+        <tr><td style="padding:2px 3px"><b>S6</b></td><td style="padding:2px 3px">Ремесленная традиция – 209 мастеров, 1 052 занятых</td><td class="r" style="padding:2px 3px"><b>«Margilan Silk»</b></td></tr>
+        <tr><td style="padding:2px 3px"><b>S7</b></td><td style="padding:2px 3px">Жилищный бум – 31 многоэтажка, 1 681 квартир</td><td class="r" style="padding:2px 3px"><b>794,7 млрд</b></td></tr>
+        <tr><td style="padding:2px 3px"><b>S8</b></td><td style="padding:2px 3px">Спорт – 4 кандидата на Олимпиаду LA 2028, 980 мероприятий</td><td class="r" style="padding:2px 3px"><b>4</b> олимпийца</td></tr>
+        <tr><td style="padding:2px 3px"><b>S9</b></td><td style="padding:2px 3px">Текстильный кластер – 49 проектов, 488,1 млрд инвест.</td><td class="r" style="padding:2px 3px"><b>1 071</b> раб. мест</td></tr>
+      </table>
+    </div>
+
+    <!-- WEAKNESSES -->
+    <div style="background:linear-gradient(135deg,#FFF1F2 0%,#FFE4E6 100%);border-radius:8px;padding:7px 12px;display:flex;flex-direction:column;overflow:hidden">
+      <div style="font-size:15.5px;font-weight:700;color:var(--red);margin-bottom:3px;letter-spacing:0.3px"><span class="dot" style="background:var(--red)"></span> СЛАБЫЕ СТОРОНЫ (WEAKNESSES)</div>
+      <table style="font-size:14px;width:100%;flex:1;line-height:1.3">
+        <tr><th style="width:26px;padding:2px 3px">#</th><th style="padding:2px 3px">Фактор</th><th class="r" style="width:150px;padding:2px 3px">Показатель</th></tr>
+        <tr><td style="padding:2px 3px"><b>W1</b></td><td style="padding:2px 3px">97% экономики – малый бизнес, нет якорных работодателей</td><td class="r" style="padding:2px 3px;color:var(--red)"><b>4,9%</b> обл. пром.</td></tr>
+        <tr><td style="padding:2px 3px"><b>W2</b></td><td style="padding:2px 3px">Монокультура – 49,5% всех ИП только розничная торговля</td><td class="r" style="padding:2px 3px;color:var(--red)"><b>3 548</b> ИП розн.</td></tr>
+        <tr><td style="padding:2px 3px"><b>W3</b></td><td style="padding:2px 3px">Массовый отток – 15 574 за рубежом, 76% ради заработка</td><td class="r" style="padding:2px 3px;color:var(--red)"><b>×3,2</b> разрыв з/п</td></tr>
+        <tr><td style="padding:2px 3px"><b>W4</b></td><td style="padding:2px 3px">Кредитные риски: NPL 4,6%, 77% просрочки в МФО</td><td class="r" style="padding:2px 3px;color:var(--red)"><b>43,8 млрд</b></td></tr>
+        <tr><td style="padding:2px 3px"><b>W5</b></td><td style="padding:2px 3px">Инфраструктура: 0 км газификации, дефицит 600 мест ДДУ</td><td class="r" style="padding:2px 3px;color:var(--red)"><b>137К/100К</b></td></tr>
+        <tr><td style="padding:2px 3px"><b>W6</b></td><td style="padding:2px 3px">43% ИП приостановлены, 2 682 самозанятых без регистрации</td><td class="r" style="padding:2px 3px;color:var(--red)"><b>3 080</b> приост.</td></tr>
+        <tr><td style="padding:2px 3px"><b>W7</b></td><td style="padding:2px 3px">Здравоохранение: 13 учрежд., 516 коек на 260К населения</td><td class="r" style="padding:2px 3px;color:var(--red)"><b>2,0</b> койки/1К</td></tr>
+        <tr><td style="padding:2px 3px"><b>W8</b></td><td style="padding:2px 3px">Дефицит дошкольного – покрытие 81,3%, нужно +2 970 мест</td><td class="r" style="padding:2px 3px;color:var(--red)"><b>81,3%</b> покрытие</td></tr>
+        <tr><td style="padding:2px 3px"><b>W9</b></td><td style="padding:2px 3px">Сезонная занятость – 3 810 из 22 205 мест (17%)</td><td class="r" style="padding:2px 3px;color:var(--red)"><b>17%</b> сезонные</td></tr>
+      </table>
+    </div>
+
+    <!-- OPPORTUNITIES -->
+    <div style="background:linear-gradient(135deg,#EFF6FF 0%,#DBEAFE 100%);border-radius:8px;padding:7px 12px;display:flex;flex-direction:column;overflow:hidden">
+      <div style="font-size:15.5px;font-weight:700;color:var(--accent);margin-bottom:3px;letter-spacing:0.3px"><span class="dot" style="background:var(--accent)"></span> ВОЗМОЖНОСТИ (OPPORTUNITIES)</div>
+      <table style="font-size:14px;width:100%;flex:1;line-height:1.3">
+        <tr><th style="width:26px;padding:2px 3px">#</th><th style="padding:2px 3px">Фактор</th><th class="r" style="width:150px;padding:2px 3px">Потенциал</th></tr>
+        <tr><td style="padding:2px 3px"><b>O1</b></td><td style="padding:2px 3px">468 инвестпроектов – 9,7 трлн сум, 22 205 рабочих мест</td><td class="r" style="padding:2px 3px;color:var(--accent)"><b>9 722 млрд</b></td></tr>
+        <tr><td style="padding:2px 3px"><b>O2</b></td><td style="padding:2px 3px">70% мигрантов (10 904) хотят вернуться – кадровый резерв</td><td class="r" style="padding:2px 3px;color:var(--accent)"><b>10 904</b> чел.</td></tr>
+        <tr><td style="padding:2px 3px"><b>O3</b></td><td style="padding:2px 3px">3 738 млрд иностранных инвестиций: 16 проектов, якорные FDI</td><td class="r" style="padding:2px 3px;color:var(--accent)"><b>3 738 млрд</b></td></tr>
+        <tr><td style="padding:2px 3px"><b>O4</b></td><td style="padding:2px 3px">15 750 м² пустующих зданий + 30 объектов – готовая база</td><td class="r" style="padding:2px 3px;color:var(--accent)"><b>30</b> объектов</td></tr>
+        <tr><td style="padding:2px 3px"><b>O5</b></td><td style="padding:2px 3px">Туризм: 42 объекта наследия, бренд шёлка, 380К туристов</td><td class="r" style="padding:2px 3px;color:var(--accent)"><b>380К</b> турист.</td></tr>
+        <tr><td style="padding:2px 3px"><b>O6</b></td><td style="padding:2px 3px">Кредитная программа ×5,6 – 1 500 млрд через 5 госпрограмм</td><td class="r" style="padding:2px 3px;color:var(--accent)"><b>1 500 млрд</b></td></tr>
+        <tr><td style="padding:2px 3px"><b>O7</b></td><td style="padding:2px 3px">Всемирный банк: 35 проектов на 154 млрд (vs 26/114 млрд в 2025)</td><td class="r" style="padding:2px 3px;color:var(--accent)"><b>154 млрд</b> WB</td></tr>
+        <tr><td style="padding:2px 3px"><b>O8</b></td><td style="padding:2px 3px">IT: 650 специалистов, IT-Park 5,0 млрд + Cybersport Center</td><td class="r" style="padding:2px 3px;color:var(--accent)"><b>650</b> IT спец.</td></tr>
+        <tr><td style="padding:2px 3px"><b>O9</b></td><td style="padding:2px 3px">Мед. университет PPP – Central Asia Medical University</td><td class="r" style="padding:2px 3px;color:var(--accent)"><b>18,9 млрд</b></td></tr>
+        <tr><td style="padding:2px 3px"><b>O10</b></td><td style="padding:2px 3px">Реновация: 315 кв. (Қирғули/Навбахор) + 1 240 Янги Ўзб.</td><td class="r" style="padding:2px 3px;color:var(--accent)"><b>1 555</b> кв.</td></tr>
+      </table>
+    </div>
+
+    <!-- THREATS -->
+    <div style="background:linear-gradient(135deg,#FFFBEB 0%,#FEF3C7 100%);border-radius:8px;padding:7px 12px;display:flex;flex-direction:column;overflow:hidden">
+      <div style="font-size:15.5px;font-weight:700;color:var(--amber);margin-bottom:3px;letter-spacing:0.3px"><span class="dot" style="background:var(--amber)"></span> УГРОЗЫ (THREATS)</div>
+      <table style="font-size:14px;width:100%;flex:1;line-height:1.3">
+        <tr><th style="width:26px;padding:2px 3px">#</th><th style="padding:2px 3px">Фактор</th><th class="r" style="width:150px;padding:2px 3px">Уровень</th></tr>
+        <tr><td style="padding:2px 3px"><b>T1</b></td><td style="padding:2px 3px">Зависимость от Китая: 95% FDI (3 699 млрд из 3 738 млрд)</td><td class="r" style="padding:2px 3px"><span class="tag tag-r">ВЫСОКИЙ</span></td></tr>
+        <tr><td style="padding:2px 3px"><b>T2</b></td><td style="padding:2px 3px">Разрыв зарплат ×3,2 (3,97 vs 12,8 млн в РФ) – отток</td><td class="r" style="padding:2px 3px"><span class="tag tag-r">ВЫСОКИЙ</span></td></tr>
+        <tr><td style="padding:2px 3px"><b>T3</b></td><td style="padding:2px 3px">План 22 205 мест при безработице 5,8% – дефицит кадров</td><td class="r" style="padding:2px 3px"><span class="tag tag-a">СРЕДНИЙ</span></td></tr>
+        <tr><td style="padding:2px 3px"><b>T4</b></td><td style="padding:2px 3px">Нестабильность инвестиций: индекс 84–183%, 71% в Q4</td><td class="r" style="padding:2px 3px"><span class="tag tag-a">СРЕДНИЙ</span></td></tr>
+        <tr><td style="padding:2px 3px"><b>T5</b></td><td style="padding:2px 3px">Кредитование ×5,6 при NPL 4,6% – риск дефолта</td><td class="r" style="padding:2px 3px"><span class="tag tag-r">ВЫСОКИЙ</span></td></tr>
+        <tr><td style="padding:2px 3px"><b>T6</b></td><td style="padding:2px 3px">Инфраструктура: 0 км газификации при +4 757 чел./год</td><td class="r" style="padding:2px 3px"><span class="tag tag-a">СРЕДНИЙ</span></td></tr>
+        <tr><td style="padding:2px 3px"><b>T7</b></td><td style="padding:2px 3px">Массовый снос жилья (Қирғули, Навбахор) – соц. риск</td><td class="r" style="padding:2px 3px"><span class="tag tag-a">СРЕДНИЙ</span></td></tr>
+        <tr><td style="padding:2px 3px"><b>T8</b></td><td style="padding:2px 3px">С/х: 6 проектов, 46,4 млрд (0,5%) – продбезопасность</td><td class="r" style="padding:2px 3px"><span class="tag tag-r">ВЫСОКИЙ</span></td></tr>
+        <tr><td style="padding:2px 3px"><b>T9</b></td><td style="padding:2px 3px">Экспорт: 55% (448 млрд) в Россию – санкционный риск</td><td class="r" style="padding:2px 3px"><span class="tag tag-r">ВЫСОКИЙ</span></td></tr>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- СТРАНИЦА 4: ПРОБЛЕМЫ И РЕШЕНИЯ (все 6)                        -->
+<!-- ============================================================ -->
+<div class="page" id="p4" style="display:flex;flex-direction:column">
+  <div class="hdr" style="flex-shrink:0">
+    <div>
+      <div class="hdr-title">Проблемы и решения</div>
+      <div class="hdr-sub">6 критических направлений &nbsp;&bull;&nbsp; Миграция &nbsp;&bull;&nbsp; Промышленность &nbsp;&bull;&nbsp; Социальная сфера &nbsp;&bull;&nbsp; Бизнес &nbsp;&bull;&nbsp; Кредиты &nbsp;&bull;&nbsp; Инфраструктура</div>
+    </div>
+    <div class="hdr-right">
+      <div class="hdr-brand">NBU Data Office</div>
+      <div class="hdr-page">04 / 09</div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:4px;flex:1;min-height:0;padding:4px 20px 6px;overflow:hidden">
+
+    <!-- Header row -->
+    <div style="display:grid;grid-template-columns:1fr 28px 1fr;gap:0;padding:0 0 2px">
+      <div style="font-size:11px;font-weight:700;color:#991B1B;letter-spacing:1.5px;text-transform:uppercase;text-align:center;opacity:0.8">&#9679; Проблема</div>
+      <div></div>
+      <div style="font-size:11px;font-weight:700;color:#065F46;letter-spacing:1.5px;text-transform:uppercase;text-align:center;opacity:0.8">&#9679; Решение</div>
+    </div>
+
+    <!-- ROW 1: Migration -->
+    <div style="display:grid;grid-template-columns:1fr 28px 1fr;gap:0;flex:1;min-height:0">
+      <div style="background:linear-gradient(135deg,#FEF2F2,#FEE2E2);border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:10px;min-width:0;border-left:4px solid #B91C1C">
+        <div style="flex:0 0 auto;text-align:center">
+          <div style="font-family:var(--mono);font-size:36px;font-weight:800;color:#991B1B;line-height:1">15 574</div>
+          <div style="font-size:11px;color:#991B1B;font-weight:600;opacity:0.7">за рубежом</div>
+        </div>
+        <div style="width:1px;align-self:stretch;background:rgba(153,27,27,0.15);margin:4px 0"></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:16px;font-weight:700;color:#991B1B;margin-bottom:2px">1. Миграционный кризис</div>
+          <div style="font-size:14px;color:var(--text2);line-height:1.4">
+            <b>76%</b> ради заработка, <b>61%</b> в Россию. Разрыв з/п ×3,2 (3,97 vs 12,8 млн). <b>2024:</b> отток ×3,5 → экспорт <span style="color:#991B1B">-22%</span>, инвест. <span style="color:#991B1B">-16%</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center"><div style="width:22px;height:22px;background:linear-gradient(135deg,#065F46,#059669);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:12px">&#10132;</div></div>
+      <div style="background:linear-gradient(135deg,#ECFDF5,#D1FAE5);border-radius:8px;padding:8px 12px;display:flex;flex-direction:column;justify-content:center;min-width:0;border-left:4px solid #065F46">
+        <div style="font-size:16px;font-weight:700;color:#065F46;margin-bottom:2px">Программы возврата и рабочие места</div>
+        <div style="font-size:14px;color:var(--text2);line-height:1.4">
+          <b>10 904 (70%)</b> хотят вернуться. Гранты 50–100 млн сум. Ипотека WENNY (672 кв.). Адресные: Бахрин (1 218), З.М.Бобур (1 008). IT-центр: 650 спец.
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 2: Industry -->
+    <div style="display:grid;grid-template-columns:1fr 28px 1fr;gap:0;flex:1;min-height:0">
+      <div style="background:linear-gradient(135deg,#FEF2F2,#FEE2E2);border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:10px;min-width:0;border-left:4px solid #B91C1C">
+        <div style="flex:0 0 auto;text-align:center">
+          <div style="font-family:var(--mono);font-size:36px;font-weight:800;color:#991B1B;line-height:1">97<span style="font-size:16px">%</span></div>
+          <div style="font-size:11px;color:#991B1B;font-weight:600;opacity:0.7">МСБ</div>
+        </div>
+        <div style="width:1px;align-self:stretch;background:rgba(153,27,27,0.15);margin:4px 0"></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:16px;font-weight:700;color:#991B1B;margin-bottom:2px">2. Слабая промышленная база</div>
+          <div style="font-size:14px;color:var(--text2);line-height:1.4">
+            Предприятия <b>-43%</b> (4 928→2 787). Доля области: <b>4,9%</b> (vs 25,3% Фергана). Крупные: 73 млрд (3%). <span style="color:#991B1B;font-weight:600">Якорь – отсутствует</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center"><div style="width:22px;height:22px;background:linear-gradient(135deg,#065F46,#059669);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:12px">&#10132;</div></div>
+      <div style="background:linear-gradient(135deg,#ECFDF5,#D1FAE5);border-radius:8px;padding:8px 12px;display:flex;flex-direction:column;justify-content:center;min-width:0;border-left:4px solid #065F46">
+        <div style="font-size:16px;font-weight:700;color:#065F46;margin-bottom:2px">Формирование якорных работодателей</div>
+        <div style="font-size:14px;color:var(--text2);line-height:1.4">
+          <b>140 промпроектов</b> – 899,8 млрд, 3 423 мест. FOSHAN (384 млрд), мебельный кластер (116 млрд). Восстановление <b>349 неработающих</b> → +100 млрд
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 3: Social -->
+    <div style="display:grid;grid-template-columns:1fr 28px 1fr;gap:0;flex:1;min-height:0">
+      <div style="background:linear-gradient(135deg,#FEF2F2,#FEE2E2);border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:10px;min-width:0;border-left:4px solid #B91C1C">
+        <div style="flex:0 0 auto;text-align:center">
+          <div style="font-family:var(--mono);font-size:36px;font-weight:800;color:#991B1B;line-height:1">2 602</div>
+          <div style="font-size:11px;color:#991B1B;font-weight:600;opacity:0.7">семей (4,2%)</div>
+        </div>
+        <div style="width:1px;align-self:stretch;background:rgba(153,27,27,0.15);margin:4px 0"></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:16px;font-weight:700;color:#991B1B;margin-bottom:2px">3. Социальная уязвимость</div>
+          <div style="font-size:14px;color:var(--text2);line-height:1.4">
+            <b>89,5%</b> глав – женщины, возраст 35,7. <span style="color:#991B1B;font-weight:600">37,5% без дохода.</span> 486 в крайней нужде. Разрыв: Ватан (75) vs Бахрин (4)
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center"><div style="width:22px;height:22px;background:linear-gradient(135deg,#065F46,#059669);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:12px">&#10132;</div></div>
+      <div style="background:linear-gradient(135deg,#ECFDF5,#D1FAE5);border-radius:8px;padding:8px 12px;display:flex;flex-direction:column;justify-content:center;min-width:0;border-left:4px solid #065F46">
+        <div style="font-size:16px;font-weight:700;color:#065F46;margin-bottom:2px">Адресная поддержка уязвимых семей</div>
+        <div style="font-size:14px;color:var(--text2);line-height:1.4">
+          Махалли: Истиклол (20 млрд), Йурмадуз (35,8 млрд). <b>974 женщины</b> → курсы. 76 микропроектов. Семейный бизнес: <b>1 856 мест</b>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 4: Sleeping business -->
+    <div style="display:grid;grid-template-columns:1fr 28px 1fr;gap:0;flex:1;min-height:0">
+      <div style="background:linear-gradient(135deg,#FEF2F2,#FEE2E2);border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:10px;min-width:0;border-left:4px solid #B91C1C">
+        <div style="flex:0 0 auto;text-align:center">
+          <div style="font-family:var(--mono);font-size:36px;font-weight:800;color:#991B1B;line-height:1">3 080</div>
+          <div style="font-size:11px;color:#991B1B;font-weight:600;opacity:0.7">приостановл.</div>
+        </div>
+        <div style="width:1px;align-self:stretch;background:rgba(153,27,27,0.15);margin:4px 0"></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:16px;font-weight:700;color:#991B1B;margin-bottom:2px">4. «Спящий» бизнес</div>
+          <div style="font-size:14px;color:var(--text2);line-height:1.4">
+            <b>43%</b> ИП приостановлены. <b>2 682</b> самозанятых без регистрации. <b>49,5%</b> ИП – только розница. <span style="color:#991B1B;font-weight:600">Монокультура перепродажи</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center"><div style="width:22px;height:22px;background:linear-gradient(135deg,#065F46,#059669);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:12px">&#10132;</div></div>
+      <div style="background:linear-gradient(135deg,#ECFDF5,#D1FAE5);border-radius:8px;padding:8px 12px;display:flex;flex-direction:column;justify-content:center;min-width:0;border-left:4px solid #065F46">
+        <div style="font-size:16px;font-weight:700;color:#065F46;margin-bottom:2px">Активация и диверсификация</div>
+        <div style="font-size:14px;color:var(--text2);line-height:1.4">
+          Возрождение <b>349 пром.</b> (+100 млрд) и <b>1 022 серв.</b> (+122,6 млрд). Формализация 4 252 самозанятых. Инкубаторы в 15 750 м² зданий
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 5: Credit risks -->
+    <div style="display:grid;grid-template-columns:1fr 28px 1fr;gap:0;flex:1;min-height:0">
+      <div style="background:linear-gradient(135deg,#FEF2F2,#FEE2E2);border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:10px;min-width:0;border-left:4px solid #B91C1C">
+        <div style="flex:0 0 auto;text-align:center">
+          <div style="font-family:var(--mono);font-size:36px;font-weight:800;color:#991B1B;line-height:1">4,6<span style="font-size:16px">%</span></div>
+          <div style="font-size:11px;color:#991B1B;font-weight:600;opacity:0.7">NPL rate</div>
+        </div>
+        <div style="width:1px;align-self:stretch;background:rgba(153,27,27,0.15);margin:4px 0"></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:16px;font-weight:700;color:#991B1B;margin-bottom:2px">5. Кредитные риски (NPL)</div>
+          <div style="font-size:14px;color:var(--text2);line-height:1.4">
+            <b>77%</b> просрочки – одна МФО (NPL <b>41%</b>). Агро банк: NPL <b>33%</b>. План ×5,6 (268→1 500 млрд). <span style="color:#991B1B;font-weight:600">Риск лавинного дефолта</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center"><div style="width:22px;height:22px;background:linear-gradient(135deg,#065F46,#059669);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:12px">&#10132;</div></div>
+      <div style="background:linear-gradient(135deg,#ECFDF5,#D1FAE5);border-radius:8px;padding:8px 12px;display:flex;flex-direction:column;justify-content:center;min-width:0;border-left:4px solid #065F46">
+        <div style="font-size:16px;font-weight:700;color:#065F46;margin-bottom:2px">Управление кредитными рисками</div>
+        <div style="font-size:14px;color:var(--text2);line-height:1.4">
+          Аудит МФО до масштабирования. PD/RBL-скоринг. Привязка к проектной экспертизе. Стоп-факторы NPL &gt;5%. Реструктуризация 1 352 кредитов
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 6: Infrastructure -->
+    <div style="display:grid;grid-template-columns:1fr 28px 1fr;gap:0;flex:1;min-height:0">
+      <div style="background:linear-gradient(135deg,#FEF2F2,#FEE2E2);border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:10px;min-width:0;border-left:4px solid #B91C1C">
+        <div style="flex:0 0 auto;text-align:center">
+          <div style="font-family:var(--mono);font-size:36px;font-weight:800;color:#991B1B;line-height:1">137К</div>
+          <div style="font-size:11px;color:#991B1B;font-weight:600;opacity:0.7">на 100К нас.</div>
+        </div>
+        <div style="width:1px;align-self:stretch;background:rgba(153,27,27,0.15);margin:4px 0"></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:16px;font-weight:700;color:#991B1B;margin-bottom:2px">6. Инфраструктурные разрывы</div>
+          <div style="font-size:14px;color:var(--text2);line-height:1.4">
+            Заболеваемость <b>137К/100К</b> – худшая в обл. Газификация: <b>0 км</b>. Детсады: дефицит <b>600 мест</b>. Плотность 5 035/км² (×8 к обл.)
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center"><div style="width:22px;height:22px;background:linear-gradient(135deg,#065F46,#059669);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:12px">&#10132;</div></div>
+      <div style="background:linear-gradient(135deg,#ECFDF5,#D1FAE5);border-radius:8px;padding:8px 12px;display:flex;flex-direction:column;justify-content:center;min-width:0;border-left:4px solid #065F46">
+        <div style="font-size:16px;font-weight:700;color:#065F46;margin-bottom:2px">Инфраструктурное развитие 2026</div>
+        <div style="font-size:14px;color:var(--text2);line-height:1.4">
+          Электросети→<b>210 км</b>. Вода→<b>100%</b>. Медвуз (<b>68,9 млрд</b>). MARMED (<b>20 млрд</b>). 2 970 мест ДДУ→охват <b>90%</b>. Газ: план 15 км
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- СТРАНИЦА 5: СТРАТЕГИЯ                                        -->
+<!-- ============================================================ -->
+<div class="page" id="p5">
+  <div class="hdr">
+    <div>
+      <div class="hdr-title">Стратегия развития Маргилана</div>
+      <div class="hdr-sub">9 приоритетов &nbsp;&bull;&nbsp; 3 горизонта &nbsp;&bull;&nbsp; 2026–2031</div>
+    </div>
+    <div class="hdr-right">
+      <div class="hdr-brand">NBU Data Office</div>
+      <div class="hdr-page">05 / 09</div>
+    </div>
+  </div>
+
+  <div class="grid g2">
+
+    <!-- Group A: Срочные -->
+    <div class="prio-group"><span class="pg-icon" style="background:var(--red)">&#9650;</span> Срочные - кадры и экономика (2026–2027)</div>
+
+    <div class="rec rec-red s4">
+      <div class="rec-h">Создание современных рабочих мест</div>
+      <div class="rec-b"><b>Проблема:</b> 15&#8239;574 за рубежом, 70% готовы вернуться (10&#8239;904 чел.). Разрыв зарплат &#215;3,2 (3,97 млн vs 12,8 млн в РФ). Безработных на 01.01.2026: 1&#8239;798 чел. (1,8%). Ожидается выход на рынок 8&#8239;753 чел. (выпускники 2&#8239;310, возвращающиеся мигранты 2&#8239;530, ВУЗы 3&#8239;244). <b>Решение:</b> гранты 50–100 млн для вернувшихся, адресные программы в Бахрин (1&#8239;218) и З.М.Бобур (1&#8239;008). Льготная ипотека WENNY ESTATE (672 кв.). Навыки 2&#8239;082 мигрантов &#8594; 16 жилпроектов. <b>План:</b> 22&#8239;205 рабочих мест (18&#8239;395 постоянных + 3&#8239;810 сезонных). Услуги: 15&#8239;284 мест | Промышленность: 4&#8239;353 | Строительство: 953 | Туризм: 465.</div>
+      <div class="rec-k"><span class="lbl">Миграция:</span><span class="from">15&#8239;574</span><span class="arr">&#8594;</span><span class="to">&lt;8&#8239;000</span> &nbsp;|&nbsp; <span class="lbl">Безработица:</span><span class="from">8&#8239;753</span><span class="arr">&#8594;</span><span class="to">0</span></div>
+    </div>
+    <div class="rec rec-red s4">
+      <div class="rec-h">Формирование якорных работодателей</div>
+      <div class="rec-b"><b>Проблема:</b> 97% промышленности на МСБ, нет крупных предприятий. <b>Решение:</b> 140 промышленных проектов на 899,8 млрд (3&#8239;423 места): текстиль 49 пр./488 млрд, пищепром 33 пр./167 млрд, мебель 10 пр./116 млрд, кожа 31 пр./55 млрд. <b>Якоря:</b> «Ферантеп Гилам» (360 млрд, 150 мест, ковры), EVROOSIYO MEBEL (36 млрд, 200 мест), TOOL-X (15 млрд, автозапчасти), FENIX TEX (12 млрд, спортодежда). Возрождение 349 неактивных предприятий (+100 млрд). Поддержка 78 падающих (+106,6 млрд).</div>
+      <div class="rec-k"><span class="lbl">Крупный бизнес:</span><span class="from">3%</span><span class="arr">&#8594;</span><span class="to">15–20%</span> &nbsp;|&nbsp; <span class="lbl">Промышленность:</span><span class="from">2&#8239;459</span><span class="arr">&#8594;</span><span class="to">3&#8239;087 млрд</span></div>
+    </div>
+    <div class="rec rec-red s4">
+      <div class="rec-h">Стабилизация инвестиций</div>
+      <div class="rec-b"><b>Проблема:</b> индекс скачет 173 &#8594; 84 &#8594; 183, 71% инвестиций в Q4. <b>Решение:</b> 468 проектов на 6&#8239;913 млрд. FDI: 3 738 млрд (16 проектов, 95% Китай) – HENG TAI 960 млрд (туркомплекс), Steel&amp;Protect 448 млрд (785 кв.), FOSHAN 384 млрд (керамика), GUANGZHOU 256 млрд (пищепром). <b>Кредиты:</b> 1&#8239;500 млрд (&#215;5,6): Биринчи қадам 90 млрд, Маҳалла лойиҳаси 20,8 млрд, Оилавий тадбиркорлик 21,8 млрд. Всемирный банк: 35 проектов, 154 млрд. Экспорт: 821 млрд (трикотаж 358 млрд, фрукты 198 млрд).</div>
+      <div class="rec-k"><span class="lbl">Инвестиции/год:</span><span class="from">1&#8239;281 млрд</span><span class="arr">&#8594;</span><span class="to">3&#8239;000 млрд</span> &nbsp;|&nbsp; <span class="lbl">FDI:</span><span class="to">3 738 млрд</span></div>
+    </div>
+
+    <!-- Group B: Среднесрочные -->
+    <div class="prio-group"><span class="pg-icon" style="background:var(--amber)">&#9632;</span> Среднесрочные - бизнес-среда и социум (2027–2029)</div>
+
+    <div class="rec rec-amber s4">
+      <div class="rec-h">Активация малого бизнеса</div>
+      <div class="rec-b"><b>Проблема:</b> 3&#8239;080 ИП приостановлены, 49,5% – только торговля.<br><b>Решение:</b> 287 сервисных проектов (1&#8239;219 млрд, 3&#8239;920 мест).<br><b>Якоря:</b> Margilan Plaza (120 млрд), Kelajak Bog&#8217; Fargona (55 млрд).<br><b>Восстановление:</b> 1&#8239;022 неактивных предприятий (+122,6 млрд).</div>
+      <div class="rec-k"><span class="lbl">Активных ИП:</span><span class="from">46,4%</span><span class="arr">&#8594;</span><span class="to">70%+</span> &nbsp;|&nbsp; <span class="lbl">Услуги:</span><span class="from">3&#8239;844</span><span class="arr">&#8594;</span><span class="to">5&#8239;267 млрд</span></div>
+    </div>
+    <div class="rec rec-amber s4">
+      <div class="rec-h">Адресная поддержка уязвимых семей</div>
+      <div class="rec-b"><b>Проблема:</b> 2&#8239;602 семьи на учёте, 486 в крайней нужде, 89,5% глав - женщины. <b>Решение:</b> профобучение, микрокредиты на домашнее производство, масштабирование модели Истиклол/Йурмадуз. Пропорциональное распределение кредитов (vs равные доли).</div>
+      <div class="rec-k"><span class="lbl">Бедных семей:</span><span class="from">2&#8239;602</span><span class="arr">&#8594;</span><span class="to">&lt;600</span></div>
+    </div>
+    <div class="rec rec-amber s4">
+      <div class="rec-h">Управление кредитными рисками</div>
+      <div class="rec-b"><b>Проблема:</b> NPL 4,6%, 41% в одном банке; план кредитования &#215;5,6. <b>Решение:</b> аудит МФО 10886, PD/RBL-модели скоринга, привязка выдачи к проектной экспертизе. Адресное распределение по махаллям (учёт разрыва 32&#215;).</div>
+      <div class="rec-k"><span class="lbl">NPL:</span><span class="from">4,6%</span><span class="arr">&#8594;</span><span class="to">&lt;2,5%</span></div>
+    </div>
+
+    <!-- Group C: Долгосрочные -->
+    <div class="prio-group"><span class="pg-icon" style="background:var(--green)">&#9679;</span> Долгосрочные - инфраструктура и развитие (2029–2031)</div>
+
+    <div class="rec rec-green s4">
+      <div class="rec-h">Развитие бренда «Margilan Silk» и туризма</div>
+      <div class="rec-b"><b>Проблема:</b> 42 объекта наследия слабо монетизированы, 209 ремесленников. <b>Решение:</b> 38 туристических проектов на 400,2 млрд (1&#8239;023 места): отели/хостелы 5 пр./148,5 млрд, ремёсла и развлечения 33 пр./251,7 млрд. HENG TAI туркомплекс (960 млрд), Comfort Avenue Hotel (126 млрд, 250 мест). Хиёбон 24/7 (1,2 км, 30 мест), набережная Тўягум (11,3 млрд, 60 мест). Реставрация: Валихон Тура (III век, 1 млрд), Жаҳри мечеть (1 млрд), комплекс Бурхониддин Марғилоний. Ожидаемый доход: 110 млрд сум.</div>
+      <div class="rec-k"><span class="lbl">Туристы:</span><span class="from">276&#8239;000</span><span class="arr">&#8594;</span><span class="to">380&#8239;000</span> (+37%) &nbsp;|&nbsp; <span class="lbl">Проекты:</span><span class="to">400,2 млрд</span></div>
+    </div>
+    <div class="rec rec-green s4">
+      <div class="rec-h">Здравоохранение и инфраструктура</div>
+      <div class="rec-b"><b>Проблема:</b> заболеваемость +37%, дефицит 600 мест в детсадах, 13 медучреждений, 516 коек. <b>Решение:</b> 54 проекта на 185 млрд (753 места): 27 медпроектов/116,8 млрд, 20 детсадов/44,9 млрд. Медвуз Central Asia (68,9 млрд, 70 мест), клиника MARMED (20 млрд, 40 мест). Детсады: охват 81,3% &#8594; 90% (+2&#8239;970 мест). <b>Строительство:</b> 2&#8239;581 млрд (+33%), 31 дом/1&#8239;681 квартира. Реновация: Қирғули (20 домов &#8594; 5&#215;9-эт., 315 кв.), Навбахор (11 домов &#8594; 2&#215;9-эт., 171 кв.). Инфраструктура: 210 км электросетей, водоснабжение 98,8% &#8594; 100%.</div>
+      <div class="rec-k"><span class="lbl">Детсады:</span><span class="from">81,3%</span><span class="arr">&#8594;</span><span class="to">90%</span> &nbsp;|&nbsp; <span class="lbl">Строительство:</span><span class="to">2&#8239;581 млрд</span></div>
+    </div>
+    <div class="rec rec-green s4">
+      <div class="rec-h">Выравнивание махаллей и образование</div>
+      <div class="rec-b"><b>Проблема:</b> разрыв доходов 32&#215;, 19 махаллей с низкой специализацией. <b>Решение:</b> 9 IT-проектов на 13,3 млрд (107 мест): IT-центр и библиотека ГЧП (1,2 млрд, 650 IT-специалистов), IT-Park на Молодёжном бульваре (5 млрд, 30 мест). 21 направление: AI/ML, data science, кибербезопасность. Обучение 1&#8239;604 безработных, 974 женщины. 17 языковых центров на 5&#8239;700 мест. Малые производства в отстающих махаллях, стажировки в 468 проектах.</div>
+      <div class="rec-k"><span class="lbl">Разрыв:</span><span class="from">32&#215;</span><span class="arr">&#8594;</span><span class="to">&lt;10&#215;</span> &nbsp;|&nbsp; <span class="lbl">IT-спец.:</span><span class="to">650</span></div>
+    </div>
+
+    <!-- Секторальные приоритеты -->
+    <div class="sec sec12">Секторальные приоритеты</div>
+
+    <div class="c s12">
+      <div class="c-t" style="color:var(--accent)">Сельское хозяйство и свободные здания</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 20px;font-size:13px;color:var(--text2);line-height:1.55">
+        <div><b>Сельское хозяйство:</b> 6 проектов, 46,4 млрд. Orion Fresh Fruits – холодильное хранилище 45 млрд, 20 мест. Цель: 832,7 млрд (+7%). Экспорт с/х: 262 млрд.</div>
+        <div><b>Свободные здания:</b> 30 объектов (6 гос. + 24 частных). Mr. Fish Fergana &#8594; технопарк (66 млрд). Газ Автоматика &#8594; ТЦ (10 млрд). 6 гос. зданий (15 млрд, 85 мест).</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- СТРАНИЦА 6: IT + РОЛЬ БАНКОВ (COMBINED)                        -->
+<!-- ============================================================ -->
+<!-- СТРАНИЦА 6: ИНВЕСТИЦИИ, СТРОИТЕЛЬСТВО И СОЦИАЛЬНАЯ СФЕРА     -->
+<!-- ============================================================ -->
+<div class="page" id="p6" style="display:flex;flex-direction:column">
+  <div class="hdr" style="flex-shrink:0">
+    <div>
+      <div class="hdr-title">План реализации 2026: инвестиции и социальная сфера</div>
+      <div class="hdr-sub">3 738 млрд FDI &nbsp;&bull;&nbsp; 821 млрд экспорт &nbsp;&bull;&nbsp; 380K туристов &nbsp;&bull;&nbsp; 2 581 млрд строительство &nbsp;&bull;&nbsp; 54 проекта здравоохранение</div>
+    </div>
+    <div class="hdr-right">
+      <div class="hdr-brand">NBU Data Office</div>
+      <div class="hdr-page">06 / 09</div>
+    </div>
+  </div>
+
+  <div style="flex:1;min-height:0;display:flex;flex-direction:column;padding:1px 20px 4px;gap:3px">
+
+    <!-- KPI row -->
+    <div style="display:flex;gap:6px;flex-shrink:0">
+      <div class="kpi" style="flex:1;padding:4px 6px"><div class="kpi-l" style="font-size:11.7px">Иностранные инвестиции</div><div class="kpi-v" style="font-size:25.7px">3 738 млрд</div><div class="kpi-s" style="font-size:11.7px">16 проектов</div></div>
+      <div class="kpi" style="flex:1;padding:4px 6px"><div class="kpi-l" style="font-size:11.7px">Экспорт</div><div class="kpi-v" style="font-size:25.7px">821 млрд</div><div class="kpi-s" style="font-size:11.7px">пром. + с/х</div></div>
+      <div class="kpi" style="flex:1;padding:4px 6px"><div class="kpi-l" style="font-size:11.7px">Туристы</div><div class="kpi-v" style="font-size:25.7px">380K</div><div class="kpi-s" style="font-size:11.7px">план 2026</div></div>
+      <div class="kpi" style="flex:1;padding:4px 6px"><div class="kpi-l" style="font-size:11.7px">Строительство</div><div class="kpi-v" style="font-size:25.7px">2 581</div><div class="kpi-s" style="font-size:11.7px">млрд сум</div></div>
+      <div class="kpi" style="flex:1;padding:4px 6px"><div class="kpi-l" style="font-size:11.7px">Жильё</div><div class="kpi-v" style="font-size:25.7px">1 681</div><div class="kpi-s" style="font-size:11.7px">кв., 31 дом</div></div>
+      <div class="kpi" style="flex:1;padding:4px 6px"><div class="kpi-l" style="font-size:11.7px">Здравоохранение</div><div class="kpi-v" style="font-size:25.7px">185</div><div class="kpi-s" style="font-size:11.7px">млрд, 54 пр.</div></div>
+      <div class="kpi" style="flex:1;padding:4px 6px"><div class="kpi-l" style="font-size:11.7px">Образование</div><div class="kpi-v" style="font-size:25.7px">90%</div><div class="kpi-s" style="font-size:11.7px">охват ДДУ</div></div>
+      <div class="kpi" style="flex:1;padding:4px 6px"><div class="kpi-l" style="font-size:11.7px">Всемирный банк</div><div class="kpi-v" style="font-size:25.7px">154 млрд</div><div class="kpi-s" style="font-size:11.7px">35 проектов</div></div>
+    </div>
+
+    <!-- ═══ TOP HALF: Инвестиции, экспорт и туризм ═══ -->
+    <div style="font-size:15.2px;font-weight:700;color:var(--accent);padding:1px 0;flex-shrink:0;letter-spacing:0.3px">&#9670; Инвестиции, экспорт и туризм</div>
+
+    <div style="flex:1;min-height:0;display:grid;grid-template-columns:5fr 4fr 3fr;gap:5px">
+
+      <!-- FDI -->
+      <div class="c" style="padding:5px 10px;overflow:hidden">
+        <div style="font-size:14.6px;font-weight:700;color:var(--accent);margin-bottom:2px">Якорные проекты FDI (3 738 млрд)</div>
+        <table style="font-size:13.6px">
+          <tr><th style="padding:1px 3px">Компания</th><th style="padding:1px 3px">Проект</th><th class="r" style="padding:1px 3px">Сумма</th><th class="r" style="padding:1px 3px">Мест</th></tr>
+          <tr><td style="padding:1px 3px"><b>HENG TAI</b></td><td style="padding:1px 3px">Отель + рекреация</td><td class="r" style="padding:1px 3px">960 млрд</td><td class="r" style="padding:1px 3px">70</td></tr>
+          <tr><td style="padding:1px 3px"><b>Steel & Protect</b></td><td style="padding:1px 3px">City Mall, 785 кв.</td><td class="r" style="padding:1px 3px">448 млрд</td><td class="r" style="padding:1px 3px">100</td></tr>
+          <tr><td style="padding:1px 3px"><b>FOSHAN</b></td><td style="padding:1px 3px">Керамика, smart home</td><td class="r" style="padding:1px 3px">384 млрд</td><td class="r" style="padding:1px 3px">50</td></tr>
+          <tr><td style="padding:1px 3px"><b>GUANGZHOU</b></td><td style="padding:1px 3px">Пищевая перераб.</td><td class="r" style="padding:1px 3px">256 млрд</td><td class="r" style="padding:1px 3px">50</td></tr>
+        </table>
+        <div style="margin-top:3px;background:#FEF3C7;border-radius:3px;padding:2px 6px;font-size:12.3px;border-left:2px solid var(--amber)">
+          <b style="color:var(--amber)">&#9888;</b> 95% FDI – Китай. Срыв 1 проекта = -960 млрд
+        </div>
+      </div>
+
+      <!-- Export + Tourism -->
+      <div style="display:flex;flex-direction:column;gap:4px;overflow:hidden">
+        <div class="c" style="flex-shrink:0;padding:5px 10px;overflow:hidden">
+          <div style="font-size:14.6px;font-weight:700;color:var(--green);margin-bottom:1px">Экспорт (821 млрд)</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px 10px;font-size:13.6px;color:var(--text2)">
+            <div>&#9632; Трикотаж – <b>358 млрд</b></div>
+            <div>&#9632; Фрукты – <b>198 млрд</b></div>
+            <div>&#9632; Химия – <b>64 млрд</b></div>
+            <div>&#9632; Сухофрукты – <b>64 млрд</b></div>
+          </div>
+          <div style="margin-top:2px;font-size:12.3px;font-weight:600;color:var(--text3)">Рынки: Россия 448 млрд &middot; Кыргызстан 102 млрд &middot; Казахстан 90 млрд &middot; Таджикистан 91 млрд</div>
+        </div>
+        <div class="c" style="flex:1;min-height:0;padding:5px 10px;overflow:hidden">
+          <div style="font-size:14.6px;font-weight:700;color:#7C3AED;margin-bottom:1px">38 турпроектов (400,2 млрд)</div>
+          <div style="font-size:13.6px;color:var(--text2);line-height:1.4">
+            <div>&#10132; <b>HENG TAI</b> – туркомплекс (960 млрд), 70 мест</div>
+            <div>&#10132; <b>Comfort Avenue</b> – 126 млрд, 250 мест</div>
+            <div>&#10132; <b>Хиёбон 24/7</b> – 1,2 км пешеходная зона</div>
+            <div>&#10132; <b>Тўягум</b> – набережная 0,9 км, 60 мест</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Heritage -->
+      <div class="c" style="padding:5px 10px;overflow:hidden">
+        <div style="font-size:14.6px;font-weight:700;color:#7C3AED;margin-bottom:2px">Культурное наследие</div>
+        <div style="font-size:13.6px;color:var(--text2);line-height:1.55">
+          <div>&#127979; <b>42 объекта</b> наследия</div>
+          <div>&#127912; <b>209 ремесленников</b>, 1 052 занят.</div>
+          <div>&#127963; <b>Валихон Тура</b> (III век)</div>
+          <div>&#128332; <b>Мечеть Жаҳри</b> (XIX-XX вв.)</div>
+          <div>&#127970; <b>Бурхониддин Маргилоний</b></div>
+          <div>&#127774; Фестиваль шёлка – ежегодно</div>
+        </div>
+        <div style="margin-top:auto;padding-top:3px;font-size:13.6px;font-weight:600;color:var(--text2)">
+          Доход: <b style="color:#7C3AED">110,0 млрд</b>
+        </div>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div style="height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent);flex-shrink:0"></div>
+
+    <!-- ═══ BOTTOM HALF: Строительство и социальная сфера ═══ -->
+    <div style="font-size:15.2px;font-weight:700;color:var(--accent);padding:1px 0;flex-shrink:0;letter-spacing:0.3px">&#9670; Строительство и социальная сфера</div>
+
+    <div style="flex:1;min-height:0;display:grid;grid-template-columns:5fr 4fr 3fr;gap:5px">
+
+      <!-- Construction -->
+      <div style="display:flex;flex-direction:column;gap:4px;overflow:hidden">
+        <div class="c" style="flex:1;min-height:0;padding:5px 10px;overflow:hidden">
+          <div style="font-size:14.6px;font-weight:700;color:var(--accent);margin-bottom:2px">Строительство и жильё (2 581 млрд)</div>
+          <table style="font-size:13.6px">
+            <tr><th style="padding:1px 3px">Источник</th><th class="r" style="padding:1px 3px">2025</th><th class="r" style="padding:1px 3px">2026</th></tr>
+            <tr><td style="padding:1px 3px">Инвестпрограмма</td><td class="r" style="padding:1px 3px">869,5</td><td class="r" style="padding:1px 3px">1 108,0</td></tr>
+            <tr><td style="padding:1px 3px">Сетевые предприятия</td><td class="r" style="padding:1px 3px">848,1</td><td class="r" style="padding:1px 3px">1 346,7</td></tr>
+            <tr><td style="padding:1px 3px">Иниц. бюджет + махалла</td><td class="r" style="padding:1px 3px">61,8</td><td class="r" style="padding:1px 3px">54,1</td></tr>
+            <tr class="tr-hl"><td style="padding:1px 3px"><b>Итого</b></td><td class="r" style="padding:1px 3px"><b>1 936</b></td><td class="r" style="padding:1px 3px"><b>2 581</b></td></tr>
+          </table>
+          <div style="margin-top:2px;font-size:12.9px;color:var(--text2);line-height:1.4">
+            <div>&#127968; <b>Янги Ўзбекистон</b> – 22 дома, 1 240 кв., 624 млрд</div>
+            <div>&#128260; <b>Реновация</b> – Қиргули (315 кв.) + Навбаҳор (171 кв.)</div>
+          </div>
+        </div>
+        <div class="c" style="flex-shrink:0;padding:4px 10px;overflow:hidden">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px 10px;font-size:12.9px;color:var(--text2)">
+            <div>&#9889; <b>210 км</b> электросетей</div>
+            <div>&#128167; <b>10,2 км</b> водопровод</div>
+            <div>&#128739; <b>13,7 км</b> дорог</div>
+            <div>&#127959; 3 медобъекта</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Healthcare + Education -->
+      <div class="c" style="padding:5px 10px;overflow:hidden">
+        <div style="font-size:14.6px;font-weight:700;color:#059669;margin-bottom:2px">Здравоохранение и образование</div>
+        <div style="font-size:13.6px;color:var(--text2);line-height:1.4">
+          <div style="font-weight:600;color:#059669;margin-bottom:1px">Здравоохранение (27 проектов, 116,8 млрд)</div>
+          <div>&#10132; <b>MARMED MEDICAL</b> – 20 млрд, 40 мест</div>
+          <div>&#10132; <b>Central Asia Medical Univ</b> – 68,9 млрд, 70 мест</div>
+          <div>&#10132; <b>13 медучреждений</b> с е-рецептами</div>
+          <div>&#10132; <b>~70 вакансий</b> врачей (дефицит)</div>
+        </div>
+        <div style="margin-top:4px;font-size:13.6px;color:var(--text2);line-height:1.4">
+          <div style="font-weight:600;color:var(--accent);margin-bottom:1px">Образование (20 проектов, 44,9 млрд)</div>
+          <div>&#10132; <b>227 ДДУ</b>: охват 81,3% &rarr; <b>90%</b> (+2 970 мест)</div>
+          <div>&#10132; <b>34 школы</b>, 39 803 ученика</div>
+          <div>&#10132; <b>7 учебных центров</b> (23,3 млрд, 146 мест)</div>
+        </div>
+      </div>
+
+      <!-- Sports + Vacant -->
+      <div style="display:flex;flex-direction:column;gap:4px;overflow:hidden">
+        <div class="c" style="flex:1;min-height:0;padding:5px 10px;overflow:hidden">
+          <div style="font-size:14.6px;font-weight:700;color:#D97706;margin-bottom:2px">Спорт и занятость</div>
+          <div style="font-size:13.6px;color:var(--text2);line-height:1.4">
+            <div style="font-weight:600;color:#D97706;margin-bottom:1px">Олимпиада ЛА-2028</div>
+            <div>&#127941; <b>Абдусатторова</b> – стрельба из лука</div>
+            <div>&#127936; <b>Холиқова, Иброҳимова</b> – FIBA 3x3</div>
+            <div>&#9876; <b>Мўсинжонов</b> – пара-фехтование</div>
+          </div>
+          <div style="margin-top:3px;font-size:13.6px;color:var(--text2);line-height:1.4">
+            <div>&#9917; <b>69</b> футб. объектов, <b>10</b> новых (2026)</div>
+            <div>&#10132; <b>22 205</b> рабочих мест план</div>
+            <div>&#10132; <b>8 753</b> безработных &rarr; 100% покрытие</div>
+          </div>
+        </div>
+        <div class="c" style="flex-shrink:0;padding:4px 10px;overflow:hidden">
+          <div style="font-size:12.9px;color:var(--text2)">
+            <b style="color:var(--accent)">&#127970; 30 свободных объектов:</b>
+            Mr. Fish (66 млрд) &middot; Газ Автоматика (10 млрд) &middot; 6 гос. зданий (15 млрд)
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- СТРАНИЦА 11: ОЖИДАЕМЫЕ РЕЗУЛЬТАТЫ 2026–2031                    -->
+<!-- ============================================================ -->
+<!-- СТРАНИЦА: МАХАЛЛИ И ПРОЕКТЫ                                  -->
+<!-- ============================================================ -->
+<div class="page" id="p7" style="display:flex;flex-direction:column">
+  <div class="hdr" style="flex-shrink:0">
+    <div>
+      <div class="hdr-title">План развития махаллей – 131 проект в 50 махаллях (2026)</div>
+      <div class="hdr-sub">Специализация территорий &nbsp;&bull;&nbsp; Драйвер-проекты &nbsp;&bull;&nbsp; 49,4 млрд инвестиций &nbsp;&bull;&nbsp; 3 000 рабочих мест &nbsp;&bull;&nbsp; Сокращение разрыва доходов с 32× до &lt;10×</div>
+    </div>
+    <div class="hdr-right">
+      <div class="hdr-brand">NBU Data Office</div>
+      <div class="hdr-page">07 / 09</div>
+    </div>
+  </div>
+
+  <div style="flex:1;min-height:0;display:flex;flex-direction:column;padding:4px 20px 8px;gap:6px">
+
+    <!-- KPI row -->
+    <div style="display:flex;gap:8px;flex-shrink:0">
+      <div class="kpi" style="flex:1"><div class="kpi-l">Махаллей</div><div class="kpi-v">50</div><div class="kpi-s">46 580 домохозяйств</div></div>
+      <div class="kpi" style="flex:1"><div class="kpi-l">Проектов</div><div class="kpi-v">131</div><div class="kpi-s">49,4 млрд инвестиций</div></div>
+      <div class="kpi" style="flex:1"><div class="kpi-l">Рабочих мест</div><div class="kpi-v">3 000</div><div class="kpi-s">новых рабочих мест</div></div>
+      <div class="kpi" style="flex:1"><div class="kpi-l">Разрыв доходов</div><div class="kpi-v">32&times;</div><div class="kpi-s">между махаллями (цель: &lt;10&times;)</div><div class="kpi-tag down">&#9660; критический</div></div>
+      <div class="kpi" style="flex:1"><div class="kpi-l">Бедность</div><div class="kpi-v">2 602</div><div class="kpi-s">семей → 651 (1,1%)</div><div class="kpi-tag down" style="background:#DCFCE7;color:#059669">&#9660; -77%</div></div>
+      <div class="kpi" style="flex:1"><div class="kpi-l">Вакансии</div><div class="kpi-v">424</div><div class="kpi-s">в 75 организациях</div></div>
+    </div>
+
+    <!-- Main content: 2 columns -->
+    <div style="flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+
+      <!-- LEFT: Specialization levels -->
+      <div style="display:flex;flex-direction:column;gap:4px;overflow:hidden">
+        <div class="sec" style="flex-shrink:0;padding:2px 0 1px;font-size:15.8px">Уровни специализации и драйвер-проекты</div>
+
+        <!-- 3 levels compact -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;flex-shrink:0">
+          <div class="c" style="padding:7px 10px">
+            <div class="c-t" style="color:var(--green);font-size:14.5px"><span class="dot" style="background:var(--green)"></span> Глубокая – 11 мах.</div>
+            <div style="text-align:center;margin:2px 0">
+              <div style="font-family:var(--mono);font-size:21.1px;font-weight:700;color:var(--green)">12 462 &rarr; 14 313</div>
+              <div style="font-size:10.6px;color:var(--text3);font-weight:600">домохозяйств (+14,9%)</div>
+            </div>
+            <div style="font-size:12.5px;color:var(--text2);line-height:1.45">
+              <div><b>Кашкар</b> – 19,6% ИП (1 401)</div>
+              <div><b>Пичоқчи</b> – Gold Silk, АБР
+              <div><b>Тўрақўрғон</b> – 1 124 ИП, шёлк</div></div>
+            </div>
+            <div style="margin-top:4px;padding-top:3px;border-top:1.5px solid var(--green)">
+              <div style="font-size:10.6px;font-weight:700;color:var(--green);letter-spacing:0.4px">ДРАЙВЕР: МФЙ ЮКСАЛИШ</div>
+              <div style="font-size:11.9px;color:var(--text2)"><b>7,5 млрд</b> – промзона «Навруз», 150 мест</div>
+              <div style="font-size:9.9px;color:var(--text3)">гос. 0,5 + предпр. 7,0 | налог <b>1,2 млрд</b></div>
+            </div>
+          </div>
+
+          <div class="c" style="padding:7px 10px">
+            <div class="c-t" style="color:var(--amber);font-size:14.5px"><span class="dot" style="background:var(--amber)"></span> Средняя – 20 мах.</div>
+            <div style="text-align:center;margin:2px 0">
+              <div style="font-family:var(--mono);font-size:21.1px;font-weight:700;color:var(--amber)">17 758 &rarr; 27 083</div>
+              <div style="font-size:10.6px;color:var(--text3);font-weight:600">домохозяйств (+52,5%)</div>
+            </div>
+            <div style="font-size:12.5px;color:var(--text2);line-height:1.45">
+              <div>Формализация 4 252 самозан.</div>
+              <div>Семейное предпр. (1 856 м.)
+              <div>Услуги: <b>5 256</b> субъектов</div></div>
+            </div>
+            <div style="margin-top:4px;padding-top:3px;border-top:1.5px solid var(--amber)">
+              <div style="font-size:10.6px;font-weight:700;color:var(--amber);letter-spacing:0.4px">ДРАЙВЕР: МФЙ ГЎРИАВВАЛ</div>
+              <div style="font-size:11.9px;color:var(--text2)"><b>4,0 млрд</b> – фонтанная площадь, 15 объектов</div>
+              <div style="font-size:9.9px;color:var(--text3)">гос. 1,0 + предпр. 3,0 | налог <b>0,3 млрд</b></div>
+            </div>
+          </div>
+
+          <div class="c" style="padding:7px 10px">
+            <div class="c-t" style="color:var(--red);font-size:14.5px"><span class="dot" style="background:var(--red)"></span> Низкая – 19 мах.</div>
+            <div style="text-align:center;margin:2px 0">
+              <div style="font-family:var(--mono);font-size:21.1px;font-weight:700;color:var(--red)">16 360 &rarr; 8 427</div>
+              <div style="font-size:10.6px;color:var(--text3);font-weight:600">домохозяйств (-48,5%)</div>
+            </div>
+            <div style="font-size:12.5px;color:var(--text2);line-height:1.45">
+              <div><b>Истиклол</b> – бедн. 6,6%, 20 млрд</div>
+              <div><b>Ватан</b> – макс. бедных (75 сем.)
+              <div><b>Целевая помощь</b> – 2 602 семьи</div></div>
+            </div>
+            <div style="margin-top:4px;padding-top:3px;border-top:1.5px solid var(--red)">
+              <div style="font-size:10.6px;font-weight:700;color:var(--red);letter-spacing:0.4px">ДРАЙВЕР: МФЙ ТУЯГУМ</div>
+              <div style="font-size:11.9px;color:var(--text2)"><b>11,3 млрд</b> – набережная 0,9 км, 10 объектов</div>
+              <div style="font-size:9.9px;color:var(--text3)">гос. 1,3 + предпр. 10,0 | налог <b>0,2 млрд</b></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Driver totals bar -->
+        <div class="c" style="flex-shrink:0;padding:5px 10px">
+          <div style="display:flex;gap:16px;font-size:12.1px;align-items:center">
+            <div style="font-weight:700;color:var(--accent)">&#9670; Итого драйверы: 22,8 млрд</div>
+            <div style="color:var(--text2)">Гос. бюджет: <b>2,8 млрд</b></div>
+            <div style="color:var(--text2)">Предприниматели: <b>20,0 млрд</b></div>
+            <div style="color:var(--text2)">Рабочих мест: <b>255</b></div>
+            <div style="color:var(--green);font-weight:600">Налоги: <b>1,7 млрд/год</b></div>
+          </div>
+        </div>
+
+        <!-- Transition bar -->
+        <div class="c" style="padding:8px 14px;flex-shrink:0">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="font-size:11.9px;font-weight:600;color:var(--text3);white-space:nowrap">СЕЙЧАС</div>
+            <div style="flex:1">
+              <div style="display:flex;height:20px;border-radius:4px;overflow:hidden">
+                <div style="width:26.8%;background:linear-gradient(90deg,#059669,#34D399)"></div>
+                <div style="width:38.1%;background:linear-gradient(90deg,#D97706,#FBBF24)"></div>
+                <div style="width:35.1%;background:linear-gradient(90deg,#DC2626,#F87171)"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:10.6px;font-weight:600;margin-top:1px">
+                <span style="color:var(--green)">26,8%</span><span style="color:var(--amber)">38,1%</span><span style="color:var(--red)">35,1%</span>
+              </div>
+            </div>
+            <div style="font-size:23.8px;color:var(--accent)">&#10132;</div>
+            <div style="flex:1">
+              <div style="display:flex;height:20px;border-radius:4px;overflow:hidden">
+                <div style="width:28.7%;background:linear-gradient(90deg,#059669,#34D399)"></div>
+                <div style="width:54.4%;background:linear-gradient(90deg,#D97706,#FBBF24)"></div>
+                <div style="width:16.9%;background:linear-gradient(90deg,#DC2626,#F87171)"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:10.6px;font-weight:600;margin-top:1px">
+                <span style="color:var(--green)">28,7%</span><span style="color:var(--amber)">54,4%</span><span style="color:var(--red)">16,9%</span>
+              </div>
+            </div>
+            <div style="font-size:11.9px;font-weight:600;color:var(--text3);white-space:nowrap">ПЛАН</div>
+          </div>
+        </div>
+
+        <!-- Top 5 projects -->
+        <div class="c" style="flex-shrink:0;padding:6px 10px;overflow:hidden">
+          <div class="c-t" style="font-size:13px">Топ-5 проектов по инвестициям</div>
+          <table style="font-size:12.5px">
+            <tr><th style="padding:1px 3px">#</th><th style="padding:1px 3px">Проект</th><th style="padding:1px 3px">Махалля</th><th class="r" style="padding:1px 3px">Инв. (млн)</th><th class="r" style="padding:1px 3px">Мест</th></tr>
+            <tr><td style="padding:1px 3px">1</td><td style="padding:1px 3px"><b>SHOYI SILK</b> – шёлк</td><td style="padding:1px 3px">Нурафшон</td><td class="r" style="padding:1px 3px">2 500</td><td class="r" style="padding:1px 3px">40</td></tr>
+            <tr><td style="padding:1px 3px">2</td><td style="padding:1px 3px"><b>ИП Зокирова</b></td><td style="padding:1px 3px">Хўжа Порсо</td><td class="r" style="padding:1px 3px">2 000</td><td class="r" style="padding:1px 3px">40</td></tr>
+            <tr><td style="padding:1px 3px">3</td><td style="padding:1px 3px"><b>Абрикосовый сад</b> 12,6 га</td><td style="padding:1px 3px">Ариқ бўйи</td><td class="r" style="padding:1px 3px">1 726</td><td class="r" style="padding:1px 3px">40</td></tr>
+            <tr><td style="padding:1px 3px">4</td><td style="padding:1px 3px"><b>ИП Собиров</b></td><td style="padding:1px 3px">Ватан</td><td class="r" style="padding:1px 3px">1 600</td><td class="r" style="padding:1px 3px">4</td></tr>
+            <tr><td style="padding:1px 3px">5</td><td style="padding:1px 3px"><b>Переработка</b> – огурцы</td><td style="padding:1px 3px">Дўстлик</td><td class="r" style="padding:1px 3px">1 000</td><td class="r" style="padding:1px 3px">50</td></tr>
+          </table>
+        </div>
+
+        <!-- Summary card -->
+        <div class="c" style="flex:1;min-height:0;padding:10px 14px;background:linear-gradient(135deg,#EFF6FF,#F0FDF4);border:2px solid rgba(37,99,235,0.18)">
+          <div style="font-size:16px;font-weight:800;color:var(--accent);margin-bottom:8px;letter-spacing:0.3px">&#9670; Ключевые выводы по развитию махаллей</div>
+          <div style="font-size:14px;color:var(--text);line-height:1.7">
+            <div>&#10132; <b style="color:var(--accent)">70%</b> инвестиций – частный капитал и предприниматели, гос. бюджет только <b>30%</b></div>
+            <div>&#10132; Разрыв доходов между махаллями <b style="color:var(--red)">32×</b> – критический; цель сократить до <b style="color:var(--green)">&lt;10×</b> к 2031</div>
+            <div>&#10132; <b style="color:var(--red)">19 бедных махаллей</b> получат адресные драйвер-проекты и программы поддержки</div>
+            <div>&#10132; Создание <b style="color:var(--accent)">22 205</b> рабочих мест – полное <b style="color:var(--green)">100%</b> покрытие всех безработных</div>
+            <div>&#10132; Формализация <b style="color:var(--amber)">4 252</b> самозанятых → рост налоговой базы и соц. защиты</div>
+            <div>&#10132; Модернизация с/х: объём <b style="color:var(--green)">832,7 млрд</b> (+107% к 2025), холодильники, теплицы</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Sector breakdown + financing -->
+      <div style="display:flex;flex-direction:column;gap:4px;overflow:hidden">
+
+        <!-- Sector table -->
+        <div class="c" style="flex-shrink:0;padding:7px 12px">
+          <div class="c-t" style="font-size:14.5px">Распределение по секторам</div>
+          <table style="font-size:14.5px">
+            <tr><th>Направление</th><th class="r">Проектов</th><th class="r">Инвест. (млн)</th><th class="r">Доля</th><th class="r">Мест</th></tr>
+            <tr><td><b>Услуги и туризм</b></td><td class="r">75</td><td class="r">28 195</td><td class="r"><b>57,0%</b></td><td class="r">2 362</td></tr>
+            <tr><td><b>Промышленность – кооперация</b></td><td class="r">43</td><td class="r">19 497</td><td class="r"><b>39,5%</b></td><td class="r">598</td></tr>
+            <tr><td><b>С/х – добавл. стоимость</b></td><td class="r">13</td><td class="r">1 726</td><td class="r"><b>3,5%</b></td><td class="r">40</td></tr>
+            <tr class="tr-hl"><td><b>Итого</b></td><td class="r"><b>131</b></td><td class="r"><b>49 418</b></td><td class="r"><b>100%</b></td><td class="r"><b>3 000</b></td></tr>
+          </table>
+          <div style="display:flex;height:14px;border-radius:4px;overflow:hidden;margin-top:5px">
+            <div style="width:57%;background:linear-gradient(90deg,#059669,#34D399)"></div>
+            <div style="width:39.5%;background:linear-gradient(90deg,#2563EB,#60A5FA)"></div>
+            <div style="width:3.5%;background:linear-gradient(90deg,#D97706,#FBBF24)"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:11.9px;font-weight:600;margin-top:2px">
+            <span style="color:var(--green)">Услуги 57%</span><span style="color:var(--accent)">Промышленность 39,5%</span><span style="color:var(--amber)">С/х 3,5%</span>
+          </div>
+        </div>
+
+        <!-- Financing sources -->
+        <div class="c" style="flex:1;min-height:0;padding:8px 12px;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between">
+          <div class="c-t" style="font-size:14.5px">Источники финансирования (млн сум)</div>
+          <div class="bar" style="margin:6px 0"><div class="bar-l" style="width:120px;font-size:13.2px">Маҳалла</div><div class="bar-t" style="height:22px"><div class="bar-f bf-blue" style="width:52.2%"></div></div><div class="bar-v" style="font-size:13.2px">25 806</div></div>
+          <div class="bar" style="margin:6px 0"><div class="bar-l" style="width:120px;font-size:13.2px">Оилавий</div><div class="bar-t" style="height:22px"><div class="bar-f bf-green" style="width:22.1%"></div></div><div class="bar-v" style="font-size:13.2px">10 898</div></div>
+          <div class="bar" style="margin:6px 0"><div class="bar-l" style="width:120px;font-size:13.2px">312 (поддержка)</div><div class="bar-t" style="height:22px"><div class="bar-f bf-amber" style="width:8.3%"></div></div><div class="bar-v" style="font-size:13.2px">4 124</div></div>
+          <div class="bar" style="margin:6px 0"><div class="bar-l" style="width:120px;font-size:13.2px">Собственные</div><div class="bar-t" style="height:22px"><div class="bar-f bf-purple" style="width:7.8%"></div></div><div class="bar-v" style="font-size:13.2px">3 850</div></div>
+          <div class="bar" style="margin:6px 0"><div class="bar-l" style="width:120px;font-size:13.2px">Всемирный банк</div><div class="bar-t" style="height:22px"><div class="bar-f" style="width:6.5%;background:linear-gradient(90deg,#0891B2,#22D3EE)"></div></div><div class="bar-v" style="font-size:13.2px">3 200</div></div>
+          <div class="bar" style="margin:6px 0"><div class="bar-l" style="width:120px;font-size:13.2px">1-й шаг бизнес</div><div class="bar-t" style="height:22px"><div class="bar-f bf-gray" style="width:2.1%"></div></div><div class="bar-v" style="font-size:13.2px">1 060</div></div>
+          <div style="margin-top:6px;padding-top:6px;border-top:1px solid var(--border);display:flex;gap:14px;font-size:12px;color:var(--text2);font-weight:600">
+            <div>Итого: <b style="color:var(--accent)">48 938 млн</b></div>
+            <div>Гос. средства: <b>30%</b></div>
+            <div>Частные: <b>70%</b></div>
+          </div>
+        </div>
+
+        <!-- Agriculture + self-employment -->
+        <div class="c" style="flex-shrink:0;padding:7px 12px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;font-size:13px;color:var(--text2)">
+            <div>&#127793; <b style="color:var(--accent)">С/х:</b> 6 проектов, <b>46,4 млрд</b></div>
+            <div>&#128101; <b style="color:var(--amber)">Самозанятые:</b> 4 252 → формализация</div>
+            <div>&#10132; <b>Orion Fresh Fruits</b> – холодильник 45,0 млрд, 20 мест</div>
+            <div>&#10132; Семейное предпр.: <b>1 856</b> | Животноводство: <b>2 проекта</b></div>
+            <div>&#10132; Теплицы: 2 проекта, 0,4 млрд | Садоводство: 1 пр., 0,5 млрд</div>
+            <div>&#10132; Объём с/х 2026: <b>832,7 млрд</b> (+107% к 2025)</div>
+          </div>
+        </div>
+
+        <!-- Context -->
+        <div class="c" style="flex-shrink:0;padding:5px 12px;background:linear-gradient(135deg,#EFF6FF,#F0FDF4);border:1px solid rgba(37,99,235,0.1)">
+          <div style="display:flex;gap:16px;font-size:13.2px;color:var(--text2);align-items:center;justify-content:center">
+            <div><b>Общий план 2026:</b> <span style="font-family:var(--mono);font-weight:700">468</span> проектов</div>
+            <div><b>Инвестиции:</b> <span style="font-family:var(--mono);font-weight:700">9 722 млрд</span></div>
+            <div><b>FDI:</b> <span style="font-family:var(--mono);font-weight:700">3 738 млрд</span></div>
+            <div><b>131 проект =</b> <span style="font-family:var(--mono);font-weight:700;color:var(--accent)">28%</span> от общего</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<div class="page" id="p8" style="display:flex;flex-direction:column">
+  <div class="hdr" style="flex-shrink:0">
+    <div>
+      <div class="hdr-title">IT, цифровизация и роль банков – План 2026</div>
+      <div class="hdr-sub">Целевые показатели и проекты на 2026 год &nbsp;&bull;&nbsp; IT-проекты &nbsp;&bull;&nbsp; Кредитные программы &nbsp;&bull;&nbsp; Финансовая инклюзия</div>
+    </div>
+    <div class="hdr-right">
+      <div class="hdr-brand">NBU Data Office</div>
+      <div class="hdr-page">08 / 09</div>
+    </div>
+  </div>
+
+  <div style="flex:1;min-height:0;display:flex;flex-direction:column;padding:2px 20px 4px;gap:3px">
+
+    <!-- ═══════ SECTION 1: IT & MODERNIZATION ═══════ -->
+    <div style="flex:1;min-height:0;display:flex;flex-direction:column;gap:3px;background:linear-gradient(135deg,#EFF6FF 0%,#F8FAFF 100%);border-radius:10px;padding:6px 16px;border:1px solid rgba(37,99,235,0.1)">
+
+      <!-- Section title + KPI row -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+        <div style="display:flex;flex-direction:column">
+          <div style="font-size:17px;font-weight:700;color:var(--accent);letter-spacing:0.2px">&#9670; От ремесленничества к модернизации</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:1px">Маргилан – город мастеров &#10140; цифровая экономика через образование, инфраструктуру и IT</div>
+        </div>
+        <div style="display:flex;gap:14px">
+          <div style="text-align:center"><div style="font-family:var(--mono);font-size:24px;font-weight:800;color:var(--accent);line-height:1">20</div><div style="font-size:10px;color:var(--text3);font-weight:600">IT-резидентов <span style="font-size:8px;color:var(--green)">(факт)</span></div></div>
+          <div style="text-align:center"><div style="font-family:var(--mono);font-size:24px;font-weight:800;color:var(--accent);line-height:1">650</div><div style="font-size:10px;color:var(--text3);font-weight:600">IT-спец. <span style="font-size:8px;color:var(--accent)">(план)</span></div></div>
+          <div style="text-align:center"><div style="font-family:var(--mono);font-size:24px;font-weight:800;color:var(--accent);line-height:1">13,3</div><div style="font-size:10px;color:var(--text3);font-weight:600">млрд инвест. <span style="font-size:8px;color:var(--accent)">(план)</span></div></div>
+          <div style="text-align:center"><div style="font-family:var(--mono);font-size:24px;font-weight:800;color:var(--accent);line-height:1">31</div><div style="font-size:10px;color:var(--text3);font-weight:600">уч. центров <span style="font-size:8px;color:var(--green)">(факт)</span></div></div>
+          <div style="text-align:center"><div style="font-family:var(--mono);font-size:24px;font-weight:800;color:var(--accent);line-height:1">21</div><div style="font-size:10px;color:var(--text3);font-weight:600">направлений <span style="font-size:8px;color:var(--accent)">(план)</span></div></div>
+        </div>
+      </div>
+
+      <!-- Transition arrow bar -->
+      <div style="display:flex;align-items:center;gap:0;flex-shrink:0">
+        <div style="flex:1;background:linear-gradient(135deg,#FEF3C7,#FDE68A);border-radius:6px 0 0 6px;padding:6px 12px;display:flex;align-items:center;gap:8px;border:1px solid rgba(217,119,6,0.15)">
+          <span style="font-size:20px">&#127912;</span>
+          <div><div style="font-size:13px;font-weight:700;color:#92400E">СЕГОДНЯ: Ремесленничество</div><div style="font-size:12px;color:#78350F">Шёлк, атлас, адрас, керамика – традиции, ручной труд, низкая добавленная стоимость</div></div>
+        </div>
+        <div style="width:44px;display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,#FDE68A,#93C5FD);font-size:22px;padding:6px 0;color:var(--accent)">&#10140;</div>
+        <div style="flex:1;background:linear-gradient(135deg,#DBEAFE,#BFDBFE);border-radius:0 6px 6px 0;padding:6px 12px;display:flex;align-items:center;gap:8px;border:1px solid rgba(37,99,235,0.15)">
+          <span style="font-size:20px">&#128187;</span>
+          <div><div style="font-size:13px;font-weight:700;color:#1E40AF">ЦЕЛЬ 2031: Цифровая экономика</div><div style="font-size:12px;color:#1E3A5F">IT-сектор, стартапы, экспорт услуг, высококвалифицированные кадры, 819 млрд экспорт</div></div>
+        </div>
+      </div>
+
+      <!-- 4 panels -->
+      <div style="flex:1;min-height:0;display:grid;grid-template-columns:5fr 8fr 5fr 5fr;gap:5px">
+
+        <div style="background:white;border-radius:7px;padding:7px 10px;border:1px solid rgba(37,99,235,0.08);border-left:3px solid #D97706;overflow:hidden">
+          <div style="font-size:14px;font-weight:700;color:#92400E;margin-bottom:3px">&#9312; Образование и кадры</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.4">
+            <div>&#8226; Обучение <b>1 604</b> безработных граждан</div>
+            <div>&#8226; <b>974 женщины</b> – основы предпринимательства</div>
+            <div>&#8226; <b>420 молодых</b> – профессиональная подготовка</div>
+            <div>&#8226; <b>17</b> языковых центров на <b>5 700</b> мест</div>
+            <div>&#8226; <b>34 школы</b>, 39 803 ученика</div>
+            <div>&#8226; Охват детсадами: 81% &#10140; <b>90%</b></div>
+          </div>
+        </div>
+
+        <div style="background:white;border-radius:7px;padding:7px 10px;border:1px solid rgba(37,99,235,0.12);border-left:4px solid #2563EB;overflow:hidden">
+          <div style="font-size:14px;font-weight:700;color:var(--accent);margin-bottom:3px">&#9313; IT-инфраструктура и цифровой переход</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.4">
+            <div>&#8226; <b>IT-центр и современная библиотека</b> (ГЧП) – 1,2 млрд сум, 20 рабочих мест, подготовка <b style="color:var(--accent)">650 IT-специалистов</b></div>
+            <div>&#8226; <b>IT-Park</b> на Молодёжном бульваре – 5,0 млрд, 30 мест, стартап-инкубатор и экосистема</div>
+            <div>&#8226; <b>21 направление обучения:</b> программирование, AI/ML, data science, кибербезопасность, UX/UI</div>
+            <div>&#8226; <b>7 IT-проектов</b> на 6,2 млрд – от e-commerce платформ до цифровых сервисов для малого бизнеса</div>
+            <div>&#8226; <b>Модернизация инфраструктуры:</b> 210 км электросетей, 180 трансформаторов, водоснабжение до 100%</div>
+            <div>&#8226; <b>Цифровые госсервисы:</b> электронные рецепты в 13 медучреждениях, единая база 7 143 предпринимателей</div>
+          </div>
+        </div>
+
+        <div style="background:white;border-radius:7px;padding:7px 10px;border:1px solid rgba(37,99,235,0.08);border-left:3px solid #059669;overflow:hidden">
+          <div style="font-size:14px;font-weight:700;color:var(--green);margin-bottom:3px">&#9314; Цифровизация города</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.4">
+            <div>&#10003; <b>Электронные рецепты</b> в 13 учреждениях</div>
+            <div>&#10003; <b>Реестр бедности</b> – 2 602 семьи</div>
+            <div>&#10003; <b>Единая база ИП</b> – 7 143 субъекта</div>
+            <div>&#10003; <b>Водоснабжение:</b> 98,8% &#10140; <b>100%</b></div>
+            <div>&#10003; <b>48 LED-фонарей</b> (зелёная энергия)</div>
+            <div>&#10003; <b>Кибербезопасность</b> городских систем</div>
+          </div>
+        </div>
+
+        <div style="background:white;border-radius:7px;padding:7px 10px;border:1px solid rgba(37,99,235,0.08);border-left:3px solid #7C3AED;overflow:hidden">
+          <div style="font-size:14px;font-weight:700;color:#7C3AED;margin-bottom:3px">&#9315; Ожидаемый результат</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.4">
+            <div>&#10140; Промышленность: <b>3 087 млрд</b> (+10,7%)</div>
+            <div>&#10140; Услуги: <b>5 267 млрд</b> (+21%)</div>
+            <div>&#10140; Экспорт: <b>821 млрд</b></div>
+            <div>&#10140; Создание <b>22 205</b> рабочих мест</div>
+            <div>&#10140; Бедность: 3,5% &#10140; <b>1,1%</b></div>
+            <div>&#10140; Иностранные инвестиции: <b>3 738 млрд</b></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div style="height:1.5px;background:linear-gradient(90deg,transparent,var(--border2),transparent);flex-shrink:0"></div>
+
+    <!-- ═══════ SECTION 2: BANKING ═══════ -->
+    <div style="flex:1;min-height:0;display:flex;flex-direction:column;gap:3px;background:linear-gradient(135deg,#EFF6FF 0%,#F8FAFF 100%);border-radius:10px;padding:6px 16px;border:1px solid rgba(37,99,235,0.1)">
+
+      <!-- Section title + KPI row -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+        <div style="font-size:17px;font-weight:700;color:var(--accent);letter-spacing:0.2px">&#9670; Роль банков в развитии Маргилана</div>
+        <div style="display:flex;gap:14px">
+          <div style="text-align:center"><div style="font-family:var(--mono);font-size:24px;font-weight:800;color:var(--accent);line-height:1">1 500</div><div style="font-size:10px;color:var(--text3);font-weight:600">млрд кредитов <span style="font-size:8px;color:var(--accent)">(план)</span></div></div>
+          <div style="text-align:center"><div style="font-family:var(--mono);font-size:24px;font-weight:800;color:var(--accent);line-height:1">3 614</div><div style="font-size:10px;color:var(--text3);font-weight:600">рабочих мест <span style="font-size:8px;color:var(--accent)">(план)</span></div></div>
+          <div style="text-align:center"><div style="font-family:var(--mono);font-size:24px;font-weight:800;color:var(--accent);line-height:1">457</div><div style="font-size:10px;color:var(--text3);font-weight:600">млрд доп. продукции <span style="font-size:8px;color:var(--accent)">(план)</span></div></div>
+          <div style="text-align:center"><div style="font-family:var(--mono);font-size:24px;font-weight:800;color:var(--accent);line-height:1">154 млрд</div><div style="font-size:10px;color:var(--text3);font-weight:600">Всемирный банк <span style="font-size:8px;color:var(--accent)">(план)</span></div></div>
+        </div>
+      </div>
+
+      <!-- 3 panels -->
+      <div style="flex:1;min-height:0;display:grid;grid-template-columns:5fr 4fr 3fr;gap:6px">
+
+        <div style="background:white;border-radius:8px;padding:6px 10px;border:1px solid rgba(37,99,235,0.08);display:flex;flex-direction:column;overflow:hidden">
+          <div style="font-size:14px;font-weight:700;color:var(--accent);margin-bottom:3px">Структура кредитования (млрд сум)</div>
+          <table style="font-size:13px">
+            <tr><th style="padding:2px 4px">Программа</th><th class="r" style="padding:2px 4px">Сумма</th><th class="r" style="padding:2px 4px">Пром.</th><th class="r" style="padding:2px 4px">Услуги</th><th class="r" style="padding:2px 4px">С/х</th></tr>
+            <tr><td style="padding:2px 4px">Биринчи қадам</td><td class="r" style="padding:2px 4px">90,0</td><td class="r" style="padding:2px 4px">35,8</td><td class="r" style="padding:2px 4px">40,6</td><td class="r" style="padding:2px 4px">13,6</td></tr>
+            <tr><td style="padding:2px 4px">Маҳалла лойиҳаси</td><td class="r" style="padding:2px 4px">20,8</td><td class="r" style="padding:2px 4px">7,9</td><td class="r" style="padding:2px 4px">10,6</td><td class="r" style="padding:2px 4px">3,8</td></tr>
+            <tr><td style="padding:2px 4px">Оилавий тадбиркорлик</td><td class="r" style="padding:2px 4px">21,8</td><td class="r" style="padding:2px 4px">8,6</td><td class="r" style="padding:2px 4px">9,1</td><td class="r" style="padding:2px 4px">4,2</td></tr>
+            <tr><td style="padding:2px 4px">Поддержка малого бизнеса</td><td class="r" style="padding:2px 4px">23,4</td><td class="r" style="padding:2px 4px">10,3</td><td class="r" style="padding:2px 4px">3,7</td><td class="r" style="padding:2px 4px">–</td></tr>
+            <tr><td style="padding:2px 4px">Коммерческие кредиты</td><td class="r" style="padding:2px 4px">1 344</td><td class="r" style="padding:2px 4px">479,9</td><td class="r" style="padding:2px 4px">439,4</td><td class="r" style="padding:2px 4px">424,7</td></tr>
+            <tr class="tr-hl"><td style="padding:2px 4px"><b>Итого</b></td><td class="r" style="padding:2px 4px"><b>1 500</b></td><td class="r" style="padding:2px 4px"><b>540</b></td><td class="r" style="padding:2px 4px"><b>510</b></td><td class="r" style="padding:2px 4px"><b>450</b></td></tr>
+          </table>
+          <div style="display:flex;height:10px;border-radius:4px;overflow:hidden;margin-top:auto">
+            <div style="width:36%;background:linear-gradient(90deg,#2563EB,#60A5FA)"></div>
+            <div style="width:34%;background:linear-gradient(90deg,#059669,#34D399)"></div>
+            <div style="width:30%;background:linear-gradient(90deg,#D97706,#FBBF24)"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:600;margin-top:2px">
+            <span style="color:var(--accent)">&#9632; Промышленность 36%</span><span style="color:var(--green)">&#9632; Услуги 34%</span><span style="color:var(--amber)">&#9632; Сельское хоз. 30%</span>
+          </div>
+        </div>
+
+        <div style="background:white;border-radius:8px;padding:6px 10px;border:1px solid rgba(37,99,235,0.08);overflow:hidden;display:flex;flex-direction:column">
+          <div style="font-size:14px;font-weight:700;color:var(--accent);margin-bottom:3px">Маҳалла банкирлари и агенты</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;flex:1">
+            <div style="background:linear-gradient(135deg,#DBEAFE,#EFF6FF);border-radius:6px;padding:6px 8px;border-left:3px solid var(--accent)">
+              <div style="font-size:11px;font-weight:700;color:var(--accent);margin-bottom:3px">12 БАНКИРОВ – социальная поддержка</div>
+              <div style="font-size:12.5px;color:var(--text2);line-height:1.4">
+                <div>&#10132; <b>1 816</b> чел. трудоустроить</div>
+                <div>&#10132; <b>1 930</b> чел. повысить доход</div>
+                <div>&#10132; <b>75</b> встреч по опыту «Уйчи»</div>
+                <div>&#10132; <b>500</b> микропроектов запустить</div>
+                <div>&#10132; <b>700</b> млрд кредитов для МСБ</div>
+              </div>
+            </div>
+            <div style="background:linear-gradient(135deg,#ECFDF5,#F0FDF4);border-radius:6px;padding:6px 8px;border-left:3px solid var(--green)">
+              <div style="font-size:11px;font-weight:700;color:#059669;margin-bottom:3px">50 АГЕНТОВ – финансовая инклюзия</div>
+              <div style="font-size:12.5px;color:var(--text2);line-height:1.4">
+                <div>&#10132; <b>1 800</b> граждан привлечь в банк</div>
+                <div>&#10132; <b>18</b> млрд привлечение вкладов</div>
+                <div>&#10132; <b>12</b> млрд розничных кредитов</div>
+                <div>&#10132; <b>6 000</b> подключений к мобильному банку</div>
+                <div>&#10132; <b>5 000</b> консультаций от двери к двери</div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:auto;background:#FEF3C7;border-radius:5px;padding:4px 8px;font-size:11px;border-left:3px solid var(--amber)">
+            <b style="color:var(--amber)">&#9888; NPL 4,6%</b> (факт) – аудит МФО, остановка при &gt;5% &nbsp;|&nbsp; <b>158 млрд</b> программное кредитование
+          </div>
+        </div>
+
+        <div style="background:white;border-radius:8px;padding:6px 10px;border:1px solid rgba(37,99,235,0.08);overflow:hidden;display:flex;flex-direction:column">
+          <div style="font-size:14px;font-weight:700;color:var(--accent);margin-bottom:3px">Финансовые инструменты</div>
+          <div style="font-size:12.5px;color:var(--text2);line-height:1.4">
+            <div>&#10132; <b>Ремесленный кредит</b> – 6,8 млрд на 84 проекта</div>
+            <div>&#10132; <b>Возвратная миграция</b> – 10 904 человек</div>
+            <div>&#10132; <b>PD/RBL скоринг</b> – кредитная экспертиза</div>
+            <div>&#10132; <b>Всемирный банк</b> – 35 проектов, 154 млрд</div>
+            <div>&#10132; <b>Реструктуризация</b> – 1 352 кредита</div>
+            <div>&#10132; <b>551</b> пакетов готовых проектов</div>
+            <div>&#10132; <b>2 400</b> тренингов по антимошенничеству</div>
+          </div>
+          <div style="margin-top:auto;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border-radius:5px;padding:4px 8px;display:flex;gap:10px;font-size:12px;justify-content:center;font-weight:600">
+            <span>Пром: <b style="color:var(--accent)">+181</b></span>
+            <span>Услуги: <b style="color:var(--green)">+220</b></span>
+            <span>С/х: <b style="color:var(--amber)">+56</b></span>
+            <span>Мест: <b>3 614</b></span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- СТРАНИЦА 7: МАХАЛЛИ – СПЕЦИАЛИЗАЦИЯ                           -->
+<!-- ============================================================ -->
+<div class="page" id="p9">
+  <div class="hdr">
+    <div>
+      <div class="hdr-title">Ожидаемые результаты 2026–2031</div>
+      <div class="hdr-sub">Прогноз ключевых показателей &nbsp;&bull;&nbsp; Горизонт 3–5 лет</div>
+    </div>
+    <div class="hdr-right">
+      <div class="hdr-brand">NBU Data Office</div>
+      <div class="hdr-page">09 / 09</div>
+    </div>
+  </div>
+
+  <div class="grid g2">
+
+    <!-- SECTION -->
+    <div class="sec sec12">Прогноз ключевых показателей</div>
+
+    <!-- Forecast chart: промышленность + экспорт -->
+    <div class="c s6">
+      <div class="chart-title">Прогноз: Промышленность и Экспорт (млрд сум) -2022–2028</div>
+      <svg width="100%" viewBox="0 0 720 160" style="display:block">
+        <!-- Forecast zone -->
+        <rect x="480" y="5" width="220" height="140" rx="4" fill="#DBEAFE" opacity="0.6"/>
+        <text x="590" y="18" text-anchor="middle" style="font-family:var(--mono);font-size:9px;font-weight:600;fill:var(--accent);opacity:0.7">ПРОГНОЗ</text>
+        <!-- Axes -->
+        <line x1="55" y1="25" x2="55" y2="130" class="lc-axis"/>
+        <line x1="55" y1="130" x2="700" y2="130" class="lc-axis"/>
+        <line x1="55" y1="95" x2="700" y2="95" class="lc-grid"/>
+        <line x1="55" y1="60" x2="700" y2="60" class="lc-grid"/>
+        <line x1="55" y1="25" x2="700" y2="25" class="lc-grid"/>
+        <text x="50" y="134" text-anchor="end" class="lc-label">0</text>
+        <text x="50" y="99" text-anchor="end" class="lc-label">2000</text>
+        <text x="50" y="64" text-anchor="end" class="lc-label">4000</text>
+        <text x="50" y="29" text-anchor="end" class="lc-label">6000</text>
+        <!-- X labels -->
+        <text x="120" y="147" text-anchor="middle" class="lc-label">2022</text>
+        <text x="230" y="147" text-anchor="middle" class="lc-label">2023</text>
+        <text x="340" y="147" text-anchor="middle" class="lc-label">2024</text>
+        <text x="450" y="147" text-anchor="middle" class="lc-label">2025</text>
+        <text x="560" y="147" text-anchor="middle" class="lc-label" fill="var(--accent)">2026п</text>
+        <text x="670" y="147" text-anchor="middle" class="lc-label" fill="var(--accent)">2028п</text>
+        <!-- Промышленность (solid -> dashed) -->
+        <polyline points="120,109 230,105 340,95 450,87" fill="none" stroke="#2563EB" stroke-width="2.5" stroke-linejoin="round"/>
+        <polyline points="450,87 560,76 670,56" fill="none" stroke="#2563EB" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="8,4"/>
+        <circle cx="120" cy="109" r="3.5" fill="#2563EB"/><circle cx="230" cy="105" r="3.5" fill="#2563EB"/>
+        <circle cx="340" cy="95" r="3.5" fill="#2563EB"/><circle cx="450" cy="87" r="3.5" fill="#2563EB"/>
+        <circle cx="560" cy="76" r="3.5" fill="#fff" stroke="#2563EB" stroke-width="2"/>
+        <circle cx="670" cy="56" r="3.5" fill="#fff" stroke="#2563EB" stroke-width="2"/>
+        <text x="120" y="104" text-anchor="middle" class="lc-val" fill="#2563EB">1&#8239;554</text>
+        <text x="230" y="100" text-anchor="middle" class="lc-val" fill="#2563EB">1&#8239;683</text>
+        <text x="340" y="90" text-anchor="middle" class="lc-val" fill="#2563EB">2&#8239;079</text>
+        <text x="450" y="82" text-anchor="middle" class="lc-val" fill="#2563EB">2&#8239;459</text>
+        <text x="560" y="71" text-anchor="middle" class="lc-val" fill="#2563EB">3&#8239;087</text>
+        <text x="670" y="51" text-anchor="middle" class="lc-val" fill="#2563EB">~4&#8239;200</text>
+        <!-- Экспорт (млрд сум) -->
+        <polyline points="120,124 230,121 340,126 450,113" fill="none" stroke="#059669" stroke-width="2" stroke-linejoin="round"/>
+        <polyline points="450,113 560,103 670,86" fill="none" stroke="#059669" stroke-width="2" stroke-linejoin="round" stroke-dasharray="5,3"/>
+        <circle cx="120" cy="124" r="2.5" fill="#059669"/>
+        <circle cx="230" cy="121" r="2.5" fill="#059669"/>
+        <circle cx="340" cy="126" r="2.5" fill="#059669" stroke="#DC2626" stroke-width="1.5"/>
+        <circle cx="450" cy="113" r="2.5" fill="#059669"/>
+        <circle cx="560" cy="103" r="2.5" fill="#fff" stroke="#059669" stroke-width="1.5"/>
+        <circle cx="670" cy="86" r="2.5" fill="#fff" stroke="#059669" stroke-width="1.5"/>
+        <text x="120" y="138" text-anchor="middle" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#059669">191</text>
+        <text x="230" y="136" text-anchor="middle" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#059669">260</text>
+        <text x="340" y="138" text-anchor="middle" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#DC2626">213</text>
+        <text x="450" y="108" text-anchor="middle" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#059669">450</text>
+        <text x="560" y="98" text-anchor="middle" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#059669">~820</text>
+        <text x="670" y="81" text-anchor="middle" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#059669">~1&#8239;100</text>
+        <!-- Инвестиции (amber line) -->
+        <polyline points="120,118 230,107 340,126 450,108" fill="none" stroke="#D97706" stroke-width="2" stroke-linejoin="round"/>
+        <polyline points="450,108 560,93 670,72" fill="none" stroke="#D97706" stroke-width="2" stroke-linejoin="round" stroke-dasharray="6,3"/>
+        <circle cx="120" cy="118" r="2.5" fill="#D97706"/><circle cx="230" cy="107" r="2.5" fill="#D97706"/>
+        <circle cx="340" cy="126" r="2.5" fill="#D97706" stroke="#DC2626" stroke-width="1.5"/>
+        <circle cx="450" cy="108" r="2.5" fill="#D97706"/>
+        <circle cx="560" cy="93" r="2.5" fill="#fff" stroke="#D97706" stroke-width="1.5"/>
+        <circle cx="670" cy="72" r="2.5" fill="#fff" stroke="#D97706" stroke-width="1.5"/>
+        <text x="110" y="128" text-anchor="middle" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#D97706">910</text>
+        <text x="240" y="103" text-anchor="start" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#D97706">1&#8239;574</text>
+        <text x="340" y="137" text-anchor="middle" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#DC2626">700</text>
+        <text x="460" y="117" text-anchor="start" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#D97706">1&#8239;281</text>
+        <text x="570" y="89" text-anchor="start" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#D97706">~2&#8239;000</text>
+        <text x="680" y="68" text-anchor="start" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#D97706">~3&#8239;000</text>
+        <!-- Легенда -->
+        <line x1="65" y1="12" x2="80" y2="12" stroke="#2563EB" stroke-width="2.5"/>
+        <text x="83" y="15" class="lc-label" fill="#2563EB">Промышленность</text>
+        <line x1="200" y1="12" x2="215" y2="12" stroke="#D97706" stroke-width="2" stroke-dasharray="5,3"/>
+        <text x="218" y="15" class="lc-label" fill="#D97706">Инвестиции</text>
+        <line x1="310" y1="12" x2="325" y2="12" stroke="#059669" stroke-width="2" stroke-dasharray="4,3"/>
+        <text x="328" y="15" class="lc-label" fill="#059669">Экспорт</text>
+      </svg>
+    </div>
+
+    <!-- Forecast chart: Миграция -->
+    <div class="c s6">
+      <div class="chart-title">Прогноз: Миграция, бедность (семей) и безработица (чел.)</div>
+      <svg width="100%" viewBox="0 0 720 160" style="display:block">
+        <rect x="480" y="5" width="220" height="140" rx="4" fill="#DBEAFE" opacity="0.6"/>
+        <text x="590" y="18" text-anchor="middle" style="font-family:var(--mono);font-size:9px;font-weight:600;fill:var(--accent);opacity:0.7">ПРОГНОЗ</text>
+        <line x1="55" y1="25" x2="55" y2="130" class="lc-axis"/>
+        <line x1="55" y1="130" x2="700" y2="130" class="lc-axis"/>
+        <line x1="55" y1="95" x2="700" y2="95" class="lc-grid"/>
+        <line x1="55" y1="60" x2="700" y2="60" class="lc-grid"/>
+        <text x="50" y="134" text-anchor="end" class="lc-label">0</text>
+        <text x="50" y="99" text-anchor="end" class="lc-label">3000</text>
+        <text x="50" y="64" text-anchor="end" class="lc-label">6000</text>
+        <text x="120" y="147" text-anchor="middle" class="lc-label">2022</text>
+        <text x="230" y="147" text-anchor="middle" class="lc-label">2023</text>
+        <text x="340" y="147" text-anchor="middle" class="lc-label">2024</text>
+        <text x="450" y="147" text-anchor="middle" class="lc-label">2025</text>
+        <text x="560" y="147" text-anchor="middle" class="lc-label" fill="var(--accent)">2026п</text>
+        <text x="670" y="147" text-anchor="middle" class="lc-label" fill="var(--accent)">2028п</text>
+        <!-- Миграция (red, bars) -->
+        <rect x="105" y="123" width="30" height="7" rx="2" fill="#F87171"/>
+        <rect x="215" y="109" width="30" height="21" rx="2" fill="#F87171"/>
+        <rect x="325" y="57" width="30" height="73" rx="2" fill="#DC2626"/>
+        <rect x="435" y="116" width="30" height="14" rx="2" fill="#F87171" opacity="0.7"/>
+        <rect x="545" y="119" width="30" height="11" rx="2" fill="#93C5FD" opacity="0.7"/>
+        <rect x="655" y="121" width="30" height="9" rx="2" fill="#93C5FD" opacity="0.7"/>
+        <text x="120" y="120" text-anchor="middle" style="font-family:var(--mono);font-size:9px;font-weight:600;fill:var(--red)">630</text>
+        <text x="230" y="106" text-anchor="middle" style="font-family:var(--mono);font-size:9px;font-weight:600;fill:var(--red)">1,8K</text>
+        <text x="340" y="53" text-anchor="middle" style="font-family:var(--mono);font-size:9px;font-weight:700;fill:var(--red)">6,2K</text>
+        <text x="450" y="113" text-anchor="middle" style="font-family:var(--mono);font-size:9px;font-weight:600;fill:var(--red)">1,2K</text>
+        <text x="560" y="116" text-anchor="middle" style="font-family:var(--mono);font-size:9px;font-weight:600;fill:var(--accent)">~800</text>
+        <text x="670" y="118" text-anchor="middle" style="font-family:var(--mono);font-size:9px;font-weight:600;fill:var(--accent)">~500</text>
+        <!-- Бедность (amber line, families) scale 0-9000 -->
+        <polyline points="120,93 230,97 340,104 450,112" fill="none" stroke="#D97706" stroke-width="2" stroke-linejoin="round"/>
+        <polyline points="450,112 560,123 670,128" fill="none" stroke="#D97706" stroke-width="2" stroke-linejoin="round" stroke-dasharray="5,3"/>
+        <circle cx="120" cy="93" r="2.5" fill="#D97706"/>
+        <circle cx="230" cy="97" r="2.5" fill="#D97706"/>
+        <circle cx="340" cy="104" r="2.5" fill="#D97706"/>
+        <circle cx="450" cy="112" r="2.5" fill="#D97706"/>
+        <circle cx="560" cy="123" r="2.5" fill="#fff" stroke="#D97706" stroke-width="1.5"/>
+        <circle cx="670" cy="128" r="2.5" fill="#fff" stroke="#D97706" stroke-width="1.5"/>
+        <text x="130" y="90" text-anchor="start" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#D97706">3&#8239;200</text>
+        <text x="240" y="94" text-anchor="start" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#D97706">2&#8239;800</text>
+        <text x="350" y="101" text-anchor="start" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#D97706">2&#8239;199</text>
+        <text x="460" y="109" text-anchor="start" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#D97706">1&#8239;548</text>
+        <text x="570" y="120" text-anchor="start" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#D97706">651</text>
+        <text x="680" y="125" text-anchor="start" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#D97706">~300</text>
+        <!-- Безработица (green line, people) -->
+        <polyline points="120,100 230,102 340,106 450,110" fill="none" stroke="#059669" stroke-width="2" stroke-linejoin="round"/>
+        <polyline points="450,110 560,118 670,124" fill="none" stroke="#059669" stroke-width="2" stroke-linejoin="round" stroke-dasharray="5,3"/>
+        <circle cx="120" cy="100" r="2.5" fill="#059669"/>
+        <circle cx="230" cy="102" r="2.5" fill="#059669"/>
+        <circle cx="340" cy="106" r="2.5" fill="#059669"/>
+        <circle cx="450" cy="110" r="2.5" fill="#059669"/>
+        <circle cx="560" cy="118" r="2.5" fill="#fff" stroke="#059669" stroke-width="1.5"/>
+        <circle cx="670" cy="124" r="2.5" fill="#fff" stroke="#059669" stroke-width="1.5"/>
+        <text x="108" y="109" text-anchor="end" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#059669">2&#8239;600</text>
+        <text x="218" y="111" text-anchor="end" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#059669">2&#8239;400</text>
+        <text x="318" y="115" text-anchor="end" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#059669">2&#8239;100</text>
+        <text x="428" y="119" text-anchor="end" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#059669">1&#8239;798</text>
+        <text x="538" y="126" text-anchor="end" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#059669">~1&#8239;000</text>
+        <text x="648" y="131" text-anchor="end" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#059669">~600</text>
+        <!-- Легенда -->
+        <rect x="65" y="8" width="12" height="8" rx="2" fill="#F87171"/>
+        <text x="80" y="15" class="lc-label" fill="#DC2626">Миграция (выезд/год)</text>
+        <line x1="230" y1="12" x2="245" y2="12" stroke="#D97706" stroke-width="2"/>
+        <text x="248" y="15" class="lc-label" fill="#D97706">Бедность (семей)</text>
+        <line x1="380" y1="12" x2="395" y2="12" stroke="#059669" stroke-width="2"/>
+        <text x="398" y="15" class="lc-label" fill="#059669">Безработица (чел.)</text>
+      </svg>
+    </div>
+
+    <!-- SECTION -->
+    <div class="sec sec12">Целевые показатели: факт vs прогноз</div>
+
+    <!-- Целевая таблица -->
+    <div class="c s8">
+      <div class="c-t">Ключевые индикаторы: 2025 (факт) - 2028 (план) - 2031 (цель)</div>
+      <table>
+        <tr><th>Показатель</th><th class="r">2025 (факт)</th><th class="r" style="color:var(--accent)">2028 (план)</th><th class="r" style="color:var(--green)">2031 (цель)</th><th class="r">&#916;</th></tr>
+        <tr><td>Промышленность (млрд сум)</td><td class="r"><b>2&#8239;459</b></td><td class="r">~3&#8239;500</td><td class="r" style="color:var(--green)"><b>5&#8239;000</b></td><td class="r" style="color:var(--green)">+103%</td></tr>
+        <tr><td>Экспорт (млрд сум)</td><td class="r"><b>450</b></td><td class="r">~900</td><td class="r" style="color:var(--green)"><b>1&#8239;300</b></td><td class="r" style="color:var(--green)">+189%</td></tr>
+        <tr><td>Инвестиции / год (млрд сум)</td><td class="r"><b>1&#8239;281</b></td><td class="r">~2&#8239;200</td><td class="r" style="color:var(--green)"><b>3&#8239;000</b></td><td class="r" style="color:var(--green)">+134%</td></tr>
+        <tr><td>Миграция (выезд/год)</td><td class="r" style="color:var(--red)"><b>15&#8239;574</b></td><td class="r">~10&#8239;000</td><td class="r" style="color:var(--green)"><b>&lt;8&#8239;000</b></td><td class="r" style="color:var(--green)">-49%</td></tr>
+        <tr><td>Безработица (чел.)</td><td class="r" style="color:var(--red)"><b>1&#8239;798</b></td><td class="r">~1&#8239;000</td><td class="r" style="color:var(--green)"><b>&lt;600</b></td><td class="r" style="color:var(--green)">-67%</td></tr>
+        <tr><td>Бедные семьи</td><td class="r" style="color:var(--red)"><b>2&#8239;602</b></td><td class="r">~1&#8239;200</td><td class="r" style="color:var(--green)"><b>&lt;600</b></td><td class="r" style="color:var(--green)">-77%</td></tr>
+        <tr><td>Ср. зарплата (тыс. сум)</td><td class="r"><b>3&#8239;974</b></td><td class="r">~5&#8239;500</td><td class="r" style="color:var(--green)"><b>7&#8239;000</b></td><td class="r" style="color:var(--green)">+76%</td></tr>
+        <tr><td>Активные ИП</td><td class="r"><b>46,4%</b></td><td class="r">~60%</td><td class="r" style="color:var(--green)"><b>70%+</b></td><td class="r" style="color:var(--green)">+24пп</td></tr>
+        <tr><td>Разрыв между махаллями</td><td class="r" style="color:var(--red)"><b>32&#215;</b></td><td class="r">~18&#215;</td><td class="r" style="color:var(--green)"><b>&lt;10&#215;</b></td><td class="r" style="color:var(--green)">-69%</td></tr>
+      </table>
+    </div>
+
+    <!-- Крупнейшие проекты -->
+    <div class="c s4">
+      <div class="c-t">Якорные проекты-катализаторы</div>
+      <table style="font-size:10.5px">
+        <tr><th>Проект</th><th class="r">Сумма</th><th class="r">Мест</th></tr>
+        <tr><td><b>HENG TAI</b> - туркомплекс</td><td class="r">960 млрд</td><td class="r">70</td></tr>
+        <tr><td><b>WENNY ESTATE</b> -672 кв.</td><td class="r">450 млрд</td><td class="r">350</td></tr>
+        <tr><td><b>FOSHAN</b> - керамика</td><td class="r">384 млрд</td><td class="r"> -</td></tr>
+        <tr><td><b>Ферантеп Гилам</b> - ковры</td><td class="r">360 млрд</td><td class="r">150+</td></tr>
+        <tr><td><b>GUANGZHOU</b> - пищепром</td><td class="r">256 млрд</td><td class="r"> -</td></tr>
+        <tr><td><b>Comfort Avenue</b> Hotel</td><td class="r">126 млрд</td><td class="r">250</td></tr>
+        <tr><td><b>Мебельный кластер</b></td><td class="r">92 млрд</td><td class="r">1&#8239;055</td></tr>
+        <tr><td><b>Медвуз</b> Central Asia</td><td class="r">68,9 млрд</td><td class="r">70</td></tr>
+      </table>
+      <div style="margin-top:6px;padding-top:4px;border-top:1px solid var(--border);font-size:10.5px;color:var(--text2)">
+        <b>Итого план 2026:</b> 468 проектов, 9&#8239;722 млрд сум
+      </div>
+    </div>
+
+    <!-- Итоговый вывод -->
+    <div class="sec sec12">Итоговый вывод</div>
+
+    <div class="c s12" style="background:linear-gradient(135deg,#EFF6FF,#F0FDF4);border:1px solid #2563EB22;padding:14px 20px">
+      <div style="display:flex;align-items:flex-start;gap:28px">
+        <div style="flex:2">
+          <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:8px">Маргилан 2031: модернизация экономической модели</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.7">
+            <b>Корневая проблема:</b> устаревшая экономическая модель – 97% малый бизнес, 49,5% ИП в рознице, отсутствие крупных производств. Результат: низкие зарплаты (×3,2 разрыв с РФ), массовая миграция (15 574 чел.) и замкнутый цикл деградации.<br>
+            <b>Стратегия:</b> переход от торгового города к промышленному центру через формирование якорных предприятий, привлечение 3 738 млрд FDI и 1 500 млрд кредитов.<br>
+            <b>Роль НБУ:</b> кредитование 1 500 млрд (×5,6 к 2025), 12 махалла-банкиров, 50 агентов финансовой инклюзии, контроль NPL (4,6% → &lt;2,5%).
+          </div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center">
+          <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:10px">Целевые показатели к 2031</div>
+          <div style="display:flex;gap:10px">
+            <div style="text-align:center;background:#fff;border-radius:8px;padding:10px 16px;border:1px solid var(--border)">
+              <div style="font-family:var(--mono);font-size:24px;font-weight:700;color:var(--green)">&#215;2</div>
+              <div style="font-size:10px;color:var(--text3);font-weight:600">промышленность</div>
+              <div style="font-size:9px;color:var(--text3);margin-top:2px">2 459 &#8594; 5 000</div>
+            </div>
+            <div style="text-align:center;background:#fff;border-radius:8px;padding:10px 16px;border:1px solid var(--border)">
+              <div style="font-family:var(--mono);font-size:24px;font-weight:700;color:var(--green)">&#215;3</div>
+              <div style="font-size:10px;color:var(--text3);font-weight:600">экспорт</div>
+              <div style="font-size:9px;color:var(--text3);margin-top:2px">450 &#8594; 1 300</div>
+            </div>
+            <div style="text-align:center;background:#fff;border-radius:8px;padding:10px 16px;border:1px solid var(--border)">
+              <div style="font-family:var(--mono);font-size:24px;font-weight:700;color:var(--green)">-77%</div>
+              <div style="font-size:10px;color:var(--text3);font-weight:600">бедность</div>
+              <div style="font-size:9px;color:var(--text3);margin-top:2px">2 602 &#8594; &lt;600 сем.</div>
+            </div>
+            <div style="text-align:center;background:#fff;border-radius:8px;padding:10px 16px;border:1px solid var(--border)">
+              <div style="font-family:var(--mono);font-size:24px;font-weight:700;color:var(--green)">-49%</div>
+              <div style="font-size:10px;color:var(--text3);font-weight:600">миграция</div>
+              <div style="font-size:9px;color:var(--text3);margin-top:2px">15 574 &#8594; &lt;8 000</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

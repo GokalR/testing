@@ -1,0 +1,2084 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Марғилон – Президент учун аналитик хулоса</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..900&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+  :root {
+    --bg: #FFFFFF;
+    --bg2: #F8F9FB;
+    --bg3: #EEF0F4;
+    --surface: rgba(0,0,0,0.018);
+    --border: rgba(0,0,0,0.07);
+    --border2: rgba(0,0,0,0.13);
+    --text: #1A1A2E;
+    --text2: #3D3D5C;
+    --text3: #8B8BA3;
+    --accent: #2563EB;
+    --red: #DC2626;
+    --red-soft: #FEF2F2;
+    --green: #059669;
+    --green-soft: #ECFDF5;
+    --amber: #D97706;
+    --amber-soft: #FFFBEB;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Inter', -apple-system, sans-serif;
+    --serif: 'DM Serif Display', Georgia, serif;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { font-size: 14px; }
+
+  @page { size: 1480px 850px; margin: 0; }
+  @media print {
+    .page { page-break-after: always; }
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  body {
+    font-family: var(--sans);
+    background: #ECEEF2;
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.45;
+    font-weight: 520;
+  }
+
+  .page {
+    width: 1480px;
+    height: 850px;
+    margin: 10px auto;
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 24px rgba(0,0,0,0.07);
+    border-radius: 6px;
+  }
+
+  .hdr {
+    padding: 14px 40px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 1.5px solid #E5E7EB;
+  }
+  .hdr-title {
+    font-family: var(--serif);
+    font-size: 30px;
+    color: var(--text);
+    letter-spacing: -0.5px;
+  }
+  .hdr-sub {
+    font-size: 13px;
+    color: var(--text2);
+    margin-top: 3px;
+    font-weight: 520;
+    letter-spacing: 0.2px;
+  }
+  .hdr-right { display:flex; align-items:center; gap:16px; }
+  .hdr-page { font-family:var(--mono); font-size:12px; color:var(--accent); font-weight:600; }
+  .hdr-brand {
+    display:flex; align-items:center; gap:8px;
+    background: linear-gradient(135deg, #1E3A5F, #2563EB);
+    padding: 5px 14px; border-radius: 6px;
+    font-size: 10px; font-weight: 700; color: #fff;
+    letter-spacing: 0.5px; text-transform: uppercase;
+  }
+
+  .grid {
+    display: grid;
+    gap: 7px;
+    padding: 10px 22px 8px;
+  }
+  .g1 { grid-template-columns: repeat(6,1fr); }
+  .g2 { grid-template-columns: repeat(12,1fr); }
+
+  .c {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 12px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  }
+  .c-t {
+    font-size: 10.5px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--text3); margin-bottom: 6px;
+    display:flex; align-items:center; gap:7px;
+  }
+  .c-t .dot { width:6px; height:6px; border-radius:50%; }
+  .s2 { grid-column: span 2; }
+  .s3 { grid-column: span 3; }
+  .s4 { grid-column: span 4; }
+  .s5 { grid-column: span 5; }
+  .s6 { grid-column: span 6; }
+  .s7 { grid-column: span 7; }
+  .s8 { grid-column: span 8; }
+  .s9 { grid-column: span 9; }
+  .s12 { grid-column: span 12; }
+
+  /* KPI */
+  .kpi {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 8px 12px 6px;
+    overflow: hidden; position: relative;
+  }
+  .kpi::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:2.5px;
+    background: var(--accent);
+  }
+  .kpi-l { font-size:10.5px; font-weight:700; letter-spacing:0.5px; color:var(--text3); text-transform:uppercase; }
+  .kpi-v { font-family:var(--mono); font-size:26px; font-weight:700; color:var(--text); margin:4px 0 2px; line-height:1; letter-spacing:-0.5px; font-feature-settings:'tnum'; }
+  .kpi-s { font-size:11px; color:var(--text3); font-weight:520; }
+  .kpi-tag {
+    display:inline-flex; align-items:center; font-size:10.5px; font-weight:600;
+    padding:2px 7px; border-radius:4px; margin-top:4px; gap:3px;
+  }
+  .kpi-tag.up { color:var(--green); background:var(--green-soft); }
+  .kpi-tag.down { color:var(--red); background:var(--red-soft); }
+
+  /* Section divider */
+  .sec {
+    grid-column: span 6; font-size:11.5px; font-weight:600;
+    color:var(--text3); letter-spacing:1.5px; text-transform:uppercase;
+    padding:0; display:flex; align-items:center; gap:12px;
+  }
+  .sec::after { content:''; flex:1; height:1px; background:var(--border); }
+  .sec12 { grid-column:span 12; }
+
+  /* Tables */
+  table { width:100%; border-collapse:collapse; font-size:11.5px; }
+  th { text-align:left; font-size:9.5px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:var(--text3); padding:5px 8px; border-bottom:1px solid var(--border2); }
+  th.r, td.r { text-align:right; }
+  th.c, td.c { text-align:center; }
+  td { padding:4.5px 8px; border-bottom:1px solid #F1F3F5; color:var(--text2); font-weight:520; }
+  td b { color:var(--text); font-weight:600; }
+  tr:last-child td { border-bottom:none; }
+  .tr-hl { background:#F8FAFC; }
+  .tr-hl td { color:var(--text); font-weight:600; }
+
+  /* Bars */
+  .bar { display:flex; align-items:center; gap:8px; margin:3px 0; }
+  .bar-l { font-size:11px; width:100px; color:var(--text2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex-shrink:0; font-weight:600; }
+  .bar-t { flex:1; height:16px; background:#F1F3F5; border-radius:4px; overflow:hidden; }
+  .bar-f { height:100%; border-radius:4px; min-width:2px; }
+  .bar-v { font-family:var(--mono); font-size:11px; font-weight:600; width:52px; text-align:right; color:var(--text2); flex-shrink:0; }
+  .bf-blue { background: linear-gradient(90deg, #2563EB, #60A5FA); }
+  .bf-red { background: linear-gradient(90deg, #DC2626, #F87171); }
+  .bf-green { background: linear-gradient(90deg, #059669, #34D399); }
+  .bf-amber { background: linear-gradient(90deg, #D97706, #FBBF24); }
+  .bf-purple { background: linear-gradient(90deg, #7C3AED, #A78BFA); }
+  .bf-gray { background: linear-gradient(90deg, #6B7280, #9CA3AF); }
+
+  /* Alerts */
+  .al { border-radius:6px; padding:6px 10px; font-size:11px; display:flex; gap:7px; line-height:1.4; font-weight:520; }
+  .al.al-r { background:#FFF1F2; border-left:2.5px solid #E11D48; color:#9F1239; }
+  .al.al-a { background:var(--amber-soft); border-left:2px solid var(--amber); color:#92400E; }
+  .al.al-g { background:var(--green-soft); border-left:2px solid var(--green); color:#065F46; }
+
+  /* Tags */
+  .tag { display:inline-block; padding:2px 7px; border-radius:3px; font-size:9px; font-weight:700; letter-spacing:0.7px; }
+  .tag-r { background:var(--red-soft); color:var(--red); }
+  .tag-g { background:var(--green-soft); color:var(--green); }
+  .tag-b { background:#EFF6FF; color:var(--accent); }
+  .tag-a { background:var(--amber-soft); color:var(--amber); }
+
+  .wm { position:absolute; bottom:6px; right:22px; font-size:9px; color:var(--text3); opacity:0.5; }
+
+  /* ============= SVG CHARTS ============= */
+  .chart-wrap { position: relative; }
+  .chart-title {
+    font-size:10px; font-weight:600; text-transform:uppercase;
+    letter-spacing:0.8px; color:var(--text3); margin-bottom:8px;
+  }
+  .lc-label { font-family: var(--mono); font-size: 9px; font-weight: 600; fill: var(--text3); }
+  .lc-val { font-family: var(--mono); font-size: 10px; font-weight: 600; }
+  .lc-grid { stroke: #F1F3F5; stroke-width: 1; }
+  .lc-axis { stroke: #E5E7EB; stroke-width: 1; }
+
+  /* Rec cards */
+  .rec {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 10px; padding: 11px 14px 10px;
+    border-left: 3px solid var(--accent);
+    position: relative;
+    transition: box-shadow 0.15s;
+  }
+  .rec:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .rec.rec-red { border-left-color: var(--red); }
+  .rec.rec-green { border-left-color: var(--green); }
+  .rec.rec-amber { border-left-color: var(--amber); }
+  .rec-n {
+    font-family:var(--mono); font-size:11px; font-weight:700;
+    color:#fff; background:var(--accent); border-radius:4px;
+    width:24px; height:24px; display:inline-flex; align-items:center; justify-content:center;
+    float:right; margin-top:-2px; margin-right:-2px;
+  }
+  .rec.rec-red .rec-n { background:var(--red); }
+  .rec.rec-green .rec-n { background:var(--green); }
+  .rec.rec-amber .rec-n { background:var(--amber); }
+  .rec-h { font-size:12.5px; font-weight:600; color:var(--text); margin-bottom:4px; }
+  .rec-b { font-size:10.5px; color:var(--text2); line-height:1.5; font-weight:500; }
+  .rec-k {
+    margin-top:6px; padding-top:6px; border-top:1px solid var(--border);
+    display:flex; align-items:center; gap:6px; font-size:11px;
+  }
+  .rec-k span { font-family:var(--mono); font-weight:600; }
+  .rec-k .from { color:var(--red); }
+  .rec-k .to { color:var(--green); }
+  .rec-k .arr { color:var(--text3); }
+  .rec-k .lbl { color:var(--text3); font-weight:500; }
+
+  /* Priority group label */
+  .prio-group {
+    grid-column: span 12; display:flex; align-items:center; gap:8px;
+    font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase;
+    color:var(--text3); padding:2px 0 0;
+  }
+  .prio-group .pg-icon {
+    width:20px; height:20px; border-radius:5px; display:inline-flex;
+    align-items:center; justify-content:center; font-size:11px; color:#fff;
+  }
+
+  /* Stat pair */
+  .sp { display:flex; gap:8px; margin-bottom:6px; }
+  .sp-box { flex:1; border-radius:8px; padding:7px; text-align:center; }
+  .sp-l { font-size:9px; font-weight:600; letter-spacing:0.8px; text-transform:uppercase; }
+  .sp-v { font-family:var(--mono); font-size:20px; font-weight:600; line-height:1.2; }
+  .sp-s { font-size:10px; font-weight:520; }
+
+  /* Vertical bar chart (compact) */
+  .vchart { display:flex; align-items:flex-end; gap:4px; height:110px; padding:0 2px; }
+  .vcol { flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; }
+  .vbar { width:100%; border-radius:3px 3px 0 0; min-height:2px; }
+  .vlbl { font-size:8px; color:var(--text3); font-weight:600; }
+  .vval { font-family:var(--mono); font-size:9px; font-weight:600; color:var(--text2); }
+
+  /* Comparison table */
+  .cmp-row { display:flex; align-items:center; gap:0; margin:1px 0; }
+  .cmp-label { font-size:8px; font-weight:600; color:var(--text3); width:100%; margin-bottom:0; letter-spacing:0.3px; }
+  .cmp-val { font-family:var(--mono); font-size:9px; font-weight:700; width:55px; text-align:right; flex-shrink:0; }
+  .cmp-bar-wrap { flex:1; height:10px; background:#F1F3F5; border-radius:3px; overflow:hidden; }
+
+  /* Title page */
+  .title-page {
+    width: 1480px;
+    height: 850px;
+    margin: 10px auto;
+    background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 40%, #2563EB 100%);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 24px rgba(0,0,0,0.07);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #fff;
+  }
+  .title-page::before {
+    content:'';
+    position:absolute;
+    top:0;left:0;right:0;bottom:0;
+    background: radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.05) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, rgba(37,99,235,0.15) 0%, transparent 50%);
+  }
+  .title-page > * { position: relative; z-index: 1; }
+  .tp-logo {
+    display: block;
+    max-height: 110px;
+    max-width: 90px;
+    width: auto;
+    height: auto;
+    margin: 0 auto 36px;
+    object-fit: contain;
+  }
+  .tp-title {
+    font-family: var(--serif);
+    font-size: 52px;
+    letter-spacing: -1px;
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+  .tp-subtitle {
+    font-size: 22px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.75);
+    margin-bottom: 48px;
+    letter-spacing: 0.3px;
+  }
+  .tp-divider {
+    width: 120px;
+    height: 2px;
+    background: rgba(255,255,255,0.25);
+    margin: 0 auto 48px;
+  }
+  .tp-prepared {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 8px;
+  }
+  .tp-org {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.9);
+  }
+  .tp-date {
+    font-size: 13px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 12px;
+    font-family: var(--mono);
+    letter-spacing: 1px;
+  }
+  .tp-sources {
+    font-size: 12px;
+    color: rgba(255,255,255,0.35);
+    margin-top: 6px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- ТИТУЛ САҲИФАСИ                                            -->
+<!-- ============================================================ -->
+<div class="title-page" id="p0">
+  <img class="tp-logo" src="NBU_logo.png" alt="NBU">
+  <div class="tp-sources" style="margin-bottom:8px">Фарғона вилояти, Ўзбекистон Республикаси</div>
+  <div class="tp-title">Марғилон</div>
+  <div class="tp-subtitle">Комплекс таҳлил ва ривожланиш стратегияси 2026–2031</div>
+  <div class="tp-divider"></div>
+  <div class="tp-prepared">Тайёрлаган</div>
+  <div class="tp-org">Ўзбекистон Миллий банки – Data Office</div>
+  <div class="tp-date">2026 йил март</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 1-САҲИФА: ЖОРИЙ ВАЗИЯТ (МАКРО)                         -->
+<!-- ============================================================ -->
+<div class="page" id="p1">
+  <div class="hdr">
+    <div>
+      <div class="hdr-title">Марғилон – Жорий вазият</div>
+      <div class="hdr-sub">Фарғона вилояти &nbsp;&bull;&nbsp; Маълумотлар 2021–2025</div>
+    </div>
+    <div class="hdr-right">
+      <div class="hdr-brand">NBU Data Office</div>
+      <div class="hdr-page">01 / 09</div>
+    </div>
+  </div>
+
+  <div class="grid g2">
+
+    <!-- KPI ROW – all 8 in one flex row -->
+    <div style="grid-column:span 12;display:flex;gap:5px">
+      <div class="kpi" style="flex:1;padding:6px 7px 4px">
+        <div class="kpi-l" style="font-size:8px">Аҳоли</div>
+        <div class="kpi-v" style="font-size:28px;margin:1px 0 1px">261&#8239;948</div>
+        <div class="kpi-s" style="font-size:8px">54% ёшлар</div>
+        <div class="kpi-tag up" style="font-size:7.5px;padding:1px 4px">&#9650; +9,6%</div>
+      </div>
+      <div class="kpi" style="flex:1;padding:6px 7px 4px">
+        <div class="kpi-l" style="font-size:8px">Майдон</div>
+        <div class="kpi-v" style="font-size:28px;margin:1px 0 1px">52 км²</div>
+        <div class="kpi-s" style="font-size:8px">5&#8239;035/км²</div>
+        <div class="kpi-tag down" style="font-size:7.5px;padding:1px 4px">&#9660; ×8 вилоятга</div>
+      </div>
+      <div class="kpi" style="flex:1;padding:6px 7px 4px">
+        <div class="kpi-l" style="font-size:8px">Саноат</div>
+        <div class="kpi-v" style="font-size:28px;margin:1px 0 1px">2&#8239;459</div>
+        <div class="kpi-s" style="font-size:8px">млрд (4,9% вил.)</div>
+        <div class="kpi-tag up" style="font-size:7.5px;padding:1px 4px">&#9650; +71%</div>
+      </div>
+      <div class="kpi" style="flex:1;padding:6px 7px 4px">
+        <div class="kpi-l" style="font-size:8px">Экспорт</div>
+        <div class="kpi-v" style="font-size:28px;margin:1px 0 1px">450</div>
+        <div class="kpi-s" style="font-size:8px">млрд (рекорд)</div>
+        <div class="kpi-tag up" style="font-size:7.5px;padding:1px 4px">&#9650; +202%</div>
+      </div>
+      <div class="kpi" style="flex:1;padding:6px 7px 4px">
+        <div class="kpi-l" style="font-size:8px">Ўрт. иш ҳақи</div>
+        <div class="kpi-v" style="font-size:28px;margin:1px 0 1px">3&#8239;974</div>
+        <div class="kpi-s" style="font-size:8px">минг сўм/ой</div>
+        <div class="kpi-tag up" style="font-size:7.5px;padding:1px 4px">&#9650; +86%</div>
+      </div>
+      <div class="kpi" style="flex:1;padding:6px 7px 4px">
+        <div class="kpi-l" style="font-size:8px">Туризм</div>
+        <div class="kpi-v" style="font-size:28px;margin:1px 0 1px">380К</div>
+        <div class="kpi-s" style="font-size:8px">турист/йил</div>
+        <div class="kpi-tag up" style="font-size:7.5px;padding:1px 4px">&#9650; 42 объект</div>
+      </div>
+      <div class="kpi" style="flex:1;padding:6px 7px 4px">
+        <div class="kpi-l" style="font-size:8px">Маҳаллалар</div>
+        <div class="kpi-v" style="font-size:28px;margin:1px 0 1px">50</div>
+        <div class="kpi-s" style="font-size:8px">46&#8239;580 уй-жой</div>
+        <div class="kpi-tag down" style="font-size:7.5px;padding:1px 4px">&#9660; 32× фарқ</div>
+      </div>
+      <div class="kpi" style="flex:1;padding:6px 7px 4px">
+        <div class="kpi-l" style="font-size:8px">Жон бошига</div>
+        <div class="kpi-v" style="font-size:28px;margin:1px 0 1px">9&#8239;461</div>
+        <div class="kpi-s" style="font-size:8px">×4 Фарғонадан</div>
+        <div class="kpi-tag down" style="font-size:7.5px;padding:1px 4px">&#9660; 24,8%</div>
+      </div>
+    </div>
+
+    <!-- SECTION: ЭКОНОМИКА -->
+    <div class="sec sec12">Иқтисодий динамика 2021–2025</div>
+
+    <!-- Экономические показатели -->
+    <div class="c s7" style="padding:4px 8px">
+      <div class="c-t" style="margin-bottom:3px">5 йиллик асосий кўрсаткичлар</div>
+      <table>
+        <tr><th>Кўрсаткич</th><th class="r">2021</th><th class="r">2022</th><th class="r">2023</th><th class="r">2024</th><th class="r">2025</th><th class="r">Тренд</th></tr>
+        <tr><td>Саноат (млрд сўм)</td><td class="r">1&#8239;440</td><td class="r">1&#8239;554</td><td class="r">1&#8239;683</td><td class="r">2&#8239;079</td><td class="r"><b>2&#8239;459</b></td><td class="r" style="color:var(--green)">+71%</td></tr>
+        <tr><td>Экспорт (млрд сўм)</td><td class="r">149</td><td class="r">191</td><td class="r">260</td><td class="r" style="color:var(--red)">213</td><td class="r"><b>450</b></td><td class="r" style="color:var(--green)">+202%</td></tr>
+        <tr><td>Импорт (млрд сўм)</td><td class="r">777</td><td class="r" style="color:var(--text3)"><i>~790</i></td><td class="r" style="color:var(--text3)"><i>~800</i></td><td class="r">817</td><td class="r"><b>745</b></td><td class="r" style="color:var(--green)">-4,1%</td></tr>
+        <tr><td>Савдо тақчиллиги (млрд сўм)</td><td class="r" style="color:var(--red)">-628</td><td class="r" style="color:var(--text3)"><i>~-599</i></td><td class="r" style="color:var(--text3)"><i>~-540</i></td><td class="r">-604</td><td class="r" style="color:var(--green)"><b>-295</b></td><td class="r" style="color:var(--green)">-53,0%</td></tr>
+        <tr><td>Қурилиш (ўсиш %)</td><td class="r">121,9</td><td class="r" style="color:var(--red)">88,9</td><td class="r">110,2</td><td class="r">102,7</td><td class="r"><b>118,8</b></td><td class="r" style="color:var(--red)">-2,5%</td></tr>
+        <tr><td>Миграция (кетиш/йил)</td><td class="r">253</td><td class="r">630</td><td class="r">1&#8239;772</td><td class="r" style="color:var(--red)"><b>6&#8239;240</b></td><td class="r">1&#8239;180</td><td class="r" style="color:var(--red)">&#215;25↑</td></tr>
+        <tr><td>Корхоналар (сони)</td><td class="r">4&#8239;928</td><td class="r" style="color:var(--text3)"><i>~4&#8239;200</i></td><td class="r" style="color:var(--text3)"><i>~3&#8239;500</i></td><td class="r">3&#8239;100</td><td class="r" style="color:var(--red)"><b>2&#8239;787</b></td><td class="r" style="color:var(--red)">-43%</td></tr>
+        <tr><td>ЯТТ субъектлари</td><td class="r" style="color:var(--text3)"><i>~6&#8239;500</i></td><td class="r" style="color:var(--text3)"><i>~6&#8239;700</i></td><td class="r" style="color:var(--text3)"><i>~6&#8239;900</i></td><td class="r">7&#8239;050</td><td class="r"><b>7&#8239;143</b></td><td class="r" style="color:var(--green)">+10%</td></tr>
+        <tr><td>Ишсизлик (%)</td><td class="r" style="color:var(--text3)"><i>~9,5</i></td><td class="r" style="color:var(--red)">9,0</td><td class="r">7,8</td><td class="r">6,5</td><td class="r" style="color:var(--green)"><b>5,8</b></td><td class="r" style="color:var(--green)">-3,7пп</td></tr>
+        <tr><td>Инвестициялар (млрд сўм)</td><td class="r" style="color:var(--text3)"><i>~780</i></td><td class="r">910</td><td class="r">1&#8239;574</td><td class="r" style="color:var(--red)">700</td><td class="r"><b>1&#8239;281</b></td><td class="r" style="color:var(--green)">+83%</td></tr>
+      </table>
+    </div>
+
+    <!-- Промышленность, экспорт и инвестиции график -->
+    <div class="c s5">
+      <div class="chart-title" style="margin-bottom:20px">Саноат, экспорт ва инвестициялар (млрд сўм)</div>
+      <svg width="100%" viewBox="0 0 380 130" style="display:block;margin-top:10px">
+        <line x1="45" y1="15" x2="45" y2="100" class="lc-axis"/>
+        <line x1="45" y1="100" x2="365" y2="100" class="lc-axis"/>
+        <line x1="45" y1="72" x2="365" y2="72" class="lc-grid"/>
+        <line x1="45" y1="44" x2="365" y2="44" class="lc-grid"/>
+        <text x="40" y="104" text-anchor="end" class="lc-label">0</text>
+        <text x="40" y="76" text-anchor="end" class="lc-label">1500</text>
+        <text x="40" y="48" text-anchor="end" class="lc-label">3000</text>
+        <text x="90" y="118" text-anchor="middle" class="lc-label">2022</text>
+        <text x="170" y="118" text-anchor="middle" class="lc-label">2023</text>
+        <text x="250" y="118" text-anchor="middle" class="lc-label">2024</text>
+        <text x="330" y="118" text-anchor="middle" class="lc-label">2025</text>
+        <!-- Промышленность -->
+        <polyline points="90,71 170,68 250,61 330,53" fill="none" stroke="#2563EB" stroke-width="2.5" stroke-linejoin="round"/>
+        <circle cx="90" cy="71" r="3" fill="#2563EB"/><circle cx="170" cy="68" r="3" fill="#2563EB"/>
+        <circle cx="250" cy="61" r="3" fill="#2563EB"/><circle cx="330" cy="53" r="3" fill="#2563EB"/>
+        <text x="90" y="66" text-anchor="middle" class="lc-val" fill="#2563EB">1&#8239;554</text>
+        <text x="170" y="63" text-anchor="middle" class="lc-val" fill="#2563EB">1&#8239;683</text>
+        <text x="250" y="56" text-anchor="middle" class="lc-val" fill="#2563EB">2&#8239;079</text>
+        <text x="330" y="48" text-anchor="middle" class="lc-val" fill="#2563EB">2&#8239;459</text>
+        <!-- Инвестиции -->
+        <polyline points="90,74 170,55 250,80 330,64" fill="none" stroke="#D97706" stroke-width="2" stroke-linejoin="round" stroke-dasharray="3,3"/>
+        <circle cx="90" cy="74" r="2.5" fill="#D97706"/><circle cx="170" cy="55" r="2.5" fill="#D97706"/>
+        <circle cx="250" cy="80" r="2.5" fill="#D97706" stroke="#DC2626" stroke-width="1.5"/><circle cx="330" cy="64" r="2.5" fill="#D97706"/>
+        <text x="100" y="72" text-anchor="start" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#D97706">910</text>
+        <text x="180" y="53" text-anchor="start" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#D97706">1&#8239;574</text>
+        <text x="260" y="78" text-anchor="start" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#DC2626">700</text>
+        <text x="335" y="60" text-anchor="start" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#D97706">1&#8239;281</text>
+        <!-- Экспорт -->
+        <polyline points="90,87 170,83 250,86 330,70" fill="none" stroke="#059669" stroke-width="2" stroke-linejoin="round" stroke-dasharray="5,3"/>
+        <circle cx="90" cy="87" r="2.5" fill="#059669"/><circle cx="170" cy="83" r="2.5" fill="#059669"/>
+        <circle cx="250" cy="86" r="2.5" fill="#059669" stroke="#DC2626" stroke-width="1.5"/><circle cx="330" cy="70" r="2.5" fill="#059669"/>
+        <text x="90" y="95" text-anchor="middle" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#059669">191</text>
+        <text x="170" y="80" text-anchor="middle" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#059669">260</text>
+        <text x="250" y="94" text-anchor="middle" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#DC2626">213</text>
+        <text x="330" y="75" text-anchor="middle" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#059669">450</text>
+        <!-- Легенда -->
+        <line x1="55" y1="8" x2="70" y2="8" stroke="#2563EB" stroke-width="2.5"/>
+        <text x="73" y="11" class="lc-label" fill="#2563EB">Саноат</text>
+        <line x1="140" y1="8" x2="155" y2="8" stroke="#D97706" stroke-width="2" stroke-dasharray="3,3"/>
+        <text x="158" y="11" class="lc-label" fill="#D97706">Инвестициялар</text>
+        <line x1="225" y1="8" x2="240" y2="8" stroke="#059669" stroke-width="2" stroke-dasharray="5,3"/>
+        <text x="243" y="11" class="lc-label" fill="#059669">Экспорт</text>
+      </svg>
+      <div style="margin-top:4px;padding:4px 8px;background:linear-gradient(135deg,#EFF6FF,#F0FDF4);border-radius:5px;font-size:10px;color:var(--text2);line-height:1.5;border:1px solid rgba(37,99,235,0.1)">
+        <b style="color:var(--accent)">Хулоса:</b> саноат барқарор ўсмоқда (+71% 4 йилда), экспорт 2024 йил пасайишидан кейин тикланди (рекорд 450 млрд). Инвестициялар беқарор – 2024 йилда тушкунлик (700 млрд), лекин 1 281 гача тикланиш (+83%). Асосий вазифа – инвестиция оқимини барқарорлаштириш.
+      </div>
+    </div>
+
+    <!-- Сравнение двух городов - компактный -->
+    <div class="c s5" style="padding-top:4px;padding-bottom:4px">
+      <div class="c-t" style="margin-bottom:3px">Марғилон vs Фарғона (жон бошига, минг сўм)</div>
+      <div style="display:flex;gap:14px;margin-bottom:4px;font-size:8px;font-weight:700">
+        <span style="color:var(--accent)">&#9632; Марғилон (262 минг)</span>
+        <span style="color:#0891B2">&#9632; Фарғона (332 минг)</span>
+      </div>
+      <!-- Промышленность -->
+      <div class="cmp-label">САНОАТ <span style="color:var(--red);font-family:var(--mono);font-weight:700">&#215;4,0</span></div>
+      <div class="cmp-row"><div class="cmp-bar-wrap"><div class="bar-f bf-blue" style="width:24.8%;height:100%"></div></div><div class="cmp-val" style="color:var(--accent)">9&#8239;461</div></div>
+      <div class="cmp-row"><div class="cmp-bar-wrap"><div class="bar-f" style="width:100%;height:100%;background:linear-gradient(90deg,#0891B2,#22D3EE)"></div></div><div class="cmp-val" style="color:#0891B2"><b>38&#8239;187</b></div></div>
+      <!-- Инвестиции -->
+      <div class="cmp-label">ИНВЕСТИЦИЯЛАР <span style="color:var(--red);font-family:var(--mono);font-weight:700">&#215;4,4</span></div>
+      <div class="cmp-row"><div class="cmp-bar-wrap"><div class="bar-f bf-blue" style="width:22.9%;height:100%"></div></div><div class="cmp-val" style="color:var(--accent)">4&#8239;928</div></div>
+      <div class="cmp-row"><div class="cmp-bar-wrap"><div class="bar-f" style="width:100%;height:100%;background:linear-gradient(90deg,#0891B2,#22D3EE)"></div></div><div class="cmp-val" style="color:#0891B2"><b>21&#8239;491</b></div></div>
+      <!-- Услуги -->
+      <div class="cmp-label">ХИЗМАТЛАР <span style="color:var(--red);font-family:var(--mono);font-weight:700">&#215;2,7</span></div>
+      <div class="cmp-row"><div class="cmp-bar-wrap"><div class="bar-f bf-blue" style="width:37.0%;height:100%"></div></div><div class="cmp-val" style="color:var(--accent)">13&#8239;599</div></div>
+      <div class="cmp-row"><div class="cmp-bar-wrap"><div class="bar-f" style="width:100%;height:100%;background:linear-gradient(90deg,#0891B2,#22D3EE)"></div></div><div class="cmp-val" style="color:#0891B2"><b>36&#8239;753</b></div></div>
+      <!-- Розница -->
+      <div class="cmp-label">ЧАКАНА <span style="color:var(--green);font-family:var(--mono);font-weight:700">&#215;1,1 &#9650;</span></div>
+      <div class="cmp-row"><div class="cmp-bar-wrap"><div class="bar-f bf-blue" style="width:100%;height:100%"></div></div><div class="cmp-val" style="color:var(--accent)"><b>21&#8239;846</b></div></div>
+      <div class="cmp-row"><div class="cmp-bar-wrap"><div class="bar-f" style="width:90.6%;height:100%;background:linear-gradient(90deg,#0891B2,#22D3EE)"></div></div><div class="cmp-val" style="color:#0891B2">19&#8239;785</div></div>
+      <!-- Строительство -->
+      <div class="cmp-label">ҚУРИЛИШ <span style="color:var(--red);font-family:var(--mono);font-weight:700">&#215;1,4</span></div>
+      <div class="cmp-row"><div class="cmp-bar-wrap"><div class="bar-f bf-blue" style="width:69.8%;height:100%"></div></div><div class="cmp-val" style="color:var(--accent)">6&#8239;899</div></div>
+      <div class="cmp-row"><div class="cmp-bar-wrap"><div class="bar-f" style="width:100%;height:100%;background:linear-gradient(90deg,#0891B2,#22D3EE)"></div></div><div class="cmp-val" style="color:#0891B2"><b>9&#8239;878</b></div></div>
+      <div class="al al-r" style="margin-top:4px;font-size:10px"><span style="font-size:11px">&#9888;</span><div><b>Асосий фарқ:</b> Фарғона – 25,3% вилоят саноати (йирик), Марғилон – 4,9% (97% ККБ)</div></div>
+    </div>
+
+    <!-- Инвестиции по источникам + демография -->
+    <div class="c s4">
+      <div class="c-t">2025 йил инвестициялари</div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="font-family:var(--mono);font-size:34px;font-weight:700;color:var(--text);line-height:1">1&#8239;281</div>
+        <div style="font-size:12px;color:var(--text3);font-weight:600">млрд сўм<br><span style="color:var(--green);font-size:13px;font-weight:700">+83% 2024 йилга</span></div>
+      </div>
+      <div style="font-size:9px;font-weight:600;color:var(--text3);letter-spacing:0.5px;margin-bottom:5px">МАНБАЛАР БЎЙИЧА ТУЗИЛМА</div>
+      <div class="bar" style="margin:5px 0"><div class="bar-l" style="width:90px;font-size:10.5px">Хорижий</div><div class="bar-t" style="height:18px"><div class="bar-f bf-blue" style="width:44.3%"></div></div><div class="bar-v" style="font-size:10.5px">44,3%</div></div>
+      <div class="bar" style="margin:5px 0"><div class="bar-l" style="width:90px;font-size:10.5px">Корхона маблағи</div><div class="bar-t" style="height:18px"><div class="bar-f bf-green" style="width:19.1%"></div></div><div class="bar-v" style="font-size:10.5px">19,1%</div></div>
+      <div class="bar" style="margin:5px 0"><div class="bar-l" style="width:90px;font-size:10.5px">Давлат бюджети</div><div class="bar-t" style="height:18px"><div class="bar-f bf-amber" style="width:16.0%"></div></div><div class="bar-v" style="font-size:10.5px">16,0%</div></div>
+      <div class="bar" style="margin:5px 0"><div class="bar-l" style="width:90px;font-size:10.5px">Аҳоли маблағи</div><div class="bar-t" style="height:18px"><div class="bar-f bf-purple" style="width:13.9%"></div></div><div class="bar-v" style="font-size:10.5px">13,9%</div></div>
+      <div class="bar" style="margin:5px 0"><div class="bar-l" style="width:90px;font-size:10.5px">Реставрация фонди</div><div class="bar-t" style="height:18px"><div class="bar-f bf-gray" style="width:6.0%"></div></div><div class="bar-v" style="font-size:10.5px">6,0%</div></div>
+      <div style="margin-top:8px;padding-top:6px;border-top:1px solid var(--border)">
+        <div style="font-size:9px;font-weight:600;color:var(--text3);letter-spacing:0.5px;margin-bottom:4px">ДЕМОГРАФИЯ</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 8px;font-size:11px;color:var(--text2);line-height:1.7">
+          <div><b>Ўсиш:</b> +4&#8239;757/йил</div>
+          <div><b>Меҳнатга лаёқатли:</b> 140&#8239;164</div>
+          <div><b>Миграция сальдоси:</b> <span style="color:var(--red)">-687</span></div>
+          <div><b>Нафақахўрлар:</b> 28&#8239;315</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Иқтисодиёт тузилмаси – donut chart -->
+    <div class="c s3">
+      <div class="c-t">Иқтисодиёт тузилмаси</div>
+      <div style="display:flex;align-items:center;justify-content:center;margin:2px 0">
+        <svg width="130" height="130" viewBox="0 0 160 160">
+          <!-- Donut chart: Розница 38.2%, Пром. 19.4%, Услуги 23.8%, Строит. 12.1%, Прочее 6.5% -->
+          <!-- Background circle -->
+          <circle cx="80" cy="80" r="58" fill="none" stroke="#F1F3F5" stroke-width="22"/>
+          <!-- Розница: 38.2% = 137.5° start at -90° -->
+          <circle cx="80" cy="80" r="58" fill="none" stroke="#D97706" stroke-width="22" stroke-dasharray="139.2 225.2" stroke-dashoffset="91.1" transform="rotate(-90 80 80)"/>
+          <!-- Саноат: 19.4% = 70.7 -->
+          <circle cx="80" cy="80" r="58" fill="none" stroke="#2563EB" stroke-width="22" stroke-dasharray="70.7 293.7" stroke-dashoffset="-48.1" transform="rotate(-90 80 80)"/>
+          <!-- Хизматлар: 23.8% = 86.8 -->
+          <circle cx="80" cy="80" r="58" fill="none" stroke="#059669" stroke-width="22" stroke-dasharray="86.8 277.6" stroke-dashoffset="-118.8" transform="rotate(-90 80 80)"/>
+          <!-- Қурилиш: 12.1% = 44.1 -->
+          <circle cx="80" cy="80" r="58" fill="none" stroke="#8B5CF6" stroke-width="22" stroke-dasharray="44.1 320.3" stroke-dashoffset="-205.6" transform="rotate(-90 80 80)"/>
+          <!-- Прочее: 6.5% = 23.7 -->
+          <circle cx="80" cy="80" r="58" fill="none" stroke="#94A3B8" stroke-width="22" stroke-dasharray="23.7 340.7" stroke-dashoffset="-249.7" transform="rotate(-90 80 80)"/>
+          <!-- Center text -->
+          <text x="80" y="74" text-anchor="middle" style="font-family:var(--mono);font-size:16px;font-weight:700;fill:var(--text)">5 725</text>
+          <text x="80" y="90" text-anchor="middle" style="font-size:9px;fill:var(--text3);font-weight:600">млрд ЯИМ</text>
+        </svg>
+      </div>
+      <div style="font-size:10px;color:var(--text2);line-height:1.7">
+        <div style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:2px;background:#D97706;display:inline-block;flex-shrink:0"></span><b>Чакана/Улгуржи</b> – 38,2% <span style="color:var(--amber);font-weight:600">№1</span></div>
+        <div style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:2px;background:#059669;display:inline-block;flex-shrink:0"></span><b>Хизматлар</b> – 23,8% <span style="color:var(--green);font-weight:600">+107%</span></div>
+        <div style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:2px;background:#2563EB;display:inline-block;flex-shrink:0"></span><b>Саноат</b> – 19,4% <span style="color:var(--red);font-weight:600">заиф</span></div>
+        <div style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:2px;background:#8B5CF6;display:inline-block;flex-shrink:0"></span><b>Қурилиш</b> – 12,1%</div>
+        <div style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:2px;background:#94A3B8;display:inline-block;flex-shrink:0"></span><b>Бошқалар</b> – 6,5%</div>
+      </div>
+      <div class="al al-a" style="margin-top:6px;font-size:9px;padding:4px 6px"><span style="font-size:10px">&#9888;</span><div><b>Номутаносиблик:</b> савдо > саноатдан 2× – шаҳар «қайта сотади», ишлаб чиқармайди</div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 2-САҲИФА: МУАММОЛАР, КАМЧИЛИКЛАР ВА САЛОҲИЯТ                  -->
+<!-- ============================================================ -->
+<div class="page" id="p2">
+  <div class="hdr">
+    <div>
+      <div class="hdr-title">Муаммолар, камчиликлар ва салоҳият</div>
+      <div class="hdr-sub">Танқидий таҳлил &nbsp;&bull;&nbsp; 6 та асосий муаммо &nbsp;&bull;&nbsp; 4 та ўсиш нуқтаси</div>
+    </div>
+    <div class="hdr-right">
+      <div class="hdr-brand">NBU Data Office</div>
+      <div class="hdr-page">02 / 09</div>
+    </div>
+  </div>
+
+  <div class="grid g2">
+
+    <!-- SECTION -->
+    <div class="sec sec12">Танқидий муаммолар</div>
+
+    <!-- Миграция -->
+    <div class="c s4">
+      <div class="c-t">1. Миграция инқирози – 15&#8239;574 чет элда</div>
+      <div style="display:flex;gap:16px">
+        <div style="flex:1;position:relative">
+          <svg style="position:absolute;top:10px;left:8px;right:8px;bottom:22px;width:calc(100% - 16px);height:calc(100% - 32px);z-index:2;pointer-events:none" viewBox="0 0 100 80" preserveAspectRatio="none">
+            <polyline points="10,14 30,28 50,40 70,52 90,58" fill="none" stroke="#059669" stroke-width="1.5" stroke-dasharray="3,2" stroke-linejoin="round"/>
+            <circle cx="10" cy="14" r="2" fill="#059669"/><circle cx="30" cy="28" r="2" fill="#059669"/><circle cx="50" cy="40" r="2" fill="#059669"/><circle cx="70" cy="52" r="2" fill="#059669"/><circle cx="90" cy="58" r="2" fill="#059669"/>
+            <text x="10" y="10" text-anchor="middle" style="font-size:6px;fill:#059669;font-weight:700;font-family:var(--mono)">9,5</text>
+            <text x="30" y="24" text-anchor="middle" style="font-size:6px;fill:#059669;font-weight:700;font-family:var(--mono)">9,0</text>
+            <text x="50" y="36" text-anchor="middle" style="font-size:6px;fill:#059669;font-weight:700;font-family:var(--mono)">7,8</text>
+            <text x="70" y="48" text-anchor="middle" style="font-size:6px;fill:#059669;font-weight:700;font-family:var(--mono)">6,5</text>
+            <text x="90" y="54" text-anchor="middle" style="font-size:6px;fill:#059669;font-weight:700;font-family:var(--mono)">5,8%</text>
+          </svg>
+          <div class="vchart" style="height:100px">
+            <div class="vcol"><div class="vval">253</div><div class="vbar" style="height:4px;background:#D97706"></div><div class="vlbl">21</div></div>
+            <div class="vcol"><div class="vval">630</div><div class="vbar" style="height:10px;background:#D97706"></div><div class="vlbl">22</div></div>
+            <div class="vcol"><div class="vval">1,8K</div><div class="vbar" style="height:28px;background:var(--red)"></div><div class="vlbl">23</div></div>
+            <div class="vcol"><div class="vval" style="color:var(--red);font-weight:700">6,2K</div><div class="vbar" style="height:75px;background:linear-gradient(180deg,#EF4444,#B91C1C)"></div><div class="vlbl" style="color:var(--red)">24</div></div>
+            <div class="vcol"><div class="vval">1,2K</div><div class="vbar" style="height:17px;background:var(--red);opacity:0.6"></div><div class="vlbl">25</div></div>
+          </div>
+          <div style="text-align:right;font-size:7px;color:#059669;font-weight:600;margin-top:1px">── ишсизлик %</div>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:11px;color:var(--text2);line-height:1.65">
+            <div><b>76%</b> пул топиш учун кетган</div>
+            <div><b>61%</b> – Россияга</div>
+            <div><b>~7,7 млн сўм/ой</b> – чет элдаги медиана</div>
+            <div><b>3,97 млн сўм/ой</b> – шаҳардаги ўртача</div>
+            <div style="color:var(--green);font-weight:600;margin-top:3px">70% қайтишни истайди (10&#8239;904 киши)</div>
+          </div>
+        </div>
+      </div>
+      <div class="al al-r" style="margin-top:4px;font-size:10px;padding:5px 8px"><span style="font-size:11px">&#9888;</span><div>Ишсизлик 5,8% → Паст иш ҳақи → <b>Миграция ×3,5</b> (2024) → экспорт <b>-22%</b>, инвестициялар <b>-16%</b>. Кадр танқислиги → ишлаб чиқариш пасайиши</div></div>
+    </div>
+
+    <!-- Предприятия и саноат -->
+    <div class="c s4">
+      <div class="c-t">2. Заиф саноат базаси</div>
+      <div style="display:flex;gap:16px">
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+            <div style="font-family:var(--mono);font-size:36px;font-weight:700;color:var(--text);line-height:1">97<span style="font-size:16px;color:var(--text3)">%</span></div>
+            <div style="flex:1">
+              <div style="font-size:12px;font-weight:600;color:var(--text2)">кичик бизнес</div>
+              <div style="display:flex;height:14px;border-radius:4px;overflow:hidden;margin-top:3px">
+                <div style="width:97%;background:linear-gradient(90deg,#2563EB,#60A5FA)"></div>
+                <div style="width:3%;background:linear-gradient(90deg,#DC2626,#F87171)"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:9px;margin-top:2px">
+                <span style="color:var(--accent);font-weight:600">МСБ: 2&#8239;386 млрд</span>
+                <span style="color:var(--red);font-weight:600">Йирик: 73 млрд</span>
+              </div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--text2);line-height:1.6;padding:4px 0;border-top:1px solid #F1F3F5">
+            <div><b>Корхоналар: -43%</b> 3 йилда (4&#8239;928 &#8594; 2&#8239;787)</div>
+            <div><b>Вилоят улуши:</b> атиги 4,9% (Фарғона ш. 25,3%)</div>
+            <div><b>Йирик иш берувчилар:</b> <span style="color:var(--red)">мавжуд эмас</span></div>
+          </div>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:0.5px;margin-bottom:4px">562 ФАОЛ ТАРМОҚЛАР БЎЙИЧА</div>
+          <div class="bar"><div class="bar-l" style="width:80px;font-size:10px">Озиқ-овқат</div><div class="bar-t" style="height:15px"><div class="bar-f bf-amber" style="width:65%"></div></div><div class="bar-v" style="font-size:10px">471</div></div>
+          <div class="bar"><div class="bar-l" style="width:80px;font-size:10px">Тўқимачилик</div><div class="bar-t" style="height:15px"><div class="bar-f bf-blue" style="width:54%"></div></div><div class="bar-v" style="font-size:10px">394</div></div>
+          <div class="bar"><div class="bar-l" style="width:80px;font-size:10px">Пойабзал</div><div class="bar-t" style="height:15px"><div class="bar-f bf-purple" style="width:35%"></div></div><div class="bar-v" style="font-size:10px">257</div></div>
+          <div class="bar"><div class="bar-l" style="width:80px;font-size:10px">Қурилиш мат.</div><div class="bar-t" style="height:15px"><div class="bar-f bf-green" style="width:14%"></div></div><div class="bar-v" style="font-size:10px">104</div></div>
+          <div class="bar"><div class="bar-l" style="width:80px;font-size:10px">Мебел</div><div class="bar-t" style="height:15px"><div class="bar-f bf-gray" style="width:6%"></div></div><div class="bar-v" style="font-size:10px">44</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Социальная уязвимость + Бедность -->
+    <div class="c s4">
+      <div class="c-t" style="color:var(--red)"><span class="dot" style="background:var(--red)"></span> 3. Ижтимоий заифлик ва камбағаллик</div>
+      <div style="display:flex;gap:12px">
+        <div style="flex:1">
+          <div style="text-align:center;margin-bottom:4px">
+            <div style="font-family:var(--mono);font-size:28px;font-weight:700;color:var(--red)">2&#8239;602</div>
+            <div style="font-size:9px;color:var(--text3);font-weight:600">РЎЙХАТДАГИ ОИЛАЛАР (4,2%)</div>
+          </div>
+          <div class="sp" style="margin-bottom:4px">
+            <div class="sp-box" style="background:#FFF7ED;padding:4px">
+              <div class="sp-l" style="color:#EA580C;font-size:8px">Хавф гуруҳи</div>
+              <div class="sp-v" style="color:#991B1B;font-size:15px">2&#8239;116</div>
+              <div class="sp-s" style="color:#EA580C;font-size:8px">81,3%</div>
+            </div>
+            <div class="sp-box" style="background:#FFF1F2;padding:4px">
+              <div class="sp-l" style="color:#E11D48;font-size:8px">Ўта муҳтожлик</div>
+              <div class="sp-v" style="color:#BE123C;font-size:15px">486</div>
+              <div class="sp-s" style="color:#E11D48;font-size:8px">18,7%</div>
+            </div>
+          </div>
+          <div style="font-size:10px;color:var(--text2);line-height:1.5">
+            <div><b>89,5%</b> оила бошлиқлари – аёллар, ўртача ёш 35,7</div>
+            <div><span style="color:var(--red);font-weight:600">37,5% ҳеч қандай даромадга эга эмас</span></div>
+            <div><b>~11 000 киши</b> қамраб олинган (~4,2% аҳоли)</div>
+          </div>
+        </div>
+        <div style="flex:0 0 150px;background:var(--red-soft);border-radius:8px;padding:8px;border:1px solid rgba(220,38,38,0.15)">
+          <div style="font-size:8px;font-weight:700;color:var(--red);letter-spacing:0.5px;margin-bottom:4px;text-align:center">КАМБАҒАЛЛИК ДАРАЖАСИ</div>
+          <div style="text-align:center;margin-bottom:6px">
+            <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--red)">4,2%</div>
+            <div style="font-size:8px;color:var(--text3)">уй хўжаликлари</div>
+          </div>
+          <div style="font-size:9px;color:var(--text2);line-height:1.6">
+            <div style="display:flex;justify-content:space-between"><span>2024:</span><span style="font-weight:600;color:var(--red)">2&#8239;602</span></div>
+            <div style="display:flex;justify-content:space-between"><span>2025п:</span><span style="font-weight:600;color:var(--amber)">1&#8239;548</span></div>
+            <div style="display:flex;justify-content:space-between"><span>2026ц:</span><span style="font-weight:600;color:var(--green)">651</span></div>
+          </div>
+          <div style="margin-top:4px;font-size:8px;color:var(--green);font-weight:600;text-align:center">Мақсад: 2026 йилга 1,1%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION -->
+    <div class="sec sec12">Қўшимча камчиликлар</div>
+
+    <!-- Предпринимательство -->
+    <div class="c s4" style="display:flex;flex-direction:column">
+      <div class="c-t">4. «Уйқудаги» бизнес ва яширин иқтисодиёт</div>
+      <div style="display:flex;gap:14px;margin-top:6px">
+        <div style="flex:1">
+          <div style="text-align:center;padding:4px 0">
+            <div style="font-family:var(--mono);font-size:24px;font-weight:700;color:var(--text)">7&#8239;143</div>
+            <div style="font-size:9px;color:var(--text3);font-weight:600">ЖАМИ ЯТТ СУБЪЕКТЛАРИ</div>
+          </div>
+          <div style="display:flex;height:16px;border-radius:4px;overflow:hidden;margin:4px 0">
+            <div style="width:46.4%;background:linear-gradient(90deg,#059669,#34D399)"></div>
+            <div style="width:43.1%;background:linear-gradient(90deg,#D97706,#FBBF24)"></div>
+            <div style="width:10.5%;background:linear-gradient(90deg,#DC2626,#F87171)"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:8px">
+            <span style="color:var(--green);font-weight:600">Фаол 3&#8239;327 (46,4%)</span>
+            <span style="color:var(--amber);font-weight:600">Тўхт. 3&#8239;080 (43,1%)</span>
+            <span style="color:var(--red);font-weight:600">Тугат. 752 (10,5%)</span>
+          </div>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:10.5px;color:var(--text2);line-height:1.55">
+            <div><b>3&#8239;080 тўхтатилган</b> – сабаблари:</div>
+            <div style="font-size:9.5px;padding-left:8px;color:var(--text3)">&#8226; Чакана савдонинг паст рентабеллиги<br>&#8226; Эгаларнинг миграцияси<br>&#8226; Кредитлардан фойдаланиш имконияти йўқлиги</div>
+            <div style="margin-top:3px"><b>49,5%</b> барча ЯТТ – фақат чакана савдо</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:6px;padding-top:5px;border-top:1px solid var(--border)">
+        <div style="font-size:9px;font-weight:700;color:var(--red);letter-spacing:0.5px;margin-bottom:3px">ЯШИРИН ИҚТИСОДИЁТ</div>
+        <div style="display:flex;gap:10px">
+          <div style="flex:1;background:var(--red-soft);border-radius:6px;padding:5px;text-align:center">
+            <div style="font-family:var(--mono);font-size:15px;font-weight:700;color:var(--red)">2&#8239;682</div>
+            <div style="font-size:8px;color:var(--text3);font-weight:600">рўйхатдан ўтмаган ўз-ўзини банд қилганлар</div>
+          </div>
+          <div style="flex:1;background:var(--amber-soft);border-radius:6px;padding:5px;text-align:center">
+            <div style="font-family:var(--mono);font-size:15px;font-weight:700;color:var(--amber)">~37%</div>
+            <div style="font-size:8px;color:var(--text3);font-weight:600">норасмий фаолият</div>
+          </div>
+          <div style="flex:1;background:#EFF6FF;border-radius:6px;padding:5px;text-align:center">
+            <div style="font-family:var(--mono);font-size:15px;font-weight:700;color:var(--accent)">4&#8239;252</div>
+            <div style="font-size:8px;color:var(--text3);font-weight:600">расмийлаштириш мақсади</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Кредитные риски -->
+    <div class="c s4" style="padding:5px 10px">
+      <div class="c-t" style="margin-bottom:3px">5. Кредит хавфлари ва банк кредитлаши</div>
+      <div style="display:flex;gap:10px">
+        <div style="flex:1">
+          <div style="text-align:center;padding:1px 0">
+            <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--red)">4,6%</div>
+            <div style="font-size:8px;color:var(--text3);font-weight:600">NPL даражаси (1&#8239;352 кредит)</div>
+          </div>
+          <table style="font-size:9px;margin-top:2px">
+            <tr><th style="padding:3px 6px">Ташкилот</th><th class="r" style="padding:3px 6px">NPL</th><th class="r" style="padding:3px 6px">Қарз</th></tr>
+            <tr><td style="padding:3px 6px"><b>МФО 10886</b></td><td class="r" style="padding:3px 6px;color:var(--red)"><b>41%</b></td><td class="r" style="padding:3px 6px"><b>43,8 млрд</b></td></tr>
+            <tr><td style="padding:3px 6px">АГРО БАНК</td><td class="r" style="padding:3px 6px;color:var(--red)">33%</td><td class="r" style="padding:3px 6px">6,7 млрд</td></tr>
+            <tr><td style="padding:3px 6px">ХАЛК БАНКИ</td><td class="r" style="padding:3px 6px">15%</td><td class="r" style="padding:3px 6px">1,2 млрд</td></tr>
+            <tr><td style="padding:3px 6px">HAMKORBANK</td><td class="r" style="padding:3px 6px">10%</td><td class="r" style="padding:3px 6px">4,9 млрд</td></tr>
+          </table>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:8px;font-weight:700;color:var(--accent);letter-spacing:0.5px;margin-bottom:2px">ЯНГИ КРЕДИТЛАР – 2026 РЕЖА</div>
+          <div style="display:flex;gap:5px;margin-bottom:3px">
+            <div style="flex:1;background:#EFF6FF;border-radius:5px;padding:3px;text-align:center">
+              <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent)">1&#8239;500</div>
+              <div style="font-size:7px;color:var(--text3);font-weight:600">млрд режа (×5,6)</div>
+            </div>
+            <div style="flex:1;background:var(--green-soft);border-radius:5px;padding:3px;text-align:center">
+              <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--green)">3&#8239;614</div>
+              <div style="font-size:7px;color:var(--text3);font-weight:600">иш ўрни</div>
+            </div>
+          </div>
+          <div class="al al-r" style="margin-bottom:2px;font-size:9px;padding:4px 8px"><span style="font-size:10px">&#9888;</span><div><b>77% муддати ўтган</b> – битта МКТ</div></div>
+          <div class="al al-a" style="font-size:9px;padding:4px 8px"><span style="font-size:10px">&#9888;</span><div><b>Маҳалла банкирлари:</b> норасмий кредитлаш – кўлами баҳоланмаган</div></div>
+        </div>
+      </div>
+      <div style="margin-top:3px;padding-top:3px;border-top:1px solid var(--border)">
+        <div style="font-size:8px;font-weight:700;color:var(--text3);letter-spacing:0.5px;margin-bottom:1px">КРЕДИТЛАШДА БАНКЛАР РОЛИ</div>
+        <div style="display:flex;gap:4px;font-size:8.5px;color:var(--text2)">
+          <div style="flex:1;padding:2px 5px;background:var(--bg2);border-radius:4px"><b>Тижорат:</b> 1&#8239;344 млрд</div>
+          <div style="flex:1;padding:2px 5px;background:var(--bg2);border-radius:4px"><b>Маҳалла:</b> 20,8 млрд</div>
+          <div style="flex:1;padding:2px 5px;background:var(--bg2);border-radius:4px"><b>1-қадам:</b> 90,0 млрд</div>
+          <div style="flex:1;padding:2px 5px;background:var(--bg2);border-radius:4px"><b>Оилавий:</b> 21,8 млрд</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Инфратузилма -->
+    <div class="c s4">
+      <div class="c-t">6. Инфратузилма узилишлари</div>
+      <div style="font-size:11.5px;color:var(--text2);line-height:1.9">
+        <div style="padding:3px 0;border-bottom:1px solid #F1F3F5"><b>Зичлик:</b> <span style="color:var(--red);font-weight:600">5&#8239;035/км²</span> <span style="color:var(--text3)">(&#215;8 вилоятга)</span></div>
+        <div style="padding:3px 0;border-bottom:1px solid #F1F3F5"><b>Саломатлик:</b> <span style="color:var(--red);font-weight:600">137&#8239;203 / 100К</span> <span style="color:var(--text3)"> - вилоятда энг юқори касалланиш</span></div>
+        <div style="padding:3px 0;border-bottom:1px solid #F1F3F5"><b>Газлаштириш:</b> <span style="color:var(--red);font-weight:600">0 км</span> <span style="color:var(--text3)">2025 йилда янги тармоқлар</span></div>
+        <div style="padding:3px 0;border-bottom:1px solid #F1F3F5"><b>Боғчалар:</b> тақчиллик <span style="color:var(--red);font-weight:600">600 ўрин</span></div>
+        <div style="padding:3px 0;border-bottom:1px solid #F1F3F5"><b>Касалхоналар:</b> 8 (Фарғона ш.нинг 11,6% аммо 78% аҳоли)</div>
+        <div style="padding:3px 0"><b>Маҳаллалар:</b> даромад фарқи <span style="color:var(--red);font-weight:600">32 баробар</span></div>
+      </div>
+    </div>
+
+    <!-- SECTION: ПОТЕНЦИАЛ -->
+    <div class="sec sec12">Салоҳият ва ўсиш нуқталари</div>
+
+    <!-- Ўсиш омиллари -->
+    <div class="c s4" style="border-left:3px solid var(--green)">
+      <div class="c-t" style="color:var(--green)"><span class="dot" style="background:var(--green)"></span> Ўсиш омиллари</div>
+      <div style="font-size:11px;color:var(--text2);line-height:1.65">
+        <div style="padding:3px 0;border-bottom:1px solid #F1F3F5"><b>Саноат:</b> 140 лойиҳа, <span style="font-family:var(--mono);font-weight:700;color:var(--green)">899,8 млрд</span>, 3&#8239;423 ўрин</div>
+        <div style="padding:3px 0;border-bottom:1px solid #F1F3F5"><b>Хизматлар/туризм:</b> 287 лойиҳа, <span style="font-family:var(--mono);font-weight:700;color:var(--green)">1&#8239;219,4 млрд</span></div>
+        <div style="padding:3px 0;border-bottom:1px solid #F1F3F5"><b>ТХИ:</b> <span style="font-family:var(--mono);font-weight:700;color:var(--accent)">3 738 млрд</span> – 16 та йирик лойиҳа (Хитой 95%)</div>
+        <div style="padding:3px 0"><b>Экспорт:</b> <span style="font-family:var(--mono);font-weight:700;color:var(--accent)">821 млрд</span> – трикотаж, мевалар, ипак</div>
+      </div>
+      <div style="margin-top:6px;background:var(--green-soft);border-radius:6px;padding:6px 10px;font-size:10px;color:#065F46">
+        <b>Хулоса:</b> йирик корхоналар йўқ → паст иш ҳақи → миграция → ёпиқ давра. Стратегия: савдо шаҳридан саноат-туризм марказига ўтиш.
+      </div>
+    </div>
+
+    <!-- Молиялаштириш манбалари -->
+    <div class="c s4" style="border-left:3px solid var(--accent)">
+      <div class="c-t" style="color:var(--accent)"><span class="dot" style="background:var(--accent)"></span> Молиялаштириш манбалари</div>
+      <div class="bar" style="margin:4px 0"><div class="bar-l" style="width:90px;font-size:10px">Корхоналар</div><div class="bar-t" style="height:16px"><div class="bar-f bf-blue" style="width:55%"></div></div><div class="bar-v" style="font-size:10px;font-weight:700">2&#8239;825 млрд</div></div>
+      <div class="bar" style="margin:4px 0"><div class="bar-l" style="width:90px;font-size:10px">Хорижий</div><div class="bar-t" style="height:16px"><div class="bar-f bf-green" style="width:38%"></div></div><div class="bar-v" style="font-size:10px;font-weight:700">3 738 млрд</div></div>
+      <div class="bar" style="margin:4px 0"><div class="bar-l" style="width:90px;font-size:10px">Банк кредитлари</div><div class="bar-t" style="height:16px"><div class="bar-f bf-purple" style="width:30%"></div></div><div class="bar-v" style="font-size:10px;font-weight:700">1&#8239;500 млрд</div></div>
+      <div class="bar" style="margin:4px 0"><div class="bar-l" style="width:90px;font-size:10px">Давлат бюджети</div><div class="bar-t" style="height:16px"><div class="bar-f bf-amber" style="width:20%"></div></div><div class="bar-v" style="font-size:10px;font-weight:700">~1&#8239;000 млрд</div></div>
+      <div style="margin-top:6px;text-align:center;background:var(--bg2);border-radius:6px;padding:5px">
+        <div style="font-size:9px;color:var(--text3);font-weight:600">ЖАМИ ПОРТФЕЛ</div>
+        <div style="font-family:var(--mono);font-size:20px;font-weight:700;color:var(--accent)">9,7 трлн сўм</div>
+      </div>
+    </div>
+
+    <!-- Инвестиционный pipeline -->
+    <div class="c s4" style="border-left:3px solid var(--amber)">
+      <div class="c-t" style="color:var(--amber)"><span class="dot" style="background:var(--amber)"></span> 2026 йил инвестиция пайплайни</div>
+      <div style="display:flex;gap:8px;margin-bottom:8px">
+        <div style="flex:1;background:#EFF6FF;border-radius:6px;padding:6px;text-align:center">
+          <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--accent)">468</div>
+          <div style="font-size:8px;color:var(--text3);font-weight:600">лойиҳа</div>
+        </div>
+        <div style="flex:1;background:var(--green-soft);border-radius:6px;padding:6px;text-align:center">
+          <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--green)">22&#8239;205</div>
+          <div style="font-size:8px;color:var(--text3);font-weight:600">иш ўрни</div>
+        </div>
+      </div>
+      <div style="font-size:10px;color:var(--text2);line-height:1.6">
+        <div style="padding:3px 0;border-bottom:1px solid #F1F3F5"><b>Саноат:</b> 140 лойиҳа → 3&#8239;423 ўрин</div>
+        <div style="padding:3px 0;border-bottom:1px solid #F1F3F5"><b>Хизматлар/савдо:</b> 287 лойиҳа → 14&#8239;168 ўрин</div>
+        <div style="padding:3px 0;border-bottom:1px solid #F1F3F5"><b>Инфратузилма:</b> 32 лойиҳа → 4&#8239;614 ўрин</div>
+        <div style="padding:3px 0"><b>IT/таълим:</b> 9 лойиҳа → 650 мутахассис</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- 3-САҲИФА: SWOT-ТАҲЛИЛ                                       -->
+<!-- ============================================================ -->
+<div class="page" id="p3" style="display:flex;flex-direction:column">
+  <div class="hdr" style="flex-shrink:0">
+    <div>
+      <div class="hdr-title">SWOT-таҳлил</div>
+      <div class="hdr-sub">Стратегик кесим &nbsp;&bull;&nbsp; Ички ва ташқи омиллар &nbsp;&bull;&nbsp; Кучли ва заиф томонлар &nbsp;&bull;&nbsp; Имкониятлар ва хавфлар</div>
+    </div>
+    <div class="hdr-right">
+      <div class="hdr-brand">NBU Data Office</div>
+      <div class="hdr-page">03 / 09</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:2px;flex:1;min-height:0;padding:2px 18px 4px">
+
+    <!-- STRENGTHS -->
+    <div style="background:linear-gradient(135deg,#F0FDF4 0%,#DCFCE7 100%);border-radius:8px;padding:7px 12px;display:flex;flex-direction:column;overflow:hidden">
+      <div style="font-size:15.5px;font-weight:700;color:var(--green);margin-bottom:3px;letter-spacing:0.3px"><span class="dot" style="background:var(--green)"></span> КУЧЛИ ТОМОНЛАР (STRENGTHS)</div>
+      <table style="font-size:14px;width:100%;flex:1;line-height:1.3">
+        <tr><th style="width:26px;padding:2px 3px">#</th><th style="padding:2px 3px">Омил</th><th class="r" style="width:150px;padding:2px 3px">Кўрсаткич</th></tr>
+        <tr><td style="padding:2px 3px"><b>S1</b></td><td style="padding:2px 3px">Вилоят савдо пойтахти – чакана ва улгуржида жон бошига №1</td><td class="r" style="padding:2px 3px"><b>13,5%</b> вилоят чаканаси</td></tr>
+        <tr><td style="padding:2px 3px"><b>S2</b></td><td style="padding:2px 3px">Рекорд экспорт – 4 йилда +202% ўсиш, тақчиллик ×2 ↓</td><td class="r" style="padding:2px 3px"><b>450 млрд</b> сўм</td></tr>
+        <tr><td style="padding:2px 3px"><b>S3</b></td><td style="padding:2px 3px">Ёш аҳоли – 54% 30 ёшдан кичик, ўсиш +4 757/йил</td><td class="r" style="padding:2px 3px"><b>141 500</b> ёшлар</td></tr>
+        <tr><td style="padding:2px 3px"><b>S4</b></td><td style="padding:2px 3px">Умумий овқатланиш +107% ўсди – хизматлар жадал ривожланмоқда</td><td class="r" style="padding:2px 3px"><b>×2,1</b> 3 йилда</td></tr>
+        <tr><td style="padding:2px 3px"><b>S5</b></td><td style="padding:2px 3px">Инвестиция ўсиши: 2025 йилда +83%, хорижий 44,3%</td><td class="r" style="padding:2px 3px"><b>1 281 млрд</b></td></tr>
+        <tr><td style="padding:2px 3px"><b>S6</b></td><td style="padding:2px 3px">Ҳунармандчилик анъаналари – 209 уста, 1 052 банд</td><td class="r" style="padding:2px 3px"><b>«Margilan Silk»</b></td></tr>
+        <tr><td style="padding:2px 3px"><b>S7</b></td><td style="padding:2px 3px">Уй-жой бўми – 31 кўп қаватли, 1 681 квартира</td><td class="r" style="padding:2px 3px"><b>794,7 млрд</b></td></tr>
+        <tr><td style="padding:2px 3px"><b>S8</b></td><td style="padding:2px 3px">Спорт – 4 номзод Олимпия ўйинлари LA 2028, 980 тадбир</td><td class="r" style="padding:2px 3px"><b>4</b> олимпиячи</td></tr>
+        <tr><td style="padding:2px 3px"><b>S9</b></td><td style="padding:2px 3px">Тўқимачилик кластери – 49 лойиҳа, 488,1 млрд инвест.</td><td class="r" style="padding:2px 3px"><b>1 071</b> иш ўрин</td></tr>
+      </table>
+    </div>
+
+    <!-- WEAKNESSES -->
+    <div style="background:linear-gradient(135deg,#FFF1F2 0%,#FFE4E6 100%);border-radius:8px;padding:7px 12px;display:flex;flex-direction:column;overflow:hidden">
+      <div style="font-size:15.5px;font-weight:700;color:var(--red);margin-bottom:3px;letter-spacing:0.3px"><span class="dot" style="background:var(--red)"></span> ЗАИФ ТОМОНЛАР (WEAKNESSES)</div>
+      <table style="font-size:14px;width:100%;flex:1;line-height:1.3">
+        <tr><th style="width:26px;padding:2px 3px">#</th><th style="padding:2px 3px">Омил</th><th class="r" style="width:150px;padding:2px 3px">Кўрсаткич</th></tr>
+        <tr><td style="padding:2px 3px"><b>W1</b></td><td style="padding:2px 3px">Иқтисодиётнинг 97%и – кичик бизнес, йирик иш берувчилар мавжуд эмас</td><td class="r" style="padding:2px 3px;color:var(--red)"><b>4,9%</b> вил. саноати</td></tr>
+        <tr><td style="padding:2px 3px"><b>W2</b></td><td style="padding:2px 3px">Монокультура – 49,5% барча ЯТТ фақат чакана савдо</td><td class="r" style="padding:2px 3px;color:var(--red)"><b>3 548</b> ЯТТ чакана</td></tr>
+        <tr><td style="padding:2px 3px"><b>W3</b></td><td style="padding:2px 3px">Оммавий оқим – 15 574 чет элда, 76% пул топиш учун</td><td class="r" style="padding:2px 3px;color:var(--red)"><b>×3,2</b> иш ҳақи фарқи</td></tr>
+        <tr><td style="padding:2px 3px"><b>W4</b></td><td style="padding:2px 3px">Кредит хавфлари: NPL 4,6%, 77% муддати ўтган МКТда</td><td class="r" style="padding:2px 3px;color:var(--red)"><b>43,8 млрд</b></td></tr>
+        <tr><td style="padding:2px 3px"><b>W5</b></td><td style="padding:2px 3px">Инфратузилма: 0 км газлаштириш, 600 ўрин МТМ тақчиллиги</td><td class="r" style="padding:2px 3px;color:var(--red)"><b>137К/100К</b></td></tr>
+        <tr><td style="padding:2px 3px"><b>W6</b></td><td style="padding:2px 3px">43% ЯТТ тўхтатилган, 2 682 ўз-ўзини банд қилган рўйхатсиз</td><td class="r" style="padding:2px 3px;color:var(--red)"><b>3 080</b> тўхт.</td></tr>
+        <tr><td style="padding:2px 3px"><b>W7</b></td><td style="padding:2px 3px">Соғлиқни сақлаш: 13 муассаса, 516 ўрин 260К аҳолига</td><td class="r" style="padding:2px 3px;color:var(--red)"><b>2,0</b> ўрин/1К</td></tr>
+        <tr><td style="padding:2px 3px"><b>W8</b></td><td style="padding:2px 3px">Мактабгача таълимда тақчиллик – қамров 81,3%, қўшимча 2 970 ўрин керак</td><td class="r" style="padding:2px 3px;color:var(--red)"><b>81,3%</b> қамров</td></tr>
+        <tr><td style="padding:2px 3px"><b>W9</b></td><td style="padding:2px 3px">Мавсумий бандлик – 22 205 иш ўриндан 3 810 (17%)</td><td class="r" style="padding:2px 3px;color:var(--red)"><b>17%</b> мавсумий</td></tr>
+      </table>
+    </div>
+
+    <!-- OPPORTUNITIES -->
+    <div style="background:linear-gradient(135deg,#EFF6FF 0%,#DBEAFE 100%);border-radius:8px;padding:7px 12px;display:flex;flex-direction:column;overflow:hidden">
+      <div style="font-size:15.5px;font-weight:700;color:var(--accent);margin-bottom:3px;letter-spacing:0.3px"><span class="dot" style="background:var(--accent)"></span> ИМКОНИЯТЛАР (OPPORTUNITIES)</div>
+      <table style="font-size:14px;width:100%;flex:1;line-height:1.3">
+        <tr><th style="width:26px;padding:2px 3px">#</th><th style="padding:2px 3px">Омил</th><th class="r" style="width:150px;padding:2px 3px">Салоҳият</th></tr>
+        <tr><td style="padding:2px 3px"><b>O1</b></td><td style="padding:2px 3px">468 инвестлойиҳа – 9,7 трлн сўм, 22 205 иш ўрни</td><td class="r" style="padding:2px 3px;color:var(--accent)"><b>9 722 млрд</b></td></tr>
+        <tr><td style="padding:2px 3px"><b>O2</b></td><td style="padding:2px 3px">70% мигрантлар (10 904) қайтишни истайди – кадр захираси</td><td class="r" style="padding:2px 3px;color:var(--accent)"><b>10 904</b> чел.</td></tr>
+        <tr><td style="padding:2px 3px"><b>O3</b></td><td style="padding:2px 3px">3 738 млрд хорижий инвестициялар: 16 лойиҳа, йирик ТХИ</td><td class="r" style="padding:2px 3px;color:var(--accent)"><b>3 738 млрд</b></td></tr>
+        <tr><td style="padding:2px 3px"><b>O4</b></td><td style="padding:2px 3px">15 750 м² бўш биноларқ+ 30 объект – тайёр база</td><td class="r" style="padding:2px 3px;color:var(--accent)"><b>30</b> объект</td></tr>
+        <tr><td style="padding:2px 3px"><b>O5</b></td><td style="padding:2px 3px">Туризм: 42 объект наследия, бренд ипака, 380К туристов</td><td class="r" style="padding:2px 3px;color:var(--accent)"><b>380К</b> турист.</td></tr>
+        <tr><td style="padding:2px 3px"><b>O6</b></td><td style="padding:2px 3px">Кредит дастури ×5,6 – 5 давлат дастури орқали 1 500 млрд</td><td class="r" style="padding:2px 3px;color:var(--accent)"><b>1 500 млрд</b></td></tr>
+        <tr><td style="padding:2px 3px"><b>O7</b></td><td style="padding:2px 3px">Жаҳон банки: 35 лойиҳа 154 млрд (vs 26/114 млрд 2025 й.)</td><td class="r" style="padding:2px 3px;color:var(--accent)"><b>154 млрд</b> ЖБ</td></tr>
+        <tr><td style="padding:2px 3px"><b>O8</b></td><td style="padding:2px 3px">IT: 650 мутахассис, IT-Park 5,0 млрд + Cybersport Center</td><td class="r" style="padding:2px 3px;color:var(--accent)"><b>650</b> IT мут.</td></tr>
+        <tr><td style="padding:2px 3px"><b>O9</b></td><td style="padding:2px 3px">Тиббиёт университети PPP – Central Asia Medical University</td><td class="r" style="padding:2px 3px;color:var(--accent)"><b>18,9 млрд</b></td></tr>
+        <tr><td style="padding:2px 3px"><b>O10</b></td><td style="padding:2px 3px">Реновация: 315 кв. (Қирғули/Навбаҳор) + 1 240 Янги Ўзб.</td><td class="r" style="padding:2px 3px;color:var(--accent)"><b>1 555</b> кв.</td></tr>
+      </table>
+    </div>
+
+    <!-- THREATS -->
+    <div style="background:linear-gradient(135deg,#FFFBEB 0%,#FEF3C7 100%);border-radius:8px;padding:7px 12px;display:flex;flex-direction:column;overflow:hidden">
+      <div style="font-size:15.5px;font-weight:700;color:var(--amber);margin-bottom:3px;letter-spacing:0.3px"><span class="dot" style="background:var(--amber)"></span> ХАВФЛАР (THREATS)</div>
+      <table style="font-size:14px;width:100%;flex:1;line-height:1.3">
+        <tr><th style="width:26px;padding:2px 3px">#</th><th style="padding:2px 3px">Омил</th><th class="r" style="width:150px;padding:2px 3px">Даража</th></tr>
+        <tr><td style="padding:2px 3px"><b>T1</b></td><td style="padding:2px 3px">Хитойга боғлиқлик: 95% ТХИ (3 738 млрддан 3 699 млрд)</td><td class="r" style="padding:2px 3px"><span class="tag tag-r">ЮҚОРИ</span></td></tr>
+        <tr><td style="padding:2px 3px"><b>T2</b></td><td style="padding:2px 3px">Иш ҳақи фарқи ×3,2 (3,97 vs 12,8 млн РФда) – оқим</td><td class="r" style="padding:2px 3px"><span class="tag tag-r">ЮҚОРИ</span></td></tr>
+        <tr><td style="padding:2px 3px"><b>T3</b></td><td style="padding:2px 3px">22 205 ўрин режаси ишсизлик 5,8% шароитида – кадрлар тақчиллиги</td><td class="r" style="padding:2px 3px"><span class="tag tag-a">ЎРТА</span></td></tr>
+        <tr><td style="padding:2px 3px"><b>T4</b></td><td style="padding:2px 3px">Инвестиция беқарорлиги: индекс 84–183%, Q4 да 71%</td><td class="r" style="padding:2px 3px"><span class="tag tag-a">ЎРТА</span></td></tr>
+        <tr><td style="padding:2px 3px"><b>T5</b></td><td style="padding:2px 3px">NPL 4,6% да кредитлаш ×5,6 – дефолт хавфи</td><td class="r" style="padding:2px 3px"><span class="tag tag-r">ЮҚОРИ</span></td></tr>
+        <tr><td style="padding:2px 3px"><b>T6</b></td><td style="padding:2px 3px">Инфратузилма: +4 757 киши/йилда 0 км газлаштириш</td><td class="r" style="padding:2px 3px"><span class="tag tag-a">ЎРТА</span></td></tr>
+        <tr><td style="padding:2px 3px"><b>T7</b></td><td style="padding:2px 3px">Оммавий уй бузиш (Қирғули, Навбаҳор) – ижтимоий хавф</td><td class="r" style="padding:2px 3px"><span class="tag tag-a">ЎРТА</span></td></tr>
+        <tr><td style="padding:2px 3px"><b>T8</b></td><td style="padding:2px 3px">С/х: 6 лойиҳа, 46,4 млрд (0,5%) – продбезопасность</td><td class="r" style="padding:2px 3px"><span class="tag tag-r">ЮҚОРИ</span></td></tr>
+        <tr><td style="padding:2px 3px"><b>T9</b></td><td style="padding:2px 3px">Экспорт: 55% (448 млрд) Россияга – санкция хавфи</td><td class="r" style="padding:2px 3px"><span class="tag tag-r">ЮҚОРИ</span></td></tr>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 4-САҲИФА: МУАММОЛАР ВА ЕЧИМЛАР (барча 6)                        -->
+<!-- ============================================================ -->
+<div class="page" id="p4" style="display:flex;flex-direction:column">
+  <div class="hdr" style="flex-shrink:0">
+    <div>
+      <div class="hdr-title">Муаммолар ва ечимлар</div>
+      <div class="hdr-sub">6 танқидий йўналиш &nbsp;&bull;&nbsp; Миграция &nbsp;&bull;&nbsp; Саноат &nbsp;&bull;&nbsp; Ижтимоий соҳа &nbsp;&bull;&nbsp; Бизнес &nbsp;&bull;&nbsp; Кредитлар &nbsp;&bull;&nbsp; Инфратузилма</div>
+    </div>
+    <div class="hdr-right">
+      <div class="hdr-brand">NBU Data Office</div>
+      <div class="hdr-page">04 / 09</div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:4px;flex:1;min-height:0;padding:4px 20px 6px;overflow:hidden">
+
+    <!-- Header row -->
+    <div style="display:grid;grid-template-columns:1fr 28px 1fr;gap:0;padding:0 0 2px">
+      <div style="font-size:11px;font-weight:700;color:#991B1B;letter-spacing:1.5px;text-transform:uppercase;text-align:center;opacity:0.8">&#9679; Муаммо</div>
+      <div></div>
+      <div style="font-size:11px;font-weight:700;color:#065F46;letter-spacing:1.5px;text-transform:uppercase;text-align:center;opacity:0.8">&#9679; Ечим</div>
+    </div>
+
+    <!-- ROW 1: Migration -->
+    <div style="display:grid;grid-template-columns:1fr 28px 1fr;gap:0;flex:1;min-height:0">
+      <div style="background:linear-gradient(135deg,#FEF2F2,#FEE2E2);border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:10px;min-width:0;border-left:4px solid #B91C1C">
+        <div style="flex:0 0 auto;text-align:center">
+          <div style="font-family:var(--mono);font-size:36px;font-weight:800;color:#991B1B;line-height:1">15 574</div>
+          <div style="font-size:11px;color:#991B1B;font-weight:600;opacity:0.7">чет элда</div>
+        </div>
+        <div style="width:1px;align-self:stretch;background:rgba(153,27,27,0.15);margin:4px 0"></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:16px;font-weight:700;color:#991B1B;margin-bottom:2px">1. Миграция инқирози</div>
+          <div style="font-size:14px;color:var(--text2);line-height:1.4">
+            <b>76%</b> пул топиш учун, <b>61%</b> Россияга. Иш ҳақи фарқи ×3,2 (3,97 vs 12,8 млн). <b>2024:</b> оқим ×3,5 → экспорт <span style="color:#991B1B">-22%</span>, инвест. <span style="color:#991B1B">-16%</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center"><div style="width:22px;height:22px;background:linear-gradient(135deg,#065F46,#059669);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:12px">&#10132;</div></div>
+      <div style="background:linear-gradient(135deg,#ECFDF5,#D1FAE5);border-radius:8px;padding:8px 12px;display:flex;flex-direction:column;justify-content:center;min-width:0;border-left:4px solid #065F46">
+        <div style="font-size:16px;font-weight:700;color:#065F46;margin-bottom:2px">Қайтиш дастурлари ва иш ўринлари</div>
+        <div style="font-size:14px;color:var(--text2);line-height:1.4">
+          <b>10 904 (70%)</b> қайтишни истайди. Грантлар 50–100 млн сўм. Ипотека WENNY (672 кв.). Аниқ мақсадли: Бахрин (1 218), З.М.Бобур (1 008). IT марказ: 650 спец.
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 2: Industry -->
+    <div style="display:grid;grid-template-columns:1fr 28px 1fr;gap:0;flex:1;min-height:0">
+      <div style="background:linear-gradient(135deg,#FEF2F2,#FEE2E2);border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:10px;min-width:0;border-left:4px solid #B91C1C">
+        <div style="flex:0 0 auto;text-align:center">
+          <div style="font-family:var(--mono);font-size:36px;font-weight:800;color:#991B1B;line-height:1">97<span style="font-size:16px">%</span></div>
+          <div style="font-size:11px;color:#991B1B;font-weight:600;opacity:0.7">МСБ</div>
+        </div>
+        <div style="width:1px;align-self:stretch;background:rgba(153,27,27,0.15);margin:4px 0"></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:16px;font-weight:700;color:#991B1B;margin-bottom:2px">2. Заиф саноат базаси</div>
+          <div style="font-size:14px;color:var(--text2);line-height:1.4">
+            Корхоналар <b>-43%</b> (4 928→2 787). Вилоят улуши: <b>4,9%</b> (vs 25,3% Фарғона). Йирик: 73 млрд (3%). <span style="color:#991B1B;font-weight:600">Йирик иш берувчилар – мавжуд эмас</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center"><div style="width:22px;height:22px;background:linear-gradient(135deg,#065F46,#059669);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:12px">&#10132;</div></div>
+      <div style="background:linear-gradient(135deg,#ECFDF5,#D1FAE5);border-radius:8px;padding:8px 12px;display:flex;flex-direction:column;justify-content:center;min-width:0;border-left:4px solid #065F46">
+        <div style="font-size:16px;font-weight:700;color:#065F46;margin-bottom:2px">Йирик иш берувчиларни шакллантириш</div>
+        <div style="font-size:14px;color:var(--text2);line-height:1.4">
+          <b>140 саноат лойиҳаси</b> – 899,8 млрд, 3 423 ўрин. FOSHAN (384 млрд), мебел кластери (116 млрд). <b>349 ишламаётган</b>ни тиклаш → +100 млрд
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 3: Social -->
+    <div style="display:grid;grid-template-columns:1fr 28px 1fr;gap:0;flex:1;min-height:0">
+      <div style="background:linear-gradient(135deg,#FEF2F2,#FEE2E2);border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:10px;min-width:0;border-left:4px solid #B91C1C">
+        <div style="flex:0 0 auto;text-align:center">
+          <div style="font-family:var(--mono);font-size:36px;font-weight:800;color:#991B1B;line-height:1">2 602</div>
+          <div style="font-size:11px;color:#991B1B;font-weight:600;opacity:0.7">оила (4,2%)</div>
+        </div>
+        <div style="width:1px;align-self:stretch;background:rgba(153,27,27,0.15);margin:4px 0"></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:16px;font-weight:700;color:#991B1B;margin-bottom:2px">3. Ижтимоий заифлик</div>
+          <div style="font-size:14px;color:var(--text2);line-height:1.4">
+            <b>89,5%</b> бошлиқ – аёллар, ёш 35,7. <span style="color:#991B1B;font-weight:600">37,5% даромадга эга эмас.</span> 486 ўта муҳтожликда. Фарқ: Ватан (75) vs Бахрин (4)
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center"><div style="width:22px;height:22px;background:linear-gradient(135deg,#065F46,#059669);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:12px">&#10132;</div></div>
+      <div style="background:linear-gradient(135deg,#ECFDF5,#D1FAE5);border-radius:8px;padding:8px 12px;display:flex;flex-direction:column;justify-content:center;min-width:0;border-left:4px solid #065F46">
+        <div style="font-size:16px;font-weight:700;color:#065F46;margin-bottom:2px">Заиф оилаларни аниқ мақсадли қўллаб-қувватлаш</div>
+        <div style="font-size:14px;color:var(--text2);line-height:1.4">
+          Маҳаллалар: Истиклол (20 млрд), Йурмадуз (35,8 млрд). <b>974 аёл</b> → курслар. 76 микролойиҳа. Оилавий бизнес: <b>1 856 ўрин</b>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 4: Sleeping business -->
+    <div style="display:grid;grid-template-columns:1fr 28px 1fr;gap:0;flex:1;min-height:0">
+      <div style="background:linear-gradient(135deg,#FEF2F2,#FEE2E2);border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:10px;min-width:0;border-left:4px solid #B91C1C">
+        <div style="flex:0 0 auto;text-align:center">
+          <div style="font-family:var(--mono);font-size:36px;font-weight:800;color:#991B1B;line-height:1">3 080</div>
+          <div style="font-size:11px;color:#991B1B;font-weight:600;opacity:0.7">тўхтатилган</div>
+        </div>
+        <div style="width:1px;align-self:stretch;background:rgba(153,27,27,0.15);margin:4px 0"></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:16px;font-weight:700;color:#991B1B;margin-bottom:2px">4. «Уйқудаги» бизнес</div>
+          <div style="font-size:14px;color:var(--text2);line-height:1.4">
+            <b>43%</b> ЯТТ тўхтатилган. <b>2 682</b> рўйхатсиз ўз-ўзини банд қилганлар. <b>49,5%</b> ЯТТ – фақат чакана. <span style="color:#991B1B;font-weight:600">Қайта сотиш монокультураси</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center"><div style="width:22px;height:22px;background:linear-gradient(135deg,#065F46,#059669);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:12px">&#10132;</div></div>
+      <div style="background:linear-gradient(135deg,#ECFDF5,#D1FAE5);border-radius:8px;padding:8px 12px;display:flex;flex-direction:column;justify-content:center;min-width:0;border-left:4px solid #065F46">
+        <div style="font-size:16px;font-weight:700;color:#065F46;margin-bottom:2px">Фаоллаштириш ва диверсификация</div>
+        <div style="font-size:14px;color:var(--text2);line-height:1.4">
+          Тиклаш <b>349 саноат</b> (+100 млрд) и <b>1 022 хизмат</b> (+122,6 млрд). 4 252 ўз-ўзини банд қилганни расмийлаштириш. 15 750 м² биноларда инкубаторлар
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 5: Credit risks -->
+    <div style="display:grid;grid-template-columns:1fr 28px 1fr;gap:0;flex:1;min-height:0">
+      <div style="background:linear-gradient(135deg,#FEF2F2,#FEE2E2);border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:10px;min-width:0;border-left:4px solid #B91C1C">
+        <div style="flex:0 0 auto;text-align:center">
+          <div style="font-family:var(--mono);font-size:36px;font-weight:800;color:#991B1B;line-height:1">4,6<span style="font-size:16px">%</span></div>
+          <div style="font-size:11px;color:#991B1B;font-weight:600;opacity:0.7">NPL rate</div>
+        </div>
+        <div style="width:1px;align-self:stretch;background:rgba(153,27,27,0.15);margin:4px 0"></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:16px;font-weight:700;color:#991B1B;margin-bottom:2px">5. Кредит хавфлари (NPL)</div>
+          <div style="font-size:14px;color:var(--text2);line-height:1.4">
+            <b>77%</b> муддати ўтган – битта МКТ (NPL <b>41%</b>). Агро банк: NPL <b>33%</b>. Режа ×5,6 (268→1 500 млрд). <span style="color:#991B1B;font-weight:600">Кўчки дефолт хавфи</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center"><div style="width:22px;height:22px;background:linear-gradient(135deg,#065F46,#059669);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:12px">&#10132;</div></div>
+      <div style="background:linear-gradient(135deg,#ECFDF5,#D1FAE5);border-radius:8px;padding:8px 12px;display:flex;flex-direction:column;justify-content:center;min-width:0;border-left:4px solid #065F46">
+        <div style="font-size:16px;font-weight:700;color:#065F46;margin-bottom:2px">Кредит хавфларини бошқариш</div>
+        <div style="font-size:14px;color:var(--text2);line-height:1.4">
+          Кенгайтиришдан олдин МКТ аудити. PD/RBL-скоринг. Лойиҳа экспертизасига боғлаш. Стоп-факторлар NPL &gt;5%. 1 352 кредитни қайта тузиш
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 6: Infrastructure -->
+    <div style="display:grid;grid-template-columns:1fr 28px 1fr;gap:0;flex:1;min-height:0">
+      <div style="background:linear-gradient(135deg,#FEF2F2,#FEE2E2);border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:10px;min-width:0;border-left:4px solid #B91C1C">
+        <div style="flex:0 0 auto;text-align:center">
+          <div style="font-family:var(--mono);font-size:36px;font-weight:800;color:#991B1B;line-height:1">137К</div>
+          <div style="font-size:11px;color:#991B1B;font-weight:600;opacity:0.7">100К аҳолига</div>
+        </div>
+        <div style="width:1px;align-self:stretch;background:rgba(153,27,27,0.15);margin:4px 0"></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:16px;font-weight:700;color:#991B1B;margin-bottom:2px">6. Инфратузилма узилишлари</div>
+          <div style="font-size:14px;color:var(--text2);line-height:1.4">
+            Касалланиш <b>137К/100К</b> – вилоятда энг ёмон Газлаштириш: <b>0 км</b>. Боғчалар: тақчиллик <b>600 ўрин</b>. Зичлик 5 035/км² (×8 вилоятга)
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center"><div style="width:22px;height:22px;background:linear-gradient(135deg,#065F46,#059669);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:12px">&#10132;</div></div>
+      <div style="background:linear-gradient(135deg,#ECFDF5,#D1FAE5);border-radius:8px;padding:8px 12px;display:flex;flex-direction:column;justify-content:center;min-width:0;border-left:4px solid #065F46">
+        <div style="font-size:16px;font-weight:700;color:#065F46;margin-bottom:2px">2026 йил инфратузилма ривожланиши</div>
+        <div style="font-size:14px;color:var(--text2);line-height:1.4">
+          Электр тармоқлари→<b>210 км</b>. Сув→<b>100%</b>. Тиббиёт ВУЗи (<b>68,9 млрд</b>). MARMED (<b>20 млрд</b>). 2 970 ўрин ДДУ→охват <b>90%</b>. Газ: режа 15 км
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 5-САҲИФА: СТРАТЕГИЯ                                        -->
+<!-- ============================================================ -->
+<div class="page" id="p5">
+  <div class="hdr">
+    <div>
+      <div class="hdr-title">Марғилон ривожланиш стратегияси</div>
+      <div class="hdr-sub">9 устуворлик &nbsp;&bull;&nbsp; 3 горизонт &nbsp;&bull;&nbsp; 2026–2031</div>
+    </div>
+    <div class="hdr-right">
+      <div class="hdr-brand">NBU Data Office</div>
+      <div class="hdr-page">05 / 09</div>
+    </div>
+  </div>
+
+  <div class="grid g2">
+
+    <!-- Group A: Срочные -->
+    <div class="prio-group"><span class="pg-icon" style="background:var(--red)">&#9650;</span> Шошилинч – кадрлар ва иқтисодиёт (2026–2027)</div>
+
+    <div class="rec rec-red s4">
+      <div class="rec-h">Яратиш современных иш ўрни</div>
+      <div class="rec-b"><b>Муаммо:</b> 15&#8239;574 чет элда, 70% қайтишга тайёр (10&#8239;904 киши). Иш ҳақи фарқи &#215;3,2 (3,97 млн vs 12,8 млн в РФ). 01.01.2026 га ишсизлар: 1&#8239;798 чел. (1,8%). Бозорга чиқиши кутилмоқда 8&#8239;753 чел. (битирувчилар 2&#8239;310, қайтаётган мигрантлар 2&#8239;530, ОТМлар 3&#8239;244). <b>Ечим:</b> грантлар 50–100 млн қайтганлар учун, аниқ мақсадли дастурлар – Бахрин (1&#8239;218) и З.М.Бобур (1&#8239;008). Имтиёзли ипотека WENNY ESTATE (672 кв.). Кўникмалар 2&#8239;082 мигрантлар &#8594; 16 жиллойиҳа. <b>Режа:</b> 22&#8239;205 иш ўрни (18&#8239;395 доимий + 3&#8239;810 мавсумий). Хизматлар: 15&#8239;284 ўрин | Саноат: 4&#8239;353 | Қурилиш: 953 | Туризм: 465.</div>
+      <div class="rec-k"><span class="lbl">Миграция:</span><span class="from">15&#8239;574</span><span class="arr">&#8594;</span><span class="to">&lt;8&#8239;000</span> &nbsp;|&nbsp; <span class="lbl">Ишсизлик:</span><span class="from">8&#8239;753</span><span class="arr">&#8594;</span><span class="to">0</span></div>
+    </div>
+    <div class="rec rec-red s4">
+      <div class="rec-h">Йирик иш берувчиларни шакллантириш</div>
+      <div class="rec-b"><b>Муаммо:</b> 97% саноати ККБда, йирик корхоналар йўқ. <b>Ечим:</b> 140 саноат лойиҳаси 899,8 млрд (3&#8239;423 ўрина): тўқимачилик 49 пр./488 млрд, озиқ-овқат 33 пр./167 млрд, мебел 10 пр./116 млрд, чарм 31 пр./55 млрд. <b>Йирик лойиҳалар:</b> «Ферантеп Гилам» (360 млрд, 150 ўрин, гиламлар), EVROOSIYO MEBEL (36 млрд, 200 ўрин), TOOL-X (15 млрд, автоэҳтиёт қисмлари), FENIX TEX (12 млрд, спорт кийимлар). 349 нофаол корхонани тиклаш (+100 млрд). 78 та пасайётганни қўллаб-қувватлаш (+106,6 млрд).</div>
+      <div class="rec-k"><span class="lbl">Йирик бизнес:</span><span class="from">3%</span><span class="arr">&#8594;</span><span class="to">15–20%</span> &nbsp;|&nbsp; <span class="lbl">Саноат:</span><span class="from">2&#8239;459</span><span class="arr">&#8594;</span><span class="to">3&#8239;087 млрд</span></div>
+    </div>
+    <div class="rec rec-red s4">
+      <div class="rec-h">Инвестицияларни барқарорлаштириш</div>
+      <div class="rec-b"><b>Муаммо:</b> индекс сакрайди 173 &#8594; 84 &#8594; 183, 71% инвестициялар Q4 да. <b>Ечим:</b> 468 лойиҳа 6&#8239;913 млрд. ТХИ: 3 738 млрд (16 лойиҳа, 95% Китай) – HENG TAI 960 млрд (турмажмуа), Steel&amp;Protect 448 млрд (785 кв.), FOSHAN 384 млрд (керамика), GUANGZHOU 256 млрд (озиқ-овқат). <b>Кредитлар:</b> 1&#8239;500 млрд (&#215;5,6): Биринчи қадам 90 млрд, Маҳалла лойиҳаси 20,8 млрд, Оилавий тадбиркорлик 21,8 млрд. Жаҳон банки: 35 лойиҳа, 154 млрд. Экспорт: 821 млрд (трикотаж 358 млрд, мевалар 198 млрд).</div>
+      <div class="rec-k"><span class="lbl">Инвестициялар/йил:</span><span class="from">1&#8239;281 млрд</span><span class="arr">&#8594;</span><span class="to">3&#8239;000 млрд</span> &nbsp;|&nbsp; <span class="lbl">ТХИ:</span><span class="to">3 738 млрд</span></div>
+    </div>
+
+    <!-- Group B: Среднесрочные -->
+    <div class="prio-group"><span class="pg-icon" style="background:var(--amber)">&#9632;</span> Ўрта муддатли – бизнес-муҳит ва ижтимоий (2027–2029)</div>
+
+    <div class="rec rec-amber s4">
+      <div class="rec-h">Кичик бизнесни фаоллаштириш</div>
+      <div class="rec-b"><b>Муаммо:</b> 3&#8239;080 ЯТТ тўхтатилган, 49,5% – фақат чакана савдо.<br><b>Ечим:</b> 287 хизмат лойиҳаси (1&#8239;219 млрд, 3&#8239;920 ўрин).<br><b>Йирик лойиҳалар:</b> Margilan Plaza (120 млрд), Kelajak Bog&#8217; Fargona (55 млрд).<br><b>Тиклаш:</b> 1&#8239;022 нофаол корхона (+122,6 млрд).</div>
+      <div class="rec-k"><span class="lbl">Фаол ЯТТ:</span><span class="from">46,4%</span><span class="arr">&#8594;</span><span class="to">70%+</span> &nbsp;|&nbsp; <span class="lbl">Хизматлар:</span><span class="from">3&#8239;844</span><span class="arr">&#8594;</span><span class="to">5&#8239;267 млрд</span></div>
+    </div>
+    <div class="rec rec-amber s4">
+      <div class="rec-h">Заиф оилаларни аниқ мақсадли қўллаб-қувватлаш</div>
+      <div class="rec-b"><b>Муаммо:</b> 2&#8239;602 рўйхатдаги оила, 486 ўта муҳтожликда, 89,5% бошлиқ – аёллар. <b>Ечим:</b> касб ўқитиш, уй ишлаб чиқариш учун микрокредитлар, моделни кенгайтириш Истиклол/Йурмадуз. Кредитларни мутаносиб тақсимлаш (vs тенг улушлар).</div>
+      <div class="rec-k"><span class="lbl">Камбағал оилаларлар:</span><span class="from">2&#8239;602</span><span class="arr">&#8594;</span><span class="to">&lt;600</span></div>
+    </div>
+    <div class="rec rec-amber s4">
+      <div class="rec-h">Кредит хавфларини бошқариш</div>
+      <div class="rec-b"><b>Муаммо:</b> NPL 4,6%, 41% битта банкда; кредитлаш режаси &#215;5,6. <b>Ечим:</b> МКТ 10886 аудити, PD/RBL скоринг моделлари, берилишни лойиҳа экспертизасига боғлаш. Маҳаллалар бўйича аниқ тақсимлаш (32&#215; фарқни ҳисобга олиш).</div>
+      <div class="rec-k"><span class="lbl">NPL:</span><span class="from">4,6%</span><span class="arr">&#8594;</span><span class="to">&lt;2,5%</span></div>
+    </div>
+
+    <!-- Group C: Долгосрочные -->
+    <div class="prio-group"><span class="pg-icon" style="background:var(--green)">&#9679;</span> Узоқ муддатли – инфратузилма ва ривожланиш (2029–2031)</div>
+
+    <div class="rec rec-green s4">
+      <div class="rec-h">«Margilan Silk» бренди ва туризмни ривожлантириш</div>
+      <div class="rec-b"><b>Муаммо:</b> 42 мерос объектлари етарли даражада монетизация қилинмаган, 209 ҳунарманд. <b>Ечим:</b> 38 туризм лойиҳаси 400,2 млрд (1&#8239;023 ўрина): меҳмонхоналар/хостеллар 5 пр./148,5 млрд, ҳунармандчилик ва кўнгилочар 33 пр./251,7 млрд. HENG TAI турмажмуа (960 млрд), Comfort Avenue Hotel (126 млрд, 250 ўрин). Хиёбон 24/7 (1,2 км, 30 ўрин), соҳил Тўягум (11,3 млрд, 60 ўрин). Реставрация: Валихон Тура (III аср, 1 млрд), Жаҳри мечеть (1 млрд), мажмуа Бурхониддин Марғилоний. Кутилаётган даромад: 110 млрд сўм.</div>
+      <div class="rec-k"><span class="lbl">Туристлар:</span><span class="from">276&#8239;000</span><span class="arr">&#8594;</span><span class="to">380&#8239;000</span> (+37%) &nbsp;|&nbsp; <span class="lbl">Лойиҳалар:</span><span class="to">400,2 млрд</span></div>
+    </div>
+    <div class="rec rec-green s4">
+      <div class="rec-h">Соғлиқни сақлаш ва инфратузилма</div>
+      <div class="rec-b"><b>Муаммо:</b> касалланиш +37%, 600 ўрин боғчаларда тақчиллик, 13 тиббиёт муассасаси, 516 ўрин. <b>Ечим:</b> 54 лойиҳа 185 млрд (753 ўрина): 27 медлойиҳа/116,8 млрд, 20 боғча/44,9 млрд. Тиббиёт ВУЗи Central Asia (68,9 млрд, 70 ўрин), клиника MARMED (20 млрд, 40 ўрин). Боғчалар: қамров 81,3% &#8594; 90% (+2&#8239;970 ўрин). <b>Қурилиш:</b> 2&#8239;581 млрд (+33%), 31 уй/1&#8239;681 квартира. Реновация: Қирғули (20 уй &#8594; 5&#215;9-эт., 315 кв.), Навбахор (11 уй &#8594; 2&#215;9-эт., 171 кв.). Инфратузилма: 210 км электр тармоқлари, сув таъминоти 98,8% &#8594; 100%.</div>
+      <div class="rec-k"><span class="lbl">Детсады:</span><span class="from">81,3%</span><span class="arr">&#8594;</span><span class="to">90%</span> &nbsp;|&nbsp; <span class="lbl">Қурилиш:</span><span class="to">2&#8239;581 млрд</span></div>
+    </div>
+    <div class="rec rec-green s4">
+      <div class="rec-h">Маҳаллаларни тенглаштириш ва таълим</div>
+      <div class="rec-b"><b>Муаммо:</b> даромад фарқи 32&#215;, 19 паст ихтисослашган маҳалла. <b>Ечим:</b> 9 IT-лойиҳа 13,3 млрд (107 ўрин): IT марказ ва кутубхона ДХШ (1,2 млрд, 650 IT-мутахассис), IT-Park Ёшлар хиёбонида (5 млрд, 30 ўрин). 21 йўналиш: AI/ML, data science, кибер хавфсизлик. 1 604 нафар ишсиз фуқарони ўқитиш, 974 аёл. 17 тил ўқув марказлари 5 700 ўрин. Орқада қолган маҳаллаларда кичик ишлаб чиқариш, 468 лойиҳада амалиёт.</div>
+      <div class="rec-k"><span class="lbl">Фарқ:</span><span class="from">32&#215;</span><span class="arr">&#8594;</span><span class="to">&lt;10&#215;</span> &nbsp;|&nbsp; <span class="lbl">IT-мут.:</span><span class="to">650</span></div>
+    </div>
+
+    <!-- Тармоқ устуворликлари -->
+    <div class="sec sec12">Тармоқ устуворликлари</div>
+
+    <div class="c s12">
+      <div class="c-t" style="color:var(--accent)">Қишлоқ хўжалиги ва бўш биноларр</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 20px;font-size:13px;color:var(--text2);line-height:1.55">
+        <div><b>Қишлоқ хўжалиги:</b> 6 лойиҳа, 46,4 млрд. Orion Fresh Fruits – совутгич омбори 45 млрд, 20 ўрин. Мақсад: 832,7 млрд (+7%). Қ/х экспорти: 262 млрд.</div>
+        <div><b>Бўш биноларқ:</b> 30 объект (6 давлат + 24 хусусий). Mr. Fish Fergana &#8594; технопарк (66 млрд). Газ Автоматика &#8594; ТЦ (10 млрд). 6 давлат биноси (15 млрд, 85 ўрин).</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 6-САҲИФА: IT + БАНКЛАР РОЛИ                        -->
+<!-- ============================================================ -->
+<!-- 6-САҲИФА: ИНВЕСТИЦИЯЛАР, ҚУРИЛИШ ВА ИЖТИМОИЙ СОҲА     -->
+<!-- ============================================================ -->
+<div class="page" id="p6" style="display:flex;flex-direction:column">
+  <div class="hdr" style="flex-shrink:0">
+    <div>
+      <div class="hdr-title">2026 йил амалга ошириш режаси: инвестициялар ва ижтимоий соҳа</div>
+      <div class="hdr-sub">3 738 млрд ТХИ &nbsp;&bull;&nbsp; 821 млрд экспорт &nbsp;&bull;&nbsp; 380K турист &nbsp;&bull;&nbsp; 2 581 млрд қурилиш &nbsp;&bull;&nbsp; 54 лойиҳа соғлиқни сақлаш</div>
+    </div>
+    <div class="hdr-right">
+      <div class="hdr-brand">NBU Data Office</div>
+      <div class="hdr-page">06 / 09</div>
+    </div>
+  </div>
+
+  <div style="flex:1;min-height:0;display:flex;flex-direction:column;padding:1px 20px 4px;gap:3px">
+
+    <!-- KPI row -->
+    <div style="display:flex;gap:6px;flex-shrink:0">
+      <div class="kpi" style="flex:1;padding:4px 6px"><div class="kpi-l" style="font-size:11.7px">Хорижий инвестициялар</div><div class="kpi-v" style="font-size:25.7px">3 738 млрд</div><div class="kpi-s" style="font-size:11.7px">16 лойиҳа</div></div>
+      <div class="kpi" style="flex:1;padding:4px 6px"><div class="kpi-l" style="font-size:11.7px">Экспорт</div><div class="kpi-v" style="font-size:25.7px">821 млрд</div><div class="kpi-s" style="font-size:11.7px">саноат + с/х</div></div>
+      <div class="kpi" style="flex:1;padding:4px 6px"><div class="kpi-l" style="font-size:11.7px">Туристлар</div><div class="kpi-v" style="font-size:25.7px">380K</div><div class="kpi-s" style="font-size:11.7px">2026 режа</div></div>
+      <div class="kpi" style="flex:1;padding:4px 6px"><div class="kpi-l" style="font-size:11.7px">Қурилиш</div><div class="kpi-v" style="font-size:25.7px">2 581</div><div class="kpi-s" style="font-size:11.7px">млрд сўм</div></div>
+      <div class="kpi" style="flex:1;padding:4px 6px"><div class="kpi-l" style="font-size:11.7px">Уй-жой</div><div class="kpi-v" style="font-size:25.7px">1 681</div><div class="kpi-s" style="font-size:11.7px">кв., 31 уй</div></div>
+      <div class="kpi" style="flex:1;padding:4px 6px"><div class="kpi-l" style="font-size:11.7px">Соғлиқни сақлаш</div><div class="kpi-v" style="font-size:25.7px">185</div><div class="kpi-s" style="font-size:11.7px">млрд, 54 лой.</div></div>
+      <div class="kpi" style="flex:1;padding:4px 6px"><div class="kpi-l" style="font-size:11.7px">Таълим</div><div class="kpi-v" style="font-size:25.7px">90%</div><div class="kpi-s" style="font-size:11.7px">МТМ қамрови</div></div>
+      <div class="kpi" style="flex:1;padding:4px 6px"><div class="kpi-l" style="font-size:11.7px">Жаҳон банки</div><div class="kpi-v" style="font-size:25.7px">154 млрд</div><div class="kpi-s" style="font-size:11.7px">35 лойиҳа</div></div>
+    </div>
+
+    <!-- ═══ TOP HALF: Инвестициялар, экспорт ва туризм ═══ -->
+    <div style="font-size:15.2px;font-weight:700;color:var(--accent);padding:1px 0;flex-shrink:0;letter-spacing:0.3px">&#9670; Инвестициялар, экспорт ва туризм</div>
+
+    <div style="flex:1;min-height:0;display:grid;grid-template-columns:5fr 4fr 3fr;gap:5px">
+
+      <!-- ТХИ -->
+      <div class="c" style="padding:5px 10px;overflow:hidden">
+        <div style="font-size:14.6px;font-weight:700;color:var(--accent);margin-bottom:2px">Йирик ТХИ лойиҳалари (3 738 млрд)</div>
+        <table style="font-size:13.6px">
+          <tr><th style="padding:1px 3px">Компания</th><th style="padding:1px 3px">Лойиҳа</th><th class="r" style="padding:1px 3px">Сумма</th><th class="r" style="padding:1px 3px">Ўрин</th></tr>
+          <tr><td style="padding:1px 3px"><b>HENG TAI</b></td><td style="padding:1px 3px">Меҳмонхона + рекреация</td><td class="r" style="padding:1px 3px">960 млрд</td><td class="r" style="padding:1px 3px">70</td></tr>
+          <tr><td style="padding:1px 3px"><b>Steel & Protect</b></td><td style="padding:1px 3px">City Mall, 785 кв.</td><td class="r" style="padding:1px 3px">448 млрд</td><td class="r" style="padding:1px 3px">100</td></tr>
+          <tr><td style="padding:1px 3px"><b>FOSHAN</b></td><td style="padding:1px 3px">Керамика, smart home</td><td class="r" style="padding:1px 3px">384 млрд</td><td class="r" style="padding:1px 3px">50</td></tr>
+          <tr><td style="padding:1px 3px"><b>GUANGZHOU</b></td><td style="padding:1px 3px">Озиқ-овқат қайта ишлаш</td><td class="r" style="padding:1px 3px">256 млрд</td><td class="r" style="padding:1px 3px">50</td></tr>
+        </table>
+        <div style="margin-top:3px;background:#FEF3C7;border-radius:3px;padding:2px 6px;font-size:12.3px;border-left:2px solid var(--amber)">
+          <b style="color:var(--amber)">&#9888;</b> 95% ТХИ – Хитой. 1 лойиҳа бузилса = -960 млрд
+        </div>
+      </div>
+
+      <!-- Export + Tourism -->
+      <div style="display:flex;flex-direction:column;gap:4px;overflow:hidden">
+        <div class="c" style="flex-shrink:0;padding:5px 10px;overflow:hidden">
+          <div style="font-size:14.6px;font-weight:700;color:var(--green);margin-bottom:1px">Экспорт (821 млрд)</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px 10px;font-size:13.6px;color:var(--text2)">
+            <div>&#9632; Трикотаж – <b>358 млрд</b></div>
+            <div>&#9632; Мевалар – <b>198 млрд</b></div>
+            <div>&#9632; Кимё – <b>64 млрд</b></div>
+            <div>&#9632; Сухомевалар – <b>64 млрд</b></div>
+          </div>
+          <div style="margin-top:2px;font-size:12.3px;font-weight:600;color:var(--text3)">Бозорлар: Россия 448 млрд &middot; Қирғизистон 102 млрд &middot; Қозоғистон 90 млрд &middot; Тожикистон 91 млрд</div>
+        </div>
+        <div class="c" style="flex:1;min-height:0;padding:5px 10px;overflow:hidden">
+          <div style="font-size:14.6px;font-weight:700;color:#7C3AED;margin-bottom:1px">38 туризм лойиҳаси (400,2 млрд)</div>
+          <div style="font-size:13.6px;color:var(--text2);line-height:1.4">
+            <div>&#10132; <b>HENG TAI</b> – турмажмуа (960 млрд), 70 ўрин</div>
+            <div>&#10132; <b>Comfort Avenue</b> – 126 млрд, 250 ўрин</div>
+            <div>&#10132; <b>Хиёбон 24/7</b> – 1,2 км пиёдалар зонаси</div>
+            <div>&#10132; <b>Тўягум</b> – соҳил 0,9 км, 60 ўрин</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Heritage -->
+      <div class="c" style="padding:5px 10px;overflow:hidden">
+        <div style="font-size:14.6px;font-weight:700;color:#7C3AED;margin-bottom:2px">Маданий мерос</div>
+        <div style="font-size:13.6px;color:var(--text2);line-height:1.55">
+          <div>&#127979; <b>42 объект</b> наследия</div>
+          <div>&#127912; <b>209 ҳунарманд</b>, 1 052 банд</div>
+          <div>&#127963; <b>Валихон Тура</b> (III аср)</div>
+          <div>&#128332; <b>Мечеть Жаҳри</b> (XIX-XX аср)</div>
+          <div>&#127970; <b>Бурхониддин Маргилоний</b></div>
+          <div>&#127774; Ипак фестивали – ҳар йили</div>
+        </div>
+        <div style="margin-top:auto;padding-top:3px;font-size:13.6px;font-weight:600;color:var(--text2)">
+          Даромад: <b style="color:#7C3AED">110,0 млрд</b>
+        </div>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div style="height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent);flex-shrink:0"></div>
+
+    <!-- ═══ BOTTOM HALF: Қурилиш ва ижтимоий соҳа ═══ -->
+    <div style="font-size:15.2px;font-weight:700;color:var(--accent);padding:1px 0;flex-shrink:0;letter-spacing:0.3px">&#9670; Қурилиш ва ижтимоий соҳа</div>
+
+    <div style="flex:1;min-height:0;display:grid;grid-template-columns:5fr 4fr 3fr;gap:5px">
+
+      <!-- Construction -->
+      <div style="display:flex;flex-direction:column;gap:4px;overflow:hidden">
+        <div class="c" style="flex:1;min-height:0;padding:5px 10px;overflow:hidden">
+          <div style="font-size:14.6px;font-weight:700;color:var(--accent);margin-bottom:2px">Қурилиш ва уй-жой (2 581 млрд)</div>
+          <table style="font-size:13.6px">
+            <tr><th style="padding:1px 3px">Манба</th><th class="r" style="padding:1px 3px">2025</th><th class="r" style="padding:1px 3px">2026</th></tr>
+            <tr><td style="padding:1px 3px">Инвестиция дастури</td><td class="r" style="padding:1px 3px">869,5</td><td class="r" style="padding:1px 3px">1 108,0</td></tr>
+            <tr><td style="padding:1px 3px">Тармоқ корхоналари</td><td class="r" style="padding:1px 3px">848,1</td><td class="r" style="padding:1px 3px">1 346,7</td></tr>
+            <tr><td style="padding:1px 3px">Ташаббус бюджети + маҳалла</td><td class="r" style="padding:1px 3px">61,8</td><td class="r" style="padding:1px 3px">54,1</td></tr>
+            <tr class="tr-hl"><td style="padding:1px 3px"><b>Жами</b></td><td class="r" style="padding:1px 3px"><b>1 936</b></td><td class="r" style="padding:1px 3px"><b>2 581</b></td></tr>
+          </table>
+          <div style="margin-top:2px;font-size:12.9px;color:var(--text2);line-height:1.4">
+            <div>&#127968; <b>Янги Ўзбекистон</b> – 22 дома, 1 240 кв., 624 млрд</div>
+            <div>&#128260; <b>Реновация</b> – Қиргули (315 кв.) + Навбаҳор (171 кв.)</div>
+          </div>
+        </div>
+        <div class="c" style="flex-shrink:0;padding:4px 10px;overflow:hidden">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px 10px;font-size:12.9px;color:var(--text2)">
+            <div>&#9889; <b>210 км</b> электр тармоқлари</div>
+            <div>&#128167; <b>10,2 км</b> сув қувури</div>
+            <div>&#128739; <b>13,7 км</b> йўл</div>
+            <div>&#127959; 3 тиббиёт объекти</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Healthcare + Education -->
+      <div class="c" style="padding:5px 10px;overflow:hidden">
+        <div style="font-size:14.6px;font-weight:700;color:#059669;margin-bottom:2px">Соғлиқни сақлаш ва таълим</div>
+        <div style="font-size:13.6px;color:var(--text2);line-height:1.4">
+          <div style="font-weight:600;color:#059669;margin-bottom:1px">Соғлиқни сақлаш (27 лойиҳа, 116,8 млрд)</div>
+          <div>&#10132; <b>MARMED MEDICAL</b> – 20 млрд, 40 ўрин</div>
+          <div>&#10132; <b>Central Asia Medical Univ</b> – 68,9 млрд, 70 ўрин</div>
+          <div>&#10132; <b>13 тиббиёт муассасаси</b> э-рецептлар билан</div>
+          <div>&#10132; <b>~70 вакансия</b> шифокорлар (тақчиллик)</div>
+        </div>
+        <div style="margin-top:4px;font-size:13.6px;color:var(--text2);line-height:1.4">
+          <div style="font-weight:600;color:var(--accent);margin-bottom:1px">Таълим (20 лойиҳа, 44,9 млрд)</div>
+          <div>&#10132; <b>227 МТМ</b>: қамров 81,3% &rarr; <b>90%</b> (+2 970 ўрин)</div>
+          <div>&#10132; <b>34 мактаб</b>, 39 803 ўқувчи</div>
+          <div>&#10132; <b>7 ўқув маркази</b> (23,3 млрд, 146 ўрин)</div>
+        </div>
+      </div>
+
+      <!-- Sports + Vacant -->
+      <div style="display:flex;flex-direction:column;gap:4px;overflow:hidden">
+        <div class="c" style="flex:1;min-height:0;padding:5px 10px;overflow:hidden">
+          <div style="font-size:14.6px;font-weight:700;color:#D97706;margin-bottom:2px">Спорт ва бандлик</div>
+          <div style="font-size:13.6px;color:var(--text2);line-height:1.4">
+            <div style="font-weight:600;color:#D97706;margin-bottom:1px">Олимпия ўйинлари ЛА-2028</div>
+            <div>&#127941; <b>Абдусатторова</b> – камондан отиш</div>
+            <div>&#127936; <b>Холиқова, Иброҳимова</b> – FIBA 3x3</div>
+            <div>&#9876; <b>Мўсинжонов</b> – пара-фехтование</div>
+          </div>
+          <div style="margin-top:3px;font-size:13.6px;color:var(--text2);line-height:1.4">
+            <div>&#9917; <b>69</b> футбол объекти, <b>10</b> янги (2026)</div>
+            <div>&#10132; <b>22 205</b> иш ўрни план</div>
+            <div>&#10132; <b>8 753</b> ишсизлар &rarr; 100% қамров</div>
+          </div>
+        </div>
+        <div class="c" style="flex-shrink:0;padding:4px 10px;overflow:hidden">
+          <div style="font-size:12.9px;color:var(--text2)">
+            <b style="color:var(--accent)">&#127970; 30 бўш объект:</b>
+            Mr. Fish (66 млрд) &middot; Газ Автоматика (10 млрд) &middot; 6 давлат биноси (15 млрд)
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- СТРАНИЦА 11: ОЖИДАЕМЫЕ РЕЗУЛЬТАТЫ 2026–2031                    -->
+<!-- ============================================================ -->
+<!-- СТРАНИЦА: МАХАЛЛИ И ПРОЕКТЫ                                  -->
+<!-- ============================================================ -->
+<div class="page" id="p7" style="display:flex;flex-direction:column">
+  <div class="hdr" style="flex-shrink:0">
+    <div>
+      <div class="hdr-title">Маҳаллалар ривожланиш режаси – 50 маҳаллада 131 лойиҳа (2026)</div>
+      <div class="hdr-sub">Ҳудудлар ихтисослашуви &nbsp;&bull;&nbsp; Драйвер-лойиҳалар &nbsp;&bull;&nbsp; 49,4 млрд инвестиция &nbsp;&bull;&nbsp; 3 000 иш ўрни &nbsp;&bull;&nbsp; Даромад фарқини 32× дан &lt;10× гача камайтириш</div>
+    </div>
+    <div class="hdr-right">
+      <div class="hdr-brand">NBU Data Office</div>
+      <div class="hdr-page">07 / 09</div>
+    </div>
+  </div>
+
+  <div style="flex:1;min-height:0;display:flex;flex-direction:column;padding:4px 20px 8px;gap:6px">
+
+    <!-- KPI row -->
+    <div style="display:flex;gap:8px;flex-shrink:0">
+      <div class="kpi" style="flex:1"><div class="kpi-l">Маҳаллалар</div><div class="kpi-v">50</div><div class="kpi-s">46 580 уй хўжаликлари</div></div>
+      <div class="kpi" style="flex:1"><div class="kpi-l">Лойиҳалар</div><div class="kpi-v">131</div><div class="kpi-s">49,4 млрд инвестиция</div></div>
+      <div class="kpi" style="flex:1"><div class="kpi-l">Иш ўринлари</div><div class="kpi-v">3 000</div><div class="kpi-s">янги иш ўринлари</div></div>
+      <div class="kpi" style="flex:1"><div class="kpi-l">Даромад фарқи</div><div class="kpi-v">32&times;</div><div class="kpi-s">маҳаллалар ўртасида (мақсад: &lt;10&times;)</div><div class="kpi-tag down">&#9660; танқидий</div></div>
+      <div class="kpi" style="flex:1"><div class="kpi-l">Камбағаллик</div><div class="kpi-v">2 602</div><div class="kpi-s">оила → 651 (1,1%)</div><div class="kpi-tag down" style="background:#DCFCE7;color:#059669">&#9660; -77%</div></div>
+      <div class="kpi" style="flex:1"><div class="kpi-l">Вакансиялар</div><div class="kpi-v">424</div><div class="kpi-s">75 ташкилотда</div></div>
+    </div>
+
+    <!-- Main content: 2 columns -->
+    <div style="flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+
+      <!-- LEFT: Specialization levels -->
+      <div style="display:flex;flex-direction:column;gap:4px;overflow:hidden">
+        <div class="sec" style="flex-shrink:0;padding:2px 0 1px;font-size:15.8px">Ихтисослашув даражалари ва драйвер-лойиҳалар</div>
+
+        <!-- 3 levels compact -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;flex-shrink:0">
+          <div class="c" style="padding:7px 10px">
+            <div class="c-t" style="color:var(--green);font-size:14.5px"><span class="dot" style="background:var(--green)"></span> Чуқур – 11 маҳ.</div>
+            <div style="text-align:center;margin:2px 0">
+              <div style="font-family:var(--mono);font-size:21.1px;font-weight:700;color:var(--green)">12 462 &rarr; 14 313</div>
+              <div style="font-size:10.6px;color:var(--text3);font-weight:600">уй хўжаликлари (+14,9%)</div>
+            </div>
+            <div style="font-size:12.5px;color:var(--text2);line-height:1.45">
+              <div><b>Кашкар</b> – 19,6% ИП (1 401)</div>
+              <div><b>Пичоқчи</b> – Gold Silk, АБР
+              <div><b>Тўрақўрғон</b> – 1 124 ИП, ипак</div></div>
+            </div>
+            <div style="margin-top:4px;padding-top:3px;border-top:1.5px solid var(--green)">
+              <div style="font-size:10.6px;font-weight:700;color:var(--green);letter-spacing:0.4px">ДРАЙВЕР: МФЙ ЮКСАЛИШ</div>
+              <div style="font-size:11.9px;color:var(--text2)"><b>7,5 млрд</b> – саноат зонаси «Навруз», 150 ўрин</div>
+              <div style="font-size:9.9px;color:var(--text3)">гос. 0,5 + предпр. 7,0 | налог <b>1,2 млрд</b></div>
+            </div>
+          </div>
+
+          <div class="c" style="padding:7px 10px">
+            <div class="c-t" style="color:var(--amber);font-size:14.5px"><span class="dot" style="background:var(--amber)"></span> Ўрта – 20 маҳ.</div>
+            <div style="text-align:center;margin:2px 0">
+              <div style="font-family:var(--mono);font-size:21.1px;font-weight:700;color:var(--amber)">17 758 &rarr; 27 083</div>
+              <div style="font-size:10.6px;color:var(--text3);font-weight:600">уй хўжаликлари (+52,5%)</div>
+            </div>
+            <div style="font-size:12.5px;color:var(--text2);line-height:1.45">
+              <div>4 252 ўзини-ўзи банд қилганни расмийлаштириш</div>
+              <div>Оилавий тадбиркорлик (1 856 м.)
+              <div>Хизматлар: <b>5 256</b> субъект</div></div>
+            </div>
+            <div style="margin-top:4px;padding-top:3px;border-top:1.5px solid var(--amber)">
+              <div style="font-size:10.6px;font-weight:700;color:var(--amber);letter-spacing:0.4px">ДРАЙВЕР: МФЙ ГЎРИАВВАЛ</div>
+              <div style="font-size:11.9px;color:var(--text2)"><b>4,0 млрд</b> – фонтан майдони, 15 объект</div>
+              <div style="font-size:9.9px;color:var(--text3)">гос. 1,0 + предпр. 3,0 | налог <b>0,3 млрд</b></div>
+            </div>
+          </div>
+
+          <div class="c" style="padding:7px 10px">
+            <div class="c-t" style="color:var(--red);font-size:14.5px"><span class="dot" style="background:var(--red)"></span> Паст – 19 маҳ.</div>
+            <div style="text-align:center;margin:2px 0">
+              <div style="font-family:var(--mono);font-size:21.1px;font-weight:700;color:var(--red)">16 360 &rarr; 8 427</div>
+              <div style="font-size:10.6px;color:var(--text3);font-weight:600">уй хўжаликлари (-48,5%)</div>
+            </div>
+            <div style="font-size:12.5px;color:var(--text2);line-height:1.45">
+              <div><b>Истиклол</b> – камб. 6,6%, 20 млрд</div>
+              <div><b>Ватан</b> – энг кўп камбағал (75 оила)
+              <div><b>Аниқ мақсадли ёрдам</b> – 2 602 оила</div></div>
+            </div>
+            <div style="margin-top:4px;padding-top:3px;border-top:1.5px solid var(--red)">
+              <div style="font-size:10.6px;font-weight:700;color:var(--red);letter-spacing:0.4px">ДРАЙВЕР: МФЙ ТУЯГУМ</div>
+              <div style="font-size:11.9px;color:var(--text2)"><b>11,3 млрд</b> – соҳил 0,9 км, 10 объект</div>
+              <div style="font-size:9.9px;color:var(--text3)">гос. 1,3 + предпр. 10,0 | налог <b>0,2 млрд</b></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Driver totals bar -->
+        <div class="c" style="flex-shrink:0;padding:5px 10px">
+          <div style="display:flex;gap:16px;font-size:12.1px;align-items:center">
+            <div style="font-weight:700;color:var(--accent)">&#9670; Жами драйверлар: 22,8 млрд</div>
+            <div style="color:var(--text2)">Давлат бюджети: <b>2,8 млрд</b></div>
+            <div style="color:var(--text2)">Тадбиркорлар: <b>20,0 млрд</b></div>
+            <div style="color:var(--text2)">Иш ўринлари: <b>255</b></div>
+            <div style="color:var(--green);font-weight:600">Солиқлар: <b>1,7 млрд/год</b></div>
+          </div>
+        </div>
+
+        <!-- Transition bar -->
+        <div class="c" style="padding:8px 14px;flex-shrink:0">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="font-size:11.9px;font-weight:600;color:var(--text3);white-space:nowrap">ҲОЗИР</div>
+            <div style="flex:1">
+              <div style="display:flex;height:20px;border-radius:4px;overflow:hidden">
+                <div style="width:26.8%;background:linear-gradient(90deg,#059669,#34D399)"></div>
+                <div style="width:38.1%;background:linear-gradient(90deg,#D97706,#FBBF24)"></div>
+                <div style="width:35.1%;background:linear-gradient(90deg,#DC2626,#F87171)"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:10.6px;font-weight:600;margin-top:1px">
+                <span style="color:var(--green)">26,8%</span><span style="color:var(--amber)">38,1%</span><span style="color:var(--red)">35,1%</span>
+              </div>
+            </div>
+            <div style="font-size:23.8px;color:var(--accent)">&#10132;</div>
+            <div style="flex:1">
+              <div style="display:flex;height:20px;border-radius:4px;overflow:hidden">
+                <div style="width:28.7%;background:linear-gradient(90deg,#059669,#34D399)"></div>
+                <div style="width:54.4%;background:linear-gradient(90deg,#D97706,#FBBF24)"></div>
+                <div style="width:16.9%;background:linear-gradient(90deg,#DC2626,#F87171)"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:10.6px;font-weight:600;margin-top:1px">
+                <span style="color:var(--green)">28,7%</span><span style="color:var(--amber)">54,4%</span><span style="color:var(--red)">16,9%</span>
+              </div>
+            </div>
+            <div style="font-size:11.9px;font-weight:600;color:var(--text3);white-space:nowrap">РЕЖА</div>
+          </div>
+        </div>
+
+        <!-- Top 5 projects -->
+        <div class="c" style="flex-shrink:0;padding:6px 10px;overflow:hidden">
+          <div class="c-t" style="font-size:13px">Инвестициялар бўйича ТОП-5 лойиҳа</div>
+          <table style="font-size:12.5px">
+            <tr><th style="padding:1px 3px">#</th><th style="padding:1px 3px">Лойиҳа</th><th style="padding:1px 3px">Маҳалла</th><th class="r" style="padding:1px 3px">Инв. (млн)</th><th class="r" style="padding:1px 3px">Ўрин</th></tr>
+            <tr><td style="padding:1px 3px">1</td><td style="padding:1px 3px"><b>SHOYI SILK</b> – ипак</td><td style="padding:1px 3px">Нурафшон</td><td class="r" style="padding:1px 3px">2 500</td><td class="r" style="padding:1px 3px">40</td></tr>
+            <tr><td style="padding:1px 3px">2</td><td style="padding:1px 3px"><b>ИП Зокирова</b></td><td style="padding:1px 3px">Хўжа Порсо</td><td class="r" style="padding:1px 3px">2 000</td><td class="r" style="padding:1px 3px">40</td></tr>
+            <tr><td style="padding:1px 3px">3</td><td style="padding:1px 3px"><b>Ўрик боғи</b> 12,6 га</td><td style="padding:1px 3px">Ариқ бўйи</td><td class="r" style="padding:1px 3px">1 726</td><td class="r" style="padding:1px 3px">40</td></tr>
+            <tr><td style="padding:1px 3px">4</td><td style="padding:1px 3px"><b>ИП Собиров</b></td><td style="padding:1px 3px">Ватан</td><td class="r" style="padding:1px 3px">1 600</td><td class="r" style="padding:1px 3px">4</td></tr>
+            <tr><td style="padding:1px 3px">5</td><td style="padding:1px 3px"><b>Қайта ишлаш</b> – бодринг</td><td style="padding:1px 3px">Дўстлик</td><td class="r" style="padding:1px 3px">1 000</td><td class="r" style="padding:1px 3px">50</td></tr>
+          </table>
+        </div>
+
+        <!-- Summary card -->
+        <div class="c" style="flex:1;min-height:0;padding:10px 14px;background:linear-gradient(135deg,#EFF6FF,#F0FDF4);border:2px solid rgba(37,99,235,0.18)">
+          <div style="font-size:16px;font-weight:800;color:var(--accent);margin-bottom:8px;letter-spacing:0.3px">&#9670; Маҳаллалар ривожланиши бўйича асосий хулосалар</div>
+          <div style="font-size:14px;color:var(--text);line-height:1.7">
+            <div>&#10132; <b style="color:var(--accent)">70%</b> инвестициялар – хусусий капитал ва тадбиркорлар, давлат бюджети фақат <b>30%</b></div>
+            <div>&#10132; Маҳаллалар ўртасида даромад фарқи <b style="color:var(--red)">32×</b> – танқидий; мақсад камайтириш <b style="color:var(--green)">&lt;10×</b> 2031 йилгача</div>
+            <div>&#10132; <b style="color:var(--red)">19 камбағал маҳалла</b> аниқ мақсадли драйвер-лойиҳалар ва қўллаб-қувватлаш дастурлари олади</div>
+            <div>&#10132; Яратиш <b style="color:var(--accent)">22 205</b> иш ўрни – полное <b style="color:var(--green)">100%</b> қамров всех ишсизлар</div>
+            <div>&#10132; Расмийлаштириш <b style="color:var(--amber)">4 252</b> ўз-ўзини банд қилганлар → солиқ базаси ва ижтимоий ҳимоя ўсиши</div>
+            <div>&#10132; Қ/х модернизацияси: ҳажм <b style="color:var(--green)">832,7 млрд</b> (2025 га +107%), совутгичлар, иссиқхоналар</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Sector breakdown + financing -->
+      <div style="display:flex;flex-direction:column;gap:4px;overflow:hidden">
+
+        <!-- Sector table -->
+        <div class="c" style="flex-shrink:0;padding:7px 12px">
+          <div class="c-t" style="font-size:14.5px">Тармоқлар бўйича тақсимот</div>
+          <table style="font-size:14.5px">
+            <tr><th>Йўналиш</th><th class="r">Лойиҳалар</th><th class="r">Инвест. (млн)</th><th class="r">Улуш</th><th class="r">Ўрин</th></tr>
+            <tr><td><b>Хизматлар ва туризм</b></td><td class="r">75</td><td class="r">28 195</td><td class="r"><b>57,0%</b></td><td class="r">2 362</td></tr>
+            <tr><td><b>Саноат – кооперация</b></td><td class="r">43</td><td class="r">19 497</td><td class="r"><b>39,5%</b></td><td class="r">598</td></tr>
+            <tr><td><b>Қ/х – қўшимча қиймат</b></td><td class="r">13</td><td class="r">1 726</td><td class="r"><b>3,5%</b></td><td class="r">40</td></tr>
+            <tr class="tr-hl"><td><b>Жами</b></td><td class="r"><b>131</b></td><td class="r"><b>49 418</b></td><td class="r"><b>100%</b></td><td class="r"><b>3 000</b></td></tr>
+          </table>
+          <div style="display:flex;height:14px;border-radius:4px;overflow:hidden;margin-top:5px">
+            <div style="width:57%;background:linear-gradient(90deg,#059669,#34D399)"></div>
+            <div style="width:39.5%;background:linear-gradient(90deg,#2563EB,#60A5FA)"></div>
+            <div style="width:3.5%;background:linear-gradient(90deg,#D97706,#FBBF24)"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:11.9px;font-weight:600;margin-top:2px">
+            <span style="color:var(--green)">Хизматлар 57%</span><span style="color:var(--accent)">Саноат 39,5%</span><span style="color:var(--amber)">Қ/х 3,5%</span>
+          </div>
+        </div>
+
+        <!-- Financing sources -->
+        <div class="c" style="flex:1;min-height:0;padding:8px 12px;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between">
+          <div class="c-t" style="font-size:14.5px">Молиялаштириш манбалари (млн сўм)</div>
+          <div class="bar" style="margin:6px 0"><div class="bar-l" style="width:120px;font-size:13.2px">Маҳалла</div><div class="bar-t" style="height:22px"><div class="bar-f bf-blue" style="width:52.2%"></div></div><div class="bar-v" style="font-size:13.2px">25 806</div></div>
+          <div class="bar" style="margin:6px 0"><div class="bar-l" style="width:120px;font-size:13.2px">Оилавий</div><div class="bar-t" style="height:22px"><div class="bar-f bf-green" style="width:22.1%"></div></div><div class="bar-v" style="font-size:13.2px">10 898</div></div>
+          <div class="bar" style="margin:6px 0"><div class="bar-l" style="width:120px;font-size:13.2px">312 (қўллаб-қувватлаш)</div><div class="bar-t" style="height:22px"><div class="bar-f bf-amber" style="width:8.3%"></div></div><div class="bar-v" style="font-size:13.2px">4 124</div></div>
+          <div class="bar" style="margin:6px 0"><div class="bar-l" style="width:120px;font-size:13.2px">Ўз маблағлари</div><div class="bar-t" style="height:22px"><div class="bar-f bf-purple" style="width:7.8%"></div></div><div class="bar-v" style="font-size:13.2px">3 850</div></div>
+          <div class="bar" style="margin:6px 0"><div class="bar-l" style="width:120px;font-size:13.2px">Жаҳон банки</div><div class="bar-t" style="height:22px"><div class="bar-f" style="width:6.5%;background:linear-gradient(90deg,#0891B2,#22D3EE)"></div></div><div class="bar-v" style="font-size:13.2px">3 200</div></div>
+          <div class="bar" style="margin:6px 0"><div class="bar-l" style="width:120px;font-size:13.2px">1-қадам бизнес</div><div class="bar-t" style="height:22px"><div class="bar-f bf-gray" style="width:2.1%"></div></div><div class="bar-v" style="font-size:13.2px">1 060</div></div>
+          <div style="margin-top:6px;padding-top:6px;border-top:1px solid var(--border);display:flex;gap:14px;font-size:12px;color:var(--text2);font-weight:600">
+            <div>Жами: <b style="color:var(--accent)">48 938 млн</b></div>
+            <div>Давлат маблағлари: <b>30%</b></div>
+            <div>Хусусий: <b>70%</b></div>
+          </div>
+        </div>
+
+        <!-- Agriculture + self-employment -->
+        <div class="c" style="flex-shrink:0;padding:7px 12px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;font-size:13px;color:var(--text2)">
+            <div>&#127793; <b style="color:var(--accent)">Қ/х:</b> 6 лойиҳа, <b>46,4 млрд</b></div>
+            <div>&#128101; <b style="color:var(--amber)">Ўз-ўзини банд қилганлар:</b> 4 252 → расмийлаштириш</div>
+            <div>&#10132; <b>Orion Fresh Fruits</b> – совутгич 45,0 млрд, 20 ўрин</div>
+            <div>&#10132; Оилавий тадбиркорлик: <b>1 856</b> | Чорвачилик: <b>2 лойиҳа</b></div>
+            <div>&#10132; Иссиқхоналар: 2 лойиҳа, 0,4 млрд | Боғдорчилик: 1 пр., 0,5 млрд</div>
+            <div>&#10132; 2026 қ/х ҳажми: <b>832,7 млрд</b> (+107% к 2025)</div>
+          </div>
+        </div>
+
+        <!-- Context -->
+        <div class="c" style="flex-shrink:0;padding:5px 12px;background:linear-gradient(135deg,#EFF6FF,#F0FDF4);border:1px solid rgba(37,99,235,0.1)">
+          <div style="display:flex;gap:16px;font-size:13.2px;color:var(--text2);align-items:center;justify-content:center">
+            <div><b>Жами 2026 режа:</b> <span style="font-family:var(--mono);font-weight:700">468</span> лойиҳа</div>
+            <div><b>Инвестициялар:</b> <span style="font-family:var(--mono);font-weight:700">9 722 млрд</span></div>
+            <div><b>ТХИ:</b> <span style="font-family:var(--mono);font-weight:700">3 738 млрд</span></div>
+            <div><b>131 лойиҳа =</b> <span style="font-family:var(--mono);font-weight:700;color:var(--accent)">28%</span> умумийдан</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<div class="page" id="p8" style="display:flex;flex-direction:column">
+  <div class="hdr" style="flex-shrink:0">
+    <div>
+      <div class="hdr-title">IT, рақамлаштириш ва банклар роли – 2026 режа</div>
+      <div class="hdr-sub">2026 йил мақсадли кўрсаткичлар ва лойиҳалар &nbsp;&bull;&nbsp; IT-лойиҳалар &nbsp;&bull;&nbsp; Кредит дастурлари &nbsp;&bull;&nbsp; Молиявий инклюзия</div>
+    </div>
+    <div class="hdr-right">
+      <div class="hdr-brand">NBU Data Office</div>
+      <div class="hdr-page">08 / 09</div>
+    </div>
+  </div>
+
+  <div style="flex:1;min-height:0;display:flex;flex-direction:column;padding:2px 20px 4px;gap:3px">
+
+    <!-- ═══════ SECTION 1: IT & MODERNIZATION ═══════ -->
+    <div style="flex:1;min-height:0;display:flex;flex-direction:column;gap:3px;background:linear-gradient(135deg,#EFF6FF 0%,#F8FAFF 100%);border-radius:10px;padding:6px 16px;border:1px solid rgba(37,99,235,0.1)">
+
+      <!-- Section title + KPI row -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+        <div style="display:flex;flex-direction:column">
+          <div style="font-size:17px;font-weight:700;color:var(--accent);letter-spacing:0.2px">&#9670; Ҳунармандчиликдан модернизацияга</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:1px">Марғилон – усталар шаҳри &#10140; таълим, инфратузилма ва IT орқали рақамли иқтисодиёт</div>
+        </div>
+        <div style="display:flex;gap:14px">
+          <div style="text-align:center"><div style="font-family:var(--mono);font-size:24px;font-weight:800;color:var(--accent);line-height:1">20</div><div style="font-size:10px;color:var(--text3);font-weight:600">IT-резидентлар <span style="font-size:8px;color:var(--green)">(факт)</span></div></div>
+          <div style="text-align:center"><div style="font-family:var(--mono);font-size:24px;font-weight:800;color:var(--accent);line-height:1">650</div><div style="font-size:10px;color:var(--text3);font-weight:600">IT-мут. <span style="font-size:8px;color:var(--accent)">(режа)</span></div></div>
+          <div style="text-align:center"><div style="font-family:var(--mono);font-size:24px;font-weight:800;color:var(--accent);line-height:1">13,3</div><div style="font-size:10px;color:var(--text3);font-weight:600">млрд инвест. <span style="font-size:8px;color:var(--accent)">(режа)</span></div></div>
+          <div style="text-align:center"><div style="font-family:var(--mono);font-size:24px;font-weight:800;color:var(--accent);line-height:1">31</div><div style="font-size:10px;color:var(--text3);font-weight:600">ўқув марказ <span style="font-size:8px;color:var(--green)">(факт)</span></div></div>
+          <div style="text-align:center"><div style="font-family:var(--mono);font-size:24px;font-weight:800;color:var(--accent);line-height:1">21</div><div style="font-size:10px;color:var(--text3);font-weight:600">йўналиш <span style="font-size:8px;color:var(--accent)">(режа)</span></div></div>
+        </div>
+      </div>
+
+      <!-- Transition arrow bar -->
+      <div style="display:flex;align-items:center;gap:0;flex-shrink:0">
+        <div style="flex:1;background:linear-gradient(135deg,#FEF3C7,#FDE68A);border-radius:6px 0 0 6px;padding:6px 12px;display:flex;align-items:center;gap:8px;border:1px solid rgba(217,119,6,0.15)">
+          <span style="font-size:20px">&#127912;</span>
+          <div><div style="font-size:13px;font-weight:700;color:#92400E">БУГУН: Ҳунармандчилик</div><div style="font-size:12px;color:#78350F">Ипак, атлас, адрас, керамика – анъаналар, қўл меҳнати, паст қўшимча қиймат</div></div>
+        </div>
+        <div style="width:44px;display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,#FDE68A,#93C5FD);font-size:22px;padding:6px 0;color:var(--accent)">&#10140;</div>
+        <div style="flex:1;background:linear-gradient(135deg,#DBEAFE,#BFDBFE);border-radius:0 6px 6px 0;padding:6px 12px;display:flex;align-items:center;gap:8px;border:1px solid rgba(37,99,235,0.15)">
+          <span style="font-size:20px">&#128187;</span>
+          <div><div style="font-size:13px;font-weight:700;color:#1E40AF">МАҚСАД 2031: Рақамли иқтисодиёт</div><div style="font-size:12px;color:#1E3A5F">IT-сектор, стартаплар, хизмат экспорти, юқори малакали кадрлар, 819 млрд экспорт</div></div>
+        </div>
+      </div>
+
+      <!-- 4 panels -->
+      <div style="flex:1;min-height:0;display:grid;grid-template-columns:5fr 8fr 5fr 5fr;gap:5px">
+
+        <div style="background:white;border-radius:7px;padding:7px 10px;border:1px solid rgba(37,99,235,0.08);border-left:3px solid #D97706;overflow:hidden">
+          <div style="font-size:14px;font-weight:700;color:#92400E;margin-bottom:3px">&#9312; Таълим ва кадрлар</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.4">
+            <div>&#8226; Обучение <b>1 604</b> ишсизлар граждан</div>
+            <div>&#8226; <b>974 аёл</b> – тадбиркорлик асослари</div>
+            <div>&#8226; <b>420 ёш</b> – касбий тайёргарлик</div>
+            <div>&#8226; <b>17</b> тил ўқув марказлари <b>5 700</b> ўрин</div>
+            <div>&#8226; <b>34 мактаб</b>, 39 803 ўқувчи</div>
+            <div>&#8226; Боғча қамрови: 81% &#10140; <b>90%</b></div>
+          </div>
+        </div>
+
+        <div style="background:white;border-radius:7px;padding:7px 10px;border:1px solid rgba(37,99,235,0.12);border-left:4px solid #2563EB;overflow:hidden">
+          <div style="font-size:14px;font-weight:700;color:var(--accent);margin-bottom:3px">&#9313; IT-инфратузилма ва рақамли ўтиш</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.4">
+            <div>&#8226; <b>IT марказ ва замонавий кутубхона</b> (ДХШ) – 1,2 млрд сўм, 20 иш ўрни, тайёрлаш <b style="color:var(--accent)">650 IT-мутахассис</b></div>
+            <div>&#8226; <b>IT-Park</b> Ёшлар хиёбонида – 5,0 млрд, 30 ўрин, стартап-инкубатор ва экотизим</div>
+            <div>&#8226; <b>21 ўқитиш йўналиши:</b> дастурлаш, AI/ML, data science, кибер хавфсизлик, UX/UI</div>
+            <div>&#8226; <b>7 IT-лойиҳа</b> на 6,2 млрд – электрон тижорат платформаларидан кичик бизнес учун рақамли хизматларгача</div>
+            <div>&#8226; <b>Инфратузилмани модернизация қилиш:</b> 210 км электр тармоқлари, 180 трансформатор, сув таъминоти 100% гача</div>
+            <div>&#8226; <b>Рақамли давлат хизматлари:</b> 13 тиббиёт муассасасида электрон рецептлар, 7 143 тадбиркор ягона базаси</div>
+          </div>
+        </div>
+
+        <div style="background:white;border-radius:7px;padding:7px 10px;border:1px solid rgba(37,99,235,0.08);border-left:3px solid #059669;overflow:hidden">
+          <div style="font-size:14px;font-weight:700;color:var(--green);margin-bottom:3px">&#9314; Шаҳарни рақамлаштириш</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.4">
+            <div>&#10003; 13 муассасада <b>электрон рецептлар</b></div>
+            <div>&#10003; <b>Реестр бедности</b> – 2 602 оила</div>
+            <div>&#10003; <b>ЯТТ ягона базаси</b> – 7 143 субъект</div>
+            <div>&#10003; <b>Сув таъминоти:</b> 98,8% &#10140; <b>100%</b></div>
+            <div>&#10003; <b>48 LED-чироқ</b> (яшил энергия)</div>
+            <div>&#10003; Шаҳар тизимлари <b>кибер хавфсизлиги</b></div>
+          </div>
+        </div>
+
+        <div style="background:white;border-radius:7px;padding:7px 10px;border:1px solid rgba(37,99,235,0.08);border-left:3px solid #7C3AED;overflow:hidden">
+          <div style="font-size:14px;font-weight:700;color:#7C3AED;margin-bottom:3px">&#9315; Кутилаётган натижа</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.4">
+            <div>&#10140; Саноат: <b>3 087 млрд</b> (+10,7%)</div>
+            <div>&#10140; Хизматлар: <b>5 267 млрд</b> (+21%)</div>
+            <div>&#10140; Экспорт: <b>821 млрд</b></div>
+            <div>&#10140; Яратиш <b>22 205</b> иш ўрни</div>
+            <div>&#10140; Камбағаллик: 3,5% &#10140; <b>1,1%</b></div>
+            <div>&#10140; Хорижий инвестициялар: <b>3 738 млрд</b></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div style="height:1.5px;background:linear-gradient(90deg,transparent,var(--border2),transparent);flex-shrink:0"></div>
+
+    <!-- ═══════ SECTION 2: BANKING ═══════ -->
+    <div style="flex:1;min-height:0;display:flex;flex-direction:column;gap:3px;background:linear-gradient(135deg,#EFF6FF 0%,#F8FAFF 100%);border-radius:10px;padding:6px 16px;border:1px solid rgba(37,99,235,0.1)">
+
+      <!-- Section title + KPI row -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+        <div style="font-size:17px;font-weight:700;color:var(--accent);letter-spacing:0.2px">&#9670; Марғилон ривожланишида банклар роли</div>
+        <div style="display:flex;gap:14px">
+          <div style="text-align:center"><div style="font-family:var(--mono);font-size:24px;font-weight:800;color:var(--accent);line-height:1">1 500</div><div style="font-size:10px;color:var(--text3);font-weight:600">млрд кредит <span style="font-size:8px;color:var(--accent)">(режа)</span></div></div>
+          <div style="text-align:center"><div style="font-family:var(--mono);font-size:24px;font-weight:800;color:var(--accent);line-height:1">3 614</div><div style="font-size:10px;color:var(--text3);font-weight:600">иш ўрни <span style="font-size:8px;color:var(--accent)">(режа)</span></div></div>
+          <div style="text-align:center"><div style="font-family:var(--mono);font-size:24px;font-weight:800;color:var(--accent);line-height:1">457</div><div style="font-size:10px;color:var(--text3);font-weight:600">млрд қўшимча маҳсулот <span style="font-size:8px;color:var(--accent)">(режа)</span></div></div>
+          <div style="text-align:center"><div style="font-family:var(--mono);font-size:24px;font-weight:800;color:var(--accent);line-height:1">154 млрд</div><div style="font-size:10px;color:var(--text3);font-weight:600">Жаҳон банки <span style="font-size:8px;color:var(--accent)">(режа)</span></div></div>
+        </div>
+      </div>
+
+      <!-- 3 panels -->
+      <div style="flex:1;min-height:0;display:grid;grid-template-columns:5fr 4fr 3fr;gap:6px">
+
+        <div style="background:white;border-radius:8px;padding:6px 10px;border:1px solid rgba(37,99,235,0.08);display:flex;flex-direction:column;overflow:hidden">
+          <div style="font-size:14px;font-weight:700;color:var(--accent);margin-bottom:3px">Кредитлаш тузилмаси (млрд сўм)</div>
+          <table style="font-size:13px">
+            <tr><th style="padding:2px 4px">Дастур</th><th class="r" style="padding:2px 4px">Сумма</th><th class="r" style="padding:2px 4px">Саноат</th><th class="r" style="padding:2px 4px">Хизмат</th><th class="r" style="padding:2px 4px">Қ/х</th></tr>
+            <tr><td style="padding:2px 4px">Биринчи қадам</td><td class="r" style="padding:2px 4px">90,0</td><td class="r" style="padding:2px 4px">35,8</td><td class="r" style="padding:2px 4px">40,6</td><td class="r" style="padding:2px 4px">13,6</td></tr>
+            <tr><td style="padding:2px 4px">Маҳалла лойиҳаси</td><td class="r" style="padding:2px 4px">20,8</td><td class="r" style="padding:2px 4px">7,9</td><td class="r" style="padding:2px 4px">10,6</td><td class="r" style="padding:2px 4px">3,8</td></tr>
+            <tr><td style="padding:2px 4px">Оилавий тадбиркорлик</td><td class="r" style="padding:2px 4px">21,8</td><td class="r" style="padding:2px 4px">8,6</td><td class="r" style="padding:2px 4px">9,1</td><td class="r" style="padding:2px 4px">4,2</td></tr>
+            <tr><td style="padding:2px 4px">Кичик бизнесни қўллаб-қувватлаш</td><td class="r" style="padding:2px 4px">23,4</td><td class="r" style="padding:2px 4px">10,3</td><td class="r" style="padding:2px 4px">3,7</td><td class="r" style="padding:2px 4px">–</td></tr>
+            <tr><td style="padding:2px 4px">Тижорат кредитлари</td><td class="r" style="padding:2px 4px">1 344</td><td class="r" style="padding:2px 4px">479,9</td><td class="r" style="padding:2px 4px">439,4</td><td class="r" style="padding:2px 4px">424,7</td></tr>
+            <tr class="tr-hl"><td style="padding:2px 4px"><b>Жами</b></td><td class="r" style="padding:2px 4px"><b>1 500</b></td><td class="r" style="padding:2px 4px"><b>540</b></td><td class="r" style="padding:2px 4px"><b>510</b></td><td class="r" style="padding:2px 4px"><b>450</b></td></tr>
+          </table>
+          <div style="display:flex;height:10px;border-radius:4px;overflow:hidden;margin-top:auto">
+            <div style="width:36%;background:linear-gradient(90deg,#2563EB,#60A5FA)"></div>
+            <div style="width:34%;background:linear-gradient(90deg,#059669,#34D399)"></div>
+            <div style="width:30%;background:linear-gradient(90deg,#D97706,#FBBF24)"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:600;margin-top:2px">
+            <span style="color:var(--accent)">&#9632; Саноат 36%</span><span style="color:var(--green)">&#9632; Хизматлар 34%</span><span style="color:var(--amber)">&#9632; Қишлоқ хўж. 30%</span>
+          </div>
+        </div>
+
+        <div style="background:white;border-radius:8px;padding:6px 10px;border:1px solid rgba(37,99,235,0.08);overflow:hidden;display:flex;flex-direction:column">
+          <div style="font-size:14px;font-weight:700;color:var(--accent);margin-bottom:3px">Маҳалла банкирлари ва агентлар</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;flex:1">
+            <div style="background:linear-gradient(135deg,#DBEAFE,#EFF6FF);border-radius:6px;padding:6px 8px;border-left:3px solid var(--accent)">
+              <div style="font-size:11px;font-weight:700;color:var(--accent);margin-bottom:3px">12 БАНКИР – ижтимоий қўллаб-қувватлаш</div>
+              <div style="font-size:12.5px;color:var(--text2);line-height:1.4">
+                <div>&#10132; <b>1 816</b> кишини ишга жойлаштириш</div>
+                <div>&#10132; <b>1 930</b> кишининг даромадини ошириш</div>
+                <div>&#10132; <b>75</b> тажриба учрашувлари «Уйчи»</div>
+                <div>&#10132; <b>500</b> микролойиҳани ишга тушириш</div>
+                <div>&#10132; <b>700</b> млрд МСБ учун кредитлар</div>
+              </div>
+            </div>
+            <div style="background:linear-gradient(135deg,#ECFDF5,#F0FDF4);border-radius:6px;padding:6px 8px;border-left:3px solid var(--green)">
+              <div style="font-size:11px;font-weight:700;color:#059669;margin-bottom:3px">50 АГЕНТ – молиявий инклюзия</div>
+              <div style="font-size:12.5px;color:var(--text2);line-height:1.4">
+                <div>&#10132; <b>1 800</b> фуқарони банкка жалб қилиш</div>
+                <div>&#10132; <b>18</b> млрд омонат жалб қилиш</div>
+                <div>&#10132; <b>12</b> млрд чакана кредитлар</div>
+                <div>&#10132; <b>6 000</b> мобил банкка уланиш</div>
+                <div>&#10132; <b>5 000</b> эшмадан-эшма маслаҳат</div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:auto;background:#FEF3C7;border-radius:5px;padding:4px 8px;font-size:11px;border-left:3px solid var(--amber)">
+            <b style="color:var(--amber)">&#9888; NPL 4,6%</b> (факт) – МКТ аудити, ўтганда тўхтатиш &gt;5% &nbsp;|&nbsp; <b>158 млрд</b> дастурий кредитлаш
+          </div>
+        </div>
+
+        <div style="background:white;border-radius:8px;padding:6px 10px;border:1px solid rgba(37,99,235,0.08);overflow:hidden;display:flex;flex-direction:column">
+          <div style="font-size:14px;font-weight:700;color:var(--accent);margin-bottom:3px">Молиявий воситалар</div>
+          <div style="font-size:12.5px;color:var(--text2);line-height:1.4">
+            <div>&#10132; <b>Ҳунармандчилик кредити</b> – 6,8 млрд 84 лойиҳа учун</div>
+            <div>&#10132; <b>Қайтиш миграцияси</b> – 10 904 киши</div>
+            <div>&#10132; <b>PD/RBL скоринг</b> – кредит экспертизаси</div>
+            <div>&#10132; <b>Жаҳон банки</b> – 35 лойиҳа, 154 млрд</div>
+            <div>&#10132; <b>Қайта тузиш</b> – 1 352 кредит</div>
+            <div>&#10132; <b>551</b> пакетов готовых лойиҳа</div>
+            <div>&#10132; <b>2 400</b> фирибгарликка қарши тренинг</div>
+          </div>
+          <div style="margin-top:auto;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border-radius:5px;padding:4px 8px;display:flex;gap:10px;font-size:12px;justify-content:center;font-weight:600">
+            <span>Саноат: <b style="color:var(--accent)">+181</b></span>
+            <span>Хизматлар: <b style="color:var(--green)">+220</b></span>
+            <span>С/х: <b style="color:var(--amber)">+56</b></span>
+            <span>Ўрин: <b>3 614</b></span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- СТРАНИЦА 7: МАХАЛЛИ – СПЕЦИАЛИЗАЦИЯ                           -->
+<!-- ============================================================ -->
+<div class="page" id="p9">
+  <div class="hdr">
+    <div>
+      <div class="hdr-title">Кутилаётган натижалар 2026–2031</div>
+      <div class="hdr-sub">Асосий кўрсаткичлар прогнози &nbsp;&bull;&nbsp; 3–5 йиллик горизонт</div>
+    </div>
+    <div class="hdr-right">
+      <div class="hdr-brand">NBU Data Office</div>
+      <div class="hdr-page">09 / 09</div>
+    </div>
+  </div>
+
+  <div class="grid g2">
+
+    <!-- SECTION -->
+    <div class="sec sec12">Асосий кўрсаткичлар прогнози</div>
+
+    <!-- Forecast chart: саноат + экспорт -->
+    <div class="c s6">
+      <div class="chart-title">Прогноз: Саноат ва Экспорт (млрд сўм) – 2022–2028</div>
+      <svg width="100%" viewBox="0 0 720 160" style="display:block">
+        <!-- Forecast zone -->
+        <rect x="480" y="5" width="220" height="140" rx="4" fill="#DBEAFE" opacity="0.6"/>
+        <text x="590" y="18" text-anchor="middle" style="font-family:var(--mono);font-size:9px;font-weight:600;fill:var(--accent);opacity:0.7">ПРОГНОЗ</text>
+        <!-- Axes -->
+        <line x1="55" y1="25" x2="55" y2="130" class="lc-axis"/>
+        <line x1="55" y1="130" x2="700" y2="130" class="lc-axis"/>
+        <line x1="55" y1="95" x2="700" y2="95" class="lc-grid"/>
+        <line x1="55" y1="60" x2="700" y2="60" class="lc-grid"/>
+        <line x1="55" y1="25" x2="700" y2="25" class="lc-grid"/>
+        <text x="50" y="134" text-anchor="end" class="lc-label">0</text>
+        <text x="50" y="99" text-anchor="end" class="lc-label">2000</text>
+        <text x="50" y="64" text-anchor="end" class="lc-label">4000</text>
+        <text x="50" y="29" text-anchor="end" class="lc-label">6000</text>
+        <!-- X labels -->
+        <text x="120" y="147" text-anchor="middle" class="lc-label">2022</text>
+        <text x="230" y="147" text-anchor="middle" class="lc-label">2023</text>
+        <text x="340" y="147" text-anchor="middle" class="lc-label">2024</text>
+        <text x="450" y="147" text-anchor="middle" class="lc-label">2025</text>
+        <text x="560" y="147" text-anchor="middle" class="lc-label" fill="var(--accent)">2026п</text>
+        <text x="670" y="147" text-anchor="middle" class="lc-label" fill="var(--accent)">2028п</text>
+        <!-- Промышленность (solid -> dashed) -->
+        <polyline points="120,109 230,105 340,95 450,87" fill="none" stroke="#2563EB" stroke-width="2.5" stroke-linejoin="round"/>
+        <polyline points="450,87 560,76 670,56" fill="none" stroke="#2563EB" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="8,4"/>
+        <circle cx="120" cy="109" r="3.5" fill="#2563EB"/><circle cx="230" cy="105" r="3.5" fill="#2563EB"/>
+        <circle cx="340" cy="95" r="3.5" fill="#2563EB"/><circle cx="450" cy="87" r="3.5" fill="#2563EB"/>
+        <circle cx="560" cy="76" r="3.5" fill="#fff" stroke="#2563EB" stroke-width="2"/>
+        <circle cx="670" cy="56" r="3.5" fill="#fff" stroke="#2563EB" stroke-width="2"/>
+        <text x="120" y="104" text-anchor="middle" class="lc-val" fill="#2563EB">1&#8239;554</text>
+        <text x="230" y="100" text-anchor="middle" class="lc-val" fill="#2563EB">1&#8239;683</text>
+        <text x="340" y="90" text-anchor="middle" class="lc-val" fill="#2563EB">2&#8239;079</text>
+        <text x="450" y="82" text-anchor="middle" class="lc-val" fill="#2563EB">2&#8239;459</text>
+        <text x="560" y="71" text-anchor="middle" class="lc-val" fill="#2563EB">3&#8239;087</text>
+        <text x="670" y="51" text-anchor="middle" class="lc-val" fill="#2563EB">~4&#8239;200</text>
+        <!-- Экспорт (млрд сўм) -->
+        <polyline points="120,124 230,121 340,126 450,113" fill="none" stroke="#059669" stroke-width="2" stroke-linejoin="round"/>
+        <polyline points="450,113 560,103 670,86" fill="none" stroke="#059669" stroke-width="2" stroke-linejoin="round" stroke-dasharray="5,3"/>
+        <circle cx="120" cy="124" r="2.5" fill="#059669"/>
+        <circle cx="230" cy="121" r="2.5" fill="#059669"/>
+        <circle cx="340" cy="126" r="2.5" fill="#059669" stroke="#DC2626" stroke-width="1.5"/>
+        <circle cx="450" cy="113" r="2.5" fill="#059669"/>
+        <circle cx="560" cy="103" r="2.5" fill="#fff" stroke="#059669" stroke-width="1.5"/>
+        <circle cx="670" cy="86" r="2.5" fill="#fff" stroke="#059669" stroke-width="1.5"/>
+        <text x="120" y="138" text-anchor="middle" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#059669">191</text>
+        <text x="230" y="136" text-anchor="middle" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#059669">260</text>
+        <text x="340" y="138" text-anchor="middle" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#DC2626">213</text>
+        <text x="450" y="108" text-anchor="middle" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#059669">450</text>
+        <text x="560" y="98" text-anchor="middle" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#059669">~820</text>
+        <text x="670" y="81" text-anchor="middle" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#059669">~1&#8239;100</text>
+        <!-- Инвестиции (amber line) -->
+        <polyline points="120,118 230,107 340,126 450,108" fill="none" stroke="#D97706" stroke-width="2" stroke-linejoin="round"/>
+        <polyline points="450,108 560,93 670,72" fill="none" stroke="#D97706" stroke-width="2" stroke-linejoin="round" stroke-dasharray="6,3"/>
+        <circle cx="120" cy="118" r="2.5" fill="#D97706"/><circle cx="230" cy="107" r="2.5" fill="#D97706"/>
+        <circle cx="340" cy="126" r="2.5" fill="#D97706" stroke="#DC2626" stroke-width="1.5"/>
+        <circle cx="450" cy="108" r="2.5" fill="#D97706"/>
+        <circle cx="560" cy="93" r="2.5" fill="#fff" stroke="#D97706" stroke-width="1.5"/>
+        <circle cx="670" cy="72" r="2.5" fill="#fff" stroke="#D97706" stroke-width="1.5"/>
+        <text x="110" y="128" text-anchor="middle" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#D97706">910</text>
+        <text x="240" y="103" text-anchor="start" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#D97706">1&#8239;574</text>
+        <text x="340" y="137" text-anchor="middle" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#DC2626">700</text>
+        <text x="460" y="117" text-anchor="start" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#D97706">1&#8239;281</text>
+        <text x="570" y="89" text-anchor="start" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#D97706">~2&#8239;000</text>
+        <text x="680" y="68" text-anchor="start" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#D97706">~3&#8239;000</text>
+        <!-- Легенда -->
+        <line x1="65" y1="12" x2="80" y2="12" stroke="#2563EB" stroke-width="2.5"/>
+        <text x="83" y="15" class="lc-label" fill="#2563EB">Саноат</text>
+        <line x1="200" y1="12" x2="215" y2="12" stroke="#D97706" stroke-width="2" stroke-dasharray="5,3"/>
+        <text x="218" y="15" class="lc-label" fill="#D97706">Инвестициялар</text>
+        <line x1="310" y1="12" x2="325" y2="12" stroke="#059669" stroke-width="2" stroke-dasharray="4,3"/>
+        <text x="328" y="15" class="lc-label" fill="#059669">Экспорт</text>
+      </svg>
+    </div>
+
+    <!-- Forecast chart: Миграция -->
+    <div class="c s6">
+      <div class="chart-title">Прогноз: Миграция, камбағаллик (оилалар) ва ишсизлик (киши)</div>
+      <svg width="100%" viewBox="0 0 720 160" style="display:block">
+        <rect x="480" y="5" width="220" height="140" rx="4" fill="#DBEAFE" opacity="0.6"/>
+        <text x="590" y="18" text-anchor="middle" style="font-family:var(--mono);font-size:9px;font-weight:600;fill:var(--accent);opacity:0.7">ПРОГНОЗ</text>
+        <line x1="55" y1="25" x2="55" y2="130" class="lc-axis"/>
+        <line x1="55" y1="130" x2="700" y2="130" class="lc-axis"/>
+        <line x1="55" y1="95" x2="700" y2="95" class="lc-grid"/>
+        <line x1="55" y1="60" x2="700" y2="60" class="lc-grid"/>
+        <text x="50" y="134" text-anchor="end" class="lc-label">0</text>
+        <text x="50" y="99" text-anchor="end" class="lc-label">3000</text>
+        <text x="50" y="64" text-anchor="end" class="lc-label">6000</text>
+        <text x="120" y="147" text-anchor="middle" class="lc-label">2022</text>
+        <text x="230" y="147" text-anchor="middle" class="lc-label">2023</text>
+        <text x="340" y="147" text-anchor="middle" class="lc-label">2024</text>
+        <text x="450" y="147" text-anchor="middle" class="lc-label">2025</text>
+        <text x="560" y="147" text-anchor="middle" class="lc-label" fill="var(--accent)">2026п</text>
+        <text x="670" y="147" text-anchor="middle" class="lc-label" fill="var(--accent)">2028п</text>
+        <!-- Миграция (red, bars) -->
+        <rect x="105" y="123" width="30" height="7" rx="2" fill="#F87171"/>
+        <rect x="215" y="109" width="30" height="21" rx="2" fill="#F87171"/>
+        <rect x="325" y="57" width="30" height="73" rx="2" fill="#DC2626"/>
+        <rect x="435" y="116" width="30" height="14" rx="2" fill="#F87171" opacity="0.7"/>
+        <rect x="545" y="119" width="30" height="11" rx="2" fill="#93C5FD" opacity="0.7"/>
+        <rect x="655" y="121" width="30" height="9" rx="2" fill="#93C5FD" opacity="0.7"/>
+        <text x="120" y="120" text-anchor="middle" style="font-family:var(--mono);font-size:9px;font-weight:600;fill:var(--red)">630</text>
+        <text x="230" y="106" text-anchor="middle" style="font-family:var(--mono);font-size:9px;font-weight:600;fill:var(--red)">1,8K</text>
+        <text x="340" y="53" text-anchor="middle" style="font-family:var(--mono);font-size:9px;font-weight:700;fill:var(--red)">6,2K</text>
+        <text x="450" y="113" text-anchor="middle" style="font-family:var(--mono);font-size:9px;font-weight:600;fill:var(--red)">1,2K</text>
+        <text x="560" y="116" text-anchor="middle" style="font-family:var(--mono);font-size:9px;font-weight:600;fill:var(--accent)">~800</text>
+        <text x="670" y="118" text-anchor="middle" style="font-family:var(--mono);font-size:9px;font-weight:600;fill:var(--accent)">~500</text>
+        <!-- Бедность (amber line, families) scale 0-9000 -->
+        <polyline points="120,93 230,97 340,104 450,112" fill="none" stroke="#D97706" stroke-width="2" stroke-linejoin="round"/>
+        <polyline points="450,112 560,123 670,128" fill="none" stroke="#D97706" stroke-width="2" stroke-linejoin="round" stroke-dasharray="5,3"/>
+        <circle cx="120" cy="93" r="2.5" fill="#D97706"/>
+        <circle cx="230" cy="97" r="2.5" fill="#D97706"/>
+        <circle cx="340" cy="104" r="2.5" fill="#D97706"/>
+        <circle cx="450" cy="112" r="2.5" fill="#D97706"/>
+        <circle cx="560" cy="123" r="2.5" fill="#fff" stroke="#D97706" stroke-width="1.5"/>
+        <circle cx="670" cy="128" r="2.5" fill="#fff" stroke="#D97706" stroke-width="1.5"/>
+        <text x="130" y="90" text-anchor="start" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#D97706">3&#8239;200</text>
+        <text x="240" y="94" text-anchor="start" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#D97706">2&#8239;800</text>
+        <text x="350" y="101" text-anchor="start" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#D97706">2&#8239;199</text>
+        <text x="460" y="109" text-anchor="start" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#D97706">1&#8239;548</text>
+        <text x="570" y="120" text-anchor="start" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#D97706">651</text>
+        <text x="680" y="125" text-anchor="start" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#D97706">~300</text>
+        <!-- Безработица (green line, people) -->
+        <polyline points="120,100 230,102 340,106 450,110" fill="none" stroke="#059669" stroke-width="2" stroke-linejoin="round"/>
+        <polyline points="450,110 560,118 670,124" fill="none" stroke="#059669" stroke-width="2" stroke-linejoin="round" stroke-dasharray="5,3"/>
+        <circle cx="120" cy="100" r="2.5" fill="#059669"/>
+        <circle cx="230" cy="102" r="2.5" fill="#059669"/>
+        <circle cx="340" cy="106" r="2.5" fill="#059669"/>
+        <circle cx="450" cy="110" r="2.5" fill="#059669"/>
+        <circle cx="560" cy="118" r="2.5" fill="#fff" stroke="#059669" stroke-width="1.5"/>
+        <circle cx="670" cy="124" r="2.5" fill="#fff" stroke="#059669" stroke-width="1.5"/>
+        <text x="108" y="109" text-anchor="end" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#059669">2&#8239;600</text>
+        <text x="218" y="111" text-anchor="end" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#059669">2&#8239;400</text>
+        <text x="318" y="115" text-anchor="end" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#059669">2&#8239;100</text>
+        <text x="428" y="119" text-anchor="end" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#059669">1&#8239;798</text>
+        <text x="538" y="126" text-anchor="end" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#059669">~1&#8239;000</text>
+        <text x="648" y="131" text-anchor="end" style="font-family:var(--mono);font-size:8px;font-weight:600;fill:#059669">~600</text>
+        <!-- Легенда -->
+        <rect x="65" y="8" width="12" height="8" rx="2" fill="#F87171"/>
+        <text x="80" y="15" class="lc-label" fill="#DC2626">Миграция (кетиш/йил)</text>
+        <line x1="230" y1="12" x2="245" y2="12" stroke="#D97706" stroke-width="2"/>
+        <text x="248" y="15" class="lc-label" fill="#D97706">Камбағаллик (оилалар)</text>
+        <line x1="380" y1="12" x2="395" y2="12" stroke="#059669" stroke-width="2"/>
+        <text x="398" y="15" class="lc-label" fill="#059669">Ишсизлик (киши)</text>
+      </svg>
+    </div>
+
+    <!-- SECTION -->
+    <div class="sec sec12">Мақсадли кўрсаткичлар: факт vs прогноз</div>
+
+    <!-- Целевая таблица -->
+    <div class="c s8">
+      <div class="c-t">Асосий кўрсаткичлар: 2025 (факт) - 2028 (режа) - 2031 (мақсад)</div>
+      <table>
+        <tr><th>Кўрсаткич</th><th class="r">2025 (факт)</th><th class="r" style="color:var(--accent)">2028 (режа)</th><th class="r" style="color:var(--green)">2031 (мақсад)</th><th class="r">&#916;</th></tr>
+        <tr><td>Саноат (млрд сўм)</td><td class="r"><b>2&#8239;459</b></td><td class="r">~3&#8239;500</td><td class="r" style="color:var(--green)"><b>5&#8239;000</b></td><td class="r" style="color:var(--green)">+103%</td></tr>
+        <tr><td>Экспорт (млрд сўм)</td><td class="r"><b>450</b></td><td class="r">~900</td><td class="r" style="color:var(--green)"><b>1&#8239;300</b></td><td class="r" style="color:var(--green)">+189%</td></tr>
+        <tr><td>Инвестициялар, йилига (млрд сўм)</td><td class="r"><b>1&#8239;281</b></td><td class="r">~2&#8239;200</td><td class="r" style="color:var(--green)"><b>3&#8239;000</b></td><td class="r" style="color:var(--green)">+134%</td></tr>
+        <tr><td>Миграция (кетиш/йил)</td><td class="r" style="color:var(--red)"><b>15&#8239;574</b></td><td class="r">~10&#8239;000</td><td class="r" style="color:var(--green)"><b>&lt;8&#8239;000</b></td><td class="r" style="color:var(--green)">-49%</td></tr>
+        <tr><td>Ишсизлик (киши)</td><td class="r" style="color:var(--red)"><b>1&#8239;798</b></td><td class="r">~1&#8239;000</td><td class="r" style="color:var(--green)"><b>&lt;600</b></td><td class="r" style="color:var(--green)">-67%</td></tr>
+        <tr><td>Камбағал оилаларлар</td><td class="r" style="color:var(--red)"><b>2&#8239;602</b></td><td class="r">~1&#8239;200</td><td class="r" style="color:var(--green)"><b>&lt;600</b></td><td class="r" style="color:var(--green)">-77%</td></tr>
+        <tr><td>Ўрт. иш ҳақи (минг сўм)</td><td class="r"><b>3&#8239;974</b></td><td class="r">~5&#8239;500</td><td class="r" style="color:var(--green)"><b>7&#8239;000</b></td><td class="r" style="color:var(--green)">+76%</td></tr>
+        <tr><td>Фаол ИП</td><td class="r"><b>46,4%</b></td><td class="r">~60%</td><td class="r" style="color:var(--green)"><b>70%+</b></td><td class="r" style="color:var(--green)">+24пп</td></tr>
+        <tr><td>Маҳаллалар ўртасидаги фарқ</td><td class="r" style="color:var(--red)"><b>32&#215;</b></td><td class="r">~18&#215;</td><td class="r" style="color:var(--green)"><b>&lt;10&#215;</b></td><td class="r" style="color:var(--green)">-69%</td></tr>
+      </table>
+    </div>
+
+    <!-- Крупнейшие проекты -->
+    <div class="c s4">
+      <div class="c-t">Йирик катализатор лойиҳалар</div>
+      <table style="font-size:10.5px">
+        <tr><th>Лойиҳа</th><th class="r">Сумма</th><th class="r">Ўрин</th></tr>
+        <tr><td><b>HENG TAI</b> - турмажмуа</td><td class="r">960 млрд</td><td class="r">70</td></tr>
+        <tr><td><b>WENNY ESTATE</b> -672 кв.</td><td class="r">450 млрд</td><td class="r">350</td></tr>
+        <tr><td><b>FOSHAN</b> - керамика</td><td class="r">384 млрд</td><td class="r"> -</td></tr>
+        <tr><td><b>Ферантеп Гилам</b> - гиламлар</td><td class="r">360 млрд</td><td class="r">150+</td></tr>
+        <tr><td><b>GUANGZHOU</b> - озиқ-овқат</td><td class="r">256 млрд</td><td class="r"> -</td></tr>
+        <tr><td><b>Comfort Avenue</b> Hotel</td><td class="r">126 млрд</td><td class="r">250</td></tr>
+        <tr><td><b>Мебел кластери</b></td><td class="r">92 млрд</td><td class="r">1&#8239;055</td></tr>
+        <tr><td><b>Тиббиёт ВУЗи</b> Central Asia</td><td class="r">68,9 млрд</td><td class="r">70</td></tr>
+      </table>
+      <div style="margin-top:6px;padding-top:4px;border-top:1px solid var(--border);font-size:10.5px;color:var(--text2)">
+        <b>Жами 2026 режа:</b> 468 лойиҳа, 9&#8239;722 млрд сўм
+      </div>
+    </div>
+
+    <!-- Итоговый вывод -->
+    <div class="sec sec12">Якуний хулоса</div>
+
+    <div class="c s12" style="background:linear-gradient(135deg,#EFF6FF,#F0FDF4);border:1px solid #2563EB22;padding:14px 20px">
+      <div style="display:flex;align-items:flex-start;gap:28px">
+        <div style="flex:2">
+          <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:8px">Марғилон 2031: иқтисодий моделни модернизация қилиш</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.7">
+            <b>Асосий муаммо:</b> эскирган иқтисодий модель — иқтисодиётнинг 97%и кичик бизнесга тўғри келади, ЯТТнинг 49,5%и чакана савдода, йирик ишлаб чиқариш корхоналари етарли эмас. Натижада иш ҳақи паст (Россияга нисбатан 3,2 баравар фарқ), юқори миграция (15 574 киши) ва иқтисодий ривожланишда чекловлар юзага келмоқда.<br>
+            <b>Стратегия:</b> савдо йўналишидаги шаҳардан саноат марказига ўтиш — йирик корхоналарни шакллантириш, 3 738 млрд сўм тўғридан-тўғри хорижий инвестицияларни жалб қилиш ва 1 500 млрд сўм кредит ресурсларини йўналтириш орқали.<br>
+            <b>Банклар роли:</b> 1 500 млрд сўм кредит ажратиш (2025 йилга нисбатан 5,6 баравар), 12 та маҳалла банки, 50 та молиявий инклюзия агентлари орқали қамровни кенгайтириш, муаммоли кредитлар улушини 4,6%дан 2,5%гача қисқартириш.
+          </div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center">
+          <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:10px">2031 йилга мақсадли кўрсаткичлар</div>
+          <div style="display:flex;gap:10px">
+            <div style="text-align:center;background:#fff;border-radius:8px;padding:10px 16px;border:1px solid var(--border)">
+              <div style="font-family:var(--mono);font-size:24px;font-weight:700;color:var(--green)">&#215;2</div>
+              <div style="font-size:10px;color:var(--text3);font-weight:600">саноат</div>
+              <div style="font-size:9px;color:var(--text3);margin-top:2px">2 459 &#8594; 5 000</div>
+            </div>
+            <div style="text-align:center;background:#fff;border-radius:8px;padding:10px 16px;border:1px solid var(--border)">
+              <div style="font-family:var(--mono);font-size:24px;font-weight:700;color:var(--green)">&#215;3</div>
+              <div style="font-size:10px;color:var(--text3);font-weight:600">экспорт</div>
+              <div style="font-size:9px;color:var(--text3);margin-top:2px">450 &#8594; 1 300</div>
+            </div>
+            <div style="text-align:center;background:#fff;border-radius:8px;padding:10px 16px;border:1px solid var(--border)">
+              <div style="font-family:var(--mono);font-size:24px;font-weight:700;color:var(--green)">-77%</div>
+              <div style="font-size:10px;color:var(--text3);font-weight:600">камбағаллик</div>
+              <div style="font-size:9px;color:var(--text3);margin-top:2px">2 602 &#8594; &lt;600 оила</div>
+            </div>
+            <div style="text-align:center;background:#fff;border-radius:8px;padding:10px 16px;border:1px solid var(--border)">
+              <div style="font-family:var(--mono);font-size:24px;font-weight:700;color:var(--green)">-49%</div>
+              <div style="font-size:10px;color:var(--text3);font-weight:600">миграция</div>
+              <div style="font-size:9px;color:var(--text3);margin-top:2px">15 574 &#8594; &lt;8 000</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

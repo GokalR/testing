@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc:*)",
+      "Bash(mkdir -p public/logos)",
+      "Bash(cp \"logo_nbu_2025/Logo_NBU_blue.png\" \"public/logos/nbu-mark.png\")",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(npx next:*)"
+    ]
+  }
+}

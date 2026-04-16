@@ -1,0 +1,288 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --radius-sm: var(--shape-radius-sm);
+  --radius-md: var(--shape-radius-md);
+  --radius-lg: var(--shape-radius-lg);
+  --radius-xl: var(--shape-radius-xl);
+  --radius-2xl: calc(var(--shape-radius-xl) + 8px);
+  --radius-3xl: calc(var(--shape-radius-xl) + 16px);
+  --radius-4xl: calc(var(--shape-radius-xl) + 24px);
+  --font-sans: var(--font-inter), "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), "JetBrains Mono", ui-monospace, monospace;
+  --font-heading: var(--font-manrope), "Manrope", ui-sans-serif, system-ui,
+    sans-serif;
+}
+
+:root {
+  color-scheme: light;
+
+  /* ── Backgrounds ─────────────────────────── */
+  --bg-primary: #f7f9fb;
+  --bg-secondary: #eceef0;
+  --bg-card: #ffffff;
+  --bg-sidebar: #f2f4f6;
+  --bg-code: #eceef0;
+
+  /* ── Text ────────────────────────────────── */
+  --text-primary: #191c1e;
+  --text-secondary: #424751;
+  --text-muted: #727783;
+  --text-inverse: #ffffff;
+
+  /* ── Accent (NBU navy blue) ──────────────── */
+  --accent: #003d7c;
+  --accent-hover: #0054a6;
+  --accent-light: #d6e3ff;
+  --edu-accent: var(--accent);
+  --edu-accent-hover: var(--accent-hover);
+  --edu-accent-light: var(--accent-light);
+
+  /* ── Gold (secondary highlight) ──────────── */
+  --gold: #d7b56d;
+  --gold-hover: #c4a35a;
+  --gold-light: #f5ecd5;
+
+  /* ── Semantic ────────────────────────────── */
+  --success: #059669;
+  --success-light: #ecfdf5;
+  --error: #dc2626;
+  --error-light: #fef2f2;
+  --warning: #d97706;
+  --warning-light: #fffbeb;
+  --info: #0054a6;
+  --info-light: #eff6ff;
+
+  /* ── Borders ─────────────────────────────── */
+  --border: #dde3ee;
+  --border-hover: #c2c6d3;
+  --edu-border: var(--border);
+  --edu-border-hover: var(--border-hover);
+
+  /* ── Shadows ─────────────────────────────── */
+  --shadow-sm: 0 1px 3px rgba(0, 27, 61, 0.04);
+  --shadow-md: 0 4px 12px rgba(25, 63, 114, 0.06);
+  --shadow-lg: 0 12px 32px rgba(25, 63, 114, 0.08);
+  --shadow-glow: 0 0 0 3px rgba(0, 61, 124, 0.12);
+
+  /* ── Radii ───────────────────────────────── */
+  --shape-radius-sm: 8px;
+  --shape-radius-md: 12px;
+  --shape-radius-lg: 16px;
+  --shape-radius-xl: 24px;
+  --edu-radius-sm: var(--shape-radius-sm);
+  --edu-radius-md: var(--shape-radius-md);
+  --edu-radius-lg: var(--shape-radius-lg);
+  --edu-radius-xl: var(--shape-radius-xl);
+
+  /* ── shadcn semantic mapping ─────────────── */
+  --background: var(--bg-primary);
+  --foreground: var(--text-primary);
+  --card: var(--bg-card);
+  --card-foreground: var(--text-primary);
+  --popover: var(--bg-card);
+  --popover-foreground: var(--text-primary);
+  --primary: var(--accent);
+  --primary-foreground: var(--text-inverse);
+  --secondary: var(--bg-secondary);
+  --secondary-foreground: var(--text-primary);
+  --muted: var(--bg-secondary);
+  --muted-foreground: var(--text-muted);
+  --accent-foreground: var(--text-primary);
+  --destructive: var(--error);
+  --input: var(--border);
+  --ring: var(--accent);
+  --chart-1: var(--accent);
+  --chart-2: var(--success);
+  --chart-3: var(--info);
+  --chart-4: var(--warning);
+  --chart-5: var(--gold);
+  --sidebar: var(--bg-sidebar);
+  --sidebar-foreground: var(--text-primary);
+  --sidebar-primary: var(--accent);
+  --sidebar-primary-foreground: var(--text-inverse);
+  --sidebar-accent: var(--accent-light);
+  --sidebar-accent-foreground: var(--text-primary);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--accent);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg-primary: #0f1114;
+  --bg-secondary: #191c21;
+  --bg-card: #1e2228;
+  --bg-sidebar: #151820;
+  --bg-code: #191c21;
+
+  --text-primary: #e0e3e5;
+  --text-secondary: #9ba3b0;
+  --text-muted: #5c6475;
+  --text-inverse: #0f1114;
+
+  --accent: #a9c7ff;
+  --accent-hover: #d6e3ff;
+  --accent-light: #1a2640;
+  --edu-accent: var(--accent);
+  --edu-accent-hover: var(--accent-hover);
+  --edu-accent-light: var(--accent-light);
+
+  --gold: #e0c17a;
+  --gold-hover: #d7b56d;
+  --gold-light: #2a2418;
+
+  --success: #5adf82;
+  --success-light: #0d2818;
+  --error: #ffa4a4;
+  --error-light: #2a1418;
+  --warning: #ffd080;
+  --warning-light: #2a2010;
+  --info: #a9c7ff;
+  --info-light: #1a2640;
+
+  --border: #2d3340;
+  --border-hover: #3d4555;
+  --edu-border: var(--border);
+  --edu-border-hover: var(--border-hover);
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 0 3px rgba(169, 199, 255, 0.15);
+}
+
+.dark {
+  --background: var(--bg-primary);
+  --foreground: var(--text-primary);
+  --card: var(--bg-card);
+  --card-foreground: var(--text-primary);
+  --popover: var(--bg-card);
+  --popover-foreground: var(--text-primary);
+  --primary: var(--accent);
+  --primary-foreground: var(--text-inverse);
+  --secondary: var(--bg-secondary);
+  --secondary-foreground: var(--text-primary);
+  --muted: var(--bg-secondary);
+  --muted-foreground: var(--text-muted);
+  --accent-foreground: var(--text-primary);
+  --destructive: var(--error);
+  --input: var(--border);
+  --ring: var(--accent);
+  --chart-1: var(--accent);
+  --chart-2: var(--success);
+  --chart-3: var(--info);
+  --chart-4: var(--warning);
+  --chart-5: var(--gold);
+  --sidebar: var(--bg-sidebar);
+  --sidebar-foreground: var(--text-primary);
+  --sidebar-primary: var(--accent);
+  --sidebar-primary-foreground: var(--text-inverse);
+  --sidebar-accent: var(--accent-light);
+  --sidebar-accent-foreground: var(--text-primary);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--accent);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+}
+
+code,
+pre,
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-secondary) 25%,
+    var(--bg-card) 50%,
+    var(--bg-secondary) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--shape-radius-sm);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/40;
+  }
+
+  html {
+    @apply font-sans;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    background-image:
+      radial-gradient(
+        circle at top,
+        color-mix(in srgb, var(--accent-light) 40%, transparent) 0%,
+        transparent 42%
+      ),
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--bg-secondary) 55%, transparent) 0%,
+        transparent 28%
+      );
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--accent) 28%, transparent);
+  }
+}
