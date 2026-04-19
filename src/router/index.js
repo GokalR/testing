@@ -2,6 +2,12 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
   {
+    path: '/login',
+    name: 'login',
+    component: () => import('@/views/LoginView.vue'),
+    meta: { layout: 'blank', public: true },
+  },
+  {
     path: '/',
     name: 'home',
     component: () => import('@/views/HomeView.vue'),
@@ -112,6 +118,18 @@ const router = createRouter({
   scrollBehavior() {
     return { top: 0 }
   },
+})
+
+// Auth guard: redirect to /login if no token (except public routes)
+router.beforeEach((to) => {
+  const isPublic = to.meta?.public === true
+  const hasToken = !!localStorage.getItem('edu_token')
+  if (!isPublic && !hasToken) {
+    return { name: 'login', query: { redirect: to.fullPath } }
+  }
+  if (to.name === 'login' && hasToken) {
+    return { path: '/' }
+  }
 })
 
 export default router
